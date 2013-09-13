@@ -29,11 +29,14 @@ function nLingual_options_page(){
  */
 add_action('admin_init', 'nLingual_register_settings');
 function nLingual_register_settings(){
-	add_settings_section('languages', 'Manage Settings', 'nLingual_manage_settings', 'nLingual');
-	add_settings_section('languages', 'Manage Languages', 'nLingual_manage_languages', 'nLingual');
+	add_settings_section('nLingual-options', 'Manage Options', 'nLingual_manage_options', 'nLingual');
+	add_settings_section('nLingual-languages', 'Manage Languages', 'nLingual_manage_languages', 'nLingual');
+	
+	register_setting('nLingual-options', 'nLingual-options');
+	register_setting('nLingual-languages', 'nLingual-languages');
 }
 
-function nLingual_manage_settings(){
+function nLingual_manage_options(){
 
 }
 

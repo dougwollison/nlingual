@@ -27,9 +27,7 @@ function nLingual_detect_requested_language(){
 	if($use_domain && preg_match('#^([a-z]{2})\.#i', $host, $match) && nL_lang_exists($match[1])){
 		$lang = $match[1];
 		$host = substr($host, 3);
-	}
-
-	// Override with path method if active and valid
+	}else // Or with path method if active and valid
 	if($use_path && preg_match('#^/([a-z]{2})(/.*)?$#i', $uri, $match) && nL_lang_exists($match[1])){
 		$lang = $match[1];
 		$host = substr($uri, 3);
@@ -99,8 +97,9 @@ function nLingual_detect_requested_post_language(&$wp){
 
 		// Now that the language is definitely set,
 		// override the $wp_locale
-		unset($GLOBALS['wp_locale']);
 		global $wp_locale;
+		// Load the nLingual local class
+		require(__DIR__.'/nLingual_WP_Locale.php');
 		$wp_locale = new nLingual_WP_Locale();
 	}
 }

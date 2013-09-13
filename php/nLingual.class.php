@@ -25,12 +25,18 @@ class nLingual{
 	public static function init(){
 		// Load options
 		self::$options		= get_option('nLingual-options', array(
+			// Default language
+			'default_lang' => 'en',
+		
 			// Detection methods
 			'accept_lang' => true,
 			'subdomain' => false,
 			'subdirectory' => false,
 			'get_var' => 'lang',
 			'post_var' => 'lang',
+			
+			// Supported post types
+			'post_types' => array('page', 'post'),
 
 			// Redirect for..
 			'check_frontpage' => true,
@@ -39,6 +45,9 @@ class nLingual{
 			// Apply split to...
 			'split_blogname' => true,
 			'split_posttitle' => true,
+			
+			// Split settings
+			'split_separator' => '//',
 
 			// Auto localize...
 			'l10n_dateformat' => true,
@@ -60,10 +69,9 @@ class nLingual{
 			)
 		));
 
-		// Load  post types, split separator, defualt language, and set current langauge
-		self::$post_types	= get_option('nLingual-post_types', array('page', 'post'));
-		self::$separator	= get_option('nLingual-separator', '//');
-		self::$default		= get_option('nLingual-default_lang', 'en');
+		// Load  post types, defualt language, and set current langauge
+		self::$post_types	= self::get_option('post_types');
+		self::$default		= self::get_option('default_lang');
 		self::$current		= self::$default;
 
 		// Register the language taxonomy and terms
