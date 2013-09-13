@@ -10,5 +10,6 @@ require 'utilities.php';
 require 'hooks.php';
 
 if(is_admin()){
-	require 'admin.php';
+	require 'admin.hooks.php';
+	require 'admin.settings.php';
 }
