@@ -9,4 +9,4 @@ Author URI: http://dougw.me
 License: GPL2
 */
 
-require('php/load.php');
+require(__DIR__.'/php/load.php');
