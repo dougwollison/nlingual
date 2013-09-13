@@ -1,44 +1,100 @@
 <?php
-function get_post_id_by_name($name){
-	global $wpdb;
-	return $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_type != 'revision'", $name));
-}
+/*
+ * ============================
+ * Extra Localization utilities
+ * ============================
+ */
 
-function _j($text, $domain = 'default'){
-	echo json_encode(__($text, $domain));
-}
-
-function _jx($text, $context, $domain = 'default'){
-	echo json_encode(_x($text, $context, $domain));
-}
-
-function _f($text, $domain = 'default'){
+/*
+ * Localize format string
+ *
+ * @uses __()
+ *
+ * @param string $text The format string
+ * @param string $domain The domain to use
+ * @params mixed $arg1.. The arguments for vsprintf
+ */
+function _f($text, $domain){
 	$args = func_get_args();
 	$args = array_slice($args, 2);
 
 	return vsprintf(__($text, $domain), $args);
 }
 
-function _ef($text, $domain = 'default'){
+/*
+ * Localize format string, with context
+ *
+ * @uses __()
+ *
+ * @param string $text The format string
+ * @param string $context The context to use
+ * @param string $domain The domain to use
+ * @params mixed $arg1.. The arguments for vsprintf
+ */
+function _xf($text, $context, $domain){
 	$args = func_get_args();
-	$args = array_slice($args, 2);
+	$args = array_slice($args, 3);
 
-	vprintf(__($text, $domain), $args);
+	return vsprintf(_x($text, $context, $domain), $args);
 }
 
+/*
+ * Echo result of _f
+ *
+ * @uses _f()
+ *
+ * @param string $text The format string
+ * @param string $domain The domain to use
+ * @params mixed $arg1.. The arguments for vsprintf
+ */
+function _ef($text, $domain){
+	echo call_user_func_array('_f', func_get_args());
+}
+
+/*
+ * Echo result of _xf
+ *
+ * @uses _xf()
+ *
+ * @param string $text The format string
+ * @param string $context The context to use
+ * @param string $domain The domain to use
+ * @params mixed $arg1.. The arguments for vsprintf
+ */
+function _exf($text, $context, $domain){
+	echo call_user_func_array('_xf', func_get_args());
+}
+
+/*
+ * Localize an array of strings
+ *
+ * @uses __()
+ *
+ * @param array $array The array to be localized
+ * @param string $domain The domain to use
+ */
 function _a($array, $domain = 'default'){
 	$_array = array();
-	foreach($array as $text){
-		$_array[] = __($text, $domain);
+	foreach($array as $key => $value){
+		$_array[$key] = __($value, $domain);
 	}
 
 	return $_array;
 }
 
+/*
+ * Localize an array of strings
+ *
+ * @uses _x()
+ *
+ * @param array $array The array to be localized
+ * @param string $context The context to use
+ * @param string $domain The domain to use
+ */
 function _ax($array, $context, $domain = 'default'){
 	$_array = array();
-	foreach($array as $text){
-		$_array[] = _x($text, $context, $domain);
+	foreach($array as $key => $value){
+		$_array[$key] = _x($value, $context, $domain);
 	}
 
 	return $_array;

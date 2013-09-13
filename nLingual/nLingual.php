@@ -1,12 +1,14 @@
 <?php
 require 'nLingual.class.php';
+require 'nLingual.aliases.php';
 
 //Initial nLingual
 nLingual::init();
 
 require 'local.php';
-require 'setup.php';
 require 'utilities.php';
 require 'hooks.php';
-require 'admin.php';
-require 'shortcodes.php';
+
+if(is_admin()){
+	require 'admin.php';
+}

@@ -1,28 +1,67 @@
 <?php
-add_action('init', function(){
-	if(isset($_GET['lang'])){
-		if(!$_GET['lang']) $_GET['lang'] = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-		set_curlang($_GET['lang']);
-		unset($_GET['lang']);
-	}elseif(isset($_POST['lang'])){
-		if(!$_POST['lang']) $_POST['lang'] = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-		set_curlang($_POST['lang']);
-		unset($_POST['lang']);
-	}else{
-		set_curlang($_SERVER['HTTP_ACCEPT_LANGUAGE'], false);
-		unset($_SERVER['HTTP_ACCEPT_LANGUAGE']);
-	}
-});
+/*
+ * Detect and set the requested language
+ */
+add_action('init', 'nLingual_detect_requested_language');
+function nLingual_detect_requested_language(){
+	$post_var = nL_get_option('post_var');
+	$get_var = nL_get_option('get_var');
+	$accept_lang = nL_get_option('accept_lang');
+	$use_domain = nL_get_option('domain');
+	$use_path = nL_get_option('path');
 
-add_action('parse_request', function(&$wp){
+	$alang = &$_SERVER['HTTP_ACCEPT_LANGUAGE'];
+	$host = &$_SERVER['HTTP_HOST'];
+	$uri = &$_SERVER['REQUEST_URI'];
+
+	$lang = null;
+	$lock = false;
+
+	// First, use the HTTP_ACCEPT_LANGUAGE method if valid
+	if(nL_lang_exists($alang)){
+		$lang = $alang;
+		$lock = false;
+	}
+
+	// Override with domain method if active and valid
+	if($use_domain && preg_match('#^([a-z]{2})\.#i', $host, $match) && nL_lang_exists($match[1])){
+		$lang = $match[1];
+		$host = substr($host, 3);
+	}
+
+	// Override with path method if active and valid
+	if($use_path && preg_match('#^/([a-z]{2})(/.*)?$#i', $uri, $match) && nL_lang_exists($match[1])){
+		$lang = $match[1];
+		$host = substr($uri, 3);
+	}
+
+	// Override with get_var method if present and valid
+	if($get_var && isset($_GET[$get_var]) && nL_lang_exists($_GET[$get_var])){
+		$lang = $_GET[$get_var];
+	}
+
+	// Override with post_var method if present and valid
+	if($post_var && isset($_POST[$post_var]) && nL_lang_exists($_POST[$post_var])){
+		$lang = $_POST[$post_var];
+	}
+
+	if($lang) nL_set_lang($lang, $lock);
+}
+
+/*
+ * Check if a translated version of the front page is being requested,
+ * adjust query to treat it as the front page
+ */
+add_action('parse_request', 'nLingual_check_alternate_frontpage');
+function nLingual_check_alternate_frontpage(&$wp){
 	global $wpdb;
 	if(!is_admin() && isset($wp->query_vars['pagename'])){
 		$name = basename($wp->query_vars['pagename']);
-		$id = get_post_id_by_name($name);
+		$id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_type != 'revision'", $name));
 
-		if(!in_default_language($id)){
-			$lang = get_language($id);
-			$orig = get_original_post($id);
+		if(!nL_in_default_lang($id)){
+			$lang = nL_get_lang($id);
+			$orig = nL_get_original_post($id);
 
 			if($orig == get_option('page_on_front')){
 				$wp->query_vars = array();
@@ -31,98 +70,119 @@ add_action('parse_request', function(&$wp){
 				$wp->matched_query = null;
 			}
 
-			set_curlang($lang);
+			nL_set_lang($lang);
 		}
 	}
-});
+}
 
-add_action('parse_query', function(&$wp_query){
-	if(!is_admin() && in_array($wp_query->query_vars['post_type'], theme_post_types()) && !isset($wp_query->query_vars['language'])){
-		$wp_query->query_vars['language'] = get_curlang();
+/*
+ * Set the language query_var if on the front end and requesting a language supporting post type
+ */
+add_action('parse_query', 'nLingual_set_language_query_var');
+function nLingual_set_language_query_var(&$wp_query){
+	if(!is_admin() && in_array($wp_query->query_vars['post_type'], nL_post_types()) && !isset($wp_query->query_vars['language'])){
+		$wp_query->query_vars['language'] = nL_get_lang();
 	}
-});
+}
 
-add_action('wp', function(&$wp){
+/*
+ * Detect the language of the requested post and apply
+ */
+add_action('wp', 'nLingual_detect_requested_post_language');
+function nLingual_detect_requested_post_language(&$wp){
 	global $wp_query;
 	if(!is_admin()){
 		if(isset($wp_query->post)){
-			$lang = get_language($wp_query->post->ID);
+			$lang = nL_get_post_lang($wp_query->post->ID);
+			nL_set_lang($lang);
 		}
 
-		set_curlang($lang);
-
+		// Now that the language is definitely set,
+		// override the $wp_locale
 		unset($GLOBALS['wp_locale']);
 		global $wp_locale;
-		$wp_locale = new theme_WP_Locale();
+		$wp_locale = new nLingual_WP_Locale();
 	}
-});
+}
 
-add_filter('locale', function($locale){
+/*
+ * Intercept and replace the .mo filename to look for
+ */
+add_filter('locale', 'nLingual_intercept_local_name');
+function nLingual_intercept_local_name($locale){
 	if(!is_admin()){
-		return get_curlang('mo');
+		return nL_get_lang('mo');
 	}
 	return $locale;
-});
+}
 
-add_filter('option_page_on_front', 'get_curlang_version');
-add_filter('option_page_for_posts', 'get_curlang_version');
-function get_curlang_version($value){
+/*
+ * Replace the page_on_front and page_for_posts values with the translated version
+ */
+add_filter('option_page_on_front', 'nLingual_get_curlang_version');
+add_filter('option_page_for_posts', 'nLingual_get_curlang_version');
+function nLingual_get_curlang_version($value){
 	if(!is_admin()){
-		$value = get_translated_post($value);
+		$value = nL_get_translated_post($value);
 	}
 	return $value;
 }
 
-add_filter('the_title', 'add_original_title', 100);
-function add_original_title($title){
-	global $post, $wpdb;
 
-	$obj = $post;
-	if(is_object($title)){
-		$obj = $title;
-		$title = $title->post_title;
-	}
-
-	if(is_admin() && is_object($obj)){
-		if(!in_default_language($obj->ID)){
-			$lang = get_language($obj->ID);
-			$origID = get_original_post($obj->ID, false);
-			$orig = $wpdb->get_var($wpdb->prepare("SELECT post_title FROM $wpdb->posts WHERE ID = %d", $origID));
-			if($orig){
-				$title .= " [$lang; $orig]";
-			}
-		}
-	}
-	return $title;
+/*
+ * If split_blogname option is true, add fitler for running split_langs on the blogname
+ */
+if(nL_get_option('split_blogname')){
+	add_filter('option_blogname', 'nL_split_langs');
 }
 
-add_filter('option_blogname', 'split_langs');
-add_filter('the_title', 'split_langs');
+/*
+ * If split_posttitle option is true, add fitler for running split_langs on the post_title
+ */
+if(nL_get_option('split_posttitle')){
+	add_filter('the_title', 'nL_split_langs');
+}
 
-add_filter('option_date_format', function($format){
-	if(!is_admin())
-		$format = __($format, 'foresite');
+/*
+ * If l10n_dateformat option is true, add fitler for localizing the date_format vlaue
+ */
+if(nL_get_option('l10n_dateformat')){
+	add_filter('option_date_format', 'nLingual_l10n_date_format');
+	function nLingual_l10n_date_format($format){
+		if(!is_admin()){
+			$format = __($format, nL_domain(true));
+		}
 
-	return $format;
-});
+		return $format;
+	}
+}
 
-add_filter('body_class', function($classes){
-	global $wp_query, $wpdb;
+/*
+ * Fix class names that contain %'s (because their encoded non-ascii names, and add the lang-[lang] class
+ */
+add_filter('body_class', 'nLingual_lang_body_class');
+function nLingual_add_language_body_class($classes){
+	global $wpdb;
+	$object = get_queried_object();
 	foreach($classes as &$class){
 		if(strpos($class, '%') !== false){
-			$lang = get_language($wp_query->queried_object->ID);
-			$orig = get_original_post($wp_query->queried_object->ID);
+			$lang = nL_get_post_lang($object->ID);
+			$orig = nL_get_original_post($object->ID);
 			$class = $wpdb->get_var($wpdb->prepare("SELECT post_name FROM $wpdb->posts WHERE ID = %d", $orig));
 			$class .= " $class--$lang";
 		}
 	}
 
-	$classes[] = "lang-".get_curlang();
+	$classes[] = "lang-".nL_get_lang();
 
 	return $classes;
-});
+}
 
-add_filter('language_attributes', function($atts){
-	$atts = preg_replace('/lang=".+?"/', 'lang="'.get_curlang('iso').'"', $atts);
+/*
+ * Update lang attribute to use the current languages ISO name
+ */
+add_filter('language_attributes', 'nLingual_html_language_attributes');
+function nLingual_html_language_attributes($atts){
+	$atts = preg_replace('/lang=".+?"/', 'lang="'.nL_get_lang('iso').'"', $atts);
 	return $atts;
-});
+}
