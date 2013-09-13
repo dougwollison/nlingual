@@ -1,15 +1,15 @@
 <?php
-require './nLingual.class.php';
-require './nLingual.aliases.php';
+require(__DIR__.'/nLingual.class.php');
+require(__DIR__.'/nLingual.aliases.php');
 
 //Initial nLingual
 nLingual::init();
 
-require './locale.php';
-require './utilities.php';
-require './hooks.php';
+require(__DIR__.'/ocale.php');
+require(__DIR__.'/tilities.php');
+require(__DIR__.'/ooks.php');
 
 if(is_admin()){
-	require './admin.hooks.php';
-	require './admin.settings.php';
+	require(__DIR__.'/admin.hooks.php');
+	require(__DIR__.'/admin.settings.php');
 }
