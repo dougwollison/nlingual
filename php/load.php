@@ -5,9 +5,9 @@ require(__DIR__.'/nLingual.aliases.php');
 //Initial nLingual
 nLingual::init();
 
-require(__DIR__.'/ocale.php');
-require(__DIR__.'/tilities.php');
-require(__DIR__.'/ooks.php');
+require(__DIR__.'/locale.php');
+require(__DIR__.'/utilities.php');
+require(__DIR__.'/hooks.php');
 
 if(is_admin()){
 	require(__DIR__.'/admin.hooks.php');
