@@ -419,6 +419,8 @@ class nLingual{
 			$lang = self::$current;
 		if(is_null($sep))
 			$sep = self::get_option('separator');
+			
+		if(!$sep) return $text;
 
 		if(is_admin() && !$force && did_action('admin_notices')) return $text;
 
