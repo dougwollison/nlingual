@@ -4,6 +4,10 @@
  * Static use class for utilizing configuration options
  */
 
+define('NL_REDIRECT_USING_PATH', 'NL_REDIRECT_USING_PATH');
+define('NL_REDIRECT_USING_DOMAIN', 'NL_REDIRECT_USING_DOMAIN');
+define('NL_REDIRECT_USING_ACCEPT', 'NL_REDIRECT_USING_ACCEPT');
+
 class nLingual{
 	protected static $options;
 	protected static $languages;
@@ -24,28 +28,18 @@ class nLingual{
 	 */
 	public static function init(){
 		// Load options
-		self::$options		= get_option('nLingual-options', array(
+		self::$options		= wp_parse_args(get_option('nLingual-options'), array(
 			// Default language
 			'default_lang' => 'en',
-		
-			// Detection methods
-			'accept_lang' => true,
-			'subdomain' => false,
-			'subdirectory' => false,
+
+			// Redirection settings
+			'method' => NL_REDIRECT_USING_ACCEPT,
 			'get_var' => 'lang',
 			'post_var' => 'lang',
-			
+
 			// Supported post types
 			'post_types' => array('page', 'post'),
 
-			// Redirect for..
-			'check_frontpage' => true,
-			'check_postspage' => true,
-
-			// Apply split to...
-			'split_blogname' => true,
-			'split_posttitle' => true,
-			
 			// Split settings
 			'split_separator' => '//',
 
@@ -170,6 +164,13 @@ class nLingual{
 				);
 			}
 		}
+	}
+
+	/*
+	 * Sanitize callback for processing the language data
+	 */
+	public static function process_languages(){
+		print_r($_POST);exit;
 	}
 
 	/*
@@ -419,7 +420,7 @@ class nLingual{
 			$lang = self::$current;
 		if(is_null($sep))
 			$sep = self::get_option('separator');
-			
+
 		if(!$sep) return $text;
 
 		if(is_admin() && !$force && did_action('admin_notices')) return $text;

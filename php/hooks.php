@@ -6,11 +6,10 @@ add_action('init', 'nLingual_detect_requested_language');
 function nLingual_detect_requested_language(){
 	$post_var = nL_get_option('post_var');
 	$get_var = nL_get_option('get_var');
-	$accept_lang = nL_get_option('accept_lang');
-	$use_domain = nL_get_option('domain');
-	$use_path = nL_get_option('path');
+	$method = nL_get_option('method');
 
-	$alang = &$_SERVER['HTTP_ACCEPT_LANGUAGE'];
+	$alang = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+
 	$host = &$_SERVER['HTTP_HOST'];
 	$uri = &$_SERVER['REQUEST_URI'];
 
@@ -23,12 +22,12 @@ function nLingual_detect_requested_language(){
 		$lock = false;
 	}
 
-	// Override with domain method if active and valid
-	if($use_domain && preg_match('#^([a-z]{2})\.#i', $host, $match) && nL_lang_exists($match[1])){
+	// Overried with domain method if we're using it, and if valid
+	if($method == NL_REDIRECT_USING_DOMAIN && preg_match('#^([a-z]{2})\.#i', $host, $match) && nL_lang_exists($match[1])){
 		$lang = $match[1];
 		$host = substr($host, 3);
-	}else // Or with path method if active and valid
-	if($use_path && preg_match('#^/([a-z]{2})(/.*)?$#i', $uri, $match) && nL_lang_exists($match[1])){
+	}else // Or with path method if we're using that, and if valid
+	if($method == NL_REDIRECT_USING_PATH && preg_match('#^/([a-z]{2})(/.*)?$#i', $uri, $match) && nL_lang_exists($match[1])){
 		$lang = $match[1];
 		$host = substr($uri, 3);
 	}
@@ -129,18 +128,10 @@ function nLingual_get_curlang_version($value){
 
 
 /*
- * If split_blogname option is true, add fitler for running split_langs on the blogname
+ * Add fitler for running split_langs on the blogname and the_title
  */
-if(nL_get_option('split_blogname')){
-	add_filter('option_blogname', 'nL_split_langs');
-}
-
-/*
- * If split_posttitle option is true, add fitler for running split_langs on the post_title
- */
-if(nL_get_option('split_posttitle')){
-	add_filter('the_title', 'nL_split_langs');
-}
+add_filter('option_blogname', 'nL_split_langs');
+add_filter('the_title', 'nL_split_langs');
 
 /*
  * If l10n_dateformat option is true, add fitler for localizing the date_format vlaue
@@ -159,7 +150,7 @@ if(nL_get_option('l10n_dateformat')){
 /*
  * Fix class names that contain %'s (because their encoded non-ascii names, and add the lang-[lang] class
  */
-add_filter('body_class', 'nLingual_lang_body_class');
+add_filter('body_class', 'nLingual_add_language_body_class');
 function nLingual_add_language_body_class($classes){
 	global $wpdb;
 	$object = get_queried_object();
