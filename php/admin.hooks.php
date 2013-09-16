@@ -231,3 +231,12 @@ function nLingual_manage_post_language_filter(){
 		</select>
 	<?php endif;
 }
+
+/*
+ * Enqueue admin styles/scripts
+ */
+add_action('admin_enqueue_scripts', 'nLingual_enqueue_scripts');
+function nLingual_enqueue_scripts(){
+	wp_enqueue_style('nLingual-admin', plugins_url('/nLingual/css/admin.css'), '1.0', 'screen');
+	wp_enqueue_script('nLingual-admin-js', plugins_url('/nLingual/js/admin.js'), array('jquery-ui-sortable'), '1.0');
+}
