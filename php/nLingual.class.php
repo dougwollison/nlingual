@@ -69,7 +69,7 @@ class nLingual{
 
 		// Loop through the languages and create a by_iso indexed version
 		foreach($languages as $lang){
-			self::$languages_buy_iso[$lang['iso']] = $lang;
+			self::$languages_by_iso[$lang['iso']] = $lang;
 		}
 
 		// Load  post types, defualt language, and set current langauge
