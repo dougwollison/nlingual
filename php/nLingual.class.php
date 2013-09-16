@@ -10,7 +10,8 @@ define('NL_REDIRECT_USING_ACCEPT', 'NL_REDIRECT_USING_ACCEPT');
 
 class nLingual{
 	protected static $options;
-	protected static $languages;
+	protected static $languages = array();
+	protected static $languages_by_iso = array();
 	protected static $post_types;
 	protected static $separator;
 	protected static $default;
@@ -28,7 +29,7 @@ class nLingual{
 	 */
 	public static function init(){
 		// Load options
-		self::$options		= wp_parse_args(get_option('nLingual-options'), array(
+		self::$options = wp_parse_args((array) get_option('nLingual-options'), array(
 			// Default language
 			'default_lang' => 'en',
 
@@ -53,20 +54,28 @@ class nLingual{
 		));
 
 		// Load languages
-		self::$languages	= get_option('nLingual-languages', array(
-			'en' => array(
+		$languages = get_option('nLingual-languages');
+		// Default to english if no langauges are set
+		if(!$languages) $languages = array(
+			array(
 				'iso'		=> 'en',
 				'mo'		=> 'english',
 				'tag'		=> 'En',
 				'name'		=> 'English',
 				'native'	=> 'English'
 			)
-		));
+		);
+		self::$languages = $languages;
+
+		// Loop through the languages and create a by_iso indexed version
+		foreach($languages as $lang){
+			self::$languages_buy_iso[$lang['iso']] = $lang;
+		}
 
 		// Load  post types, defualt language, and set current langauge
-		self::$post_types	= self::get_option('post_types');
-		self::$default		= self::get_option('default_lang');
-		self::$current		= self::$default;
+		self::$post_types = self::get_option('post_types');
+		self::$default = self::get_option('default_lang');
+		self::$current = self::$default;
 
 		// Register the language taxonomy and terms
 		add_action('init', array('nLingual', 'register_taxonomy'));
@@ -101,7 +110,7 @@ class nLingual{
 	 * Return the languages array
 	 */
 	public static function languages(){
-		return self::$languages;
+		return self::$languages_buy_iso;
 	}
 
 	/*
@@ -153,13 +162,13 @@ class nLingual{
 		);
 
 		// Insert any terms needed
-		foreach(self::$languages as $lang => $data){
-			if(!term_exists($lang, 'language')){
+		foreach(self::$languages as $lang){
+			if(!term_exists($lang['iso'], 'language')){
 				wp_insert_term(
-					$data['name'],
+					$lang['name'],
 					'language',
 					array(
-						'slug' => $lang,
+						'slug' => $lang['iso'],
 					)
 				);
 			}
@@ -208,7 +217,7 @@ class nLingual{
 	 * @param string $lang The slug of the language
 	 */
 	public static function lang_exists($lang){
-		return isset(self::$languages[$lang]);
+		return isset(self::$languages_by_iso[$lang]);
 	}
 
 	/*
@@ -223,7 +232,7 @@ class nLingual{
 		elseif(!self::lang_exists($lang))
 			return false;
 
-		return is_null($field) ? $lang : self::$languages[$lang][$field];
+		return is_null($field) ? $lang : self::$languages_by_iso[$lang][$field];
 	}
 
 	/*
@@ -399,8 +408,8 @@ class nLingual{
 	public static function lang_links($echo = false, $prefix = '', $sep = ' '){
 		echo $prefix;
 		$links = array();
-		foreach(self::$languages as $lang => $data){
-			$links[] = sprintf('<a href="%s">%s</a>', !is_front_page() ? self::get_permalink(get_queried_object()->ID, $lang, false) : "?lang=$lang", $data['native']);
+		foreach(self::$languages as $lang){
+			$links[] = sprintf('<a href="%s">%s</a>', !is_front_page() ? self::get_permalink(get_queried_object()->ID, $lang['iso'], false) : "?lang=$lang", $lang['native']);
 		}
 
 		if($echo) echo $prefix.implode($sep, $links);
@@ -425,7 +434,10 @@ class nLingual{
 
 		if(is_admin() && !$force && did_action('admin_notices')) return $text;
 
-		$langs = array_keys(self::$languages);
+		$langs = array_map(function($lang){
+			return $lang['iso'];
+		}, self::$languages);
+
 		$langn = array_search($lang, $langs);
 
 		$sep = preg_quote($sep, '/');
