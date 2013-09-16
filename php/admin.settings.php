@@ -34,7 +34,7 @@ function nLingual_register_settings(){
 	add_settings_section('nLingual-languages', 'Languages', 'nLingual_manage_languages', 'nLingual');
 
 	register_setting('nLingual', 'nLingual-options');
-	//register_setting('nLingual', 'nLingual-languages', 'nL_process_languages');
+	register_setting('nLingual', 'nLingual-languages', 'nL_process_languages');
 
 	add_settings_field('redirection-method', 'Language redirection method', function(){
 		$compare = nL_get_option('method');
@@ -91,5 +91,27 @@ function nLingual_manage_options(){
 }
 
 function nLingual_manage_languages(){
+	$languages = nL_languages();
+	?>
+	<div class="nLingual-languages">
+	<?php foreach($languages as $language) _nLingual_language_editor($language)?>
+	</div>
 
+	<script id="nLingual-language-template" type="text/template">
+		<?php _nLingual_language_editor()?>
+	</script>
+	<?php
+}
+
+function _nLingual_language_editor($language = array()){
+	extract(array_merge(array('iso'=>'', 'mo'=>'', 'tag'=>'', 'name'=>'', 'native'=>''), $language));
+	?>
+	<div class="nLingual-language">
+		<label class="name">Name <input type="text" name="nLingual-languages[name][]" value="<?php echo $name?>"></label>
+		<label class="native">Native <input type="text" name="nLingual-languages[native][]" value="<?php echo $native?>"></label>
+		<label class="iso" title="The code to use for selecting the langauge.">ISO (2 letter) code <input type="text" name="nLingual-languages[iso][]" value="<?php echo $iso?>" maxlength="2"></label>
+		<label class="mo" title="The name (sans extension) of the .MO file use for localization.">.mo filename <input type="text" name="nLingual-languages[mo][]" value="<?php echo $mo?>"></label>
+		<label class="tag">Shorthand name <input type="text" name="nLingual-languages[tag][]" value="<?php echo $tag?>"></label>
+	</div>
+	<?php
 }
