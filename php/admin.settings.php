@@ -36,6 +36,10 @@ function nLingual_register_settings(){
 	register_setting('nLingual', 'nLingual-options');
 	register_setting('nLingual', 'nLingual-languages', function($data){
 		$languages = array();
+
+		// In case santizing was already called, check if it's proper and skip if so.
+		if($data === array_values($data)) return $data;
+
 		foreach($data as $field => $values)
 			foreach($values as $index => $value)
 				$languages[$index][$field] = $value;
