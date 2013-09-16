@@ -110,7 +110,7 @@ class nLingual{
 	 * Return the languages array
 	 */
 	public static function languages(){
-		return self::$languages_buy_iso;
+		return self::$languages_by_iso;
 	}
 
 	/*
