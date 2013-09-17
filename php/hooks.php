@@ -10,8 +10,11 @@ function nLingual_detect_requested_language(){
 
 	$alang = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
 
-	$host = &$_SERVER['HTTP_HOST'];
-	$uri = &$_SERVER['REQUEST_URI'];
+	$host = $_SERVER['HTTP_HOST'];
+	$uri = $_SERVER['REQUEST_URI'];
+
+	$site_path = parse_url(get_option('home'), PHP_URL_PATH);
+	$uri = preg_replace("#^$site_path#", '', $uri);
 
 	$lang = null;
 	$lock = false;
@@ -25,11 +28,11 @@ function nLingual_detect_requested_language(){
 	// Overried with domain method if we're using it, and if valid
 	if($method == NL_REDIRECT_USING_DOMAIN && preg_match('#^([a-z]{2})\.#i', $host, $match) && nL_lang_exists($match[1])){
 		$lang = $match[1];
-		$host = substr($host, 3);
+		$_SERVER['HTTP_HOST'] = substr($host, 3);
 	}else // Or with path method if we're using that, and if valid
 	if($method == NL_REDIRECT_USING_PATH && preg_match('#^/([a-z]{2})(/.*)?$#i', $uri, $match) && nL_lang_exists($match[1])){
 		$lang = $match[1];
-		$host = substr($uri, 3);
+		$_SERVER['REQUEST_URI'] = preg_replace('#/'.$match[1].'(/|$)#', '', $uri);
 	}
 
 	// Override with get_var method if present and valid
