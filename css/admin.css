@@ -41,10 +41,10 @@
 				}
 			#nLingual_languages .name,
 			#nLingual_languages .native{
-				width: 50%;
+				width: 35%;
 			}
 			#nLingual_languages .iso,
 			#nLingual_languages .mo,
 			#nLingual_languages .tag{
-				width: 33.33%;
+				width: 10%;
 			}
