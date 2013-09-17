@@ -129,9 +129,9 @@ function _nLingual_language_editor($language = array()){
 		<div class="info">
 			<label class="name">System Name <input type="text" name="nLingual-languages[name][]" value="<?php echo $name?>"></label>
 			<label class="native">Native Name <input type="text" name="nLingual-languages[native][]" value="<?php echo $native?>"></label>
-			<label class="iso" title="The code to use for selecting the langauge.">ISO (2 letter) code <input type="text" name="nLingual-languages[iso][]" value="<?php echo $iso?>" maxlength="2"></label>
-			<label class="mo" title="The name (sans extension) of the .MO file use for localization.">.mo filename <input type="text" name="nLingual-languages[mo][]" value="<?php echo $mo?>"></label>
-			<label class="tag">Shorthand name <input type="text" name="nLingual-languages[tag][]" value="<?php echo $tag?>"></label>
+			<label class="iso" title="The 2 letter code to use for identifying the langauge.">ISO <input type="text" name="nLingual-languages[iso][]" value="<?php echo $iso?>" maxlength="2"></label>
+			<label class="mo" title="The name (minus extension) of the .MO file use for localization.">.MO file <input type="text" name="nLingual-languages[mo][]" value="<?php echo $mo?>"></label>
+			<label class="tag" title="A shorthand name for the language.">Short name <input type="text" name="nLingual-languages[tag][]" value="<?php echo $tag?>"></label>
 			<br class="clearfix">
 		</div>
 	</div>
