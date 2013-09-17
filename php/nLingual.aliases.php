@@ -57,6 +57,10 @@ function nL_get_post_lang($id = null, $default = null){
 	return nL::get_post_lang($id, $default);
 }
 
+function nL_set_post_lang($id = null, $lang = null){
+	return nL::set_post_lang($id, $lang);
+}
+
 function nL_in_this_lang($id = null, $lang){
 	return nL::in_this_lang($id, $lang);
 }
