@@ -304,6 +304,15 @@ class nLingual{
 	}
 
 	/*
+	 * Test if a post is in the specified language
+	 *
+	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
+	 */
+	public static function in_this_lang($id, $lang){
+		return self::get_post_lang($id, null) == $lang;
+	}
+
+	/*
 	 * Test if a post is in the default language
 	 *
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
