@@ -37,7 +37,7 @@ function nLingual_translations_metabox($post){
 	if(nL_in_default_lang($post)){
 		// If in the default language (the original) offer a list of posts in each language to select as the translated version
 		foreach(nL_languages() as $lang => $data){
-			if($lang == DEFAULT_LANG) continue;
+			if($lang == nL_default_lang()) continue;
 
 			$tp = get_post_meta($post->ID, "_translated_$lang", true);
 
