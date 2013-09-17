@@ -232,6 +232,22 @@ class nLingual{
 	}
 
 	/*
+	 * Get the WordPress term for the selected langauge, returning the term object or just a specific property
+	 *
+	 * @param string $lang Optional The language to retrieve (defaults to the default language)
+	 * @param string $field Optional The specific field to retrieve (leave blank to return the whole object)
+	 * @return mixed $term/$term_property The term object or a specific property
+	 */
+	public static function lang_term($lang = null, $field = null){
+		$term = get_term_by('slug', $lang, 'language');
+
+		if(is_null($field)){
+			return $term;
+		}
+		return $term->$field;
+	}
+
+	/*
 	 * Get the langauge property (or the full array) of a specified langauge (current language by default)
 	 *
 	 * @param string $field Optional The field to retrieve
@@ -322,6 +338,8 @@ class nLingual{
 	 * @return int $translation_id The id of the translation to use
 	 */
 	protected static function _translation_id($id){
+		global $wpdb;
+
 		if(!($translation_id = $wpdb->get_var($wpdb->prepare("SELECT translation_id FROM $wpdb->nL_translations WHERE post_id = %d", $id)))){
 			// This will be new, so we have to get a new translation_id
 			$translation_id = $wpdb->get_var("SELECT MAX(translation_id) + 1 FROM $wpdb->nL_translations");
@@ -452,6 +470,7 @@ class nLingual{
 		";
 
 		foreach($posts as $lang => $id){
+			if($id <= 0) continue; // Not an actual post
 			$query .= $wpdb->prepare("(%d, %s, %d)", $translation_id, $lang, $id);
 		}
 
