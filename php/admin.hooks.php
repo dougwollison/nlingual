@@ -22,7 +22,7 @@ function nLingual_add_meta_box(){
 
 function nLingual_language_metabox($post){
 	?>
-	<select name="language">
+	<select name="language" style="width:100%">
 	<?php foreach(nL_languages() as $slug => $lang): $lang = get_term_by('slug', $slug, 'language');?>
 		<option value="<?php echo $lang->term_id?>" <?php if(nL_in_this_lang($post->ID, $slug)) echo 'selected'?>><?php echo $lang->name?></option>
 	<?php endforeach;?>
