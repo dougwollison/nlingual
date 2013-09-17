@@ -163,8 +163,8 @@ function nLingual_save_post($post_id, $post){
 add_action('admin_init', 'nLingual_new_translation');
 function nLingual_new_translation(){
 	global $wpdb;
-	if(isset($_GET['new_translation'])){
-		$post_id = $_GET['new_translation'];
+	if(isset($_GET['nL_new_translation'])){
+		$post_id = $_GET['nL_new_translation'];
 
 		if(!isset($_GET['_nL_nonce']) || !wp_verify_nonce($_GET['_nL_nonce'], __FILE__))
 			wp_die('You do not have permission to do that.');
