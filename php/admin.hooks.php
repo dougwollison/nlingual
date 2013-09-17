@@ -169,7 +169,7 @@ function nLingual_new_translation(){
 		if(!isset($_GET['_nL_nonce']) || !wp_verify_nonce($_GET['_nL_nonce'], __FILE__))
 			wp_die('You do not have permission to do that.');
 
-		if(!nL_in_default_language($post_id))
+		if(!nL_in_default_lang($post_id))
 			wp_die('This object is not in the default language.');
 
 		if(!isset($_GET['language']) || !($lang = get_term_by('slug', $_GET['language'], 'language')))
