@@ -92,7 +92,7 @@ function nLingual_translations_metabox($post){
 		<p><label>
 			Make this a translation of:
 			<select name="translation_of">
-				<option value="-1">Select <?php echo get_curlang('name', DEFAULT_LANG)?> <?php echo $post->post_type?></option>
+				<option value="-1">Select <?php echo nL_get_lang('name')?> <?php echo $post->post_type?></option>
 			<?php foreach($lang_posts as $lang_post):?>
 				<option value="<?php echo $lang_post->ID?>" <?php if(nL_get_translated_post($lang_post->ID, $lang) == $post->ID) echo 'selected'?>><?php echo $lang_post->post_title?></option>
 			<?php endforeach;?>
