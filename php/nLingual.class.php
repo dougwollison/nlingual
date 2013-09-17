@@ -347,9 +347,9 @@ class nLingual{
 	 *
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
 	 * @param string $lang The slug of the language requested (defaults to current language)
-	 * @param bool $return_self Wether or not to return the provided $id or just false should no original be found (or it is the original)
+	 * @param bool $return_self Wether or not to return the provided $id or just false should no original be found
 	 */
-	public static function get_translated_post($id, $lang = null, $return_self = true){
+	public static function get_translation($id, $lang = null, $return_self = true){
 		global $wpdb;
 
 		if(is_null($id)){
