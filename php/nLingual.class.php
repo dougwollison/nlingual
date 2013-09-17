@@ -437,7 +437,7 @@ class nLingual{
 	 * Associate translations together in the nL_translations table
 	 *
 	 * @param int $post_id The id of the post to use as an achor
-	 * @param array $posts The ids of the other posts to link together
+	 * @param array $posts The ids of the other posts to link together (in lang => post_id format)
 	 */
 	public static function associate_posts($post_id, $posts){
 		global $wpdb;
