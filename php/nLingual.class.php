@@ -137,7 +137,7 @@ class nLingual{
 			nLingual::$post_types,
 			array(
 				'hierarchical'			=> false,
-			    'show_ui'				=> true,
+			    'show_ui'				=> false,
 			    'show_admin_column'		=> true,
 			    'update_count_callback'	=> '_update_post_term_count',
 				'labels' => array(
