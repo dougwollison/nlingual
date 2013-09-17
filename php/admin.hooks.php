@@ -109,18 +109,17 @@ add_action('save_post', 'nLingual_save_post', 999, 2);
 function nLingual_save_post($post_id, $post){
 	global $wpdb;
 
-	if($post->post_status == 'publish'){
-		$terms = wp_get_object_terms($post_id, 'language');
-
-		if(is_array($terms) && empty($terms)){
-			wp_set_object_terms($post_id, nL_default_lang(), 'language');
-		}
-	}
-
+	// Abort if they don't have permission to edit posts/pages
 	if($_POST['post_type'] == 'page' && !current_user_can('edit_page', $post_id)) return;
 	elseif($_POST['post_type'] == 'page' && !current_user_can('edit_page', $post_id)) return;
 
+	// Abort if nonce verification fails
 	if(!isset($_POST['nLingual_translations']) || !wp_verify_nonce($_POST['nLingual_translations'], __FILE__))return;
+
+	// Set the language
+	if($_POST['language']){
+		wp_set_object_terms($post_id, intval($_POST['language']), 'language');
+	}
 
 	if(isset($_POST['translations'])){
 		// Update the translation status of each post selected
@@ -146,6 +145,7 @@ function nLingual_save_post($post_id, $post){
 	// Loop through the sync options, and syncronize the fields with it's associated posts
 	$associated = nL_associated_posts($post_id);
 	if($post_fields = nL_get_option('sync_post_fields')){
+
 	}
 	if($meta_fields = nL_get_option('sync_meta_fields')){
 
