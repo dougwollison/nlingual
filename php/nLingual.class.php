@@ -284,7 +284,7 @@ class nLingual{
 	 * Get the language of the post in question, according to the nL_translations table
 	 *
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
-	 * @param string $default The default language to return should none be found
+	 * @param string $default The default language to return should none be found (defaults to default language)
 	 */
 	public static function get_post_lang($id = null, $default = null){
 		global $wpdb;
@@ -313,6 +313,46 @@ class nLingual{
 		self::cacheSet($id, $lang);
 
 		return $lang;
+	}
+
+	/*
+	 * Set the language of the post in question for the nL_translations table
+	 *
+	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
+	 * @param string $lang The language to set the post to (defaults to default language)
+	 */
+	public static function set_post_lang($id = null, $lang = null){
+		global $wpdb;
+
+		if(is_null($default)){
+			$default = self::$default;
+		}
+
+		if(is_null($id)){
+			global $post;
+			$id = $post->ID;
+		}if(is_object($id)){
+			$id = $id->ID;
+		}
+
+		// Get the translation_id to use for this query
+		if(!($translation_id = $wpdb->get_var($wpdb->prepare("SELECT translation_id FROM $wpdb->nL_translations WHERE post_id = %d", $id)))){
+			$translation_id = $wpdb->get_var("SELECT MAX(translation_id) + 1 FROM $wpdb->nL_translations");
+		}
+
+		// Run the REPLACE query
+		$wpdb->replace(
+			$wpdb->nL_translations,
+			array(
+				'translation_id' => $translation_id,
+				'language' => $lang,
+				'post_id' => $id
+			),
+			array('%d', '%s', '%d')
+		);
+
+		// Add/Update the cache of it, just in case
+		self::cacheSet($id, $lang);
 	}
 
 	/*
@@ -405,7 +445,7 @@ class nLingual{
 		";
 
 		if(!$include_self){
-			$query .= "AND t1.post_id != %$1d"
+			$query .= "AND t1.post_id != %$1d";
 		}
 
 		$posts = $wpdb->get_col($wpdb->prepare($query, $post_id));
