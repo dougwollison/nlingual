@@ -69,12 +69,8 @@ function nL_in_current_lang($id = null){
 	return nL::in_current_lang($id);
 }
 
-function nL_get_original_post($id = null, $return_self = true){
-	return nL::get_original_post($id, $return_self);
-}
-
-function nL_get_translated_post($id, $lang = null, $return_self = true){
-	return nL::get_translated_post($id, $lang, $return_self);
+function nL_get_translation($id, $lang = null, $return_self = true){
+	return nL::get_translation($id, $lang, $return_self);
 }
 
 function nL_associated_posts($post_id, $include_self = true){
