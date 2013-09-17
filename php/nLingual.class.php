@@ -316,6 +316,21 @@ class nLingual{
 	}
 
 	/*
+	 * Utility function, get the translation_id to use for insert/replace/update queries
+	 *
+	 * @param int $id The post ID to find the existing translation_id for
+	 * @return int $translation_id The id of the translation to use
+	 */
+	protected static function _translation_id($id){
+		if(!($translation_id = $wpdb->get_var($wpdb->prepare("SELECT translation_id FROM $wpdb->nL_translations WHERE post_id = %d", $id)))){
+			// This will be new, so we have to get a new translation_id
+			$translation_id = $wpdb->get_var("SELECT MAX(translation_id) + 1 FROM $wpdb->nL_translations");
+		}
+
+		return $translation_id;
+	}
+
+	/*
 	 * Set the language of the post in question for the nL_translations table
 	 *
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
@@ -335,16 +350,11 @@ class nLingual{
 			$id = $id->ID;
 		}
 
-		// Get the translation_id to use for this query
-		if(!($translation_id = $wpdb->get_var($wpdb->prepare("SELECT translation_id FROM $wpdb->nL_translations WHERE post_id = %d", $id)))){
-			$translation_id = $wpdb->get_var("SELECT MAX(translation_id) + 1 FROM $wpdb->nL_translations");
-		}
-
 		// Run the REPLACE query
 		$wpdb->replace(
 			$wpdb->nL_translations,
 			array(
-				'translation_id' => $translation_id,
+				'translation_id' => self::_translation_id($id),
 				'language' => $lang,
 				'post_id' => $id
 			),
@@ -424,9 +434,34 @@ class nLingual{
 	}
 
 	/*
+	 * Associate translations together in the nL_translations table
+	 *
+	 * @param int $post_id The id of the post to use as an achor
+	 * @param array $posts The ids of the other posts to link together
+	 */
+	public static function associate_posts($post_id, $posts){
+		global $wpdb;
+
+		$translation_id = self::_translation_id($post_id);
+
+		$query = "
+			REPLACE INTO
+				$wpdb->nL_translations
+				(translation_id, language, post_id)
+			VALUES
+		";
+
+		foreach($posts as $lang => $id){
+			$query .= $wpdb->prepare("(%d, %s, %d)", $translation_id, $lang, $id);
+		}
+
+		$wpdb->query($query);
+	}
+
+	/*
 	 * Return the IDs of all posts associated with this one, according to the nL_translations table
 	 *
-	 * @param id $post_id The id of the post
+	 * @param int $post_id The id of the post
 	 * @param bool $include_self Wether or not to include itself in the returned list
 	 */
 	public static function associated_posts($post_id, $include_self = true){
