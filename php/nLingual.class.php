@@ -392,7 +392,27 @@ class nLingual{
 	public static function get_permalink($id = null, $lang = null, $echo = true){
 		global $wpdb;
 
+		if(is_null($lang))
+			$lang = self::$current;
+
 		$link = get_permalink(self::get_translated_post($id, $lang));
+
+		$method = self::get_option('method');
+
+		switch($method){
+			case NL_REDIRECT_USING_DOMAIN:
+				// Prepend the domain of the URL with the language slug
+				$link = preg_replace('#(https?)://([\w\.-]+)#', '$1://'.$lang.'.$2', $link);
+				break;
+			case NL_REDIRECT_USING_PATH:
+				// Prefix the path (after the base path of the site) with the language slug
+				$home = stripslashget_option('home');
+				$link = str_replace($home, "$home/$lang", $link);
+				break;
+			default:
+				$link .= '?'.self::get_option('get_var').'='.$lang;
+				break;
+		}
 
 		if($echo) echo $link;
 		return $link;
@@ -409,7 +429,7 @@ class nLingual{
 		echo $prefix;
 		$links = array();
 		foreach(self::$languages as $lang){
-			$links[] = sprintf('<a href="%s">%s</a>', !is_front_page() ? self::get_permalink(get_queried_object()->ID, $lang['iso'], false) : "?lang=$lang", $lang['native']);
+			$links[] = sprintf('<a href="%s">%s</a>', self::get_permalink(get_queried_object()->ID, $lang['iso'], false), $lang['native']);
 		}
 
 		if($echo) echo $prefix.implode($sep, $links);
