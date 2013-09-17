@@ -77,6 +77,10 @@ function nL_get_translation($id, $lang = null, $return_self = true){
 	return nL::get_translation($id, $lang, $return_self);
 }
 
+function nL_associate_posts($post_id, $posts){
+	return nL::associate_posts($post_id, $posts);
+}
+
 function nL_associated_posts($post_id, $include_self = true){
 	return nL::associated_posts($post_id, $include_self);
 }
