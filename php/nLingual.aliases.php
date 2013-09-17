@@ -13,16 +13,16 @@ function nL_get_option($name){
 	return nL::get_option($name);
 }
 
-function nL_languages($name){
-	return nL::languages($name);
+function nL_languages(){
+	return nL::languages();
 }
 
-function nL_post_types($name){
-	return nL::post_types($name);
+function nL_post_types(){
+	return nL::post_types();
 }
 
-function nL_default_lang($name){
-	return nL::default_lang($name);
+function nL_default_lang(){
+	return nL::default_lang();
 }
 
 function nL_cacheGet($id){
