@@ -77,6 +77,17 @@ class nLingual{
 		self::$default = self::get_option('default_lang');
 		self::$current = self::$default;
 
+		// Create and register the translations table
+		global $wpdb, $table_prefix;
+		$wpdb->nL_translations = $table_prefix.'nL_translations';
+		$wpdb->query("
+		CREATE TABLE IF NOT EXISTS `$wpdb->nL_translations` (
+			`translation_id` bigint(20) NOT NULL,
+			`language` char(2) NOT NULL,
+			`post_id` bigint(20) NOT NULL
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+		");
+
 		// Register the language taxonomy and terms
 		add_action('init', array('nLingual', 'register_taxonomy'));
 
@@ -270,7 +281,7 @@ class nLingual{
 	}
 
 	/*
-	 * Get the language of the post in question
+	 * Get the language of the post in question, according to the nL_translations table
 	 *
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
 	 * @param string $default The default language to return should none be found
@@ -289,15 +300,16 @@ class nLingual{
 			$id = $id->ID;
 		}
 
+		// Check if it's cached, return if so
 		if($lang = self::cacheGet($id)) return $lang;
 
-		$lang = $default;
+		// Query the nL_translations table for the langauge of the post in question
+		$lang = $wpdb->get_var($wpdb->prepare("SELECT language FROM $wpdb->nL_translations WHERE post_id = %d", $id));
 
-		if(($languages = wp_get_object_terms($id, 'language'))
-		&& is_array($languages)){
-			$lang = reset($languages)->slug;
-		}
+		// If no language is found, make it the $default one
+		if(!$lang) $lang = $default;
 
+		// Add it to the cache
 		self::cacheSet($id, $lang);
 
 		return $lang;
@@ -331,12 +343,13 @@ class nLingual{
 	}
 
 	/*
-	 * Get the original post in the default language
+	 * Get the translation of the post in the provided language, via the nL_translations table
 	 *
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
+	 * @param string $lang The slug of the language requested (defaults to current language)
 	 * @param bool $return_self Wether or not to return the provided $id or just false should no original be found (or it is the original)
 	 */
-	public static function get_original_post($id = null, $return_self = true){
+	public static function get_translated_post($id, $lang = null, $return_self = true){
 		global $wpdb;
 
 		if(is_null($id)){
@@ -346,49 +359,58 @@ class nLingual{
 			$id = $id->ID;
 		}
 
-		$lang = self::get_post_lang($id);
-		$orig = $wpdb->get_var($wpdb->prepare("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %d", "_translated_$lang", $id));
-
-		if($orig) return $orig;
-		return $return_self ? $id : false;
-	}
-
-	/*
-	 * Get the version of the post in the provided language
-	 *
-	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
-	 * @param string $lang The slug of the language requested (defaults to current language)
-	 * @param bool $return_self Wether or not to return the provided $id or just false should no original be found (or it is the original)
-	 */
-	public static function get_translated_post($id, $lang = null, $return_self = true){
-		global $wpdb;
 		if(is_null($lang))
 			$lang = self::$current;
 
-		$postlang = self::get_post_lang($id);
+		// Get the language according to the translations table
+		$translation = $wpdb->get_var($wpdb->prepare("
+			SELECT
+				t1.post_id
+			FROM
+				$wpdb->nL_translations AS t1
+				LEFT JOIN
+					$wpdb->nL_translations AS t2
+					ON (t1.translation_id = t2.translation_id)
+			WHERE
+				t2.post_id = %d
+				AND t1.language = %s
+		", $id, $lang));
 
-		if($postlang == $lang) return $id;
+		// Return the translation's id if found
+		if($translation) return $translation;
 
-		if($postlang == self::$default){
-			//Search this posts meta data for the alternate
-			$alt = get_post_meta($id, "_translated_$lang", true);
-		}elseif($orig = self::get_original_post($id, false)){
-			//Search for the post this one is the translantion of, then get the alternate
-			$alt = self::get_translated_post($orig, $lang, $return_self);
-		}
-
-		if($alt && $alt > 0) return $alt;
+		// Otherwise, return the original id or false, depending on $return_self
 		return $return_self ? $id : false;
 	}
 
 	/*
-	 * Return all posts associated with this one (either the translated version or the original and sister translations)
+	 * Return the IDs of all posts associated with this one, according to the nL_translations table
 	 *
 	 * @param id $post_id The id of the post
 	 * @param bool $include_self Wether or not to include itself in the returned list
 	 */
 	public static function associated_posts($post_id, $include_self = true){
+		global $wpdb;
 
+		$query = "
+			SELECT
+				t1.post_id
+			FROM
+				$wpdb->nL_translations AS t1
+				LEFT JOIN
+					$wpdb->nL_translations AS t2
+					ON (t1.translation_id = t2.translation_id)
+			WHERE
+				t2.post_id = %$1d
+		";
+
+		if(!$include_self){
+			$query .= "AND t1.post_id != %$1d"
+		}
+
+		$posts = $wpdb->get_col($wpdb->prepare($query, $post_id));
+
+		return $posts;
 	}
 
 	/*
