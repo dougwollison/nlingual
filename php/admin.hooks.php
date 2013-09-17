@@ -22,7 +22,7 @@ function nLingual_add_meta_box(){
 
 function nLingual_language_metabox($post){
 	?>
-	<select name="language" style="width:100%">
+	<select name="language">
 	<?php foreach(nL_languages() as $slug => $lang): $lang = get_term_by('slug', $slug, 'language');?>
 		<option value="<?php echo $lang->term_id?>" <?php if(nL_in_this_lang($post->ID, $slug)) echo 'selected'?>><?php echo $lang->name?></option>
 	<?php endforeach;?>
@@ -34,7 +34,7 @@ function nLingual_translations_metabox($post){
 	global $wpdb;
 	wp_nonce_field(__FILE__, 'nLingual_translations');
 
-	if(in_default_language($post)){
+	if(nL_in_default_language($post)){
 		// If in the default language (the original) offer a list of posts in each language to select as the translated version
 		foreach(nL_languages() as $lang => $data){
 			if($lang == DEFAULT_LANG) continue;
