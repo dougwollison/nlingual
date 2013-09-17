@@ -34,7 +34,7 @@ function nLingual_translations_metabox($post){
 	global $wpdb;
 	wp_nonce_field(__FILE__, 'nLingual_translations');
 
-	if(nL_in_default_language($post)){
+	if(nL_in_default_lang($post)){
 		// If in the default language (the original) offer a list of posts in each language to select as the translated version
 		foreach(nL_languages() as $lang => $data){
 			if($lang == DEFAULT_LANG) continue;
