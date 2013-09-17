@@ -41,6 +41,10 @@ function nL_get_lang($field = null, $lang = null){
 	return nL::get_lang($field, $lang);
 }
 
+function nL_lang_term($lang = null, $field = null){
+	return nL::lang_term($lang, $field);
+}
+
 function nL_set_lang($lang, $lock = true){
 	return nL::set_lang($lang, $lock);
 }
