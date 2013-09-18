@@ -491,11 +491,11 @@ class nLingual{
 					$wpdb->nL_translations AS t2
 					ON (t1.translation_id = t2.translation_id)
 			WHERE
-				t2.post_id = %$1d
+				t2.post_id = %1\$d
 		";
 
 		if(!$include_self){
-			$query .= "AND t1.post_id != %$1d";
+			$query .= "AND t1.post_id != %1\$d";
 		}
 
 		$result = $wpdb->get_col($wpdb->prepare($query, $post_id));
