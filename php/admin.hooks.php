@@ -218,6 +218,6 @@ function nL_do_language_column($column, $post_id){
  */
 add_action('admin_enqueue_scripts', 'nLingual_enqueue_scripts');
 function nLingual_enqueue_scripts(){
-	wp_enqueue_style('nLingual-admin', plugins_url('css/admin.css', NL_DIR), '1.0', 'screen');
-	wp_enqueue_script('nLingual-admin-js', plugins_url('js/admin.js', NL_DIR), array('jquery-ui-sortable'), '1.0');
+	wp_enqueue_style('nLingual-admin', plugins_url('css/admin.css', NL_SELF), '1.0', 'screen');
+	wp_enqueue_script('nLingual-admin-js', plugins_url('js/admin.js', NL_SELF), array('jquery-ui-sortable'), '1.0');
 }

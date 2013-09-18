@@ -100,7 +100,7 @@ class nLingual{
 	 * loads text domain for this plugin
 	 */
 	public static function onloaded(){
-		load_plugin_textdomain('nLingual', false, NL_DIR.'/lang/');
+		load_plugin_textdomain('nLingual', false, plugins_url('lang/', NL_SELF));
 	}
 
 	/*
