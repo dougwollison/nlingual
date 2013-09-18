@@ -85,7 +85,7 @@ function nL_associate_posts($post_id, $posts){
 	return nL::associate_posts($post_id, $posts);
 }
 
-function nL_associated_posts($post_id, $include_self = true){
+function nL_associated_posts($post_id, $include_self = false){
 	return nL::associated_posts($post_id, $include_self);
 }
 
