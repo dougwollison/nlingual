@@ -143,7 +143,7 @@ if(nL_get_option('l10n_dateformat')){
 	add_filter('option_date_format', 'nLingual_l10n_date_format');
 	function nLingual_l10n_date_format($format){
 		if(!is_admin()){
-			$format = __($format, nL_domain(true));
+			$format = __($format, wp_get_theme()->get('TextDomain'));
 		}
 
 		return $format;
