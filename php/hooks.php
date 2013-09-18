@@ -111,8 +111,8 @@ function nLingual_detect_requested_post_language(&$wp){
  */
 add_filter('locale', 'nLingual_intercept_local_name');
 function nLingual_intercept_local_name($locale){
-	if(!is_admin()){
-		return nL_get_lang('mo');
+	if(!is_admin() && $mo = nL_get_lang('mo')){
+		return $mo;
 	}
 	return $locale;
 }
