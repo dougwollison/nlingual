@@ -206,7 +206,7 @@ foreach(nL_post_types() as $post_type){
 	add_action($prefix.'_custom_column', 'nL_do_language_column', 10, 2);
 }
 function nL_add_language_column($columns){
-	$columns['language'] = __('Language', nL_domain());
+	$columns['language'] = __('Language', NL_TXTDMN);
 
 	return $columns;
 }
