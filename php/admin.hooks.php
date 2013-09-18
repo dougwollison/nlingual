@@ -101,6 +101,11 @@ function nLingual_save_post($post_id){
 }
 
 /*
+ * Delete post hook for updating translation links
+ */
+add_action('delete_post', 'nL_delete_translation', 999);
+
+/*
  * Handle request for a new translation of a post
  * Will create a new post with the data copied over,
  * and direct you to the edit page of the new post

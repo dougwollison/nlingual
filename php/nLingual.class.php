@@ -82,9 +82,11 @@ class nLingual{
 		$wpdb->nL_translations = $table_prefix.'nL_translations';
 		$wpdb->query("
 		CREATE TABLE IF NOT EXISTS `$wpdb->nL_translations` (
-			`translation_id` bigint(20) NOT NULL,
+			`group_id` bigint(20) NOT NULL,
 			`language` char(2) NOT NULL,
-			`post_id` bigint(20) NOT NULL
+			`post_id` bigint(20) NOT NULL,
+			UNIQUE KEY `post` (`post_id`),
+			UNIQUE KEY `translation` (`group_id`, `language`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 		");
 
@@ -323,12 +325,12 @@ class nLingual{
 	 * @param int $id The post ID to find the existing translation_id for
 	 * @return int $translation_id The id of the translation to use
 	 */
-	protected static function _translation_id($id){
+	protected static function _translation_group_id($id){
 		global $wpdb;
 
-		if(!($translation_id = $wpdb->get_var($wpdb->prepare("SELECT translation_id FROM $wpdb->nL_translations WHERE post_id = %d", $id)))){
+		if(!($translation_id = $wpdb->get_var($wpdb->prepare("SELECT group_id FROM $wpdb->nL_translations WHERE post_id = %d", $id)))){
 			// This will be new, so we have to get a new translation_id
-			$translation_id = $wpdb->get_var("SELECT MAX(translation_id) + 1 FROM $wpdb->nL_translations");
+			$translation_id = $wpdb->get_var("SELECT MAX(group_id) + 1 FROM $wpdb->nL_translations");
 		}
 
 		return $translation_id;
@@ -358,7 +360,7 @@ class nLingual{
 		$wpdb->replace(
 			$wpdb->nL_translations,
 			array(
-				'translation_id' => self::_translation_id($id),
+				'group_id' => self::_translation_group_id($id),
 				'language' => $lang,
 				'post_id' => $id
 			),
@@ -367,6 +369,21 @@ class nLingual{
 
 		// Add/Update the cache of it, just in case
 		self::cacheSet($id, $lang);
+	}
+
+	/*
+	 * Delete the langauge link for the post in question
+	 *
+	 * @param mixed $id The ID or object of the post in question
+	 */
+	public static function delete_translation($id){
+		global $wpdb;
+
+		return $wpdb->delete(
+			$wpdb->nL_translations,
+			array('post_id' => $id),
+			array('%d')
+		);
 	}
 
 	/*
@@ -424,7 +441,7 @@ class nLingual{
 				$wpdb->nL_translations AS t1
 				LEFT JOIN
 					$wpdb->nL_translations AS t2
-					ON (t1.translation_id = t2.translation_id)
+					ON (t1.group_id = t2.group_id)
 			WHERE
 				t2.post_id = %d
 				AND t1.language = %s
@@ -446,12 +463,12 @@ class nLingual{
 	public static function associate_posts($post_id, $posts){
 		global $wpdb;
 
-		$translation_id = self::_translation_id($post_id);
+		$translation_id = self::_translation_group_id($post_id);
 
 		$query = "
 			REPLACE INTO
 				$wpdb->nL_translations
-				(translation_id, language, post_id)
+				(group_id, language, post_id)
 			VALUES
 		";
 
@@ -480,7 +497,7 @@ class nLingual{
 				$wpdb->nL_translations AS t1
 				LEFT JOIN
 					$wpdb->nL_translations AS t2
-					ON (t1.translation_id = t2.translation_id)
+					ON (t1.group_id = t2.group_id)
 			WHERE
 				t2.post_id = %1\$d
 		";
