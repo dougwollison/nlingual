@@ -91,8 +91,16 @@ class nLingual{
 		// Register the language taxonomy and terms
 		add_action('init', array('nLingual', 'register_taxonomy'));
 
-		// When the theme is loaded, set the theme domain
-		add_action('after_theme_setup', array('nLingual', 'get_theme_domain'));
+		// Load the text domain
+		add_action('plugins_loaded', array('nLingual', 'onloaded'));
+	}
+
+	/*
+	 * Hook to run when the plugin is loaded
+	 * loads text domain for this plugin
+	 */
+	public static function onloaded(){
+		load_plugin_textdomain('nLingual', false, NL_DIR.'/lang/');
 	}
 
 	/*
@@ -149,7 +157,6 @@ class nLingual{
 			array(
 				'hierarchical'			=> false,
 			    'show_ui'				=> false,
-			    'show_admin_column'		=> true,
 			    'update_count_callback'	=> '_update_post_term_count',
 				'labels' => array(
 					'name'							=> _x('Languages', 'taxonomy general name'),
@@ -191,16 +198,6 @@ class nLingual{
 	 */
 	public static function process_languages(){
 		print_r($_POST);exit;
-	}
-
-	/*
-	 * Hook for caching the theme domain
-	 */
-	public static function get_theme_domain(){
-		$domain = wp_get_theme()->get('TextDomain');
-		if(self::$domains['theme'] == 'default' && $domain){
-			self::$domains['theme'] = $domain;
-		}
 	}
 
 	/*
