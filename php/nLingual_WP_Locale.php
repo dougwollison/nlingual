@@ -5,7 +5,7 @@ class nLingual_WP_Locale extends WP_locale {
 	}
 
 	function init() {
-		$theme_domain = nLingual::domain();
+		$theme_domain = wp_get_theme()->get('TextDomain');
 
 		// The Weekdays
 		$this->weekday[0] = /* translators: weekday */ __('Sunday', $theme_domain);

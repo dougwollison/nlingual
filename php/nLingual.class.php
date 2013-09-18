@@ -104,15 +104,6 @@ class nLingual{
 	}
 
 	/*
-	 * Return the plugin or theme's text domain
-	 *
-	 * @param bool $theme Wether to return the theme's domain or the plugin's
-	 */
-	public static function domain($theme = false){
-		return self::$domains[$theme ? 'theme' : 'plugin'];
-	}
-
-	/*
 	 * Return the value of a particular option
 	 *
 	 * @param string $name The name of the option to retrieve

@@ -5,10 +5,6 @@
 
 use nLingual as nL;
 
-function nL_domain($theme = false){
-	return nL::domain($theme);
-}
-
 function nL_get_option($name){
 	return nL::get_option($name);
 }
