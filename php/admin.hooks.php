@@ -210,18 +210,18 @@ function nL_add_language_column($columns){
 function nL_do_language_column($column, $post_id){
 	if($column == 'language'){
 		// Print out the language it's in
-		$lang = get_post_lang($post_id);
+		$lang = nL_get_post_lang($post_id);
 
 		if(!$lang){
 			_ex('None', 'no language', NL_TXTDMN);
 		}
 
-		$lang = get_lang(true, $lang);
+		$lang = nL_get_lang(true, $lang);
 		printf('<strong>%s</strong>', $lang['name']);
 
 		if($associated = nL_associated_posts($post_id)){
 			foreach($associated as $lang => $pid){
-				$lang = get_lang(true, $lang);
+				$lang = nL_get_lang(true, $lang);
 				$edit = admin_url("/post.php?post=$pid&action=edit");
 				$title = get_the_title($pid);
 				printf('<br>%s: <a href="%s">%s</a>', $lang['name'], $edit, $title);
