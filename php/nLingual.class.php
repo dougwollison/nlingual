@@ -498,7 +498,7 @@ class nLingual{
 			$query .= "AND t1.post_id != %1\$d";
 		}
 
-		$result = $wpdb->get_col($wpdb->prepare($query, $post_id));
+		$result = $wpdb->get_results($wpdb->prepare($query, $post_id));
 
 		$posts = array();
 		foreach($result as $row){
