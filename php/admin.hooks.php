@@ -7,13 +7,13 @@ function nLingual_add_meta_box(){
 	foreach(nL_post_types() as $type){
 		add_meta_box(
 			'nLingual_language',
-			'nLingual: '.ucwords(str_replace('_', '', $type)).' Language',
+			__('Language', NL_TXTDMN),
 			'nLingual_language_metabox',
 			$type
 		);
 		add_meta_box(
 			'nLingual_translations',
-			'nLingual: Translated Versions',
+			__('Translations', NL_TXTDMN),
 			'nLingual_translations_metabox',
 			$type
 		);
@@ -52,12 +52,14 @@ function nLingual_translations_metabox($post){
 		<p>
 			<strong><?php echo $data['name']?>:</strong>
 			<select name="translations[<?php echo $lang?>]">
-				<option value="-1">None</option>
+				<option value="-1"><?php _ex('None', 'no translation', NL_TXTDMN)?></option>
 			<?php foreach($lang_posts->posts as $lang_post):?>
 				<option value="<?php echo $lang_post->ID?>" <?php if($lang_post->ID == $translation) echo 'selected'?>><?php echo $lang_post->post_title?></option>
 			<?php endforeach;?>
 			</select>
-			or <a href="<?php echo admin_url()?>?nL_new_translation=<?php echo $post->ID?>&language=<?php echo $lang?>&_nL_nonce=<?php echo wp_create_nonce(__FILE__)?>" class="button-secondary">Create a new <?php echo strtolower($data['name'])?> <?php echo str_replace('_', '', $post->post_type)?></a>
+			or <a href="<?php echo admin_url()?>?nL_new_translation=<?php echo $post->ID?>&language=<?php echo $lang?>&_nL_nonce=<?php echo wp_create_nonce(__FILE__)?>" class="button-secondary">
+				<?php _ef('Create a new %1$s %2$s', NL_TXTDMN, $lang['name'], get_post_type_object($post->post_type)->labels->singular_name)?>
+			</a>
 		</p>
 		<?php
 	}
@@ -112,10 +114,10 @@ function nLingual_new_translation(){
 		$post_id = $_GET['nL_new_translation'];
 
 		if(!isset($_GET['_nL_nonce']) || !wp_verify_nonce($_GET['_nL_nonce'], __FILE__))
-			wp_die('You do not have permission to do that.');
+			wp_die(__('You do not have permission to do that.', NL_TXTDMN));
 
 		if(!isset($_GET['language']) || !nL_lang_exists($_GET['language']))
-			wp_die('Invalid language.');
+			wp_die(__('Invalid language.', NL_TXTDMN));
 
 		$lang = $_GET['language'];
 
@@ -175,7 +177,7 @@ function nLingual_manage_post_language_filter(){
 		$selected = isset($_REQUEST['language']) ? $_REQUEST['language'] : '';
 		?>
 		<select name="language" class="postform">
-			<option value="">Show all languages</option>
+			<option value=""><?php _e('Show all languages', NL_TXTDMN)?></option>
 			<?php
 			$langs = get_terms('language', array(
 				'orderby' => 'name',
@@ -191,10 +193,31 @@ function nLingual_manage_post_language_filter(){
 }
 
 /*
+ * Add language column to editor tables
+ */
+foreach(nL_post_types() as $post_type){
+	if(in_array($post_type, array('post', 'page'))) $prefix = "manage_{$post_type}s";
+	else $prefix = "manage_{$post_type}_posts";
+
+	add_action($prefix.'_columns', 'nL_add_language_column');
+	add_action($prefix.'_custom_column', 'nL_do_language_column', 10, 2);
+}
+function nL_add_language_column($columns){
+	$columns['language'] = __('Language', nL_domain());
+
+	return $columns;
+}
+function nL_do_language_column($column, $post_id){
+	if($column == 'language'){
+		// do language info
+	}
+}
+
+/*
  * Enqueue admin styles/scripts
  */
 add_action('admin_enqueue_scripts', 'nLingual_enqueue_scripts');
 function nLingual_enqueue_scripts(){
-	wp_enqueue_style('nLingual-admin', plugins_url('/nLingual/css/admin.css'), '1.0', 'screen');
-	wp_enqueue_script('nLingual-admin-js', plugins_url('/nLingual/js/admin.js'), array('jquery-ui-sortable'), '1.0');
+	wp_enqueue_style('nLingual-admin', plugins_url('css/admin.css', NL_DIR), '1.0', 'screen');
+	wp_enqueue_script('nLingual-admin-js', plugins_url('js/admin.js', NL_DIR), array('jquery-ui-sortable'), '1.0');
 }
