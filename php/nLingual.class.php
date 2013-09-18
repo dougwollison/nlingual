@@ -256,7 +256,9 @@ class nLingual{
 		elseif(!self::lang_exists($lang))
 			return false;
 
-		return is_null($field) ? $lang : self::$languages_by_iso[$lang][$field];
+		if($field === true) return self::$languages_by_iso[$lang];
+		if($field === null) return $lang;
+		return self::$languages_by_iso[$lang][$field];
 	}
 
 	/*
@@ -297,14 +299,10 @@ class nLingual{
 	 * Get the language of the post in question, according to the nL_translations table
 	 *
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
-	 * @param string $default The default language to return should none be found (defaults to default language)
+	 * @param string $default The default value to return should none be found
 	 */
-	public static function get_post_lang($id = null, $default = null){
+	public static function get_post_lang($id = null, $default = false){
 		global $wpdb;
-
-		if(is_null($default)){
-			$default = self::$default;
-		}
 
 		if(is_null($id)){
 			global $post;
@@ -480,11 +478,12 @@ class nLingual{
 	 * @param int $post_id The id of the post
 	 * @param bool $include_self Wether or not to include itself in the returned list
 	 */
-	public static function associated_posts($post_id, $include_self = true){
+	public static function associated_posts($post_id, $include_self = false){
 		global $wpdb;
 
 		$query = "
 			SELECT
+				t1.language,
 				t1.post_id
 			FROM
 				$wpdb->nL_translations AS t1
@@ -499,7 +498,12 @@ class nLingual{
 			$query .= "AND t1.post_id != %$1d";
 		}
 
-		$posts = $wpdb->get_col($wpdb->prepare($query, $post_id));
+		$result = $wpdb->get_col($wpdb->prepare($query, $post_id));
+
+		$posts = array();
+		foreach($result as $row){
+			$posts[$row->language] = $row->post_id;
+		}
 
 		return $posts;
 	}
