@@ -215,8 +215,11 @@ function nL_do_language_column($column, $post_id){
 		// Print out the language it's in
 		$lang = nL_get_post_lang($post_id);
 
+		printf('<input type="hidden" value="%s">', $lang);
+
 		if(!$lang){
 			_ex('None', 'no language', NL_TXTDMN);
+			return;
 		}
 
 		$lang = nL_get_lang(true, $lang);
