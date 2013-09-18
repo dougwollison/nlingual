@@ -68,24 +68,22 @@ function nLingual_translations_metabox($post){
 /*
  * Save post hook for saving and updating translation links
  */
-add_action('save_post', 'nLingual_save_post', 999, 2);
-function nLingual_save_post($post_id, $post){
+add_action('save_post', 'nLingual_save_post', 999);
+function nLingual_save_post($post_id){
 	global $wpdb;
 
 	// Abort if they don't have permission to edit posts/pages
 	if($_POST['post_type'] == 'page' && !current_user_can('edit_page', $post_id)) return;
 	elseif($_POST['post_type'] == 'page' && !current_user_can('edit_page', $post_id)) return;
 
-	// Abort if nonce verification fails
-	if(!isset($_POST['nLingual_translations']) || !wp_verify_nonce($_POST['nLingual_translations'], __FILE__))return;
-
-	// Set the language
-	if($_POST['language']){
+	// Set the language if nLingual_language nonce is verified
+	if(isset($_POST['nLingual_language']) && wp_verify_nonce($_POST['nLingual_language'], __FILE__) && isset($_POST['language'])){
 		wp_set_object_terms($post_id, $_POST['language'], 'language');
 		nL_set_post_lang($post_id, $_POST['language']);
 	}
 
-	if(isset($_POST['translations'])){
+	// Update translations if nLingual_translations nonce is verified
+	if(isset($_POST['nLingual_translations']) && wp_verify_nonce($_POST['nLingual_translations'], __FILE__) && isset($_POST['translations'])){
 		nL_associate_posts($post_id, $_POST['translations']);
 	}
 
@@ -231,10 +229,44 @@ function nL_do_language_column($column, $post_id){
 }
 
 /*
+ * Quick edit field for language
+ */
+add_action('quick_edit_custom_box', 'nLingual_quick_edit_box');
+function nLingual_quick_edit_box($column, $post_type){
+	static $printNonce = TRUE;
+    if($printNonce){
+        $printNonce = FALSE;
+        wp_nonce_field(__FILE__, 'nLingual_language');
+    }
+    ?>
+    <?php if($column == 'language'):?>
+    <fieldset class="inline-edit-col-right inline-edit-book">
+      <div class="inline-edit-col column-<?php echo $column ?>">
+        <label class="inline-edit-group">
+        	<?php _e('Language', NL_TXTDMN)?>
+        	<select name="language">
+			<?php foreach(nL_languages() as $slug => $lang):?>
+				<option value="<?php echo $slug?>"><?php echo $lang['name']?></option>
+			<?php endforeach;?>
+			</select>
+        </label>
+      </div>
+    </fieldset>
+    <?php endif;?>
+    <?php
+}
+
+/*
  * Enqueue admin styles/scripts
  */
 add_action('admin_enqueue_scripts', 'nLingual_enqueue_scripts');
 function nLingual_enqueue_scripts(){
-	wp_enqueue_style('nLingual-admin', plugins_url('css/admin.css', NL_SELF), '1.0', 'screen');
-	wp_enqueue_script('nLingual-admin-js', plugins_url('js/admin.js', NL_SELF), array('jquery-ui-sortable'), '1.0');
+	// Settings styling
+	wp_enqueue_style('nLingual-settings', plugins_url('css/settings.css', NL_SELF), '1.0', 'screen');
+
+	// Settings javascript
+	wp_enqueue_script('nLingual-settings-js', plugins_url('js/settings.js', NL_SELF), array('jquery-ui-sortable'), '1.0');
+
+	// Quick-Edit javascript
+	wp_enqueue_script('nLingual-quickedit-js', plugins_url('js/quickedit.js', NL_SELF), array('inline-edit-post'), '1.0', true);
 }
