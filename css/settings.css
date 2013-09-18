@@ -1,0 +1,50 @@
+#nLingual_languages{
+	max-width: 800px;
+}
+	#nLingual_languages .clearfix{
+		margin: 0;
+		font-size: 0;
+		line-height: 0;
+		clear: both;
+	}
+	#nLingual_languages .language{
+		margin: 10px 0;
+		padding: 5px;
+		background: #f5f5f5;
+		border: 1px solid #dfdfdf;
+		border-radius: 3px;
+	}
+		#nLingual_languages .controls{
+			padding-bottom: 5px;
+			margin-bottom: 5px;
+			border-bottom: 1px solid #dfdfdf;
+		}
+			#nLingual_languages .default{
+				float: left;
+			}
+			#nLingual_languages .delete{
+				float: right;
+				line-height: 14px;
+				height: 16px;
+				padding: 0 5px;
+				font-size: 10px;
+			}
+		#nLingual_languages .info{
+			clear: both;
+		}
+			#nLingual_languages .info label{
+				float: left;
+			}
+				#nLingual_languages .info input{
+					display: block;
+					width: 99%;
+				}
+			#nLingual_languages .name,
+			#nLingual_languages .native{
+				width: 35%;
+			}
+			#nLingual_languages .iso,
+			#nLingual_languages .mo,
+			#nLingual_languages .tag{
+				width: 10%;
+			}
