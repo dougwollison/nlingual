@@ -93,7 +93,7 @@ function nLingual_check_alternate_frontpage(&$wp){
 add_action('parse_query', 'nLingual_set_language_query_var');
 function nLingual_set_language_query_var(&$wp_query){
 	if(!is_admin() && nL_post_type_exists($wp_query->query_vars['post_type']) && !isset($wp_query->query_vars['language'])){
-		$wp_query->query_vars['language'] = nL_get_lang();
+		$wp_query->query_vars['language'] = nL_current_lang();
 	}
 }
 
@@ -178,7 +178,7 @@ function nLingual_add_language_body_class($classes){
 		}
 	}
 
-	$classes[] = "lang-".nL_get_lang();
+	$classes[] = "lang-".nL_current_lang();
 
 	return $classes;
 }
