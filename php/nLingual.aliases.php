@@ -93,6 +93,14 @@ function nL_associated_posts($post_id, $include_self = false){
 	return nL::associated_posts($post_id, $include_self);
 }
 
+function nL_process_url($host, $uri){
+	return nL::process_url($host, $uri);
+}
+
+function nL_localize_url($url = null, $lang = null, $force_admin = false){
+	return nL::localize_url($url, $lang, $force_admin);
+}
+
 function nL_get_permalink($id = null, $lang = null, $echo = true){
 	return nL::get_permalink($id, $lang, $echo);
 }
