@@ -241,11 +241,15 @@ class nLingual{
 	 * @return mixed $term/$term_property The term object or a specific property
 	 */
 	public static function lang_term($lang = null, $field = null){
+		if(is_null($lang))
+			$lang = self::$default;
+
 		$term = get_term_by('slug', $lang, 'language');
 
 		if(is_null($field)){
 			return $term;
 		}
+
 		return $term->$field;
 	}
 
