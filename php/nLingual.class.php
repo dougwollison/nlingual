@@ -24,8 +24,39 @@ class nLingual{
 	);
 
 	/*
+	 * Utility function, make $lang the default if === true, the current if === null
+	 *
+	 * @param mixed &$lang The lang variable to process
+	 */
+	protected static function _lang(&$lang){
+		if($lang === null)
+			$lang = self::$current;
+		elseif($lang === true)
+			$alng = self::$default;
+	}
+
+	/*
+	 * Utility function, get the translation_id to use for insert/replace/update queries
+	 *
+	 * @param int $id The post ID to find the existing translation_id for
+	 * @return int $translation_id The id of the translation to use
+	 */
+	protected static function _translation_group_id($id){
+		global $wpdb;
+
+		if(!($translation_id = $wpdb->get_var($wpdb->prepare("SELECT group_id FROM $wpdb->nL_translations WHERE post_id = %d", $id)))){
+			// This will be new, so we have to get a new translation_id
+			$translation_id = $wpdb->get_var("SELECT MAX(group_id) + 1 FROM $wpdb->nL_translations");
+		}
+
+		return $translation_id;
+	}
+
+	/*
 	 * Initialization method
 	 * Loads options into local properties
+	 *
+	 * @uses self::get_option()
 	 */
 	public static function init(){
 		// Load options
@@ -236,13 +267,14 @@ class nLingual{
 	/*
 	 * Get the WordPress term for the selected langauge, returning the term object or just a specific property
 	 *
-	 * @param string $lang Optional The language to retrieve (defaults to the default language)
+	 * @uses self::_lang()
+	 *
+	 * @param string $lang Optional The language to retrieve
 	 * @param string $field Optional The specific field to retrieve (leave blank to return the whole object)
 	 * @return mixed $term/$term_property The term object or a specific property
 	 */
 	public static function lang_term($lang = null, $field = null){
-		if(is_null($lang))
-			$lang = self::$default;
+		self::_lang($lang);
 
 		$term = get_term_by('slug', $lang, 'language');
 
@@ -254,15 +286,18 @@ class nLingual{
 	}
 
 	/*
-	 * Get the langauge property (or the full array) of a specified langauge (current language by default)
+	 * Get the langauge property (or the full array) of a specified langauge
+	 *
+	 * @uses self::_lang()
+	 * @uses self::lang_exists()
 	 *
 	 * @param string $field Optional The field to retrieve
 	 * @param string $lang Optional The language to retrieve from
 	 */
 	public static function get_lang($field = null, $lang = null){
-		if(is_null($lang))
-			$lang = self::$current;
-		elseif(!self::lang_exists($lang))
+		self::_lang($lang);
+
+		if(!self::lang_exists($lang))
 			return false;
 
 		if($field === true) return self::$languages_by_iso[$lang];
@@ -272,6 +307,8 @@ class nLingual{
 
 	/*
 	 * Set the current langauge
+	 *
+	 * @uses self::lang_exists()
 	 *
 	 * @param string $lang The language to set/switchto
 	 * @param bool $lock Wether or not to lock the change
@@ -307,6 +344,10 @@ class nLingual{
 	/*
 	 * Get the language of the post in question, according to the nL_translations table
 	 *
+	 * @uses self::_lang()
+	 * @uses self::cache_get()
+	 * @uses self::cache_set()
+	 *
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
 	 * @param string $default The default value to return should none be found
 	 */
@@ -327,7 +368,10 @@ class nLingual{
 		$lang = $wpdb->get_var($wpdb->prepare("SELECT language FROM $wpdb->nL_translations WHERE post_id = %d", $id));
 
 		// If no language is found, make it the $default one
-		if(!$lang) $lang = $default;
+		if(!$lang){
+			self::_lang($default);
+			$lang = $default;
+		}
 
 		// Add it to the cache
 		self::cache_set($id, $lang, 'translations');
@@ -336,24 +380,11 @@ class nLingual{
 	}
 
 	/*
-	 * Utility function, get the translation_id to use for insert/replace/update queries
-	 *
-	 * @param int $id The post ID to find the existing translation_id for
-	 * @return int $translation_id The id of the translation to use
-	 */
-	protected static function _translation_group_id($id){
-		global $wpdb;
-
-		if(!($translation_id = $wpdb->get_var($wpdb->prepare("SELECT group_id FROM $wpdb->nL_translations WHERE post_id = %d", $id)))){
-			// This will be new, so we have to get a new translation_id
-			$translation_id = $wpdb->get_var("SELECT MAX(group_id) + 1 FROM $wpdb->nL_translations");
-		}
-
-		return $translation_id;
-	}
-
-	/*
 	 * Set the language of the post in question for the nL_translations table
+	 *
+	 * @users self::_lang()
+	 * @users self::_translation_group_id()
+	 * @users self::cache_set()
 	 *
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
 	 * @param string $lang The language to set the post to (defaults to default language)
@@ -361,16 +392,14 @@ class nLingual{
 	public static function set_post_lang($id = null, $lang = null){
 		global $wpdb;
 
-		if(is_null($default)){
-			$default = self::$default;
-		}
-
 		if(is_null($id)){
 			global $post;
 			$id = $post->ID;
 		}if(is_object($id)){
 			$id = $id->ID;
 		}
+
+		self::_lang($lang);
 
 		// Run the REPLACE query
 		$wpdb->replace(
@@ -384,7 +413,7 @@ class nLingual{
 		);
 
 		// Add/Update the cache of it, just in case
-		self::cacheSet($id, $lang);
+		self::cache_set($id, $lang);
 	}
 
 	/*
@@ -405,6 +434,8 @@ class nLingual{
 	/*
 	 * Test if a post is in the specified language
 	 *
+	 * @uses self::get_post_lang()
+	 *
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
 	 */
 	public static function in_this_lang($id, $lang){
@@ -414,23 +445,29 @@ class nLingual{
 	/*
 	 * Test if a post is in the default language
 	 *
+	 * @uses self::get_post_lang()
+	 *
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
 	 */
 	public static function in_default_lang($id = null){
-		return self::get_post_lang($id, null) == self::$default;
+		return self::get_post_lang($id) == self::$default;
 	}
 
 	/*
 	 * Test if a post is in the current language
 	 *
+	 * @uses self::get_post_lang()
+	 *
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
 	 */
 	public static function in_current_lang($id){
-		return sefl::get_post_lang($id, null) == self::$current;
+		return sefl::get_post_lang($id) == self::$current;
 	}
 
 	/*
 	 * Get the translation of the post in the provided language, via the nL_translations table
+	 *
+	 * @uses self::_lang()
 	 *
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
 	 * @param string $lang The slug of the language requested (defaults to current language)
@@ -446,10 +483,7 @@ class nLingual{
 			$id = $id->ID;
 		}
 
-		if(is_null($lang))
-			$lang = self::$current;
-		elseif($lang === true)
-			$lang = self::$default;
+		self::_lang($lang);
 
 		// Get the language according to the translations table
 		$translation = $wpdb->get_var($wpdb->prepare("
@@ -474,6 +508,8 @@ class nLingual{
 
 	/*
 	 * Associate translations together in the nL_translations table
+	 *
+	 * @uses self::_translation_group_id()
 	 *
 	 * @param int $post_id The id of the post to use as an achor
 	 * @param array $posts The ids of the other posts to link together (in lang => post_id format)
@@ -537,6 +573,9 @@ class nLingual{
 	/*
 	 * Process a URL (the host and uri portions) and get the language, along with update host/uri
 	 *
+	 * @uses self::get_option()
+	 * @uses self::lang_exists()
+	 *
 	 * @param string $host The host name
 	 * @param string $uri The requested uri
 	 * @return array $result An array of the resulting language, host name and requested uri
@@ -548,7 +587,7 @@ class nLingual{
 		switch(self::get_option('method')){
 			case NL_REDIRECT_USING_DOMAIN:
 				// Check if a language slug is present and is an existing language
-				if(preg_match('#^([a-z]{2})\.#i', $host, $match) && nL_lang_exists($match[1])){
+				if(preg_match('#^([a-z]{2})\.#i', $host, $match) && self::lang_exists($match[1])){
 					$lang = $match[1];
 					$host = substr($host, 3); // Recreate the hostname sans the language slug at the beginning
 				}
@@ -561,7 +600,7 @@ class nLingual{
 				$uri = substr($uri, strlen($home)); // Now /en/... or /mysite/en/... will become en/...
 
 				// Check if a language slug is present and is an existing language
-				if(preg_match('#^([a-z]{2})(/.*)?$#i', $uri, $match) && nL_lang_exists($match[1])){
+				if(preg_match('#^([a-z]{2})(/.*)?$#i', $uri, $match) && self::lang_exists($match[1])){
 					$lang = $match[1];
 					$uri = $home.substr($uri, 3); // Recreate the url sans the language slug and slash after it
 				}
@@ -576,6 +615,12 @@ class nLingual{
 	/*
 	 * Localize the URL with the supplied language
 	 *
+	 * @uses self::cache_get()
+	 * @uses self::cache_set()
+	 * @uses self::current_lang()
+	 * @uses self::get_option()
+	 * @uses self::process_url()
+	 *
 	 * @param string $url The URL to localize
 	 * @param string $lang The language to localize with (default's to current language)
 	 * @param bool $force_admin Wether or not to run it within the admin
@@ -583,7 +628,7 @@ class nLingual{
 	public static function localize_url($url, $lang = null, $force_admin = false){
 		if(defined('WP_ADMIN') && !$force_admin) return $url; // Don't bother in Admin mode
 
-		if(is_null($lang)) $lang = nL_current_lang();
+		if(is_null($lang)) $lang = self::current_lang();
 
 		// Create an identifier for the url for caching
 		$id = "[$lang]$url";
@@ -624,6 +669,10 @@ class nLingual{
 	/*
 	 * Get the permalink of the specified post in the specified language
 	 *
+	 * @uses self::_lang()
+	 * @uses self::get_translation()
+	 * @uses self::localize_url()
+	 *
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
 	 * @param string $lang The slug of the language requested (defaults to current language)
 	 * @param bool $echo Wether or not to echo the resulting $link
@@ -631,8 +680,7 @@ class nLingual{
 	public static function get_permalink($id = null, $lang = null, $echo = true){
 		global $wpdb;
 
-		if(is_null($lang))
-			$lang = self::$current;
+		self::_lang($lang);
 
 		$link = get_permalink(self::get_translation($id, $lang));
 
@@ -644,6 +692,8 @@ class nLingual{
 
 	/*
 	 * Return or print a list of links to the current page in all available languages
+	 *
+	 * @uses self::get_permalink()
 	 *
 	 * @param bool $echo Wether or not to echo the imploded list of links
 	 * @param string $prefix The text to preceded the link list with
@@ -663,14 +713,16 @@ class nLingual{
 	/*
 	 * Split a string at the separator and return the part corresponding to the specified language
 	 *
+	 * @uses self::get_option()
+	 *
 	 * @param string $text The text to split
 	 * @param string $lang The slug of the language requested (defaults to current language)
 	 * @param string $sep The separator to use when splitting the string ($defaults to global separator)
 	 * @param bool $force Wether or not to force the split when it normally would be skipped
 	 */
 	public static function split_langs($text, $lang = null, $sep = null, $force = false){
-		if(is_null($lang))
-			$lang = self::$current;
+		self::_lang($lang);
+
 		if(is_null($sep))
 			$sep = self::get_option('separator');
 
