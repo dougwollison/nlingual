@@ -320,11 +320,7 @@ class nLingual{
 		if(self::lang_exists($lang))
 			self::$current = self::$current_cache = $lang;
 
-		if(!$temp){
-			return load_theme_textdomain(wp_get_theme()->get('TextDomain'), get_template_directory().'/lang');
-		}
-
-		return true;
+		return load_theme_textdomain(wp_get_theme()->get('TextDomain'), get_template_directory().'/lang');
 	}
 
 	/*
