@@ -124,6 +124,27 @@ function nLingual_get_curlang_version($value){
 	return $value;
 }
 
+/*
+ * Fitlers for adjusting the next/previous posts query parts to return only those in the current language
+ */
+add_filter('get_previous_post_join', 'nLingual_adjacent_post_join');
+add_filter('get_next_post_join', 'nLingual_adjacent_post_join');
+function nLingual_adjacent_post_join($join){
+	global $wpdb;
+	$join .= " INNER JOIN $wpdb->term_relationships AS trL ON p.ID = trL.object_id INNER JOIN $wpdb->term_taxonomy ttL ON trL.term_taxonomy_id = ttL.term_taxonomy_id";
+
+	return $join;
+}
+
+add_filter('get_previous_post_where', 'nLingual_adjacent_post_where');
+add_filter('get_next_post_where', 'nLingual_adjacent_post_where');
+function nLingual_adjacent_post_where($where){
+	global $wpdb;
+	$where .= " AND ttL.taxonomy = 'language' AND ttL.term_id = ".nL_lang_term(null, 'term_id');
+
+	return $where;
+}
+
 
 /*
  * Add fitler for running split_langs on the blogname and the_title
