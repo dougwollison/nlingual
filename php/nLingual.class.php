@@ -187,13 +187,6 @@ class nLingual{
 	}
 
 	/*
-	 * Sanitize callback for processing the language data
-	 */
-	public static function process_languages(){
-		print_r($_POST);exit;
-	}
-
-	/*
 	 * Get the cached language of the specified post id
 	 *
 	 * @param int $id The ID of the post in question
@@ -228,7 +221,7 @@ class nLingual{
 	 */
 	public static function post_type_exists($type = 'post'){
 		if(is_null($type)) $type = 'post';
-		return isset(self::$post_types[$type]);
+		return in_array($type, self::$post_types);
 	}
 
 	/*
