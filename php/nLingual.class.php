@@ -301,7 +301,6 @@ class nLingual{
 			return false;
 
 		if($field === true) return self::$languages_by_iso[$lang];
-		if($field === null) return $lang;
 		return self::$languages_by_iso[$lang][$field];
 	}
 
