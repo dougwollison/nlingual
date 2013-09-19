@@ -132,6 +132,28 @@ add_filter('option_blogname', 'nL_split_langs');
 add_filter('the_title', 'nL_split_langs');
 
 /*
+ * Add filter for localizing the permalinks
+ */
+add_filter('author_feed_link',				'nL_localize_url');
+add_filter('author_feed_link',				'nL_localize_url');
+add_filter('author_link',					'nL_localize_url');
+add_filter('category_feed_link',			'nL_localize_url');
+add_filter('category_link',					'nL_localize_url');
+add_filter('day_link',						'nL_localize_url');
+add_filter('feed_link',						'nL_localize_url');
+add_filter('get_comment_author_url_link',	'nL_localize_url');
+add_filter('get_pagenum_link',				'nL_localize_url');
+add_filter('month_link',					'nL_localize_url');
+add_filter('page_link',						'nL_localize_url');
+add_filter('post_comments_feed_link',		'nL_localize_url');
+add_filter('post_link',						'nL_localize_url');
+add_filter('tag_feed_link',					'nL_localize_url');
+add_filter('tag_link',						'nL_localize_url');
+add_filter('term_link',						'nL_localize_url');
+add_filter('the_permalink',					'nL_localize_url');
+add_filter('year_link',						'nL_localize_url');
+
+/*
  * If l10n_dateformat option is true, add fitler for localizing the date_format vlaue
  */
 if(nL_get_option('l10n_dateformat')){
