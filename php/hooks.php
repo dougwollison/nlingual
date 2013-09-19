@@ -61,7 +61,7 @@ function nLingual_check_alternate_frontpage(&$wp){
 
 		if(!nL_in_default_lang($id)){
 			$lang = nL_get_lang($id);
-			$orig = nL_get_original_post($id);
+			$orig = nL_get_translation($id, true);
 
 			if($orig == get_option('page_on_front')){
 				$wp->query_vars = array();
@@ -124,7 +124,7 @@ add_filter('option_page_on_front', 'nLingual_get_curlang_version');
 add_filter('option_page_for_posts', 'nLingual_get_curlang_version');
 function nLingual_get_curlang_version($value){
 	if(!is_admin()){
-		$value = nL_get_translated_post($value);
+		$value = nL_get_translation($value);
 	}
 	return $value;
 }
