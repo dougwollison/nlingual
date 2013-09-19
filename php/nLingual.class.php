@@ -432,6 +432,8 @@ class nLingual{
 
 		if(is_null($lang))
 			$lang = self::$current;
+		elseif($lang === true)
+			$lang = self::$default;
 
 		// Get the language according to the translations table
 		$translation = $wpdb->get_var($wpdb->prepare("
