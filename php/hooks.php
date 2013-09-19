@@ -4,11 +4,10 @@
  */
 add_action('init', 'nLingual_detect_requested_language');
 function nLingual_detect_requested_language(){
-	$post_var = nL_get_option('post_var');
-	$get_var = nL_get_option('get_var');
-	$method = nL_get_option('method');
-
+	// Get the accepted language, host name and requested uri
 	$alang = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+	$host = $_SERVER['HTTP_HOST'];
+	$uri = $_SERVER['REQUEST_URI'];
 
 	$lang = null;
 	$lock = false;
@@ -16,45 +15,29 @@ function nLingual_detect_requested_language(){
 	// First, use the HTTP_ACCEPT_LANGUAGE method if valid
 	if(nL_lang_exists($alang)){
 		$lang = $alang;
-		$lock = false;
 	}
 
-	// Proceed based on method
-	switch($method){
-		case NL_REDIRECT_USING_DOMAIN:
-			$host = $_SERVER['HTTP_HOST'];
-
-			// Check if a language slug is present and is an existing language
-			if(preg_match('#^([a-z]{2})\.#i', $host, $match) && nL_lang_exists($match[1])){
-				$lang = $match[1];
-				$_SERVER['HTTP_HOST'] = substr($host, 3); // Recreate the hostname sans the language slug at the beginning
-			}
-			break;
-		case NL_REDIRECT_USING_PATH:
-			$uri = $_SERVER['REQUEST_URI'];
-
-			// Get the path of the home URL, with trailing slash
-			$home = trailingslashit(parse_url(get_option('home'), PHP_URL_PATH));
-
-			// Strip the home path from the beginning of the URI
-			$uri = substr($uri, strlen($home)); // Now /en/... or /mysite/en/... will become en/...
-
-			// Check if a language slug is present and is an existing language
-			if(preg_match('#^([a-z]{2})(/.*)?$#i', $uri, $match) && nL_lang_exists($match[1])){
-				$lang = $match[1];
-				$_SERVER['REQUEST_URI'] = $home.substr($uri, 3); // Recreate the url sans the language slug and slash after it
-			}
-			break;
+	// Process the host & uri and get the language
+	if($result = nL_process_url($host, $uri, $lang)){
+		$lang = $result['lang'];
+		// Update host & uri with processed versions
+		$_SERVER['HTTP_HOST'] = $result['host'];
+		$_SERVER['REQUEST_URI'] = $result['uri'];
+		$lock = true;
 	}
 
 	// Override with get_var method if present and valid
+	$get_var = nL_get_option('get_var');
 	if($get_var && isset($_GET[$get_var]) && nL_lang_exists($_GET[$get_var])){
 		$lang = $_GET[$get_var];
+		$lock = true;
 	}
 
 	// Override with post_var method if present and valid
+	$post_var = nL_get_option('post_var');
 	if($post_var && isset($_POST[$post_var]) && nL_lang_exists($_POST[$post_var])){
 		$lang = $_POST[$post_var];
+		$lock = true;
 	}
 
 	if($lang) nL_set_lang($lang, $lock);
