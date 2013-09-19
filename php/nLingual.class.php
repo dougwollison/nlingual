@@ -541,7 +541,7 @@ class nLingual{
 		if(is_null($lang))
 			$lang = self::$current;
 
-		$link = get_permalink(self::get_translated_post($id, $lang));
+		$link = get_permalink(self::get_translation($id, $lang));
 
 		$method = self::get_option('method');
 
