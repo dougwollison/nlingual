@@ -92,7 +92,7 @@ function nLingual_check_alternate_frontpage(&$wp){
  */
 add_action('parse_query', 'nLingual_set_language_query_var');
 function nLingual_set_language_query_var(&$wp_query){
-	if(!is_admin() && in_array($wp_query->query_vars['post_type'], nL_post_types()) && !isset($wp_query->query_vars['language'])){
+	if(!is_admin() && nL_post_type_exists($wp_query->query_vars['post_type']) && !isset($wp_query->query_vars['language'])){
 		$wp_query->query_vars['language'] = nL_get_lang();
 	}
 }
