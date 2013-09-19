@@ -21,12 +21,16 @@ function nL_default_lang(){
 	return nL::default_lang();
 }
 
-function nL_cacheGet($id){
-	return nL::cacheGet($id);
+function nL_current_lang(){
+	return nL::current_lang();
 }
 
-function nL_cacheSet($id, $lang){
-	return nL::cacheSet($id, $lang);
+function nL_cache_get($id){
+	return nL::cache_get($id);
+}
+
+function nL_cache_set($id, $lang){
+	return nL::cache_set($id, $lang);
 }
 
 function nL_lang_exists($lang){

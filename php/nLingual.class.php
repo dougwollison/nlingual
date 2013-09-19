@@ -140,6 +140,13 @@ class nLingual{
 	}
 
 	/*
+	 * Return the current language
+	 */
+	public static function current_lang(){
+		return self::$current;
+	}
+
+	/*
 	 * Hook for registering the Language taxonomy and terms
 	 */
 	public static function register_taxonomy(){
@@ -187,22 +194,24 @@ class nLingual{
 	}
 
 	/*
-	 * Get the cached language of the specified post id
+	 * Get the cached data for an object
 	 *
-	 * @param int $id The ID of the post in question
+	 * @param mixed $id The ID of cached object
+	 * @param string $section The name of the section to cache under
 	 */
-	public static function cacheGet($id){
-		return self::$cache[$id];
+	public static function cache_get($id, $section){
+		return self::$cache[$section][$id];
 	}
 
 	/*
-	 * Set the cached language of the specified post id
+	 * Cache some data for an object
 	 *
-	 * @param int $id The ID of the post in question
-	 * @param string $lang The language to cache fo the ID
+	 * @param mixed $id The ID of cached object
+	 * @param mixed $data The data to cache for the object
+	 * @param string $section The name of the section to cache under
 	 */
-	public static function cacheSet($id, $lang){
-		self::$cache[$id] = $lang;
+	public static function cache_set($id, $data, $section){
+		self::$cache[$section][$id] = $data;
 	}
 
 	/*
@@ -308,7 +317,7 @@ class nLingual{
 		}
 
 		// Check if it's cached, return if so
-		if($lang = self::cacheGet($id)) return $lang;
+		if($lang = self::cache_get($id, 'translations')) return $lang;
 
 		// Query the nL_translations table for the langauge of the post in question
 		$lang = $wpdb->get_var($wpdb->prepare("SELECT language FROM $wpdb->nL_translations WHERE post_id = %d", $id));
@@ -317,7 +326,7 @@ class nLingual{
 		if(!$lang) $lang = $default;
 
 		// Add it to the cache
-		self::cacheSet($id, $lang);
+		self::cache_set($id, $lang, 'translations');
 
 		return $lang;
 	}
@@ -576,7 +585,7 @@ class nLingual{
 		$id = "[$lang]$url";
 
 		// Check if this URL has been taken care of, return cached result
-		if($cached = self::cacheGet($id, 'url')){
+		if($cached = self::cache_get($id, 'url')){
 			return $cached;
 		}
 
@@ -603,7 +612,7 @@ class nLingual{
 		}
 
 		// Store the URL in the cache
-		self::cacheSet($id, $url, 'url');
+		self::cache_set($id, $url, 'url');
 
 		return $url;
 	}
