@@ -522,6 +522,93 @@ class nLingual{
 	}
 
 	/*
+	 * Process a URL (the host and uri portions) and get the language, along with update host/uri
+	 *
+	 * @param string $host The host name
+	 * @param string $uri The requested uri
+	 * @return array $result An array of the resulting language, host name and requested uri
+	 */
+	public static function process_url($host, $uri){
+		$lang = null;
+
+		// Proceed based on method
+		switch(self::get_option('method')){
+			case NL_REDIRECT_USING_DOMAIN:
+				// Check if a language slug is present and is an existing language
+				if(preg_match('#^([a-z]{2})\.#i', $host, $match) && nL_lang_exists($match[1])){
+					$lang = $match[1];
+					$host = substr($host, 3); // Recreate the hostname sans the language slug at the beginning
+				}
+				break;
+			case NL_REDIRECT_USING_PATH:
+				// Get the path of the home URL, with trailing slash
+				$home = trailingslashit(parse_url(get_option('home'), PHP_URL_PATH));
+
+				// Strip the home path from the beginning of the URI
+				$uri = substr($uri, strlen($home)); // Now /en/... or /mysite/en/... will become en/...
+
+				// Check if a language slug is present and is an existing language
+				if(preg_match('#^([a-z]{2})(/.*)?$#i', $uri, $match) && nL_lang_exists($match[1])){
+					$lang = $match[1];
+					$uri = $home.substr($uri, 3); // Recreate the url sans the language slug and slash after it
+				}
+				break;
+		}
+
+		if($lang){
+			return array('lang' => $lang, 'host' => $host, 'uri' => $uri);
+		}
+	}
+
+	/*
+	 * Localize the URL with the supplied language
+	 *
+	 * @param string $url The URL to localize
+	 * @param string $lang The language to localize with (default's to current language)
+	 * @param bool $force_admin Wether or not to run it within the admin
+	 */
+	public static function localize_url($url, $lang = null, $force_admin = false){
+		if(defined('WP_ADMIN') && !$force_admin) return $url; // Don't bother in Admin mode
+
+		if(is_null($lang)) $lang = nL_current_lang();
+
+		// Create an identifier for the url for caching
+		$id = "[$lang]$url";
+
+		// Check if this URL has been taken care of, return cached result
+		if($cached = self::cacheGet($id, 'url')){
+			return $cached;
+		}
+
+		$home = trailingslashit(get_option('home'));
+
+		// Only proceed if it's a proper absolute URL for within the site
+		if(strpos($url, $home) !== false){
+			// First, check if it's already localized, localize if not
+			$url_data = parse_url($url);
+			if(!self::process_url($url_data['host'], $url_data['path'])){
+				switch(self::get_option('method')){
+					case NL_REDIRECT_USING_DOMAIN:
+						extract(parse_url($url));
+						$url = "$scheme://$lang.$host$path";
+						break;
+					case NL_REDIRECT_USING_PATH:
+						$path = substr($url, strlen($home));
+						$url = "$home$lang/$path";
+						break;
+					default:
+						$url .= '?'.self::get_option('get_var').'='.$lang;
+				}
+			}
+		}
+
+		// Store the URL in the cache
+		self::cacheSet($id, $url, 'url');
+
+		return $url;
+	}
+
+	/*
 	 * Get the permalink of the specified post in the specified language
 	 *
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
@@ -536,22 +623,7 @@ class nLingual{
 
 		$link = get_permalink(self::get_translation($id, $lang));
 
-		$method = self::get_option('method');
-
-		switch($method){
-			case NL_REDIRECT_USING_DOMAIN:
-				// Prepend the domain of the URL with the language slug
-				$link = preg_replace('#(https?)://([\w\.-]+)#', '$1://'.$lang.'.$2', $link);
-				break;
-			case NL_REDIRECT_USING_PATH:
-				// Prefix the path (after the base path of the site) with the language slug
-				$home = stripslashget_option('home');
-				$link = str_replace($home, "$home/$lang", $link);
-				break;
-			default:
-				$link .= '?'.self::get_option('get_var').'='.$lang;
-				break;
-		}
+		$link = self::localize_url($link, $lang);
 
 		if($echo) echo $link;
 		return $link;
