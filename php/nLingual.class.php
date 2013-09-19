@@ -222,6 +222,16 @@ class nLingual{
 	}
 
 	/*
+	 * Test if a post type is registered to use nLingual
+	 *
+	 * @param string $type The slug of the post_type (null = post)
+	 */
+	public static function post_type_exists($type = 'post'){
+		if(is_null($type)) $type = 'post';
+		return isset(self::$post_types[$type]);
+	}
+
+	/*
 	 * Get the WordPress term for the selected langauge, returning the term object or just a specific property
 	 *
 	 * @param string $lang Optional The language to retrieve (defaults to the default language)
