@@ -36,9 +36,9 @@ function nLingual_translations_metabox($post){
 
 	// Loop through each language and present controls for each translation
 	foreach(nL_languages() as $lang => $data){
-		if($lang == nL_get_post_lang()) continue;
+		if(nL_in_this_lang($post->ID, $lang)) continue;
 
-		$translation = nL_get_translation($post->ID, $lang, false);
+		$translation = nL_get_translation($post->ID, $lang);
 
 		// Get a list of available posts in the selected language
 		$lang_posts = new WP_Query(array(
@@ -58,7 +58,7 @@ function nLingual_translations_metabox($post){
 			<?php endforeach;?>
 			</select>
 			or <a href="<?php echo admin_url()?>?nL_new_translation=<?php echo $post->ID?>&language=<?php echo $lang?>&_nL_nonce=<?php echo wp_create_nonce(__FILE__)?>" class="button-secondary">
-				<?php _ef('Create a new %1$s %2$s', NL_TXTDMN, $lang['name'], get_post_type_object($post->post_type)->labels->singular_name)?>
+				<?php _ef('Create a new %1$s %2$s', NL_TXTDMN, strtolower(nL_get_lang('name', $lang)), strtolower(get_post_type_object($post->post_type)->labels->singular_name))?>
 			</a>
 		</p>
 		<?php
@@ -149,7 +149,7 @@ function nLingual_new_translation(){
 		$args['post_title'] = sprintf('Translate to %s: %s', nL_get_lang('name', $lang), $args['post_title']);
 
 		// Set the post parent to be the translated parent if available
-		$args['post_parent'] = nL_get_translation($orig['post_parent'], $lang->slug);
+		$args['post_parent'] = nL_get_translation($orig['post_parent'], $lang);
 
 		// Inser the new post
 		$new = wp_insert_post($args);
@@ -176,7 +176,7 @@ function nLingual_new_translation(){
 add_action('restrict_manage_posts', 'nLingual_manage_post_language_filter');
 function nLingual_manage_post_language_filter(){
 	global $typenow;
-	if(in_array($typenow, nL_post_types())):
+	if(nL_post_type_exists($typenow)):
 		$selected = isset($_REQUEST['language']) ? $_REQUEST['language'] : '';
 		?>
 		<select name="language" class="postform">
@@ -222,15 +222,16 @@ function nL_do_language_column($column, $post_id){
 			return;
 		}
 
-		$lang = nL_get_lang(true, $lang);
-		printf('<strong>%s</strong>', $lang['name']);
+		printf('<strong>%s</strong>', nL_get_lang('name', $lang));
 
 		if($associated = nL_associated_posts($post_id)){
 			foreach($associated as $lang => $pid){
-				$lang = nL_get_lang(true, $lang);
-				$edit = admin_url("/post.php?post=$pid&action=edit");
-				$title = get_the_title($pid);
-				printf('<br>%s: <a href="%s">%s</a>', $lang['name'], $edit, $title);
+				printf('<br>%s: <a href="%s">%s</a> | <a href="%s">View</a>',
+					nL_get_lang('name', $lang),
+					admin_url("/post.php?post=$pid&action=edit"),
+					get_the_title($pid),
+					get_permalink($pid)
+				);
 			}
 		}
 	}

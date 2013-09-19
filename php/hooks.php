@@ -18,7 +18,7 @@ function nLingual_detect_requested_language(){
 	}
 
 	// Process the host & uri and get the language
-	if($result = nL_process_url($host, $uri, $lang)){
+	if($result = nL_process_url($host, $uri)){
 		$lang = $result['lang'];
 		// Update host & uri with processed versions
 		$_SERVER['HTTP_HOST'] = $result['host'];
@@ -55,7 +55,7 @@ function nLingual_check_alternate_frontpage(&$wp){
 		$id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_type != 'revision'", $name));
 
 		if(!nL_in_default_lang($id)){
-			$lang = nL_get_lang($id);
+			$lang = nL_get_post_lang($id);
 			$orig = nL_get_translation($id, true);
 
 			if($orig == get_option('page_on_front')){
@@ -140,7 +140,7 @@ add_filter('get_previous_post_where', 'nLingual_adjacent_post_where');
 add_filter('get_next_post_where', 'nLingual_adjacent_post_where');
 function nLingual_adjacent_post_where($where){
 	global $wpdb;
-	$where .= " AND ttL.taxonomy = 'language' AND ttL.term_id = ".nL_lang_term(null, 'term_id');
+	$where .= " AND ttL.taxonomy = 'language' AND ttL.term_id = ".nL_lang_term()->term_id;
 
 	return $where;
 }
@@ -196,12 +196,7 @@ function nLingual_add_language_body_class($classes){
 	global $wpdb;
 	$object = get_queried_object();
 	foreach($classes as &$class){
-		if(strpos($class, '%') !== false){
-			$lang = nL_get_post_lang($object->ID);
-			$orig = nL_get_original_post($object->ID);
-			$class = $wpdb->get_var($wpdb->prepare("SELECT post_name FROM $wpdb->posts WHERE ID = %d", $orig));
-			$class .= " $class--$lang";
-		}
+		$class = str_replace('%', '-', $class);
 	}
 
 	$classes[] = "lang-".nL_current_lang();
