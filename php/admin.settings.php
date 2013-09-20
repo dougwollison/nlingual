@@ -5,9 +5,9 @@
 
 add_action('admin_menu', 'nLingual_options_menu');
 function nLingual_options_menu(){
-	add_menu_page(
-		__('nLingual Settings', NL_TXTDMN),
-		'nLingual',
+	add_options_page(
+		__('Language Settings', NL_TXTDMN),
+		__('Languages', NL_TXTDMN),
 		'manage_options',
 		'nLingual',
 		'nLingual_settings_page'
@@ -17,7 +17,7 @@ function nLingual_options_menu(){
 function nLingual_settings_page(){
 	?>
 	<div class="wrap">
-		<?php screen_icon('generic')?>
+		<?php screen_icon('options-general')?>
 		<h2><?php echo get_admin_page_title()?></h2>
 
 		<br>
