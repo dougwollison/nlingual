@@ -71,6 +71,15 @@ function nLingual_check_alternate_frontpage(&$wp){
 }
 
 /*
+ * Register langauge query_var
+ */
+add_filter('query_vars', 'nLingual_langauge_var');
+function nLingual_langauge_var($vars){
+	$vars[] = 'language';
+	return $vars;
+}
+
+/*
  * Set the language query_var if on the front end and requesting a language supporting post type
  */
 add_action('parse_query', 'nLingual_set_language_query_var');
