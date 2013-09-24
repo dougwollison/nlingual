@@ -68,6 +68,7 @@ class nLingual{
 			'method' => NL_REDIRECT_USING_ACCEPT,
 			'get_var' => 'lang',
 			'post_var' => 'lang',
+			'skip_default_localization' => false,
 
 			// Supported post types
 			'post_types' => array('page', 'post'),
@@ -649,9 +650,9 @@ class nLingual{
 
 		// Only proceed if it's a proper absolute URL for within the site
 		if(strpos($url, $home) !== false){
-			// First, check if it's already localized, localize if not
+			// First, check if it's already localized or in the default language (and skip_default_localization is set), localize if not
 			$url_data = parse_url($url);
-			if(!self::process_url($url_data['host'], $url_data['path'])){
+			if(!self::process_url($url_data['host'], $url_data['path']) && !($lang == self::$current && self::get_option('skip_default_localization'))){
 				switch(self::get_option('method')){
 					case NL_REDIRECT_USING_DOMAIN:
 						extract(parse_url($url));
