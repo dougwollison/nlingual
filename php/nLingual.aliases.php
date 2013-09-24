@@ -25,12 +25,12 @@ function nL_current_lang(){
 	return nL::current_lang();
 }
 
-function nL_cache_get($id){
-	return nL::cache_get($id);
+function nL_cache_get($id, $section){
+	return nL::cache_get($id, $section);
 }
 
-function nL_cache_set($id, $lang){
-	return nL::cache_set($id, $lang);
+function nL_cache_set($id, $lang, $section){
+	return nL::cache_set($id, $lang, $section);
 }
 
 function nL_lang_exists($lang){
