@@ -65,6 +65,10 @@ function nLingual_register_settings(){
 			$label = sprintf($label, nL_default_lang(), parse_url(get_bloginfo('home'), PHP_URL_HOST));
 			printf('<label><input type="radio" name="nLingual-options[method]" value="%s" %s> %s</label><br/>', $value, $value == $compare ? 'checked' : '', __($label, 'NL_TXTDMN'));
 		}
+
+		$bool = nL_get_option('skip_default_localization');
+
+		printf('<label><input id="skip_default_localization" type="checkbox" name="nLingual-options[skip_default_localization]" value="1" %s> %s</label>', $bool ? 'checked' : '', __('Skip on urls in the default language', NL_TXTDMN));
 	}, 'nLingual', 'nLingual-options');
 
 	add_settings_field('request-vars', __('POST & GET variable names', NL_TXTDMN), function(){
