@@ -180,13 +180,13 @@ function nLingual_localize_permalink($link){
 
 add_filter('page_link', 'nLingual_localize_page_permalink', 10, 2);
 function nLingual_localize_page_permalink($link, $post_id){
-	$link = nL_localize_url($link, nL_get_post_lang($post_id, true));
+	$link = nL_localize_url($link, nL_get_post_lang($post_id, true), false, true);
 	return $link;
 }
 
 add_filter('post_link', 'nLingual_localize_post_permalink', 10, 2);
 function nLingual_localize_post_permalink($link, $post){
-	$link = nL_localize_url($link, nL_get_post_lang($post->ID, true));
+	$link = nL_localize_url($link, nL_get_post_lang($post->ID, true), false, true);
 	return $link;
 }
 
