@@ -28,7 +28,7 @@ class nLingual{
 	 *
 	 * @param mixed &$lang The lang variable to process
 	 */
-	protected static function _lang(&$lang){
+	public static function _lang(&$lang){
 		if($lang === null)
 			$lang = self::$current;
 		elseif($lang === true)
@@ -41,7 +41,7 @@ class nLingual{
 	 * @param int $id The post ID to find the existing translation_id for
 	 * @return int $translation_id The id of the translation to use
 	 */
-	protected static function _translation_group_id($id){
+	public static function _translation_group_id($id){
 		global $wpdb;
 
 		if(!($translation_id = $wpdb->get_var($wpdb->prepare("SELECT group_id FROM $wpdb->nL_translations WHERE post_id = %d", $id)))){
@@ -122,9 +122,6 @@ class nLingual{
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 		");
 
-		// Register the language taxonomy and terms
-		add_action('init', array('nLingual', 'register_taxonomy'));
-
 		// Load the text domain
 		add_action('plugins_loaded', array('nLingual', 'onloaded'));
 	}
@@ -193,53 +190,6 @@ class nLingual{
 	}
 
 	/*
-	 * Hook for registering the Language taxonomy and terms
-	 */
-	public static function register_taxonomy(){
-		// Register the Language taxonomy
-		register_taxonomy(
-			'language',
-			nLingual::$post_types,
-			array(
-				'hierarchical'			=> false,
-			    'show_ui'				=> false,
-			    'update_count_callback'	=> '_update_post_term_count',
-				'labels' => array(
-					'name'							=> _x('Languages', 'taxonomy general name'),
-					'singular_name'					=> _x('Language', 'taxonomy singular name'),
-					'search_items'					=> __('Search Languages'),
-					'popular_items'					=> __('Popular Languages'),
-					'all_items'						=> __('All Languages'),
-					'parent_item'					=> null,
-					'parent_item_colon'				=> null,
-					'edit_item'						=> __('Edit Language'),
-					'update_item'					=> __('Update Language'),
-					'add_new_item'					=> __('Add New Language'),
-					'new_item_name'					=> __('New Language Name'),
-					'separate_items_with_commas'	=> __('Separate languages with commas'),
-					'add_or_remove_items'			=> __('Add or remove languages'),
-					'choose_from_most_used'			=> __('Choose from the most used languages'),
-					'not_found'						=> __('No languages found.'),
-					'menu_name'						=> __('Languages'),
-				)
-			)
-		);
-
-		// Insert any terms needed
-		foreach(self::$languages as $lang){
-			if(!term_exists($lang['iso'], 'language')){
-				wp_insert_term(
-					$lang['name'],
-					'language',
-					array(
-						'slug' => $lang['iso'],
-					)
-				);
-			}
-		}
-	}
-
-	/*
 	 * Get the cached data for an object
 	 *
 	 * @param mixed $id The ID of cached object
@@ -272,9 +222,10 @@ class nLingual{
 	/*
 	 * Test if a post type is registered to use nLingual
 	 *
-	 * @param string $type The slug of the post_type (null = post)
+	 * @param mixed $type The slug of the post_type (null/false/"" = post)
+	 * @param bool $all Wether to match all or at least one (if $type is array)
 	 */
-	public static function post_type_supported($type = 'post'){
+	public static function post_type_supported($type = 'post', $all = true){
 		if(!$type) $type = 'post';
 
 		if(is_array($type)){
@@ -283,27 +234,6 @@ class nLingual{
 		}
 
 		return in_array($type, self::$post_types);
-	}
-
-	/*
-	 * Get the WordPress term for the selected langauge, returning the term object or just a specific property
-	 *
-	 * @uses self::_lang()
-	 *
-	 * @param string $lang Optional The language to retrieve
-	 * @param string $field Optional The specific field to retrieve (leave blank to return the whole object)
-	 * @return mixed $term/$term_property The term object or a specific property
-	 */
-	public static function lang_term($lang = null, $field = null){
-		self::_lang($lang);
-
-		$term = get_term_by('slug', $lang, 'language');
-
-		if(is_null($field)){
-			return $term;
-		}
-
-		return $term->$field;
 	}
 
 	/*

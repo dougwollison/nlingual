@@ -78,7 +78,6 @@ function nLingual_save_post($post_id){
 
 	// Set the language if nLingual_language nonce is verified
 	if(isset($_POST['nLingual_language']) && wp_verify_nonce($_POST['nLingual_language'], __FILE__) && isset($_POST['language'])){
-		wp_set_object_terms($post_id, $_POST['language'], 'language');
 		nL_set_post_lang($post_id, $_POST['language']);
 	}
 
@@ -182,13 +181,8 @@ function nLingual_manage_post_language_filter(){
 		<select name="language" class="postform">
 			<option value=""><?php _e('Show all languages', NL_TXTDMN)?></option>
 			<?php
-			$langs = get_terms('language', array(
-				'orderby' => 'name',
-				'hide_empty' => false,
-				'parent' => $parent
-			));
-			foreach($langs as $lang){
-			    echo '<option value="'.$lang->slug.'"'.($_GET['language'] == $lang->slug ? ' selected' : '').'>'.$lang->name.'</option>';
+			foreach(nL_languages() as $lang){
+			    echo '<option value="'.$lang['iso'].'"'.($_GET['language'] == $lang['iso'] ? ' selected' : '').'>'.$lang['name'].'</option>';
 			}
 			?>
 		</select>

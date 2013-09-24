@@ -125,24 +125,56 @@ function nLingual_get_curlang_version($value){
 }
 
 /*
- * Fitlers for adjusting the next/previous posts query parts to return only those in the current language
+ * Filters for join/where parts of WP_Query statements to match languages
+ *
+ * Will skip if not a supported post type, or language is blank/not set
  */
-add_filter('get_previous_post_join', 'nLingual_adjacent_post_join');
-add_filter('get_next_post_join', 'nLingual_adjacent_post_join');
-function nLingual_adjacent_post_join($join){
+add_filter('posts_join_request', 'nLingual_posts_join_request', 10, 2);
+function nLingual_posts_join_request($join, &$query){
 	global $wpdb;
-	$join .= " INNER JOIN $wpdb->term_relationships AS trL ON p.ID = trL.object_id INNER JOIN $wpdb->term_taxonomy ttL ON trL.term_taxonomy_id = ttL.term_taxonomy_id";
+	if(!nL_post_type_supported($query->query_vars['post_type'])
+	|| !isset($query->query_vars['language'])
+	|| !$query->query_vars['language']) return $join;
+
+	$join .= " INNER JOIN $wpdb->nL_translations AS nL ON $wpdb->posts.ID = nL.post_id";
 
 	return $join;
 }
 
-add_filter('get_previous_post_where', 'nLingual_adjacent_post_where');
-add_filter('get_next_post_where', 'nLingual_adjacent_post_where');
-function nLingual_adjacent_post_where($where){
-	global $wpdb;
-	$where .= " AND ttL.taxonomy = 'language' AND ttL.term_id = ".nL_lang_term()->term_id;
+add_filter('posts_where_request', 'nLingual_posts_where_request', 10, 2);
+function nLingual_posts_where_request($where, &$query){
+	if(!nL_post_type_supported($query->query_vars['post_type'])
+	|| !isset($query->query_vars['language'])
+	|| !$query->query_vars['language']) return $where;
+
+	$where .= " AND nL.language = '{$query->query_vars['language']}'";
 
 	return $where;
+}
+
+/*
+ * Fitlers for adjusting the next/previous posts query parts to return only those in the current language
+ *
+ * Unfortunately, this will run indiscriminately so long as the "post" post type is supported
+ */
+if(nL_post_type_supported('post')){
+	add_filter('get_previous_post_join', 'nLingual_adjacent_post_join');
+	add_filter('get_next_post_join', 'nLingual_adjacent_post_join');
+	function nLingual_adjacent_post_join($join){
+		global $wpdb;
+		$join .= " INNER JOIN $wpdb->nL_translations AS nL ON p.ID = nL.post_id";
+
+		return $join;
+	}
+
+	add_filter('get_previous_post_where', 'nLingual_adjacent_post_where');
+	add_filter('get_next_post_where', 'nLingual_adjacent_post_where');
+	function nLingual_adjacent_post_where($where){
+		$lang = nL_current_lang();
+		$where .= " AND nL.language = '$lang'";
+
+		return $where;
+	}
 }
 
 
