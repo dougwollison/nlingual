@@ -25,6 +25,14 @@ function nL_current_lang(){
 	return nL::current_lang();
 }
 
+function nL_is_lang($lang){
+	return nL::is_lang($lang);
+}
+
+function nL_is_default(){
+	return nL::is_default();
+}
+
 function nL_cache_get($id, $section){
 	return nL::cache_get($id, $section);
 }

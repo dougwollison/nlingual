@@ -178,6 +178,20 @@ class nLingual{
 	}
 
 	/*
+	 * Test if the current langauge is the specified language
+	 */
+	public static function is_lang($lang){
+		return self::$current == $lang;
+	}
+
+	/*
+	 * Test if the current langauge is the default language
+	 */
+	public static function is_default(){
+		return self::is_lang(self::$default);
+	}
+
+	/*
 	 * Hook for registering the Language taxonomy and terms
 	 */
 	public static function register_taxonomy(){
