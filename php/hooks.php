@@ -281,3 +281,21 @@ function nLingual_localize_nav_menu_args($args){
 
 	return $args;
 }
+
+/*
+ * Process the langlink menu items
+ */
+add_filter('wp_nav_menu_objects', 'nLingual_process_menu_objects', 10, 2);
+function nLingual_process_menu_objects($items, $args){
+	foreach($items as $item){
+		if($item->type == 'langlink'){ // Language link, set URL to the localized version of the current
+			if(is_singular()){
+				$item->url = nL_get_permalink(get_queried_object()->ID, $item->object, false);
+			}else{
+				$item->url = nL_localize_url(sprintf('%s://%s%s', $_SERVER['HTTPS'] == 'on' ? 'https' : 'http', $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']), $item->object);
+			}
+		}
+	}
+
+	return $items;
+}
