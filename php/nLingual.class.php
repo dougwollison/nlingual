@@ -632,8 +632,9 @@ class nLingual{
 	 * @param string $url The URL to localize
 	 * @param string $lang The language to localize with (default's to current language)
 	 * @param bool $force_admin Wether or not to run it within the admin
+	 * @param bool $relocalize Wether or not to relocalize the url if it already is
 	 */
-	public static function localize_url($url, $lang = null, $force_admin = false){
+	public static function localize_url($url, $lang = null, $force_admin = false, $relocalize = false){
 		if(defined('WP_ADMIN') && !$force_admin) return $url; // Don't bother in Admin mode
 
 		if(is_null($lang)) $lang = self::current_lang();
