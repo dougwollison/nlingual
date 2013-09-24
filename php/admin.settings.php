@@ -100,9 +100,9 @@ function nLingual_register_settings(){
 	}, 'nLingual', 'nLingual-options');
 
 	add_settings_field('l10n_dateformat', __('Localize date format?', NL_TXTDMN), function(){
-		$bool = get_option('l10n_dateformat');
+		$bool = nL_get_option('l10n_dateformat');
 
-		printf('<label><input id="l10n_dateformat" type="checkbox" name="nLingual-options[l10n_dateformat]" value="1" %s> %s</label>', $bool ? 'checked' : 'checked', __('Run localization on the date format string', NL_TXTDMN));
+		printf('<label><input id="l10n_dateformat" type="checkbox" name="nLingual-options[l10n_dateformat]" value="1" %s> %s</label>', $bool ? 'checked' : '', __('Run localization on the date format string', NL_TXTDMN));
 		printf('<p class="description">%s</p>', __('Use if any of your languages use custom date formats.', NL_TXTDMN));
 	}, 'nLingual', 'nLingual-options');
 }
