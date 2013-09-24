@@ -650,9 +650,11 @@ class nLingual{
 
 		// Only proceed if it's a proper absolute URL for within the site
 		if(strpos($url, $home) !== false){
-			// First, check if it's already localized or in the default language (and skip_default_localization is set), localize if not
+			// First, check if it's already localized, or a wp-admin url, or in the default language (and skip_default_localization is set), localize if not
 			$url_data = parse_url($url);
-			if(!self::process_url($url_data['host'], $url_data['path']) && !($lang == self::$current && self::get_option('skip_default_l10n'))){
+			if(!self::process_url($url_data['host'], $url_data['path'])
+			&& strpos($url_data['path'], '/wp-admin/') === false
+			&& !($lang == self::$default && self::get_option('skip_default_l10n'))){
 				switch(self::get_option('method')){
 					case NL_REDIRECT_USING_DOMAIN:
 						extract(parse_url($url));
