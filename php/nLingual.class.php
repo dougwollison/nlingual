@@ -274,8 +274,14 @@ class nLingual{
 	 *
 	 * @param string $type The slug of the post_type (null = post)
 	 */
-	public static function post_type_exists($type = 'post'){
-		if(is_null($type)) $type = 'post';
+	public static function post_type_supported($type = 'post'){
+		if(!$type) $type = 'post';
+
+		if(is_array($type)){
+			$match = array_intersect($type, self::$post_types);
+			return $all ? count($match) == count($type) : $match;
+		}
+
 		return in_array($type, self::$post_types);
 	}
 

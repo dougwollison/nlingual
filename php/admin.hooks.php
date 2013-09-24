@@ -176,7 +176,7 @@ function nLingual_new_translation(){
 add_action('restrict_manage_posts', 'nLingual_manage_post_language_filter');
 function nLingual_manage_post_language_filter(){
 	global $typenow;
-	if(nL_post_type_exists($typenow)):
+	if(nL_post_type_supported($typenow)):
 		$selected = isset($_REQUEST['language']) ? $_REQUEST['language'] : '';
 		?>
 		<select name="language" class="postform">

@@ -45,8 +45,8 @@ function nL_lang_exists($lang){
 	return nL::lang_exists($lang);
 }
 
-function nL_post_type_exists($type){
-	return nL::post_type_exists($type);
+function nL_post_type_supported($type){
+	return nL::post_type_supported($type);
 }
 
 function nL_get_lang($field = null, $lang = null){
