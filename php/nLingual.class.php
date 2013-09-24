@@ -650,19 +650,33 @@ class nLingual{
 
 		// Only proceed if it's a proper absolute URL for within the site
 		if(strpos($url, $home) !== false){
-			// First, check if it's already localized, or a wp-admin url, or in the default language (and skip_default_localization is set), localize if not
+			// Parse and process the url
 			$url_data = parse_url($url);
-			if(!self::process_url($url_data['host'], $url_data['path'])
-			&& strpos($url_data['path'], '/wp-admin/') === false
-			&& !($lang == self::$default && self::get_option('skip_default_l10n'))){
+			$processed = self::process_url($url_data['host'], $url_data['path']);
+
+			// If successfully processed and $relocalize is true,
+			// update $url_data with the $processed info, and rebuild $url
+			if($relocalize && $processed){
+				$url_data['host'] = $processed['host'];
+				$url_data['path'] = substr($processed['uri'], intval(strpos($processed['uri'], '?')));
+				$url = sprintf('%s://%s%s', $url_data['scheme'], $url_data['host'], $url_data['path']);
+			}
+
+			// If processing failed (or $relocalize is true,
+			// and if the URL is not a wp-admin one,
+			// and if we're not in the default language (or if skil_default_l10n is disabled)
+			// Go ahead and localize the URL
+			if(
+				(!$processed || $relocalize)
+				&& strpos($url_data['path'], '/wp-admin/') === false
+				&& ($lang != self::$default || !self::get_option('skip_default_l10n'))
+			){
 				switch(self::get_option('method')){
 					case NL_REDIRECT_USING_DOMAIN:
-						extract(parse_url($url));
-						$url = "$scheme://$lang.$host$path";
+						$url = sprintf('%s://%s.%s%s', $url_data['scheme'], $lang, $url_data['host'], $url_data['path']);
 						break;
 					case NL_REDIRECT_USING_PATH:
-						$path = substr($url, strlen($home));
-						$url = "$home$lang/$path";
+						$url = sprintf('%s://%s/%s%s', $url_data['scheme'], $url_data['host'], $lang, $url_data['path']);
 						break;
 					default:
 						$url .= '?'.self::get_option('get_var').'='.$lang;

@@ -109,8 +109,8 @@ function nL_process_url($host, $uri){
 	return nL::process_url($host, $uri);
 }
 
-function nL_localize_url($url = null, $lang = null, $force_admin = false){
-	return nL::localize_url($url, $lang, $force_admin);
+function nL_localize_url($url = null, $lang = null, $force_admin = false, $relocalize = false){
+	return nL::localize_url($url, $lang, $force_admin, $relocalize);
 }
 
 function nL_get_permalink($id = null, $lang = null, $echo = true){
