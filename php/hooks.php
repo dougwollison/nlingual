@@ -155,24 +155,40 @@ add_filter('the_title', 'nL_split_langs');
 /*
  * Add filter for localizing the permalinks
  */
-add_filter('author_feed_link',				'nL_localize_url');
-add_filter('author_feed_link',				'nL_localize_url');
-add_filter('author_link',					'nL_localize_url');
-add_filter('category_feed_link',			'nL_localize_url');
-add_filter('category_link',					'nL_localize_url');
-add_filter('day_link',						'nL_localize_url');
-add_filter('feed_link',						'nL_localize_url');
-add_filter('get_comment_author_url_link',	'nL_localize_url');
-add_filter('get_pagenum_link',				'nL_localize_url');
-add_filter('month_link',					'nL_localize_url');
-add_filter('page_link',						'nL_localize_url');
-add_filter('post_comments_feed_link',		'nL_localize_url');
-add_filter('post_link',						'nL_localize_url');
-add_filter('tag_feed_link',					'nL_localize_url');
-add_filter('tag_link',						'nL_localize_url');
-add_filter('term_link',						'nL_localize_url');
-add_filter('the_permalink',					'nL_localize_url');
-add_filter('year_link',						'nL_localize_url');
+add_filter('author_feed_link',				'nLingual_localize_permalink');
+add_filter('author_feed_link',				'nLingual_localize_permalink');
+add_filter('author_link',					'nLingual_localize_permalink');
+add_filter('category_feed_link',			'nLingual_localize_permalink');
+add_filter('category_link',					'nLingual_localize_permalink');
+add_filter('day_link',						'nLingual_localize_permalink');
+add_filter('feed_link',						'nLingual_localize_permalink');
+add_filter('get_comment_author_url_link',	'nLingual_localize_permalink');
+add_filter('get_pagenum_link',				'nLingual_localize_permalink');
+add_filter('home_url',						'nLingual_localize_permalink');
+add_filter('month_link',					'nLingual_localize_permalink');
+add_filter('post_comments_feed_link',		'nLingual_localize_permalink');
+add_filter('site_url',						'nLingual_localize_permalink');
+add_filter('tag_feed_link',					'nLingual_localize_permalink');
+add_filter('tag_link',						'nLingual_localize_permalink');
+add_filter('term_link',						'nLingual_localize_permalink');
+add_filter('the_permalink',					'nLingual_localize_permalink');
+add_filter('year_link',						'nLingual_localize_permalink');
+function nLingual_localize_permalink($link){
+	$link = nL_localize_url($link);
+	return $link;
+}
+
+add_filter('page_link', 'nLingual_localize_page_permalink', 10, 2);
+function nLingual_localize_page_permalink($link, $post_id){
+	$link = nL_localize_url($link, nL_get_post_lang($post_id, true));
+	return $link;
+}
+
+add_filter('post_link', 'nLingual_localize_post_permalink', 10, 2);
+function nLingual_localize_post_permalink($link, $post){
+	$link = nL_localize_url($link, nL_get_post_lang($post->ID, true));
+	return $link;
+}
 
 /*
  * If l10n_dateformat option is true, add fitler for localizing the date_format vlaue
