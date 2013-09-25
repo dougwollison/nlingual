@@ -123,13 +123,13 @@ function nLingual_register_settings(){
 			printf('<label>%s</label><br>', _f('Check off the fields that should be synchronized between sister %s.', NL_TXTDMN, strtolower($post_type->labels->name)));
 			foreach(array(
 				'post_author',
+				'post_parent',
 				'post_date',
+				'post_modified',
+				'menu_order',
 				'post_status',
 				'comment_status',
 				'ping_status',
-				'post_modified',
-				'post_parent',
-				'menu_order',
 			) as $field){
 				printf(
 					'<label><input type="checkbox" name="nLingual-sync_rules[%s][data]" value="%s" %s> %s</label><br/>',
