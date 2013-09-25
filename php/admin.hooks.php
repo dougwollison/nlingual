@@ -127,7 +127,12 @@ function nLingual_save_post($post_id){
 		}
 	}
 	if($meta_fields = nL_sync_rules($post_type, 'meta')){
-
+		foreach($meta_fields as $field){
+			$data = get_post_meta($post_id, $field, true);
+			foreach($associated as $id){
+				update_post_meta($id, $field, $data);
+			}
+		}
 	}
 }
 
