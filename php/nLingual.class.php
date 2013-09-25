@@ -490,10 +490,13 @@ class nLingual{
 			VALUES
 		";
 
+		$values = array();
 		foreach($posts as $lang => $id){
 			if($id <= 0) continue; // Not an actual post
-			$query .= $wpdb->prepare("(%d, %s, %d)", $translation_id, $lang, $id);
+			$values[] = $wpdb->prepare("(%d,%s,%d)", $translation_id, $lang, $id);
 		}
+
+		$query .=  implode(',', $values);
 
 		$wpdb->query($query);
 	}
