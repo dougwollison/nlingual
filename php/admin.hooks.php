@@ -108,10 +108,25 @@ function nLingual_save_post($post_id){
 		// Run the update
 		$wpdb->query("UPDATE $wpdb->posts SET $changes WHERE ID IN($ids)");
 	}
-	if($meta_fields = nL_sync_rules($post_type, 'meta')){
-
-	}
 	if($taxonomies = nL_sync_rules($post_type, 'tax')){
+		foreach($taxonomies as $taxonomy){
+			$terms = get_the_terms($post_id, $taxonomy);
+			if(is_object($terms)) continue; // invalid taxonomy, abort
+
+			if(is_array($terms)){
+				$terms = array_map(function($term){
+					return intval($term->term_id);
+				}, $terms);
+			}else{
+				$terms = null;
+			}
+
+			foreach($associated as $id){
+				wp_set_object_terms($id, $terms, $taxonomy);
+			}
+		}
+	}
+	if($meta_fields = nL_sync_rules($post_type, 'meta')){
 
 	}
 }
