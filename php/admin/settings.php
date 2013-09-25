@@ -95,9 +95,10 @@ function nLingual_register_settings(){
 	add_settings_field('post_types', __('Supported post types', NL_TXTDMN), function(){
 		$post_types = nL_post_types();
 
-		$available = get_post_types(array('show_ui' => true, 'show_in_nav_menus' => true), 'objects');
+		$available = get_post_types(array('show_ui' => true), 'objects');
 
 		foreach($available as $slug => $data){
+			if($slug == 'attachment') continue; // Attachements are excluded; they have show_ui but they should not be translated.
 			printf('<label><input type="checkbox" name="nLingual-options[post_types][]" value="%s" %s> %s</label><br/>', $slug, in_array($slug, $post_types) ? 'checked' : '', $data->labels->menu_name);
 		}
 	}, 'nLingual', 'nLingual-options');
