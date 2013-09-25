@@ -142,7 +142,7 @@ function nLingual_register_settings(){
 
 			$sync_meta_rules = nL_sync_rules($pt, 'meta');
 			printf('<label for="%s-meta-sync_rules">%s</label><br>', $pt, __('List the meta field that should be synchronized, one per line.', NL_TXTDMN));
-			printf('<textarea id="%s-meta-sync_rules" name="nLingual-sync_rules[%s][meta]" class="large-text code" rows="10">%s</textarea>', $pt, $pt, implode("\n", $sync_meta_rules));
+			printf('<textarea id="%s-meta-sync_rules" name="nLingual-sync_rules[%s][meta]" class="large-text code" rows="5">%s</textarea>', $pt, $pt, implode("\n", $sync_meta_rules));
 
 			$sync_tax_rules = nL_sync_rules($pt, 'tax');
 			$taxonomies = get_object_taxonomies($pt, 'objects');
