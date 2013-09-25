@@ -189,12 +189,12 @@ function nLingual_manage_languages(){
 }
 
 function _nLingual_language_editor($language = array()){
-	extract(array_merge(array('iso'=>'', 'mo'=>'', 'tag'=>'', 'name'=>'', 'native'=>''), $language));
+	extract(array_merge(array('slug'=>'', 'iso'=>'', 'mo'=>'', 'tag'=>'', 'name'=>'', 'native'=>''), $language));
 	$default = nL_default_lang();
 	?>
 	<div class="language">
 		<div class="controls">
-			<label class="default"><input type="radio" name="nLingual-options[default_lang]" value="<?php echo $iso?>" <?php if($default == $iso) echo 'checked'?>> Default</label>
+			<label class="default"><input type="radio" name="nLingual-options[default_lang]" value="<?php echo $slug?>" <?php if($default == $slug) echo 'checked'?>> Default</label>
 			<button type="button" class="delete button-secondary"><?php _e('Delete', NL_TXTDMN)?></button>
 			<br class="clearfix">
 		</div>
@@ -207,7 +207,11 @@ function _nLingual_language_editor($language = array()){
 				<?php _e('Native Name', NL_TXTDMN)?>
 				<input type="text" name="nLingual-languages[native][]" value="<?php echo $native?>">
 			</label>
-			<label class="iso" title="<?php _e('The 2 letter code to use for identifying the langauge.', NL_TXTDMN)?>">
+			<label class="slug" title="<?php _e('A unique identifier for this language.', NL_TXTDMN)?>">
+				<?php _e('Slug', NL_TXTDMN)?>
+				<input type="text" name="nLingual-languages[slug][]" value="<?php echo $slug?>" maxlength="2">
+			</label>
+			<label class="iso" title="<?php _e('The official 2 letter code identifying this language.', NL_TXTDMN)?>">
 				<?php _e('ISO', NL_TXTDMN)?>
 				<input type="text" name="nLingual-languages[iso][]" value="<?php echo $iso?>" maxlength="2">
 			</label>

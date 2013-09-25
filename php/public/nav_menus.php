@@ -14,7 +14,7 @@ function nLingual_alter_registered_nav_menus(){
 	$localized_menus = array();
 	foreach($_wp_registered_nav_menus as $slug => $name){
 		foreach(nL_languages() as $lang){
-			$_slug = "{$slug}--{$lang['iso']}";
+			$_slug = "{$slug}--{$lang['slug']}";
 			$_name = "$name ({$lang['name']})";
 			$localized_menus[$_slug] = $_name;
 		}

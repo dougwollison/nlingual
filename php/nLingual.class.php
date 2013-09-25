@@ -12,7 +12,7 @@ class nLingual{
 	protected static $options = array();
 	protected static $sync_rules = array();
 	protected static $languages = array();
-	protected static $languages_by_iso = array();
+	protected static $languages_by_slug = array();
 	protected static $post_types;
 	protected static $separator;
 	protected static $default;
@@ -89,6 +89,7 @@ class nLingual{
 		// Default to english if no langauges are set
 		if(!$languages) $languages = array(
 			array(
+				'slug'		=> 'en',
 				'iso'		=> 'en',
 				'mo'		=> 'english',
 				'tag'		=> 'En',
@@ -98,9 +99,9 @@ class nLingual{
 		);
 		self::$languages = $languages;
 
-		// Loop through the languages and create a by_iso indexed version
+		// Loop through the languages and create a by_slug indexed version
 		foreach($languages as $lang){
-			self::$languages_by_iso[$lang['iso']] = $lang;
+			self::$languages_by_slug[$lang['slug']] = $lang;
 		}
 
 		// Load  post types, defualt language, and set current langauge
@@ -170,7 +171,7 @@ class nLingual{
 	 * Return the languages array
 	 */
 	public static function languages(){
-		return self::$languages_by_iso;
+		return self::$languages_by_slug;
 	}
 
 	/*
@@ -235,7 +236,7 @@ class nLingual{
 	 * @param string $lang The slug of the language
 	 */
 	public static function lang_exists($lang){
-		return isset(self::$languages_by_iso[$lang]);
+		return isset(self::$languages_by_slug[$lang]);
 	}
 
 	/*
@@ -270,8 +271,8 @@ class nLingual{
 		if(!self::lang_exists($lang))
 			return false;
 
-		if($field === true) return self::$languages_by_iso[$lang];
-		return self::$languages_by_iso[$lang][$field];
+		if($field === true) return self::$languages_by_slug[$lang];
+		return self::$languages_by_slug[$lang][$field];
 	}
 
 	/*
@@ -683,7 +684,7 @@ class nLingual{
 		echo $prefix;
 		$links = array();
 		foreach(self::$languages as $lang){
-			$links[] = sprintf('<a href="%s">%s</a>', self::get_permalink(get_queried_object()->ID, $lang['iso'], false), $lang['native']);
+			$links[] = sprintf('<a href="%s">%s</a>', self::get_permalink(get_queried_object()->ID, $lang['slug'], false), $lang['native']);
 		}
 
 		if($echo) echo $prefix.implode($sep, $links);
@@ -711,7 +712,7 @@ class nLingual{
 		if(is_admin() && !$force && did_action('admin_notices')) return $text;
 
 		$langs = array_map(function($lang){
-			return $lang['iso'];
+			return $lang['slug'];
 		}, self::$languages);
 
 		$langn = array_search($lang, $langs);

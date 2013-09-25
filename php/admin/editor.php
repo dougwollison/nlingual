@@ -16,7 +16,7 @@ function nLingual_manage_post_language_filter(){
 			<option value=""><?php _e('Show all languages', NL_TXTDMN)?></option>
 			<?php
 			foreach(nL_languages() as $lang){
-			    echo '<option value="'.$lang['iso'].'"'.($_GET['language'] == $lang['iso'] ? ' selected' : '').'>'.$lang['name'].'</option>';
+			    echo '<option value="'.$lang['slug'].'"'.($_GET['language'] == $lang['slug'] ? ' selected' : '').'>'.$lang['name'].'</option>';
 			}
 			?>
 		</select>

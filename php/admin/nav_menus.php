@@ -33,7 +33,7 @@ function nLingual_add_langlinks(){
 					</label>
 					<input type="hidden" class="menu-item-type" name="menu-item[<?php echo $i?>][menu-item-type]" value="langlink">
 					<input type="hidden" class="menu-item-title" name="menu-item[<?php echo $i?>][menu-item-title]" value="<?php echo $lang['native']?>">
-					<input type="hidden" class="menu-item-url" name="menu-item[<?php echo $i?>][menu-item-object]" value="<?php echo $lang['iso']?>">
+					<input type="hidden" class="menu-item-url" name="menu-item[<?php echo $i?>][menu-item-object]" value="<?php echo $lang['slug']?>">
 				</li>
 			<?php $i--; endforeach;?>
 			</ul>

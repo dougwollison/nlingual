@@ -100,6 +100,6 @@ function nLingual_add_language_body_class($classes){
  */
 add_filter('language_attributes', 'nLingual_html_language_attributes');
 function nLingual_html_language_attributes($atts){
-	$atts = preg_replace('/lang=".+?"/', 'lang="'.nL_get_lang('iso').'"', $atts);
+	$atts = preg_replace('/lang=".+?"/', 'lang="'.nL_get_lang('slug').'"', $atts);
 	return $atts;
 }
