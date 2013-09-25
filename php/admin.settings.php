@@ -120,7 +120,7 @@ function nLingual_register_settings(){
 		add_settings_field($post_type->name.'-sync_rules', _f('%s', NL_TXTDMN, $post_type->labels->name), function() use ($post_type, $sync_rules){
 			$pt = $post_type->name;
 			$sync_data_rules = nL_sync_rules($pt, 'data');
-			printf('<p>%s</p>', _f('Check off the fields that should be synchronized between sister %s.', NL_TXTDMN, strtolower($post_type->labels->name)));
+			printf('<label>%s</label><br>', _f('Check off the fields that should be synchronized between sister %s.', NL_TXTDMN, strtolower($post_type->labels->name)));
 			foreach(array(
 				'post_author',
 				'post_date',
@@ -141,11 +141,11 @@ function nLingual_register_settings(){
 			}
 
 			$sync_meta_rules = nL_sync_rules($pt, 'meta');
-			printf('<p>%s</p>', __('List the meta field that should be synchronized, one per line.', NL_TXTDMN));
-			printf('<textarea name="nLingual-sync_rules[%s][meta]">%s</textarea>', $pt, implode("\n", $sync_meta_rules));
+			printf('<label for="%s-meta-sync_rules">%s</label><br>', $pt, __('List the meta field that should be synchronized, one per line.', NL_TXTDMN));
+			printf('<textarea id="%s-meta-sync_rules" name="nLingual-sync_rules[%s][meta]" class="large-text code" rows="10">%s</textarea>', $pt, $pt, implode("\n", $sync_meta_rules));
 
 			$sync_tax_rules = nL_sync_rules($pt, 'tax');
-			printf('<p>%s</p>', __('Check off the taxonomies that should be synchronized.', NL_TXTDMN));
+			printf('<label>%s</label><br>', __('Check off the taxonomies that should be synchronized.', NL_TXTDMN));
 			foreach(get_object_taxonomies($pt, 'objects') as $taxonomy => $data){
 				printf(
 					'<label><input type="checkbox" name="nLingual-sync_rules[%s][tax]" value="%s" %s> %s</label><br/>',
