@@ -9,6 +9,10 @@ function nL_get_option($name){
 	return nL::get_option($name);
 }
 
+function nL_sync_rules($post_type, $rule_type = null){
+	return nL::sync_rules($post_type, $rule_type);
+}
+
 function nL_languages(){
 	return nL::languages();
 }
