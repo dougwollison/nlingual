@@ -9,7 +9,8 @@ define('NL_REDIRECT_USING_DOMAIN', 'NL_REDIRECT_USING_DOMAIN');
 define('NL_REDIRECT_USING_ACCEPT', 'NL_REDIRECT_USING_ACCEPT');
 
 class nLingual{
-	protected static $options;
+	protected static $options = array();
+	protected static $sync_rules = array();
 	protected static $languages = array();
 	protected static $languages_by_iso = array();
 	protected static $post_types;
@@ -77,13 +78,11 @@ class nLingual{
 			'split_separator' => '//',
 
 			// Auto localize...
-			'l10n_dateformat' => true,
-
-			// Syncronizing options
-			'sync_post_fields' => array(),
-			'sync_meta_fields' => array(),
-			'sync_taxonomies' => array()
+			'l10n_dateformat' => true
 		));
+
+		// Load sync rules
+		self::$sync_rules = (array) get_option('nLingual-sync_rules', array());
 
 		// Load languages
 		$languages = get_option('nLingual-languages');
@@ -145,6 +144,26 @@ class nLingual{
 		}
 
 		return null;
+	}
+
+	/*
+	 * Return the rule(s) for a specific post type (and maybe type)
+	 *
+	 * @param string $post_type The slug of the post type to retrieve rules for
+	 * @param string $rule_type The specific rule type to retrieve
+	 * @return array $rules The request rules (empty array if nothing found)
+	 */
+	public static function sync_rules($post_type, $rule_type = null){
+		if(isset(self::$sync_rules[$post_type])){
+			if(isset(self::$sync_rules[$post_type][$rule_type])){
+				return self::$sync_rules[$post_type][$rule_type];
+			}else{
+				return array();
+			}
+			return self::$sync_rules[$post_type];
+		}else{
+			return array();
+		}
 	}
 
 	/*

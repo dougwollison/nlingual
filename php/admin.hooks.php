@@ -72,9 +72,11 @@ add_action('save_post', 'nLingual_save_post', 999);
 function nLingual_save_post($post_id){
 	global $wpdb;
 
+	$post_type = $_POST['post_type'];
+
 	// Abort if they don't have permission to edit posts/pages
-	if($_POST['post_type'] == 'page' && !current_user_can('edit_page', $post_id)) return;
-	elseif($_POST['post_type'] == 'page' && !current_user_can('edit_page', $post_id)) return;
+	if($post_type == 'page' && !current_user_can('edit_page', $post_id)) return;
+	elseif($post_type == 'page' && !current_user_can('edit_page', $post_id)) return;
 
 	// Set the language if nLingual_language nonce is verified
 	if(isset($_POST['nLingual_language']) && wp_verify_nonce($_POST['nLingual_language'], __FILE__) && isset($_POST['language'])){
@@ -88,13 +90,13 @@ function nLingual_save_post($post_id){
 
 	// Loop through the sync options, and syncronize the fields with it's associated posts
 	$associated = nL_associated_posts($post_id);
-	if($post_fields = nL_get_option('sync_post_fields')){
+	if($data_fields = nL_sync_rules($post_type, 'data')){
 
 	}
-	if($meta_fields = nL_get_option('sync_meta_fields')){
+	if($meta_fields = nL_sync_rules($post_type, 'meta')){
 
 	}
-	if($taxonomies = nL_get_option('sync_taxonomies')){
+	if($taxonomies = nL_sync_rules($post_type, 'tax')){
 
 	}
 }

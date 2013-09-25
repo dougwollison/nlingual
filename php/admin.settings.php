@@ -37,9 +37,11 @@ function nLingual_settings_page(){
 add_action('admin_init', 'nLingual_register_settings');
 function nLingual_register_settings(){
 	add_settings_section('nLingual-options', __('Options', NL_TXTDMN), 'nLingual_manage_options', 'nLingual');
+	add_settings_section('nLingual-sync_rules', __('Synchronization Rules', NL_TXTDMN), 'nLingual_manage_sync', 'nLingual');
 	add_settings_section('nLingual-languages', __('Languages', NL_TXTDMN), 'nLingual_manage_languages', 'nLingual');
 
 	register_setting('nLingual', 'nLingual-options');
+	register_setting('nLingual', 'nLingual-sync_rules');
 	register_setting('nLingual', 'nLingual-languages', function($data){
 		$languages = array();
 
@@ -105,10 +107,58 @@ function nLingual_register_settings(){
 		printf('<label><input id="l10n_dateformat" type="checkbox" name="nLingual-options[l10n_dateformat]" value="1" %s> %s</label>', $bool ? 'checked' : '', __('Run localization on the date format string', NL_TXTDMN));
 		printf('<p class="description">%s</p>', __('Use if any of your languages use custom date formats.', NL_TXTDMN));
 	}, 'nLingual', 'nLingual-options');
+
+	// Add Syncornization Rule managers for each post type
+	foreach(nL_post_types() as $post_type){
+		$post_type = get_post_type_object($post_type);
+		add_settings_field($post_type->name.'-sync', _f('%s', NL_TXTDMN, $post_type->labels->name), function() use ($post_type, $sync_rules){
+			$pt = $post_type->name;
+			$sync_data_rules = nL_sync_rules($pt, 'data');
+			printf('<p>%s</p>', _f('Check off the fields that should be synchronized between sister %s.', NL_TXTDMN, strtolower($post_type->labels->name)));
+			foreach(array(
+				'post_author',
+				'post_date',
+				'post_status',
+				'comment_status',
+				'ping_status',
+				'post_modified',
+				'post_parent',
+				'menu_order',
+			) as $field){
+				printf(
+					'<label><input type="checkbox" name="nLingual-sync_rules[%s][data]" value="%s" %s> %s</label><br/>',
+					$pt,
+					$field,
+					in_array($field, $sync_data_rules) ? 'checked' : '',
+					$field
+				);
+			}
+
+			$sync_meta_rules = nL_sync_rules($pt, 'meta');
+			printf('<p>%s</p>', __('List the meta field that should be synchronized, one per line.', NL_TXTDMN));
+			printf('<textarea name="nLingual-sync_rules[%s][meta]">%s</textarea>', $pt, $sync_meta_rules);
+
+			$sync_tax_rules = nL_sync_rules($pt, 'tax');
+			printf('<p>%s</p>', __('Check off the taxonomies that should be synchronized.', NL_TXTDMN));
+			foreach(get_object_taxonomies($pt, 'objects') as $taxonomy => $data){
+				printf(
+					'<label><input type="checkbox" name="nLingual-sync_rules[%s][tax]" value="%s" %s> %s</label><br/>',
+					$pt,
+					$taxonomy,
+					in_array($taxonomy, $sync_tax_rules) ? 'checked' : '',
+					$data->label
+				);
+			}
+		});
+	}
 }
 
 function nLingual_manage_options(){
 	do_settings_fields('nLingual', 'options');
+}
+
+function nLingual_manage_sync(){
+	do_settings_fields('nLingual', 'sync');
 }
 
 function nLingual_manage_languages(){
