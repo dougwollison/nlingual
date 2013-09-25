@@ -94,8 +94,19 @@ function nLingual_save_post($post_id){
 
 	// Loop through the sync options, and syncronize the fields with it's associated posts
 	$associated = nL_associated_posts($post_id);
-	if($data_fields = nL_sync_rules($post_type, 'data')){
 
+	if($data_fields = nL_sync_rules($post_type, 'data')){
+		$ids = implode(',', $associated);
+		$post = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE ID = %d", $post_id));
+
+		$changes = array();
+		foreach($data_fields as $field){
+			$changes[] = $wpdb->prepare("$field = %s", $post->$field);
+		}
+		$changes = implode(',', $changes);
+
+		// Run the update
+		$wpdb->query("UPDATE $wpdb->posts SET $changes WHERE ID IN($ids)");
 	}
 	if($meta_fields = nL_sync_rules($post_type, 'meta')){
 
