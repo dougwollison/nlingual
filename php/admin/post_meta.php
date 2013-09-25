@@ -25,6 +25,7 @@ function nLingual_add_meta_box(){
 }
 
 function nLingual_language_metabox($post){
+	wp_nonce_field(NL_SELF, 'nLingual_language');
 	?>
 	<select name="language" style="width:100%">
 	<?php foreach(nL_languages() as $slug => $lang):?>
@@ -35,8 +36,7 @@ function nLingual_language_metabox($post){
 }
 
 function nLingual_translations_metabox($post){
-	global $wpdb;
-	wp_nonce_field(__FILE__, 'nLingual_translations');
+	wp_nonce_field(NL_SELF, 'nLingual_translations');
 
 	// Loop through each language and present controls for each translation
 	foreach(nL_languages() as $lang => $data){
@@ -61,7 +61,7 @@ function nLingual_translations_metabox($post){
 				<option value="<?php echo $lang_post->ID?>" <?php if($lang_post->ID == $translation) echo 'selected'?>><?php echo $lang_post->post_title?></option>
 			<?php endforeach;?>
 			</select>
-			or <a href="<?php echo admin_url()?>?nL_new_translation=<?php echo $post->ID?>&language=<?php echo $lang?>&_nL_nonce=<?php echo wp_create_nonce(__FILE__)?>" class="button-secondary">
+			or <a href="<?php echo admin_url()?>?nL_new_translation=<?php echo $post->ID?>&language=<?php echo $lang?>&_nL_nonce=<?php echo wp_create_nonce(NL_SELF)?>" class="button-secondary">
 				<?php _ef('Create a new %1$s %2$s', NL_TXTDMN, strtolower(nL_get_lang('name', $lang)), strtolower(get_post_type_object($post->post_type)->labels->singular_name))?>
 			</a>
 		</p>

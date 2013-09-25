@@ -21,12 +21,12 @@ function nLingual_save_post($post_id){
 	elseif($post_type == 'page' && !current_user_can('edit_page', $post_id)) return;
 
 	// Set the language if nLingual_language nonce is verified
-	if(isset($_POST['nLingual_language']) && wp_verify_nonce($_POST['nLingual_language'], __FILE__) && isset($_POST['language'])){
+	if(isset($_POST['nLingual_language']) && wp_verify_nonce($_POST['nLingual_language'], NL_SELF) && isset($_POST['language'])){
 		nL_set_post_lang($post_id, $_POST['language']);
 	}
 
 	// Update translations if nLingual_translations nonce is verified
-	if(isset($_POST['nLingual_translations']) && wp_verify_nonce($_POST['nLingual_translations'], __FILE__) && isset($_POST['translations'])){
+	if(isset($_POST['nLingual_translations']) && wp_verify_nonce($_POST['nLingual_translations'], NL_SELF) && isset($_POST['translations'])){
 		nL_associate_posts($post_id, $_POST['translations']);
 	}
 
@@ -78,3 +78,15 @@ function nLingual_save_post($post_id){
  * Delete post hook for updating translation links
  */
 add_action('delete_post', 'nL_delete_translation', 999);
+
+/*
+ * Bulk edit interception
+ */
+add_action('admin_init', 'nLingual_bulk_edit');
+function nLingual_bulk_edit(){
+	if(isset($_GET['bulk_edit']) && isset($_GET['nLingual_language']) && wp_verify_nonce($_GET['nLingual_language'], NL_SELF)){
+		foreach((array) $_GET['post'] as $post_id){
+			nL_set_post_lang($post_id, $_GET['language']);
+		}
+	}
+}

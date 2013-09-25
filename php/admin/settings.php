@@ -47,6 +47,8 @@ function nLingual_register_settings(){
 	register_setting('nLingual', 'nLingual-sync_rules', function($data){
 		foreach($data as &$ruleset){
 			$ruleset['meta'] = explode("\n", $ruleset['meta']);
+			if(in_array('post_date', $ruleset['data'])) $ruleset['data'][] = 'post_date_gmt';
+			if(in_array('post_modified', $ruleset['data'])) $ruleset['data'][] = 'post_modified_gmt';
 		}
 
 		return $data;
