@@ -145,15 +145,18 @@ function nLingual_register_settings(){
 			printf('<textarea id="%s-meta-sync_rules" name="nLingual-sync_rules[%s][meta]" class="large-text code" rows="10">%s</textarea>', $pt, $pt, implode("\n", $sync_meta_rules));
 
 			$sync_tax_rules = nL_sync_rules($pt, 'tax');
-			printf('<label>%s</label><br>', __('Check off the taxonomies that should be synchronized.', NL_TXTDMN));
-			foreach(get_object_taxonomies($pt, 'objects') as $taxonomy => $data){
-				printf(
-					'<label><input type="checkbox" name="nLingual-sync_rules[%s][tax]" value="%s" %s> %s</label><br/>',
-					$pt,
-					$taxonomy,
-					in_array($taxonomy, $sync_tax_rules) ? 'checked' : '',
-					$data->label
-				);
+			$taxonomies = get_object_taxonomies($pt, 'objects');
+			if($taxonomies){
+				printf('<label>%s</label><br>', __('Check off the taxonomies that should be synchronized.', NL_TXTDMN));
+				foreach($taxonomies as $taxonomy => $data){
+					printf(
+						'<label><input type="checkbox" name="nLingual-sync_rules[%s][tax]" value="%s" %s> %s</label><br/>',
+						$pt,
+						$taxonomy,
+						in_array($taxonomy, $sync_tax_rules) ? 'checked' : '',
+						$data->label
+					);
+				}
 			}
 		}, 'nLingual', 'nLingual-sync_rules');
 	}
