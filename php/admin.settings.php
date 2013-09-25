@@ -43,7 +43,7 @@ function nLingual_register_settings(){
 	register_setting('nLingual', 'nLingual-options');
 	register_setting('nLingual', 'nLingual-sync_rules', function($data){
 		foreach($data as &$ruleset){
-			$ruleset['meta'] = explode("\n", $ruleset);
+			$ruleset['meta'] = explode("\n", $ruleset['meta']);
 		}
 
 		return $data;
