@@ -27,11 +27,8 @@ function nLingual_manage_post_language_filter(){
  * Add language column to editor tables
  */
 foreach(nL_post_types() as $post_type){
-	if(in_array($post_type, array('post', 'page'))) $prefix = "manage_{$post_type}s";
-	else $prefix = "manage_{$post_type}_posts";
-
-	add_action($prefix.'_columns', 'nL_add_language_column');
-	add_action($prefix.'_custom_column', 'nL_do_language_column', 10, 2);
+	add_filter("manage_{$post_type}_posts_columns", 'nL_add_language_column', 999);
+	add_action("manage_{$post_type}_posts_custom_column", 'nL_do_language_column', 10, 2);
 }
 function nL_add_language_column($columns){
 	$columns['language'] = __('Language', NL_TXTDMN);
