@@ -2,7 +2,7 @@
 /*
 Plugin Name: nLingual
 Plugin URI: https://github.com/dougwollison/nLingual
-Description: Simple yet efficient multilingual system.
+Description: Easy to manage Multilingual system, with theme development utilities and post data synchronization.
 Version: 1.0
 Author: Doug Wollison
 Author URI: http://dougw.me
