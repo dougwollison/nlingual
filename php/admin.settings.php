@@ -41,7 +41,13 @@ function nLingual_register_settings(){
 	add_settings_section('nLingual-languages', __('Languages', NL_TXTDMN), 'nLingual_manage_languages', 'nLingual');
 
 	register_setting('nLingual', 'nLingual-options');
-	register_setting('nLingual', 'nLingual-sync_rules');
+	register_setting('nLingual', 'nLingual-sync_rules', function($data){
+		foreach($data as &$ruleset){
+			$ruleset['meta'] = explode("\n", $ruleset);
+		}
+
+		return $data;
+	});
 	register_setting('nLingual', 'nLingual-languages', function($data){
 		$languages = array();
 
@@ -136,7 +142,7 @@ function nLingual_register_settings(){
 
 			$sync_meta_rules = nL_sync_rules($pt, 'meta');
 			printf('<p>%s</p>', __('List the meta field that should be synchronized, one per line.', NL_TXTDMN));
-			printf('<textarea name="nLingual-sync_rules[%s][meta]">%s</textarea>', $pt, $sync_meta_rules);
+			printf('<textarea name="nLingual-sync_rules[%s][meta]">%s</textarea>', $pt, implode("\n", $sync_meta_rules));
 
 			$sync_tax_rules = nL_sync_rules($pt, 'tax');
 			printf('<p>%s</p>', __('Check off the taxonomies that should be synchronized.', NL_TXTDMN));
