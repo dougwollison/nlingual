@@ -70,12 +70,8 @@ add_action('bulk_edit_custom_box', 'nLingual_quick_edit_box', 10, 2);
 function nLingual_quick_edit_box($column, $post_type){
 	if(!nL_post_type_supported($post_type)) return;
 
-    if(!defined('DID_NL_NONCE')){
-    	define('DID_NL_NONCE', true);
-        wp_nonce_field(NL_SELF, 'nLingual_language');
-    }
-    ?>
-    <?php if($column == 'language'):?>
+	if($column == 'language'): wp_nonce_field(NL_SELF, 'nLingual_language');
+	?>
     <fieldset class="inline-edit-col-right inline-edit-book">
       <div class="inline-edit-col column-<?php echo $column ?>">
         <label class="inline-edit-group">
@@ -88,5 +84,6 @@ function nLingual_quick_edit_box($column, $post_type){
         </label>
       </div>
     </fieldset>
-    <?php endif;
+    <?php
+    endif;
 }
