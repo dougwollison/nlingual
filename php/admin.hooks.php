@@ -312,6 +312,22 @@ function nLingual_enqueue_scripts(){
 }
 
 /*
+ * Add link to settings page from plugin entry on Plugins page
+ */
+add_filter('plugin_action_links', 'nLingual_plugin_links', 10, 2);
+function nLingual_plugin_links($links, $file){
+	global $this_plugin;
+	if(!$this_plugin) $this_plugin = plugin_basename(NL_SELF);
+
+	if($file == $this_plugin){
+		$settings_link = '<a href="options-general.php?page=nLingual">'.__('Settings', NL_TXTDMN).'</a>';
+		array_unshift($links, $settings_link);
+	}
+
+	return $links;
+}
+
+/*
  * Langlinks for nav menus
  */
 add_action('admin_head', 'nLingual_special_metaboxes');
