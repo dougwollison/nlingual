@@ -132,7 +132,7 @@ function nLingual_register_settings(){
 				'ping_status',
 			) as $field){
 				printf(
-					'<label><input type="checkbox" name="nLingual-sync_rules[%s][data]" value="%s" %s> %s</label><br/>',
+					'<label><input type="checkbox" name="nLingual-sync_rules[%s][data][]" value="%s" %s> %s</label><br/>',
 					$pt,
 					$field,
 					in_array($field, $sync_data_rules) ? 'checked' : '',
@@ -150,7 +150,7 @@ function nLingual_register_settings(){
 				printf('<label>%s</label><br>', __('Check off the taxonomies that should be synchronized.', NL_TXTDMN));
 				foreach($taxonomies as $taxonomy => $data){
 					printf(
-						'<label><input type="checkbox" name="nLingual-sync_rules[%s][tax]" value="%s" %s> %s</label><br/>',
+						'<label><input type="checkbox" name="nLingual-sync_rules[%s][tax][]" value="%s" %s> %s</label><br/>',
 						$pt,
 						$taxonomy,
 						in_array($taxonomy, $sync_tax_rules) ? 'checked' : '',
