@@ -72,6 +72,10 @@ add_action('save_post', 'nLingual_save_post', 999);
 function nLingual_save_post($post_id){
 	global $wpdb;
 
+	// Abort if doing auto save or it's a revision
+	if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+	elseif(wp_is_post_revision($post_id)) return;
+
 	$post_type = $_POST['post_type'];
 
 	// Abort if they don't have permission to edit posts/pages
