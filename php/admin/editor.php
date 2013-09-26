@@ -16,7 +16,7 @@ function nLingual_manage_post_language_filter(){
 			<option value=""><?php _e('Show all languages', NL_TXTDMN)?></option>
 			<?php
 			foreach(nL_languages() as $lang){
-			    echo '<option value="'.$lang['slug'].'"'.($_GET['language'] == $lang['slug'] ? ' selected' : '').'>'.$lang['name'].'</option>';
+			    echo '<option value="'.$lang->slug.'"'.($_GET['language'] == $lang->slug ? ' selected' : '').'>'.$lang->system_name.'</option>';
 			}
 			?>
 		</select>
@@ -77,8 +77,8 @@ function nLingual_quick_edit_box($column, $post_type){
         <label class="inline-edit-group">
         	<?php _e('Language', NL_TXTDMN)?>
         	<select name="language">
-			<?php foreach(nL_languages() as $slug => $lang):?>
-				<option value="<?php echo $slug?>"><?php echo $lang['name']?></option>
+			<?php foreach(nL_languages() as $lang):?>
+				<option value="<?php echo $lang->slug?>"><?php echo $lang->system_name?></option>
 			<?php endforeach;?>
 			</select>
         </label>

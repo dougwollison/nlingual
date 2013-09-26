@@ -12,7 +12,7 @@ function nLingual_shortcodes($content){
 	//Strip closing p tags and opening p tags from beginning/end of string
 	$content = preg_replace('#^\s*(?:</p>)\s*([\s\S]+)\s*(?:<p.*?>)\s*$#', '$1', $content);
 	//Unwrap tags
-	$content = preg_replace('#(?:<p.*?>)?(\[/?(?:'.implode('|', array_keys(nL_languages())).').*\])(?:</p>)?#', '$1', $content);
+	$content = preg_replace('#(?:<p.*?>)?(\[/?(?:'.implode('|', array_keys(nL_langs_by_slug())).').*\])(?:</p>)?#', '$1', $content);
 
 	return trim($content);
 }
@@ -21,7 +21,7 @@ function nLingual_shortcodes($content){
  * Add a shortcode for each language slug
  */
 foreach(nL_languages() as $lang){
-	add_shortcode($lang['slug'], 'nLingual_show_language');
+	add_shortcode($lang->slug, 'nLingual_show_language');
 }
 /*
  * Language shortcode; return the containing text ONLY if it's for the current language

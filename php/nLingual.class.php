@@ -109,10 +109,10 @@ class nLingual{
 		");
 
 		// Load languages
-		$languages = $wpdb->get_results("SELECT * FROM $wpdb->nL_languages", ARRAY_A);
+		$languages = $wpdb->get_results("SELECT * FROM $wpdb->nL_languages", OBJECT);
 		// Default to english if no langauges are set
 		if(!$languages) $languages = array(
-			array(
+			(object) array(
 				'lang_id'		=> 1,
 				'system_name'	=> 'English',
 				'native_name'	=> 'English',
@@ -127,14 +127,14 @@ class nLingual{
 
 		// Loop through the languages and create a lang_id and slug indexed version
 		foreach($languages as $lang){
-			self::$languages_by_id[$lang['lang_id']] = $lang;
-			self::$languages_by_slug[$lang['slug']] = $lang;
+			self::$languages_by_id[$lang->lang_id] = $lang;
+			self::$languages_by_slug[$lang->slug] = $lang;
 		}
 
 		// Load options
 		self::$options = wp_parse_args((array) get_option('nLingual-options'), array(
 			// Default language
-			'default_lang' => $languages[0]['lang_id'],
+			'default_lang' => $languages[0]->lang_id,
 
 			// Redirection settings
 			'method' => NL_REDIRECT_USING_ACCEPT,
@@ -209,6 +209,20 @@ class nLingual{
 	 * Return the languages array
 	 */
 	public static function languages(){
+		return self::$languages;
+	}
+
+	/*
+	 * Return the languages by id array
+	 */
+	public static function langs_by_id(){
+		return self::$languages_by_id;
+	}
+
+	/*
+	 * Return the languages by slug array
+	 */
+	public static function langs_by_slug(){
 		return self::$languages_by_slug;
 	}
 
@@ -296,7 +310,7 @@ class nLingual{
 	}
 
 	/*
-	 * Get the langauge property (or the full array) of a specified langauge
+	 * Get the langauge property (or the full object) of a specified langauge
 	 *
 	 * @uses self::_lang()
 	 * @uses self::lang_exists()
@@ -309,9 +323,17 @@ class nLingual{
 
 		$array = self::_languages($lang);
 
+		// Handle shorthand names for fields
+		switch($field){
+			case 'id': $field = 'lang_id'; break;
+			case 'name': $field = 'system_name'; break;
+			case 'native': $field = 'native_name'; break;
+			case 'order': $field = 'list_order'; break;
+		}
+
 		if(!isset($array[$lang])) return false;
 		if($field === true) return $array[$lang];
-		return $array[$lang][$field];
+		return $array[$lang]->$field;
 	}
 
 	/*
@@ -465,7 +487,7 @@ class nLingual{
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
 	 */
 	public static function in_this_lang($id, $lang){
-		return self::get_post_lang($id, null) == $lang;
+		return self::get_post_lang($id) == $lang;
 	}
 
 	/*
@@ -476,7 +498,7 @@ class nLingual{
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
 	 */
 	public static function in_default_lang($id = null){
-		return self::get_post_lang($id) == self::$default;
+		return self::in_this_lang($id, self::$default);
 	}
 
 	/*
@@ -487,7 +509,7 @@ class nLingual{
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
 	 */
 	public static function in_current_lang($id){
-		return sefl::get_post_lang($id) == self::$current;
+		return self::in_this_lang($id, self::$current);
 	}
 
 	/*
@@ -593,10 +615,10 @@ class nLingual{
 			$query .= "AND t1.post_id != %1\$d";
 		}
 
-		$result = $wpdb->get_results($wpdb->prepare($query, $post_id));
+		$results = $wpdb->get_results($wpdb->prepare($query, $post_id));
 
 		$posts = array();
-		foreach($result as $row){
+		foreach($results as $row){
 			$posts[$row->language] = $row->post_id;
 		}
 
@@ -804,7 +826,7 @@ class nLingual{
 		if(is_admin() && !$force && did_action('admin_notices')) return $text;
 
 		$langs = array_map(function($lang){
-			return $lang['slug'];
+			return $lang->slug;
 		}, self::$languages);
 
 		$langn = array_search($lang, $langs);

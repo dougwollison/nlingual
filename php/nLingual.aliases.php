@@ -17,6 +17,14 @@ function nL_languages(){
 	return nL::languages();
 }
 
+function nL_langs_by_id(){
+	return nL::langs_by_id();
+}
+
+function nL_langs_by_slug(){
+	return nL::langs_by_slug();
+}
+
 function nL_post_types(){
 	return nL::post_types();
 }

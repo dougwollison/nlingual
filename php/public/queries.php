@@ -45,7 +45,9 @@ function nLingual_posts_where_request($where, &$query){
 	|| !isset($query->query_vars['language'])
 	|| !$query->query_vars['language']) return $where;
 
-	$where .= " AND nL.language = '{$query->query_vars['language']}'";
+	$lang_id = nL_lang_id($query->query_vars['language']);
+
+	$where .= " AND nL.lang_id = '$lang_id'";
 
 	return $where;
 }
@@ -68,8 +70,9 @@ if(nL_post_type_supported('post')){
 	add_filter('get_previous_post_where', 'nLingual_adjacent_post_where');
 	add_filter('get_next_post_where', 'nLingual_adjacent_post_where');
 	function nLingual_adjacent_post_where($where){
-		$lang = nL_current_lang();
-		$where .= " AND nL.language = '$lang'";
+		$lang = nL_lang_id();
+
+		$where .= " AND nL.lang_id = '$lang_id'";
 
 		return $where;
 	}
