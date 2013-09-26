@@ -53,18 +53,6 @@ function nLingual_register_settings(){
 
 		return $data;
 	});
-	register_setting('nLingual', 'nLingual-languages', function($data){
-		$languages = array();
-
-		// In case santizing was already called, check if it's proper and skip if so.
-		if($data === array_values($data)) return $data;
-
-		foreach($data as $field => $values)
-			foreach($values as $index => $value)
-				$languages[$index][$field] = $value;
-
-		return $languages;
-	});
 
 	add_settings_field('redirection-method', __('Language redirection method', NL_TXTDMN), function(){
 		$compare = nL_get_option('method');
@@ -184,6 +172,7 @@ function nLingual_manage_sync(){
 
 function nLingual_manage_languages(){
 	$languages = nL_languages();
+	print_r($languages);exit;
 	?>
 	<button id="nLingual_add_language" type="button" class="button-secondary"><?php _e('Add Language', NL_TXTDMN)?></button>
 
@@ -216,6 +205,10 @@ function _nLingual_language_editor($language = array()){
 				<?php _e('Native Name', NL_TXTDMN)?>
 				<input type="text" name="nLingual-languages[native][]" value="<?php echo $native?>">
 			</label>
+			<label class="tag" title="<?php _e('A shorthand name for the language.', NL_TXTDMN)?>">
+				<?php _e('Short name', NL_TXTDMN)?>
+				<input type="text" name="nLingual-languages[tag][]" value="<?php echo $tag?>">
+			</label>
 			<label class="slug" title="<?php _e('A unique identifier for this language.', NL_TXTDMN)?>">
 				<?php _e('Slug', NL_TXTDMN)?>
 				<input type="text" name="nLingual-languages[slug][]" value="<?php echo $slug?>" maxlength="2">
@@ -227,10 +220,6 @@ function _nLingual_language_editor($language = array()){
 			<label class="mo" title="<?php _e('The name (minus extension) of the .MO file use for localization.', NL_TXTDMN)?>">
 				<?php _e('.MO file', NL_TXTDMN)?>
 				<input type="text" name="nLingual-languages[mo][]" value="<?php echo $mo?>">
-			</label>
-			<label class="tag" title="<?php _e('A shorthand name for the language.', NL_TXTDMN)?>">
-				<?php _e('Short name', NL_TXTDMN)?>
-				<input type="text" name="nLingual-languages[tag][]" value="<?php echo $tag?>">
 			</label>
 			<br class="clearfix">
 		</div>
