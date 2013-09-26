@@ -172,13 +172,27 @@ function nLingual_manage_sync(){
 
 function nLingual_manage_languages(){
 	$languages = nL_languages();
-	print_r($languages);return;
 	?>
 	<button id="nLingual_add_language" type="button" class="button-secondary"><?php _e('Add Language', NL_TXTDMN)?></button>
 
-	<div id="nLingual_languages">
-	<?php foreach($languages as $language) _nLingual_language_editor($language)?>
-	</div>
+	<table id="nLingual_languages" class="widefat">
+		<thead>
+			<tr>
+				<th class="language-default">Default?</th>
+				<th class="language-system_name">System Name</th>
+				<th class="language-native_name">Native Name</th>
+				<th class="language-short_name" title="<?php _e('A shorthand name for the language.', NL_TXTDMN)?>">Short Name</th>
+				<th class="language-mo" title="<?php _e('The name (minus extension) of the .MO file use for localization.', NL_TXTDMN)?>">.MO File</th>
+				<th class="language-slug" title="<?php _e('A unique identifier for this language.', NL_TXTDMN)?>">Slug</th>
+				<th class="language-iso" title="<?php _e('The official 2 letter code identifying this language.', NL_TXTDMN)?>">ISO</th>
+				<th class="language-list_order" title="<?php _e('The order this language should appear.', NL_TXTDMN)?>">Order</th>
+				<th class="language-delete">Delete?</th>
+			</tr>
+		</thead>
+		<tbody>
+		<?php foreach($languages as $language) _nLingual_language_editor(get_object_vars($language))?>
+		</tbody>
+	</table>
 
 	<script id="nLingual_language_template" type="text/template">
 		<?php _nLingual_language_editor()?>
@@ -187,43 +201,38 @@ function nLingual_manage_languages(){
 }
 
 function _nLingual_language_editor($language = array()){
-	extract(array_merge(array('slug'=>'', 'iso'=>'', 'mo'=>'', 'tag'=>'', 'name'=>'', 'native'=>''), $language));
+	extract(array_merge(array('lang_id'=>'-1', 'native_name'=>'', 'system_name'=>'', 'short_name'=>'', 'slug'=>'', 'iso'=>'', 'mo'=>'', 'list_order'=>''), $language));
 	$default = nL_default_lang();
 	?>
-	<div class="language">
-		<div class="controls">
-			<label class="default"><input type="radio" name="nLingual-options[default_lang]" value="<?php echo $slug?>" <?php if($default == $slug) echo 'checked'?>> Default</label>
-			<button type="button" class="delete button-secondary"><?php _e('Delete', NL_TXTDMN)?></button>
-			<br class="clearfix">
-		</div>
-		<div class="info">
-			<label class="name">
-				<?php _e('System Name', NL_TXTDMN)?>
-				<input type="text" name="nLingual-languages[name][]" value="<?php echo $name?>">
-			</label>
-			<label class="native">
-				<?php _e('Native Name', NL_TXTDMN)?>
-				<input type="text" name="nLingual-languages[native][]" value="<?php echo $native?>">
-			</label>
-			<label class="tag" title="<?php _e('A shorthand name for the language.', NL_TXTDMN)?>">
-				<?php _e('Short name', NL_TXTDMN)?>
-				<input type="text" name="nLingual-languages[tag][]" value="<?php echo $tag?>">
-			</label>
-			<label class="slug" title="<?php _e('A unique identifier for this language.', NL_TXTDMN)?>">
-				<?php _e('Slug', NL_TXTDMN)?>
-				<input type="text" name="nLingual-languages[slug][]" value="<?php echo $slug?>" maxlength="2">
-			</label>
-			<label class="iso" title="<?php _e('The official 2 letter code identifying this language.', NL_TXTDMN)?>">
-				<?php _e('ISO', NL_TXTDMN)?>
-				<input type="text" name="nLingual-languages[iso][]" value="<?php echo $iso?>" maxlength="2">
-			</label>
-			<label class="mo" title="<?php _e('The name (minus extension) of the .MO file use for localization.', NL_TXTDMN)?>">
-				<?php _e('.MO file', NL_TXTDMN)?>
-				<input type="text" name="nLingual-languages[mo][]" value="<?php echo $mo?>">
-			</label>
-			<br class="clearfix">
-		</div>
-	</div>
+	<tr>
+		<td class="language-default">
+			<input type="radio" name="nLingual-options[default_lang]" value="<?php echo $slug?>" <?php if($default == $slug) echo 'checked'?>>
+		</td>
+		<td class="language-system_name">
+			<input type="text" name="languages[<?php echo $lang_id?>][system_name]" value="<?php echo $system_name?>">
+		</td>
+		<td class="language-native_name">
+			<input type="text" name="languages[<?php echo $lang_id?>][native_name]" value="<?php echo $native_name?>">
+		</td>
+		<td class="language-short_name" title="<?php _e('A shorthand name for the language.', NL_TXTDMN)?>">
+			<input type="text" name="languages[<?php echo $lang_id?>][short_name]" value="<?php echo $short_name?>">
+		</td>
+		<td class="language-mo" title="<?php _e('The name (minus extension) of the .MO file use for localization.', NL_TXTDMN)?>">
+			<input type="text" name="languages[<?php echo $lang_id?>][mo]" value="<?php echo $mo?>">
+		</td>
+		<td class="language-slug" title="<?php _e('A unique identifier for this language.', NL_TXTDMN)?>">
+			<input type="text" name="languages[<?php echo $lang_id?>][slug]" value="<?php echo $slug?>">
+		</td>
+		<td class="language-iso" title="<?php _e('The official 2 letter code identifying this language.', NL_TXTDMN)?>">
+			<input type="text" name="languages[<?php echo $lang_id?>][iso]" value="<?php echo $iso?>">
+		</td>
+		<td class="language-list_order" title="<?php _e('The order this language should appear.', NL_TXTDMN)?>">
+			<input type="text" name="languages[<?php echo $lang_id?>][list_order]" value="<?php echo $list_order?>">
+		</td>
+		<td class="language-delete">
+			<input type="checkbox" name="nLingual[delete][]" value="<?php echo $lang_id?>">
+		</td>
+	</tr>
 	<?php
 }
 
