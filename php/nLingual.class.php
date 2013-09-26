@@ -314,7 +314,7 @@ class nLingual{
 	 *
 	 * @param string $slug The slug of the langauge to fetch
 	 */
-	public static function lang_slug($slug){
+	public static function lang_id($slug){
 		return self::get_lang('lang_id', $slug);
 	}
 
