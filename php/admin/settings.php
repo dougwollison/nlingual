@@ -120,10 +120,10 @@ function nLingual_register_settings(){
 		printf('<p class="description">%s</p>', __('Use if any of your languages use custom date formats.', NL_TXTDMN));
 	}, 'nLingual', 'nLingual-options');
 
-	add_settings_field('reset_translations', __('Reset translation data?', NL_TXTDMN), function(){
-		wp_nonce_field(NL_SELF, 'nLingual_reset_nonce');
-		printf('<label><input id="reset_translations" type="checkbox" name="nLingual_reset_translations" value="1"> %s</label>', __('Clear the translations table for this site?', NL_TXTDMN));
-		printf('<p class="description">%s</p>', __('This will delete all language information, and translation links, for all posts.', NL_TXTDMN));
+	add_settings_field('erase_translations', __('Erase translation data?', NL_TXTDMN), function(){
+		wp_nonce_field(NL_SELF, 'nLingual_erase_nonce');
+		printf('<label><input id="erase_translations" type="submit" name="nLingual_erase_translations" value="%s" class="button-primary"></label>', __('Clear the translations table for this site?', NL_TXTDMN));
+		printf('<p class="description">%s</p>', __('This will erase all language information, and translation links, for all posts (actual posts will be unaffected).', NL_TXTDMN));
 	}, 'nLingual', 'nLingual-options');
 
 	// Add Syncornization Rule managers for each post type
@@ -238,13 +238,18 @@ function _nLingual_language_editor($language = array()){
 	<?php
 }
 
-add_action('admin_init', 'nLingual_reset_translations');
+add_action('admin_init', 'nLingual_erase_translations');
 function nLingual_reset_translations(){
 	global $wpdb;
-	if(isset($_GET['nLingual_reset_translations'])){
-		if(!isset($_GET['nLingual_reset_nonce']) || !wp_verify_nonce($_GET['nLingual_reset_nonce'], NL_SELF))
+	if(isset($_POST['nLingual_erase_translations'])){
+		if(!isset($_POST['nLingual_erase_nonce']) || !wp_verify_nonce($_POST['nLingual_erase_nonce'], NL_SELF))
 			wp_die(__('You do not have permission to do that.', NL_TXTDMN));
 
 		$wpdb->query("TRUNCATE TABLE $wpdb->nL_translations");
+
+		// Redirect back to the nLingual page with the notice that the table was cleared.
+		$goback = add_query_arg('nLingual-erase', 'true',  wp_get_referer());
+		wp_redirect($goback);
+		exit;
 	}
 }

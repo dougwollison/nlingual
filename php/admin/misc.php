@@ -18,8 +18,8 @@ function nLingual_enqueue_scripts(){
 	wp_register_script('nLingual-quickedit-js', plugins_url('js/quickedit.js', NL_SELF), array('inline-edit-post'), '1.0', true);
 
 	wp_localize_script('nLingual-settings-js', 'nLingual_l10n', array(
-		'DeleteLangConfirm' => 'Are you sure you wish to delete this language?',
-		'ResetTranslationsConfirm' => 'Are you sure you wish to clear translations?'
+		'DeleteLangConfirm' => __('Are you sure you wish to delete this language?', NL_TXTDMN),
+		'ResetTranslationsConfirm' => __('Are you sure you wish to clear translations?', NL_TXTDMN)
 	));
 
 	wp_enqueue_style('nLingual-settings');
@@ -41,4 +41,14 @@ function nLingual_plugin_links($links, $file){
 	}
 
 	return $links;
+}
+
+/*
+ * Admin Notices for any specific actions
+ */
+add_action('admin_notices', 'nLingual_admin_notices');
+function nLingual_admin_notices(){
+	if(isset($_GET['nLingual-erase']) && $_GET['nLingual-erase']){
+		printf('<div class="updated"><p>%s</p></div>', __('The translation table has been successfully erased.', NL_TXTDMN));
+	}
 }
