@@ -84,17 +84,55 @@ class nLingual{
 		// Load sync rules
 		self::$sync_rules = (array) get_option('nLingual-sync_rules', array());
 
+		// Load  post types, defualt language, and set current langauge
+		self::$post_types = self::get_option('post_types');
+		self::$default = self::get_option('default_lang');
+		self::$current = self::$default;
+
+		global $wpdb, $table_prefix;
+
+		// Create and register the translations table
+		$wpdb->nL_translations = $table_prefix.'nL_translations';
+		$wpdb->query("
+		CREATE TABLE IF NOT EXISTS `$wpdb->nL_translations` (
+			`group_id` bigint(20) NOT NULL,
+			`lang_id` bigint(20) NOT NULL,
+			`post_id` bigint(20) NOT NULL,
+			UNIQUE KEY `post` (`post_id`),
+			UNIQUE KEY `translation` (`group_id`, `lang_id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+		");
+
+		// Create and register the languages table
+		$wpdb->nL_translations = $table_prefix.'nL_languages';
+		$wpdb->query("
+		CREATE TABLE IF NOT EXISTS `$wpdb->nL_languages` (
+			`lang_id` bigint(20) NOT NULL AUTO_INCREMENT,
+			`system_name` varchar(255) CHARACTER SET utf8 NOT NULL,
+			`native_name` varchar(255) CHARACTER SET utf8 NOT NULL,
+			`short_name` varchar(10) CHARACTER SET utf8 NOT NULL,
+			`slug` char(2) NOT NULL,
+			`iso` char(2) NOT NULL,
+			`mo` varchar(100) NOT NULL,
+			`list_order` int(11) NOT NULL,
+			PRIMARY KEY (`lang_id`),
+			UNIQUE KEY `slug` (`slug`)
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+		");
+
 		// Load languages
-		$languages = get_option('nLingual-languages');
+		$languages = $wpdb->get_results("SELECT * FROM $wpdb->nL_languages", OBJECT_K);
 		// Default to english if no langauges are set
 		if(!$languages) $languages = array(
-			array(
-				'slug'		=> 'en',
-				'iso'		=> 'en',
-				'mo'		=> 'english',
-				'tag'		=> 'En',
-				'name'		=> 'English',
-				'native'	=> 'English'
+			1 => array(
+				'lang_id'		=> 1,
+				'system_name'	=> 'English',
+				'native_name'	=> 'English'
+				'short_name'	=> 'En',
+				'slug'			=> 'en',
+				'iso'			=> 'en',
+				'mo'			=> 'english',
+				'list_order'	=> 0,
 			)
 		);
 		self::$languages = $languages;
@@ -103,24 +141,6 @@ class nLingual{
 		foreach($languages as $lang){
 			self::$languages_by_slug[$lang['slug']] = $lang;
 		}
-
-		// Load  post types, defualt language, and set current langauge
-		self::$post_types = self::get_option('post_types');
-		self::$default = self::get_option('default_lang');
-		self::$current = self::$default;
-
-		// Create and register the translations table
-		global $wpdb, $table_prefix;
-		$wpdb->nL_translations = $table_prefix.'nL_translations';
-		$wpdb->query("
-		CREATE TABLE IF NOT EXISTS `$wpdb->nL_translations` (
-			`group_id` bigint(20) NOT NULL,
-			`language` char(2) NOT NULL,
-			`post_id` bigint(20) NOT NULL,
-			UNIQUE KEY `post` (`post_id`),
-			UNIQUE KEY `translation` (`group_id`, `language`)
-		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-		");
 
 		// Load the text domain
 		add_action('plugins_loaded', array('nLingual', 'onloaded'));
