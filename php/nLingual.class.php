@@ -12,6 +12,7 @@ class nLingual{
 	protected static $options = array();
 	protected static $sync_rules = array();
 	protected static $languages = array();
+	protected static $languages_by_id = array();
 	protected static $languages_by_slug = array();
 	protected static $post_types;
 	protected static $separator;
@@ -60,35 +61,6 @@ class nLingual{
 	 * @uses self::get_option()
 	 */
 	public static function init(){
-		// Load options
-		self::$options = wp_parse_args((array) get_option('nLingual-options'), array(
-			// Default language
-			'default_lang' => 'en',
-
-			// Redirection settings
-			'method' => NL_REDIRECT_USING_ACCEPT,
-			'get_var' => 'lang',
-			'post_var' => 'lang',
-			'skip_default_l10n' => false,
-
-			// Supported post types
-			'post_types' => array('page', 'post'),
-
-			// Split settings
-			'split_separator' => '//',
-
-			// Auto localize...
-			'l10n_dateformat' => true
-		));
-
-		// Load sync rules
-		self::$sync_rules = (array) get_option('nLingual-sync_rules', array());
-
-		// Load  post types, defualt language, and set current langauge
-		self::$post_types = self::get_option('post_types');
-		self::$default = self::get_option('default_lang');
-		self::$current = self::$default;
-
 		global $wpdb, $table_prefix;
 
 		// Create and register the translations table
@@ -121,13 +93,13 @@ class nLingual{
 		");
 
 		// Load languages
-		$languages = $wpdb->get_results("SELECT * FROM $wpdb->nL_languages", OBJECT_K);
+		$languages = $wpdb->get_results("SELECT * FROM $wpdb->nL_languages", ARRAY_A);
 		// Default to english if no langauges are set
 		if(!$languages) $languages = array(
-			1 => array(
+			array(
 				'lang_id'		=> 1,
 				'system_name'	=> 'English',
-				'native_name'	=> 'English'
+				'native_name'	=> 'English',
 				'short_name'	=> 'En',
 				'slug'			=> 'en',
 				'iso'			=> 'en',
@@ -137,10 +109,44 @@ class nLingual{
 		);
 		self::$languages = $languages;
 
-		// Loop through the languages and create a by_slug indexed version
+		// Loop through the languages and create a lang_id indexed version
+		foreach($languages as $lang){
+			self::$languages_by_id[$lang['lang_id']] = $lang;
+		}
+
+		// Loop through the languages and create a slug indexed version
 		foreach($languages as $lang){
 			self::$languages_by_slug[$lang['slug']] = $lang;
 		}
+
+		// Load options
+		self::$options = wp_parse_args((array) get_option('nLingual-options'), array(
+			// Default language
+			'default_lang' => $languages[0]['lang_id'],
+
+			// Redirection settings
+			'method' => NL_REDIRECT_USING_ACCEPT,
+			'get_var' => 'lang',
+			'post_var' => 'lang',
+			'skip_default_l10n' => false,
+
+			// Supported post types
+			'post_types' => array('page', 'post'),
+
+			// Split settings
+			'split_separator' => '//',
+
+			// Auto localize...
+			'l10n_dateformat' => true
+		));
+
+		// Load sync rules
+		self::$sync_rules = (array) get_option('nLingual-sync_rules', array());
+
+		// Load  post types, defualt language, and set current langauge
+		self::$post_types = self::get_option('post_types');
+		self::$default = self::lang_slug(get_option('default_lang'));
+		self::$current = self::$default;
 
 		// Load the text domain
 		add_action('plugins_loaded', array('nLingual', 'onloaded'));
@@ -283,7 +289,7 @@ class nLingual{
 	 * @uses self::lang_exists()
 	 *
 	 * @param string $field Optional The field to retrieve
-	 * @param string $lang Optional The language to retrieve from
+	 * @param mixed $lang Optional The slug/id of the language to retrieve from
 	 */
 	public static function get_lang($field = null, $lang = null){
 		self::_lang($lang);
@@ -291,8 +297,36 @@ class nLingual{
 		if(!self::lang_exists($lang))
 			return false;
 
-		if($field === true) return self::$languages_by_slug[$lang];
-		return self::$languages_by_slug[$lang][$field];
+		$array = self::$languages_by_slug;
+		if(is_numeric($lang)){
+			$lang = intval($lang);
+			$array = self::$languages_by_id;
+		}
+
+		if($field === true) return $array[$lang];
+		return self::$array[$lang][$field];
+	}
+
+	/*
+	 * Get the lang_id based on the slug provided
+	 *
+	 * @uses self::get_lang()
+	 *
+	 * @param string $slug The slug of the langauge to fetch
+	 */
+	public static function lang_slug($slug){
+		return self::get_lang('lang_id', $slug);
+	}
+
+	/*
+	 * Get the slug based on the lang_id provided
+	 *
+	 * @uses self::get_lang()
+	 *
+	 * @param int $lang_id The id of the langauge to fetch
+	 */
+	public static function lang_slug($lang_id){
+		return self::get_lang('slug', $lang_id);
 	}
 
 	/*
@@ -349,7 +383,8 @@ class nLingual{
 		if($lang = self::cache_get($id, 'translations')) return $lang;
 
 		// Query the nL_translations table for the langauge of the post in question
-		$lang = $wpdb->get_var($wpdb->prepare("SELECT language FROM $wpdb->nL_translations WHERE post_id = %d", $id));
+		$lang_id = $wpdb->get_var($wpdb->prepare("SELECT lang_id FROM $wpdb->nL_translations WHERE post_id = %d", $id));
+		$lang = self::lang_slug($lang_id);
 
 		// If no language is found, make it the $default one
 		if(!$lang){
@@ -390,7 +425,7 @@ class nLingual{
 			$wpdb->nL_translations,
 			array(
 				'group_id' => self::_translation_group_id($id),
-				'language' => $lang,
+				'lang_id' => self::lang_id($lang),
 				'post_id' => $id
 			),
 			array('%d', '%s', '%d')
@@ -480,8 +515,8 @@ class nLingual{
 					ON (t1.group_id = t2.group_id)
 			WHERE
 				t2.post_id = %d
-				AND t1.language = %s
-		", $id, $lang));
+				AND t1.lang_id = %s
+		", $id, self::lang_id($lang)));
 
 		// Return the translation's id if found
 		if($translation) return $translation;
@@ -501,19 +536,20 @@ class nLingual{
 	public static function associate_posts($post_id, $posts){
 		global $wpdb;
 
-		$translation_id = self::_translation_group_id($post_id);
+		$group_id = self::_translation_group_id($post_id);
 
 		$query = "
 			REPLACE INTO
 				$wpdb->nL_translations
-				(group_id, language, post_id)
+				(group_id, lang_id, post_id)
 			VALUES
 		";
 
 		$values = array();
 		foreach($posts as $lang => $id){
 			if($id <= 0) continue; // Not an actual post
-			$values[] = $wpdb->prepare("(%d,%s,%d)", $translation_id, $lang, $id);
+			$lang_id = self::lang_id($lang);
+			$values[] = $wpdb->prepare("(%d,%s,%d)", $group_id, $lang_id, $id);
 		}
 
 		$query .=  implode(',', $values);
@@ -532,13 +568,16 @@ class nLingual{
 
 		$query = "
 			SELECT
-				t1.language,
+				l.slug as language,
 				t1.post_id
 			FROM
 				$wpdb->nL_translations AS t1
-				LEFT JOIN
-					$wpdb->nL_translations AS t2
-					ON (t1.group_id = t2.group_id)
+			LEFT JOIN
+				$wpdb->nL_translations AS t2
+				ON (t1.group_id = t2.group_id)
+			LEFT JOIN
+				$wpdb->nL_languages AS l
+				ON (t1.lang_id = l.lang_id)
 			WHERE
 				t2.post_id = %1\$d
 		";
