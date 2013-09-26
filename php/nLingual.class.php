@@ -76,7 +76,7 @@ class nLingual{
 		");
 
 		// Create and register the languages table
-		$wpdb->nL_translations = $table_prefix.'nL_languages';
+		$wpdb->nL_languages = $table_prefix.'nL_languages';
 		$wpdb->query("
 		CREATE TABLE IF NOT EXISTS `$wpdb->nL_languages` (
 			`lang_id` bigint(20) NOT NULL AUTO_INCREMENT,
