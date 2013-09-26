@@ -120,6 +120,12 @@ function nLingual_register_settings(){
 		printf('<p class="description">%s</p>', __('Use if any of your languages use custom date formats.', NL_TXTDMN));
 	}, 'nLingual', 'nLingual-options');
 
+	add_settings_field('reset_translations', __('Reset translation data?', NL_TXTDMN), function(){
+		wp_nonce_field(NL_SELF, 'nLingual_reset_nonce');
+		printf('<label><input id="reset_translations" type="checkbox" name="nLingual_reset_translations" value="1"> %s</label>', __('Clear the translations table for this site?', NL_TXTDMN));
+		printf('<p class="description">%s</p>', __('This will delete all language information, and translation links, for all posts.', NL_TXTDMN));
+	}, 'nLingual', 'nLingual-options');
+
 	// Add Syncornization Rule managers for each post type
 	foreach(nL_post_types() as $post_type){
 		$post_type = get_post_type_object($post_type);
@@ -230,4 +236,15 @@ function _nLingual_language_editor($language = array()){
 		</div>
 	</div>
 	<?php
+}
+
+add_action('admin_init', 'nLingual_reset_translations');
+function nLingual_reset_translations(){
+	global $wpdb;
+	if(isset($_GET['nLingual_reset_translations'])){
+		if(!isset($_GET['nLingual_reset_nonce']) || !wp_verify_nonce($_GET['nLingual_reset_nonce'], NL_SELF))
+			wp_die(__('You do not have permission to do that.', NL_TXTDMN));
+
+		$wpdb->query("TRUNCATE TABLE $wpdb->nL_translations");
+	}
 }
