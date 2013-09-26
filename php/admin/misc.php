@@ -18,8 +18,8 @@ function nLingual_enqueue_scripts(){
 	wp_register_script('nLingual-quickedit-js', plugins_url('js/quickedit.js', NL_SELF), array('inline-edit-post'), '1.0', true);
 
 	wp_localize_script('nLingual-settings-js', 'nLingual_l10n', array(
-		'DeleteLangConfirm' => __('Are you sure you wish to delete this language?', NL_TXTDMN),
-		'EraseDataConfirm' => __('Are you sure you wish to clear translations?', NL_TXTDMN)
+		'DeleteLangConfirm' => __('Are you sure you wish to delete this language? (all links to this language will be deleted)', NL_TXTDMN),
+		'EraseDataConfirm' => __('Are you sure you wish to erase all language and translation data?', NL_TXTDMN)
 	));
 
 	wp_enqueue_style('nLingual-settings');
