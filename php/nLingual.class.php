@@ -38,6 +38,22 @@ class nLingual{
 	}
 
 	/*
+	 * Utility function, return the by_id or by_slug array based on the provided $lang
+	 *
+	 * @param mixed $lang The language id or slug to use and alter
+	 * @return array $languages The proper languages array based on $lang
+	 */
+	public static function _languages(&$lang){
+		$array = self::$languages_by_slug;
+		if(is_numeric($lang)){
+			$lang = intval($lang);
+			$array = self::$languages_by_id;
+		}
+
+		return $array;
+	}
+
+	/*
 	 * Utility function, get the translation_id to use for insert/replace/update queries
 	 *
 	 * @param int $id The post ID to find the existing translation_id for
@@ -109,13 +125,9 @@ class nLingual{
 		);
 		self::$languages = $languages;
 
-		// Loop through the languages and create a lang_id indexed version
+		// Loop through the languages and create a lang_id and slug indexed version
 		foreach($languages as $lang){
 			self::$languages_by_id[$lang['lang_id']] = $lang;
-		}
-
-		// Loop through the languages and create a slug indexed version
-		foreach($languages as $lang){
 			self::$languages_by_slug[$lang['slug']] = $lang;
 		}
 
@@ -145,7 +157,7 @@ class nLingual{
 
 		// Load  post types, defualt language, and set current langauge
 		self::$post_types = self::get_option('post_types');
-		self::$default = self::lang_slug(get_option('default_lang'));
+		self::$default = self::lang_slug(self::get_option('default_lang'));
 		self::$current = self::$default;
 
 		// Load the text domain
@@ -262,7 +274,8 @@ class nLingual{
 	 * @param string $lang The slug of the language
 	 */
 	public static function lang_exists($lang){
-		return isset(self::$languages_by_slug[$lang]);
+		$array = self::_languages($lang);
+		return isset($array[$lang]);
 	}
 
 	/*
@@ -294,17 +307,11 @@ class nLingual{
 	public static function get_lang($field = null, $lang = null){
 		self::_lang($lang);
 
-		if(!self::lang_exists($lang))
-			return false;
+		$array = self::_languages($lang);
 
-		$array = self::$languages_by_slug;
-		if(is_numeric($lang)){
-			$lang = intval($lang);
-			$array = self::$languages_by_id;
-		}
-
+		if(!isset($array[$lang])) return false;
 		if($field === true) return $array[$lang];
-		return self::$array[$lang][$field];
+		return $array[$lang][$field];
 	}
 
 	/*
