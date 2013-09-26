@@ -12,6 +12,7 @@ require(__DIR__.'/public/detection.php');
 require(__DIR__.'/public/nav_menus.php');
 require(__DIR__.'/public/queries.php');
 require(__DIR__.'/public/rewrites.php');
+require(__DIR__.'/public/shortcodes.php');
 
 // Load admin side files if needed
 if(is_admin()){
