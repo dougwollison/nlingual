@@ -90,7 +90,7 @@ function nLingual_detect_requested_post_language(&$wp){
 		// override the $wp_locale
 		global $wp_locale;
 		// Load the nLingual local class
-		require(__DIR__.'/nLingual_WP_Locale.php');
+		require(dirname(NL_SELF).'/php/nLingual_WP_Locale.php');
 		$wp_locale = new nLingual_WP_Locale();
 	}
 }
