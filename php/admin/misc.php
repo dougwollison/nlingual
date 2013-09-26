@@ -19,7 +19,7 @@ function nLingual_enqueue_scripts(){
 
 	wp_localize_script('nLingual-settings-js', 'nLingual_l10n', array(
 		'DeleteLangConfirm' => __('Are you sure you wish to delete this language?', NL_TXTDMN),
-		'ResetTranslationsConfirm' => __('Are you sure you wish to clear translations?', NL_TXTDMN)
+		'EraseDataConfirm' => __('Are you sure you wish to clear translations?', NL_TXTDMN)
 	));
 
 	wp_enqueue_style('nLingual-settings');

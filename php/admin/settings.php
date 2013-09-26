@@ -239,7 +239,7 @@ function _nLingual_language_editor($language = array()){
 }
 
 add_action('admin_init', 'nLingual_erase_translations');
-function nLingual_reset_translations(){
+function nLingual_erase_translations(){
 	global $wpdb;
 	if(isset($_POST['nLingual_erase_translations'])){
 		if(!isset($_POST['nLingual_erase_nonce']) || !wp_verify_nonce($_POST['nLingual_erase_nonce'], NL_SELF))

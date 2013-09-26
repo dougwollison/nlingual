@@ -15,8 +15,8 @@ jQuery(function($){
 		$('#nLingual_languages').sortable('refresh');
 	});
 
-	$('#reset_translations').click(function(e){
-		if(!confirm(nLingual_l10n.ResetTranslationsConfirm))
+	$('#erase_translations').click(function(e){
+		if(!confirm(nLingual_l10n.EraseDataConfirm))
 			e.preventDefault();
 	});
 });
