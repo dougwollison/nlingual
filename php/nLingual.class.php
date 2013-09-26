@@ -675,6 +675,29 @@ class nLingual{
 	}
 
 	/*
+	 * Find the post with the provided path, and return the one for the provided language version
+	 *
+	 * @uses self::_lang()
+	 * @uses self::get_permalink()
+	 *
+	 * @param string $path The path (in /parent/child/ or /page/ form) of the page to find
+	 * @param string $post_type The slug of the post type it should be looking for (defaults to page)
+	 * @param string $lang The slug of the language requested (defaults to current language)
+	 * @param bool $echo Wether or not to echo the resulting $link
+	 */
+	public static function translate_link($path, $post_type = null, $lang = null, $echo = true){
+		global $wpdb;
+
+		if(!$post_type) $post_type = 'page';
+
+		self::_lang($lang);
+
+		$post = get_page_by_path(trim($path, '/'), OBJECT, $post_type);
+
+		return self::get_permalink($post->ID, $lang, $echo);
+	}
+
+	/*
 	 * Return or print a list of links to the current page in all available languages
 	 *
 	 * @uses self::get_permalink()
