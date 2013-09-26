@@ -172,7 +172,7 @@ function nLingual_manage_sync(){
 
 function nLingual_manage_languages(){
 	$languages = nL_languages();
-	print_r($languages);exit;
+	print_r($languages);return;
 	?>
 	<button id="nLingual_add_language" type="button" class="button-secondary"><?php _e('Add Language', NL_TXTDMN)?></button>
 
