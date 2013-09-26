@@ -33,7 +33,7 @@ class nLingual{
 		if($lang === null)
 			$lang = self::$current;
 		elseif($lang === true)
-			$alng = self::$default;
+			$lang = self::$default;
 	}
 
 	/*
