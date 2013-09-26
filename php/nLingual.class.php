@@ -109,7 +109,7 @@ class nLingual{
 		");
 
 		// Load languages
-		$languages = $wpdb->get_results("SELECT * FROM $wpdb->nL_languages", OBJECT);
+		$languages = $wpdb->get_results("SELECT * FROM $wpdb->nL_languages ORDER BY list_order ASC", OBJECT);
 		// Default to english if no langauges are set
 		if(!$languages) $languages = array(
 			(object) array(
