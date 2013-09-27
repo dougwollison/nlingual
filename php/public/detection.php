@@ -65,6 +65,10 @@ function nLingual_check_alternate_frontpage(&$wp){
 				$wp->matched_rule = null;
 				$wp->matched_query = null;
 			}
+
+			// Primarily if it's the Front or Posts page,
+			// we need to set the language here and now
+			nL_set_lang($lang);
 		}
 	}
 }
@@ -78,6 +82,8 @@ function nLingual_detect_requested_post_language(&$wp){
 	if(!is_admin()){
 		if(isset($wp_query->post)){
 			$lang = nL_get_post_lang($wp_query->post->ID);
+
+			// Set the language
 			nL_set_lang($lang);
 		}
 
