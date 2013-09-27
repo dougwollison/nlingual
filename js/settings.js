@@ -1,14 +1,16 @@
 jQuery(function($){
 	var $langauges = $('#nLingual_languages');
+	
+	var language_order = function(){
+		$langauges.find('tbody tr').each(function(i){
+			$('.list_order',this).val(i);
+		});
+	}
 
 	$langauges.find('tbody').sortable({
 		items: 'tr',
 		axis: 'y',
-		stop: function(event, ui){
-			$langauges.find('tbody tr').each(function(i){
-				$('.list_order',this).val(i);
-			});
-		}
+		stop: language_order
 	});
 
 	var lang_id = -1;
@@ -25,6 +27,7 @@ jQuery(function($){
 
 		$langauges.find('tbody').append($new_row);
 		$langauges.find('tbody').sortable('refresh');
+		language_order();
 	});
 	
 	$langauges.on('change', '.language-system_name input', function(){
