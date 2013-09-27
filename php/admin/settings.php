@@ -64,22 +64,39 @@ function nLingual_register_settings(){
 
 		foreach($options as $label => $value){
 			$label = sprintf($label, nL_default_lang(), parse_url(get_bloginfo('home'), PHP_URL_HOST));
-			printf('<label><input type="radio" name="nLingual-options[method]" value="%s" %s> %s</label><br/>', $value, $value == $compare ? 'checked' : '', __($label, 'NL_TXTDMN'));
+			printf(
+				'<label><input type="radio" name="nLingual-options[method]" value="%s" %s> %s</label><br/>',
+				$value,
+				$value == $compare ? 'checked' : '',
+				__($label, 'NL_TXTDMN')
+			);
 		}
 
 		$bool = nL_get_option('skip_default_l10n');
 
-		printf('<label><input id="skip_default_l10n" type="checkbox" name="nLingual-options[skip_default_l10n]" value="1" %s> %s</label>', $bool ? 'checked' : '', __('Skip on urls in the default language', NL_TXTDMN));
+		printf(
+			'<label><input id="skip_default_l10n" type="checkbox" name="nLingual-options[skip_default_l10n]" value="1" %s> %s</label>',
+			$bool ? 'checked' : '',
+			__('Skip on urls in the default language', NL_TXTDMN)
+		);
 	}, 'nLingual', 'nLingual-options');
 
 	add_settings_field('request-vars', __('POST & GET variable names', NL_TXTDMN), function(){
 		$get = nL_get_option('get_var');
 		$post = nL_get_option('post_var');
 
-		printf('<label>%s</label><br>', __('If these parameters are passed, they will override the language set via the redirection method.', NL_TXTDMN));
-
-		printf('<label><code>GET&nbsp;</code> <input type="text" name="nLingual-options[get_var]" value="%s"></label><br>', $get);
-		printf('<label><code>POST</code> <input type="text" name="nLingual-options[post_var]" value="%s"></label><br>', $post);
+		printf(
+			'<label>%s</label><br>',
+			__('If these parameters are passed, they will override the language set via the redirection method.', NL_TXTDMN)
+		);
+		printf(
+			'<label><code>GET&nbsp;</code> <input type="text" name="nLingual-options[get_var]" value="%s"></label><br>',
+			$get
+		);
+		printf(
+			'<label><code>POST</code> <input type="text" name="nLingual-options[post_var]" value="%s"></label><br>',
+			$post
+		);
 	}, 'nLingual', 'nLingual-options');
 
 	add_settings_field('post_types', __('Supported post types', NL_TXTDMN), function(){
@@ -89,29 +106,56 @@ function nLingual_register_settings(){
 
 		foreach($available as $slug => $data){
 			if($slug == 'attachment') continue; // Attachements are excluded; they have show_ui but they should not be translated.
-			printf('<label><input type="checkbox" name="nLingual-options[post_types][]" value="%s" %s> %s</label><br/>', $slug, in_array($slug, $post_types) ? 'checked' : '', $data->labels->menu_name);
+			printf(
+				'<label><input type="checkbox" name="nLingual-options[post_types][]" value="%s" %s> %s</label><br/>',
+				$slug,
+				in_array($slug, $post_types) ? 'checked' : '',
+				$data->labels->menu_name
+			);
 		}
 	}, 'nLingual', 'nLingual-options');
 
 	add_settings_field('split_separator', __('Split language separator', NL_TXTDMN), function(){
 		$separator = nL_get_option('separator');
 
-		printf('<input id="split_separator" type="text" class="small-text" name="nLingual-options[separator]" value="%s">', $separator);
-		printf('<p>%s</p>', __('Used for splitting things like the blog title and extracting the title for the appropriate language.', NL_TXTDMN));
-		printf('<p class="description">'.__('Example: <strong>English Title %1$s French Title %1$s Spanish Title</strong> (if the language order is English, French, Spanish)', NL_TXTDMN).'</p>', $separator);
+		printf(
+			'<input id="split_separator" type="text" class="small-text" name="nLingual-options[separator]" value="%s">',
+			$separator
+		);
+		printf(
+			'<p>%s</p>',
+			__('Used for splitting things like the blog title and extracting the title for the appropriate language.', NL_TXTDMN)
+		);
+		printf(
+			'<p class="description">'.__('Example: <strong>English Title %1$s French Title %1$s Spanish Title</strong> (if the language order is English, French, Spanish)', NL_TXTDMN).'</p>', $separator
+		);
 	}, 'nLingual', 'nLingual-options');
 
 	add_settings_field('l10n_dateformat', __('Localize date format?', NL_TXTDMN), function(){
 		$bool = nL_get_option('l10n_dateformat');
 
-		printf('<label><input id="l10n_dateformat" type="checkbox" name="nLingual-options[l10n_dateformat]" value="1" %s> %s</label>', $bool ? 'checked' : '', __('Run localization on the date format string', NL_TXTDMN));
-		printf('<p class="description">%s</p>', __('Use if any of your languages use custom date formats.', NL_TXTDMN));
+		printf(
+			'<label><input id="l10n_dateformat" type="checkbox" name="nLingual-options[l10n_dateformat]" value="1" %s> %s</label>',
+			$bool ? 'checked' : '',
+			__('Run localization on the date format string', NL_TXTDMN)
+		);
+		printf(
+			'<p class="description">%s</p>',
+			__('Use if any of your languages use custom date formats.', NL_TXTDMN)
+		);
 	}, 'nLingual', 'nLingual-options');
 
 	add_settings_field('erase_translations', __('Erase translation data?', NL_TXTDMN), function(){
 		$erase_url = admin_url(sprintf('?_nL_nonce=%s', wp_create_nonce('nLingual_erase_translations')));
-		printf('<label><a href="%s" id="erase_translations" class="button-primary">%s</a></label>', $erase_url, __('Clear the translations table for this site?', NL_TXTDMN));
-		printf('<p class="description">%s</p>', __('This will erase all language information, and translation links, for all posts (actual posts will be unaffected).', NL_TXTDMN));
+		printf(
+			'<label><a href="%s" id="erase_translations" class="button-primary">%s</a></label>',
+			$erase_url,
+			__('Clear the translations table for this site?', NL_TXTDMN)
+		);
+		printf(
+			'<p class="description">%s</p>',
+			__('This will erase all language information, and translation links, for all posts (actual posts will be unaffected).', NL_TXTDMN)
+		);
 	}, 'nLingual', 'nLingual-options');
 
 	// Add Syncornization Rule managers for each post type
@@ -201,7 +245,16 @@ function nLingual_manage_languages(){
 
 function _nLingual_language_editor($language = array()){
 	$language = array_map('esc_textarea', $language);
-	extract(array_merge(array('lang_id'=>'-1', 'system_name'=>'', 'native_name'=>'', 'short_name'=>'', 'slug'=>'', 'iso'=>'', 'mo'=>'', 'list_order'=>''), $language));
+	extract(array_merge(array(
+		'lang_id'=>'-1',
+		'system_name'=>'',
+		'native_name'=>'',
+		'short_name'=>'',
+		'slug'=>'',
+		'iso'=>'',
+		'mo'=>'',
+		'list_order'=>''
+	), $language));
 	$default = nL_default_lang();
 	?>
 	<tr>
