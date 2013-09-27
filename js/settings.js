@@ -1,7 +1,14 @@
 jQuery(function($){
-	$('#nLingual_languages tbody').sortable({
+	var $langauges = $('#nLingual_languages');
+
+	$langauges.find('tbody').sortable({
 		items: 'tr',
-		axis: 'y'
+		axis: 'y',
+		stop: function(event, ui){
+			$langauges.find('tbody tr').each(function(i){
+				$('.list_order',this).val(i);
+			});
+		}
 	});
 
 	var lang_id = -1;
@@ -16,8 +23,8 @@ jQuery(function($){
 
 		lang_id--;
 
-		$('#nLingual_languages tbody').append($new_row);
-		$('#nLingual_languages tbody').sortable('refresh');
+		$langauges.find('tbody').append($new_row);
+		$langauges.find('tbody').sortable('refresh');
 	});
 
 	$('#erase_translations').click(function(e){
