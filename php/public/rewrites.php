@@ -30,6 +30,7 @@ function nLingual_get_curlang_version($value){
  * Add fitler for running split_langs on the blogname
  */
 add_filter('option_blogname', 'nL_split_langs');
+add_filter('the_title', 'nL_split_langs');
 
 /*
  * Add filter for localizing the permalinks
