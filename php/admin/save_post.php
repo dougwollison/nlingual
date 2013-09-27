@@ -21,12 +21,12 @@ function nLingual_save_post($post_id){
 	elseif($post_type == 'page' && !current_user_can('edit_page', $post_id)) return;
 
 	// Set the language if nLingual_language nonce is verified
-	if(isset($_POST['nLingual_language']) && wp_verify_nonce($_POST['nLingual_language'], NL_SELF) && isset($_POST['language'])){
+	if(isset($_POST['nLingual_language']) && wp_verify_nonce($_POST['nL_lang'], 'nLingual_set_language') && isset($_POST['language'])){
 		nL_set_post_lang($post_id, $_POST['language']);
 	}
 
 	// Update translations if nLingual_translations nonce is verified
-	if(isset($_POST['nLingual_translations']) && wp_verify_nonce($_POST['nLingual_translations'], NL_SELF) && isset($_POST['translations'])){
+	if(isset($_POST['nLingual_translations']) && wp_verify_nonce($_POST['nL_link'], 'nLingual_set_translations') && isset($_POST['translations'])){
 		nL_associate_posts($post_id, $_POST['translations']);
 	}
 

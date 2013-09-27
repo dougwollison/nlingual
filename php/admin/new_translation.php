@@ -14,7 +14,7 @@ function nLingual_new_translation(){
 	if(isset($_GET['nL_new_translation'])){
 		$post_id = $_GET['nL_new_translation'];
 
-		if(!isset($_GET['_nL_nonce']) || !wp_verify_nonce($_GET['_nL_nonce'], NL_SELF))
+		if(!isset($_GET['_nL_nonce']) || !wp_verify_nonce($_GET['_nL_nonce'], 'nLingual_new_translation'))
 			wp_die(__('You do not have permission to do that.', NL_TXTDMN));
 
 		if(!isset($_GET['language']) || !nL_lang_exists($_GET['language']))
