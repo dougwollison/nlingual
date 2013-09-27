@@ -20,6 +20,7 @@ class nLingual{
 	protected static $cache = array();
 	protected static $current;
 	protected static $current_cache;
+	protected static $loaded_textdomains = array();
 	protected static $domains = array(
 		'theme' => 'default',
 		'plugin' => 'nLingual'
