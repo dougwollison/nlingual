@@ -8,21 +8,20 @@
  */
 add_action('admin_enqueue_scripts', 'nLingual_enqueue_scripts');
 function nLingual_enqueue_scripts(){
-	// Settings styling
-	wp_register_style('nLingual-settings', plugins_url('css/settings.css', NL_SELF), '1.0', 'screen');
+	// Admin styling
+	wp_register_style('nLingual-admin', plugins_url('css/admin.css', NL_SELF), '1.0', 'screen');
 
-	// Settings javascript
-	wp_register_script('nLingual-settings-js', plugins_url('js/settings.js', NL_SELF), array('jquery-ui-sortable'), '1.0');
+	// Admin javascript
+	wp_register_script('nLingual-admin-js', plugins_url('js/admin.js', NL_SELF), array('jquery-ui-sortable'), '1.0');
+	wp_localize_script('nLingual-admin-js', 'nLingual_l10n', array(
+		'EraseDataConfirm' => __('Are you sure you wish to erase all language and translation data?', NL_TXTDMN)
+	));
 
 	// Quick-Edit javascript
 	wp_register_script('nLingual-quickedit-js', plugins_url('js/quickedit.js', NL_SELF), array('inline-edit-post'), '1.0', true);
 
-	wp_localize_script('nLingual-settings-js', 'nLingual_l10n', array(
-		'EraseDataConfirm' => __('Are you sure you wish to erase all language and translation data?', NL_TXTDMN)
-	));
-
-	wp_enqueue_style('nLingual-settings');
-	wp_enqueue_script('nLingual-settings-js');
+	wp_enqueue_style('nLingual-admin');
+	wp_enqueue_script('nLingual-admin-js');
 	wp_enqueue_script('nLingual-quickedit-js');
 }
 

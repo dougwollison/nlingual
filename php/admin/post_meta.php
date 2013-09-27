@@ -55,14 +55,15 @@ function nLingual_translations_metabox($post){
 		?>
 		<p>
 			<strong><?php echo $lang->system_name?>:</strong>
-			<select name="translations[<?php echo $lang->slug?>]">
+			<select name="translations[<?php echo $lang->slug?>]" class="translations">
 				<option value="-1"><?php _ex('None', 'no translation', NL_TXTDMN)?></option>
 			<?php foreach($lang_posts->posts as $lang_post):?>
 				<option value="<?php echo $lang_post->ID?>" <?php if($lang_post->ID == $translation) echo 'selected'?>><?php echo $lang_post->post_title?></option>
 			<?php endforeach;?>
 			</select>
+			<a href="<?php echo admin_url("/post.php?post=%d&action=edit")?>" class="button-primary edit-translation"><?php _e('Edit', NL_TXTDMN)?></a>
 			or <a href="<?php echo admin_url(sprintf('?nL_new_translation=%d&language=%s&_nL_nonce=%s', $post->ID, $lang->slug, wp_create_nonce('nLingual_new_translation')))?>" class="button-secondary">
-				<?php _ef('Create a new %1$s %2$s', NL_TXTDMN, strtolower($lang->slug), strtolower(get_post_type_object($post->post_type)->labels->singular_name))?>
+				<?php _ef('Create a new %1$s %2$s', NL_TXTDMN, strtolower($lang->system_name), strtolower(get_post_type_object($post->post_type)->labels->singular_name))?>
 			</a>
 		</p>
 		<?php
