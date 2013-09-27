@@ -38,6 +38,20 @@ function nLingual_process_options(){
 		foreach($_POST['nLingual-languages'] as $lang_id => $data){
 			// Make sure $lang_id is an integer
 			$lang_id = intval($lang_id);
+			
+			// If no system_name is passed, skip it
+			if(!isset($data['system_name'])) continue;
+			
+			// Default the values
+			$name = $data['system_name'];
+			$data = wp_parse_args($data, array(
+				'system_name' => $name,
+				'native_name' => $name,
+				'short_name' => $name,
+				'mo' => $name,
+				'slug' => $name,
+				'iso' => $name
+			));
 		
 			// Build the $values array	
 			$values = array(

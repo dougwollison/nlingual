@@ -261,16 +261,18 @@ function nLingual_manage_languages(){
 
 function _nLingual_language_editor($language = array()){
 	$language = array_map('esc_textarea', $language);
+	
 	extract(array_merge(array(
 		'lang_id'=>'-1',
 		'system_name'=>'',
 		'native_name'=>'',
 		'short_name'=>'',
+		'mo'=>'',
 		'slug'=>'',
 		'iso'=>'',
-		'mo'=>'',
 		'list_order'=>''
 	), $language));
+	
 	$default = nL_default_lang();
 	?>
 	<tr>
