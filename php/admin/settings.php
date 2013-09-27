@@ -57,18 +57,18 @@ function nLingual_register_settings(){
 	add_settings_field('redirection-method', __('Language redirection method', NL_TXTDMN), function(){
 		$compare = nL_get_option('method');
 		$options = array(
-			'Subdomain (e.g. <code>%1$s.%2$s</code>)' => NL_REDIRECT_USING_DOMAIN,
-			'Path prefix (e.g. <code>%2$s/%1$s</code>)' => NL_REDIRECT_USING_PATH,
-			'None, use visitors native language, if applicable' => NL_REDIRECT_USING_ACCEPT
+			NL_REDIRECT_USING_DOMAIN	=> __('Subdomain (e.g. <code>%1$s.%2$s</code>)', NL_TXTDMN),
+			NL_REDIRECT_USING_PATH		=> __('Path prefix (e.g. <code>%2$s/%1$s</code>)', NL_TXTDMN),
+			NL_REDIRECT_USING_ACCEPT	=> __('None, use visitors native language, if applicable', NL_TXTDMN)
 		);
 
-		foreach($options as $label => $value){
+		foreach($options as $value => $label){
 			$label = sprintf($label, nL_default_lang(), parse_url(get_bloginfo('home'), PHP_URL_HOST));
 			printf(
 				'<label><input type="radio" name="nLingual-options[method]" value="%s" %s> %s</label><br/>',
 				$value,
 				$value == $compare ? 'checked' : '',
-				__($label, 'NL_TXTDMN')
+				$label
 			);
 		}
 
