@@ -56,7 +56,7 @@ function nLingual_translations_metabox($post){
 		<p>
 			<strong><?php echo $lang->system_name?>:</strong>
 			<select name="translations[<?php echo $lang->slug?>]" class="translations">
-				<option value="-1"><?php _ex('None', 'no translation', NL_TXTDMN)?></option>
+				<option value="-1"><?php _e('None', NL_TXTDMN)?></option>
 			<?php foreach($lang_posts->posts as $lang_post):?>
 				<option value="<?php echo $lang_post->ID?>" <?php if($lang_post->ID == $translation) echo 'selected'?>><?php echo $lang_post->post_title?></option>
 			<?php endforeach;?>

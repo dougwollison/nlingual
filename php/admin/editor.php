@@ -43,7 +43,7 @@ function nL_do_language_column($column, $post_id){
 		printf('<input type="hidden" value="%s">', $lang);
 
 		if(!$lang){
-			_ex('None', 'no language', NL_TXTDMN);
+			_e('None', NL_TXTDMN);
 			return;
 		}
 

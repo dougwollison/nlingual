@@ -161,7 +161,7 @@ function nLingual_register_settings(){
 	// Add Syncornization Rule managers for each post type
 	foreach(nL_post_types() as $post_type){
 		$post_type = get_post_type_object($post_type);
-		add_settings_field($post_type->name.'-sync_rules', _f('%s', NL_TXTDMN, $post_type->labels->name), function() use ($post_type, $sync_rules){
+		add_settings_field($post_type->name.'-sync_rules', $post_type->labels->name, function() use ($post_type, $sync_rules){
 			$pt = $post_type->name;
 			$sync_data_rules = nL_sync_rules($pt, 'data');
 			printf(
