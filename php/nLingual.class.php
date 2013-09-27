@@ -161,7 +161,7 @@ class nLingual{
 		self::$current = self::$default;
 
 		// Setup text domain related hooks
-		add_action('plugins_loaded', array('nLingual', 'onloaded'), 1);
+		add_action('plugins_loaded', array('nLingual', 'onloaded'));
 		add_action('load_textdomain', array('nLingual', 'log_textdomain'), 10, 2);
 	}
 
