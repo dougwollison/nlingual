@@ -21,6 +21,7 @@ if(is_admin()){
 	require(__DIR__.'/admin/nav_menus.php');
 	require(__DIR__.'/admin/new_translation.php');
 	require(__DIR__.'/admin/post_meta.php');
+	require(__DIR__.'/admin/process_options.php');
 	require(__DIR__.'/admin/save_post.php');
 	require(__DIR__.'/admin/settings.php');
 }
