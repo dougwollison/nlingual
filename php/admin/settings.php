@@ -109,8 +109,8 @@ function nLingual_register_settings(){
 	}, 'nLingual', 'nLingual-options');
 
 	add_settings_field('erase_translations', __('Erase translation data?', NL_TXTDMN), function(){
-		wp_nonce_field(NL_SELF, 'nLingual_erase_nonce');
-		printf('<label><input id="erase_translations" type="submit" name="nLingual_erase_translations" value="%s" class="button-primary"></label>', __('Clear the translations table for this site?', NL_TXTDMN));
+		$erase_url = admin_url(sprintf('?_nL_nonce=%s', wp_create_nonce('nLingual_erase_translations')));
+		printf('<label><a href="%s" id="erase_translations" class="button-primary">%s</a></label>', $erase_url, __('Clear the translations table for this site?', NL_TXTDMN));
 		printf('<p class="description">%s</p>', __('This will erase all language information, and translation links, for all posts (actual posts will be unaffected).', NL_TXTDMN));
 	}, 'nLingual', 'nLingual-options');
 
@@ -185,7 +185,6 @@ function nLingual_manage_languages(){
 				<th class="language-mo" title="<?php _e('The name (minus extension) of the .MO file use for localization.', NL_TXTDMN)?>">.MO File</th>
 				<th class="language-slug" title="<?php _e('A unique identifier for this language.', NL_TXTDMN)?>">Slug</th>
 				<th class="language-iso" title="<?php _e('The official 2 letter code identifying this language.', NL_TXTDMN)?>">ISO</th>
-				<th class="language-list_order" title="<?php _e('The order this language should appear.', NL_TXTDMN)?>">Order</th>
 				<th class="language-delete">Delete?</th>
 			</tr>
 		</thead>
@@ -201,53 +200,36 @@ function nLingual_manage_languages(){
 }
 
 function _nLingual_language_editor($language = array()){
-	extract(array_merge(array('lang_id'=>'-1', 'native_name'=>'', 'system_name'=>'', 'short_name'=>'', 'slug'=>'', 'iso'=>'', 'mo'=>'', 'list_order'=>''), $language));
+	$language = array_map('esc_textarea', $language);
+	extract(array_merge(array('lang_id'=>'-1', 'system_name'=>'', 'native_name'=>'', 'short_name'=>'', 'slug'=>'', 'iso'=>'', 'mo'=>'', 'list_order'=>''), $language));
 	$default = nL_default_lang();
 	?>
 	<tr>
 		<td class="language-default">
 			<input type="radio" name="nLingual-options[default_lang]" value="<?php echo $slug?>" <?php if($default == $slug) echo 'checked'?>>
+			<input type="hidden" name="nLingual-languages[<?php echo $lang_id?>][list_order]" value="<?php echo $list_order?>" class="list_order">
 		</td>
 		<td class="language-system_name">
-			<input type="text" name="languages[<?php echo $lang_id?>][system_name]" value="<?php echo $system_name?>">
+			<input type="text" name="nLingual-languages[<?php echo $lang_id?>][system_name]" value="<?php echo $system_name?>">
 		</td>
 		<td class="language-native_name">
-			<input type="text" name="languages[<?php echo $lang_id?>][native_name]" value="<?php echo $native_name?>">
+			<input type="text" name="nLingual-languages[<?php echo $lang_id?>][native_name]" value="<?php echo $native_name?>">
 		</td>
 		<td class="language-short_name" title="<?php _e('A shorthand name for the language.', NL_TXTDMN)?>">
-			<input type="text" name="languages[<?php echo $lang_id?>][short_name]" value="<?php echo $short_name?>">
+			<input type="text" name="nLingual-languages[<?php echo $lang_id?>][short_name]" value="<?php echo $short_name?>">
 		</td>
 		<td class="language-mo" title="<?php _e('The name (minus extension) of the .MO file use for localization.', NL_TXTDMN)?>">
-			<input type="text" name="languages[<?php echo $lang_id?>][mo]" value="<?php echo $mo?>">
+			<input type="text" name="nLingual-languages[<?php echo $lang_id?>][mo]" value="<?php echo $mo?>">
 		</td>
 		<td class="language-slug" title="<?php _e('A unique identifier for this language.', NL_TXTDMN)?>">
-			<input type="text" name="languages[<?php echo $lang_id?>][slug]" value="<?php echo $slug?>">
+			<input type="text" name="nLingual-languages[<?php echo $lang_id?>][slug]" value="<?php echo $slug?>">
 		</td>
 		<td class="language-iso" title="<?php _e('The official 2 letter code identifying this language.', NL_TXTDMN)?>">
-			<input type="text" name="languages[<?php echo $lang_id?>][iso]" value="<?php echo $iso?>">
-		</td>
-		<td class="language-list_order" title="<?php _e('The order this language should appear.', NL_TXTDMN)?>">
-			<input type="text" name="languages[<?php echo $lang_id?>][list_order]" value="<?php echo $list_order?>">
+			<input type="text" name="nLingual-languages[<?php echo $lang_id?>][iso]" value="<?php echo $iso?>">
 		</td>
 		<td class="language-delete">
-			<input type="checkbox" name="nLingual[delete][]" value="<?php echo $lang_id?>">
+			<input type="checkbox" name="nLingual-delete[]" value="<?php echo $lang_id?>">
 		</td>
 	</tr>
 	<?php
-}
-
-add_action('admin_init', 'nLingual_erase_translations');
-function nLingual_erase_translations(){
-	global $wpdb;
-	if(isset($_POST['nLingual_erase_translations'])){
-		if(!isset($_POST['nLingual_erase_nonce']) || !wp_verify_nonce($_POST['nLingual_erase_nonce'], NL_SELF))
-			wp_die(__('You do not have permission to do that.', NL_TXTDMN));
-
-		$wpdb->query("TRUNCATE TABLE $wpdb->nL_translations");
-
-		// Redirect back to the nLingual page with the notice that the table was cleared.
-		$goback = add_query_arg('nLingual-erase', 'true',  wp_get_referer());
-		wp_redirect($goback);
-		exit;
-	}
 }
