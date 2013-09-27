@@ -16,6 +16,7 @@ require(__DIR__.'/public/shortcodes.php');
 
 // Load admin side files if needed
 if(is_admin()){
+	require(__DIR__.'/presets.php');
 	require(__DIR__.'/admin/editor.php');
 	require(__DIR__.'/admin/misc.php');
 	require(__DIR__.'/admin/nav_menus.php');

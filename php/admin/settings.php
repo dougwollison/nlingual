@@ -231,8 +231,16 @@ function nLingual_manage_sync(){
 }
 
 function nLingual_manage_languages(){
+	global $nLingual_preset_languages;
 	$languages = nL_languages();
 	?>
+	<select id="nLingual_language_preset">
+		<option value=""><?php _e('Custom', NL_TXTDMN)?></option>
+		<?php
+		foreach($nLingual_preset_languages as $lang => $data)
+			printf('<option value="%s" title="%s">%s</option>', $lang, $data['native_name'], $data['system_name']);
+		?>
+	</select>
 	<button id="nLingual_add_language" type="button" class="button-secondary"><?php _e('Add Language', NL_TXTDMN)?></button>
 
 	<table id="nLingual_languages" class="widefat">
@@ -253,6 +261,8 @@ function nLingual_manage_languages(){
 		</tbody>
 	</table>
 
+	<script id="nLingual_preset_languages" type="text/javascript">var nLingual_preset_languages = <?php echo json_encode($nLingual_preset_languages)?>;</script>
+
 	<script id="nLingual_language_template" type="text/template">
 		<?php _nLingual_language_editor()?>
 	</script>
@@ -261,7 +271,7 @@ function nLingual_manage_languages(){
 
 function _nLingual_language_editor($language = array()){
 	$language = array_map('esc_textarea', $language);
-	
+
 	extract(array_merge(array(
 		'lang_id'=>'-1',
 		'system_name'=>'',
@@ -272,7 +282,7 @@ function _nLingual_language_editor($language = array()){
 		'iso'=>'',
 		'list_order'=>''
 	), $language));
-	
+
 	$default = nL_default_lang();
 	?>
 	<tr>
