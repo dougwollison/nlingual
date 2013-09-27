@@ -5,6 +5,10 @@
 
 use nLingual as nL;
 
+function nL_log_textdomain($domain, $mofile, $force = false){
+	return nl::log_textdomains($domain, $mofile, $force);
+}
+
 function nL_get_option($name){
 	return nL::get_option($name);
 }
@@ -143,4 +147,8 @@ function nL_lang_links($echo = false, $prefix = '', $sep = ' '){
 
 function nL_split_langs($text, $lang = null, $sep = null, $force = false){
 	return nL::split_langs($text, $lang, $sep, $force);
+}
+
+function nL_reload_textdomains($old_locale, $new_locale){
+	return nL::reload_textdomains($old_locale, $new_locale);
 }

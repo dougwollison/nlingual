@@ -160,8 +160,9 @@ class nLingual{
 		self::$default = self::lang_slug(self::get_option('default_lang'));
 		self::$current = self::$default;
 
-		// Load the text domain
-		add_action('plugins_loaded', array('nLingual', 'onloaded'));
+		// Setup text domain related hooks
+		add_action('plugins_loaded', array('nLingual', 'onloaded'), 1);
+		add_action('load_textdomain', array('nLingual', 'log_textdomain'), 10, 2);
 	}
 
 	/*
@@ -169,7 +170,16 @@ class nLingual{
 	 * loads text domain for this plugin
 	 */
 	public static function onloaded(){
-		load_plugin_textdomain('nLingual', false, plugins_url('lang/', NL_SELF));
+		load_plugin_textdomain('nLingual', false, dirname(plugin_basename(NL_SELF)).'/lang/');
+	}
+
+	/*
+	 * Hook to run when a textdomain is loaded
+	 * logs the text domain for later use in reloading
+	 */
+	public static function log_textdomain($domain, $mofile, $force = false){
+		if(!isset(self::$loaded_textdomains[$domain]) && !$force)
+			self::$loaded_textdomains[$domain] = $mofile;
 	}
 
 	/*
@@ -370,8 +380,19 @@ class nLingual{
 		if(defined('NLINGUAL_LANG_SET')) return;
 		if($lock) define('NLINGUAL_LANG_SET', true);
 
-		if(self::lang_exists($lang))
+		$old_locale = get_locale();
+
+		if(self::lang_exists($lang)){
+			// Set the current language (and the current cache langauge
 			self::$current = self::$current_cache = $lang;
+
+			$new_locale = get_locale();
+
+			// Reload the theme's text domain if the locale has changed
+			if($old_locale != $new_locale){
+				self::reload_textdomains($old_locale, $new_locale);
+			}
+		}
 	}
 
 	/*
@@ -841,5 +862,27 @@ class nLingual{
 		}
 
 		return $text;
+	}
+
+	/*
+	 * Reload all current text domains with those of the new current language
+	 */
+	public static function reload_textdomains($old_locale, $new_locale){
+		if(self::$loaded_textdomains){
+			foreach(self::$loaded_textdomains as $domain => $mofile){
+				unload_textdomain($domain);
+
+				extract(pathinfo($mofile));
+
+				// Replace the locale in the basename with the new locale
+				$basename = str_replace($old_locale, $new_locale, $basename);
+
+				// Rebuild the mofile path
+				$mofile = "$dirname/$basename";
+
+				// Now reload the textdomain
+				load_textdomain($domain, $mofile);
+			}
+		}
 	}
 }
