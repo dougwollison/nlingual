@@ -1,17 +1,188 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Qian Qin
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: http://wordpress.org/tag/qtranslate\n"
-"POT-Creation-Date: 2009-10-11 12:35+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Project-Id-Version: nLingual 1.0\n"
+"Language: LANGAUGE\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n == 1 ? 0 : 1;\n"
+"X-Generator: Poedit 1.5.7\n"
+"X-Poedit-KeywordsList: __;_x;_e;_ex;_f;_xf;_ef;_exf;\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: ../php/admin\n"
+
+#: ../php/admin/editor.php:16
+msgid "Show all languages"
+msgstr ""
+
+#: ../php/admin/editor.php:34
+#: ../php/admin/editor.php:78
+#: ../php/admin/post_meta.php:14
+msgid "Language"
+msgstr ""
+
+#: ../php/admin/editor.php:46
+#: ../php/admin/post_meta.php:59
+msgid "None"
+msgstr ""
+
+#: ../php/admin/misc.php:17
+msgid "Are you sure you wish to erase all language and translation data?"
+msgstr ""
+
+#: ../php/admin/misc.php:37
+msgid "Settings"
+msgstr ""
+
+#: ../php/admin/misc.php:50
+msgid "The translation table has been successfully erased."
+msgstr ""
+
+#: ../php/admin/nav_menus.php:48
+msgid "Add to Menu"
+msgstr ""
+
+#: ../php/admin/new_translation.php:18
+msgid "You do not have permission to do that."
+msgstr ""
+
+#: ../php/admin/new_translation.php:21
+msgid "Invalid language."
+msgstr ""
+
+#: ../php/admin/post_meta.php:20
+msgid "Translations"
+msgstr ""
+
+#: ../php/admin/post_meta.php:64
+msgid "Edit"
+msgstr ""
+
+#: ../php/admin/post_meta.php:66
+#, php-format
+msgid "Create a new %1$s %2$s"
+msgstr ""
+
+#: ../php/admin/settings.php:12
+msgid "Language Settings"
+msgstr ""
+
+#: ../php/admin/settings.php:13
+#: ../php/admin/settings.php:44
+msgid "Languages"
+msgstr ""
+
+#: ../php/admin/settings.php:42
+msgid "Options"
+msgstr ""
+
+#: ../php/admin/settings.php:43
+msgid "Synchronization Rules"
+msgstr ""
+
+#: ../php/admin/settings.php:57
+msgid "Language redirection method"
+msgstr ""
+
+#: ../php/admin/settings.php:80
+msgid "Skip on urls in the default language"
+msgstr ""
+
+#: ../php/admin/settings.php:84
+msgid "POST & GET variable names"
+msgstr ""
+
+#: ../php/admin/settings.php:90
+msgid ""
+"If these parameters are passed, they will override the language set via the "
+"redirection method."
+msgstr ""
+
+#: ../php/admin/settings.php:102
+msgid "Supported post types"
+msgstr ""
+
+#: ../php/admin/settings.php:118
+msgid "Split language separator"
+msgstr ""
+
+#: ../php/admin/settings.php:127
+msgid ""
+"Used for splitting things like the blog title and extracting the title for "
+"the appropriate language."
+msgstr ""
+
+#: ../php/admin/settings.php:130
+#, php-format
+msgid ""
+"Example: <strong>English Title %1$s French Title %1$s Spanish Title</strong> "
+"(if the language order is English, French, Spanish)"
+msgstr ""
+
+#: ../php/admin/settings.php:134
+msgid "Localize date format?"
+msgstr ""
+
+#: ../php/admin/settings.php:140
+msgid "Run localization on the date format string"
+msgstr ""
+
+#: ../php/admin/settings.php:144
+msgid "Use if any of your languages use custom date formats."
+msgstr ""
+
+#: ../php/admin/settings.php:148
+msgid "Erase translation data?"
+msgstr ""
+
+#: ../php/admin/settings.php:153
+msgid "Clear the translations table for this site?"
+msgstr ""
+
+#: ../php/admin/settings.php:157
+msgid ""
+"This will erase all language information, and translation links, for all "
+"posts (actual posts will be unaffected)."
+msgstr ""
+
+#: ../php/admin/settings.php:169
+#, php-format
+msgid "Check off the fields that should be synchronized between sister %s."
+msgstr ""
+
+#: ../php/admin/settings.php:196
+msgid "Check off the taxonomies that should be synchronized."
+msgstr ""
+
+#: ../php/admin/settings.php:213
+msgid "List the meta field that should be synchronized, one per line."
+msgstr ""
+
+#: ../php/admin/settings.php:238
+msgid "Custom"
+msgstr ""
+
+#: ../php/admin/settings.php:244
+msgid "Add Language"
+msgstr ""
+
+#: ../php/admin/settings.php:252
+#: ../php/admin/settings.php:299
+msgid "A shorthand name for the language."
+msgstr ""
+
+#: ../php/admin/settings.php:253
+#: ../php/admin/settings.php:302
+msgid "The name (minus extension) of the .MO file use for localization."
+msgstr ""
+
+#: ../php/admin/settings.php:254
+#: ../php/admin/settings.php:305
+msgid "A unique identifier for this language."
+msgstr ""
+
+#: ../php/admin/settings.php:255
+#: ../php/admin/settings.php:308
+msgid "The official 2 letter code identifying this language."
+msgstr ""
