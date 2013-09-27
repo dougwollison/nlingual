@@ -6,7 +6,7 @@
 /*
  * Detect and set the requested language
  */
-add_action('init', 'nLingual_detect_requested_language');
+add_action('plugins_loaded', 'nLingual_detect_requested_language', 0);
 function nLingual_detect_requested_language(){
 	// Get the accepted language, host name and requested uri
 	$alang = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
@@ -14,7 +14,6 @@ function nLingual_detect_requested_language(){
 	$uri = $_SERVER['REQUEST_URI'];
 
 	$lang = null;
-	$lock = false;
 
 	// First, use the HTTP_ACCEPT_LANGUAGE method if valid
 	if(nL_lang_exists($alang)){
@@ -27,24 +26,22 @@ function nLingual_detect_requested_language(){
 		// Update host & uri with processed versions
 		$_SERVER['HTTP_HOST'] = $result['host'];
 		$_SERVER['REQUEST_URI'] = $result['uri'];
-		$lock = true;
 	}
 
 	// Override with get_var method if present and valid
 	$get_var = nL_get_option('get_var');
 	if($get_var && isset($_GET[$get_var]) && nL_lang_exists($_GET[$get_var])){
 		$lang = $_GET[$get_var];
-		$lock = true;
 	}
 
 	// Override with post_var method if present and valid
 	$post_var = nL_get_option('post_var');
 	if($post_var && isset($_POST[$post_var]) && nL_lang_exists($_POST[$post_var])){
 		$lang = $_POST[$post_var];
-		$lock = true;
 	}
 
-	if($lang) nL_set_lang($lang, $lock);
+	// Set the language if determined, but don't lock it
+	if($lang) nL_set_lang($lang, false);
 }
 
 /*
@@ -68,8 +65,6 @@ function nLingual_check_alternate_frontpage(&$wp){
 				$wp->matched_rule = null;
 				$wp->matched_query = null;
 			}
-
-			nL_set_lang($lang);
 		}
 	}
 }
