@@ -20,12 +20,6 @@ jQuery(function($){
 		$('#nLingual_languages tbody').sortable('refresh');
 	});
 
-	$('#nLingual_languages').on('click', '.delete', function(){
-		if(!confirm(nLingual_l10n.DeleteLangConfirm)) return;
-		$(this).parents('tr').remove();
-		$('#nLingual_languages tbody').sortable('refresh');
-	});
-
 	$('#erase_translations').click(function(e){
 		if(!confirm(nLingual_l10n.EraseDataConfirm))
 			e.preventDefault();
