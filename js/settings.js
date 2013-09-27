@@ -10,7 +10,13 @@ jQuery(function($){
 	$langauges.find('tbody').sortable({
 		items: 'tr',
 		axis: 'y',
-		stop: language_order
+		stop: language_order,
+		helper: function(e, ui){
+			ui.children().each(function(){
+				$(this).width($(this).width());
+			});
+			return ui;
+		}
 	});
 
 	var lang_id = -1;
