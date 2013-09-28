@@ -686,11 +686,12 @@ class nLingual{
 	 *
 	 * @param string $url The URL to localize
 	 * @param string $lang The language to localize with (default's to current language)
-	 * @param bool $force_admin Wether or not to run it within the admin
 	 * @param bool $relocalize Wether or not to relocalize the url if it already is
 	 */
-	public static function localize_url($url, $lang = null, $force_admin = false, $relocalize = false){
-		if(defined('WP_ADMIN') && !$force_admin) return $url; // Don't bother in Admin mode
+	public static function localize_url($url, $lang = null, $relocalize = false){
+		global $pagenow;
+		if(defined('WP_ADMIN') || in_array($pagenow, array('wp-login.php', 'wp-register.php')))
+			return $url; // Don't mess with the url when in the wp-admin/login/register pages
 
 		if(!$lang) $lang = self::$current;
 
@@ -719,12 +720,14 @@ class nLingual{
 			}
 
 			// If processing failed (or $relocalize is true,
-			// and if the URL is not a wp-admin one,
+			// and if the URL is not a wp-admin/login/register one,
 			// and if we're not in the default language (or if skil_default_l10n is disabled)
 			// Go ahead and localize the URL
 			if(
 				(!$processed || $relocalize)
 				&& strpos($url_data['path'], '/wp-admin/') === false
+				&& strpos($url_data['path'], '/wp-login.php') === false
+				&& strpos($url_data['path'], '/wp-register.php') === false
 				&& ($lang != self::$default || !self::get_option('skip_default_l10n'))
 			){
 				switch(self::get_option('method')){
