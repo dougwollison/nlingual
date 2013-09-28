@@ -418,9 +418,8 @@ class nLingual{
 	 * @uses self::cache_set()
 	 *
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
-	 * @param string $default The default value to return should none be found
 	 */
-	public static function get_post_lang($id = null, $default = false){
+	public static function get_post_lang($id = null){
 		global $wpdb;
 
 		if(is_null($id)){
@@ -431,20 +430,14 @@ class nLingual{
 		}
 
 		// Check if it's cached, return if so
-		if($lang = self::cache_get($id, 'translations')) return $lang;
+		if($lang = self::cache_get($id, 'language')) return $lang;
 
 		// Query the nL_translations table for the langauge of the post in question
 		$lang_id = $wpdb->get_var($wpdb->prepare("SELECT lang_id FROM $wpdb->nL_translations WHERE post_id = %d", $id));
-		$lang = self::lang_slug($lang_id);
-
-		// If no language is found, make it the $default one
-		if(!$lang){
-			self::_lang($default);
-			$lang = $default;
-		}
+		$lang = $lang_id ? self::lang_slug($lang_id) : null;
 
 		// Add it to the cache
-		self::cache_set($id, $lang, 'translations');
+		self::cache_set($id, $lang, 'language');
 
 		return $lang;
 	}
@@ -470,6 +463,13 @@ class nLingual{
 		}
 
 		self::_lang($lang);
+		
+		// If the $lang is -1, delete the translation link
+		if($lang = -1){
+			$wpdb->delete($wpdb->nL_translations, array('post_id' => $id), array('%d'));
+			self::cache_set($id, false, 'language');
+			return;
+		}
 
 		// Run the REPLACE query
 		$wpdb->replace(
@@ -483,7 +483,7 @@ class nLingual{
 		);
 
 		// Add/Update the cache of it, just in case
-		self::cache_set($id, $lang);
+		self::cache_set($id, $lang, 'language');
 	}
 
 	/*
@@ -706,7 +706,7 @@ class nLingual{
 	public static function localize_url($url, $lang = null, $force_admin = false, $relocalize = false){
 		if(defined('WP_ADMIN') && !$force_admin) return $url; // Don't bother in Admin mode
 
-		if(is_null($lang)) $lang = self::current_lang();
+		if(!$lang) $lang = self::$current;
 
 		// Create an identifier for the url for caching
 		$id = "[$lang]$url";
