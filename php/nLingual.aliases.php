@@ -89,7 +89,7 @@ function nL_restore_lang(){
 	return nL::restore_lang();
 }
 
-function nL_get_post_lang($id = null, $default = null){
+function nL_get_post_lang($id = null){
 	return nL::get_post_lang($id, $default);
 }
 
