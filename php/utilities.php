@@ -31,7 +31,7 @@ function _f($text, $domain){
  * @param string $domain The domain to use
  * @params mixed $arg1.. The arguments for vsprintf
  */
-function _xf($text, $context, $domain){
+function _fx($text, $context, $domain){
 	$args = func_get_args();
 	$args = array_slice($args, 3);
 
@@ -61,8 +61,8 @@ function _ef($text, $domain){
  * @param string $domain The domain to use
  * @params mixed $arg1.. The arguments for vsprintf
  */
-function _exf($text, $context, $domain){
-	echo call_user_func_array('_xf', func_get_args());
+function _efx($text, $context, $domain){
+	echo call_user_func_array('_fx', func_get_args());
 }
 
 /*
