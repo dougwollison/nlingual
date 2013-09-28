@@ -10,7 +10,7 @@
 add_action('admin_init', 'nLingual_process_options');
 function nLingual_process_options(){
 	global $wpdb;
-	
+
 	// Handle erasing of translation table.
 	if(isset($_GET['_nL_nonce']) && !wp_verify_nonce($_GET['_nL_nonce'], 'nLingual_erase_translations')){
 		// Truncate  the translations table
@@ -21,7 +21,7 @@ function nLingual_process_options(){
 		wp_redirect($goback);
 		exit;
 	}
-	
+
 	if(isset($_POST['_wpnonce']) && wp_verify_nonce($_POST['_wpnonce'], 'nLingual-options') && isset($_POST['nLingual-languages'])){
 		// First, run through and process the deletes
 		if(isset($_POST['nLingual-delete']) && is_array($_POST['nLingual-delete'])){
@@ -33,15 +33,15 @@ function nLingual_process_options(){
 				}
 			}
 		}
-		
+
 		// Now, update/insert the remaining languages
 		foreach($_POST['nLingual-languages'] as $lang_id => $data){
 			// Make sure $lang_id is an integer
 			$lang_id = intval($lang_id);
-			
+
 			// If no system_name is passed, skip it
 			if(!isset($data['system_name'])) continue;
-			
+
 			// Default the values
 			$name = $data['system_name'];
 			$data = wp_parse_args($data, array(
@@ -52,8 +52,8 @@ function nLingual_process_options(){
 				'slug' => $name,
 				'iso' => $name
 			));
-		
-			// Build the $values array	
+
+			// Build the $values array
 			$values = array(
 				'system_name' => stripslashes($data['system_name']),
 				'native_name' => stripslashes($data['native_name']),
@@ -63,16 +63,22 @@ function nLingual_process_options(){
 				'iso' => substr(preg_replace('/[^a-z]/', '', strtolower($data['iso'])), 0, 2),
 				'list_order' => intval($data['list_order'])
 			);
-			
+
 			// Build the $formats array
 			$formats = array('%s', '%s', '%s', '%s', '%s', '%s', '%d');
-				
+
 			if($lang_id > 0){
 				// Exisiting language, update
 				$wpdb->update($wpdb->nL_languages, $values, array('lang_id' => $lang_id), $formats, array('%d'));
 			}else{
 				// New language, insert
-				$wpdb->replace($wpdb->nL_languages, $values, $formats);
+				$insert_id = $wpdb->replace($wpdb->nL_languages, $values, $formats);
+
+				// Check if this new language was set to be the new default langauge,
+				// updated the $_POST value for it to the $insert_id
+				if(isset($_POST['nLingual-options']['default_lang']) && $_POST['nLingual-options']['default_lang'] == $lang_id){
+					$_POST['nLingual-options']['default_lang'] = $id;
+				}
 			}
 		}
 	}
