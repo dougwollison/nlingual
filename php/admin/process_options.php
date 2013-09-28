@@ -72,12 +72,12 @@ function nLingual_process_options(){
 				$wpdb->update($wpdb->nL_languages, $values, array('lang_id' => $lang_id), $formats, array('%d'));
 			}else{
 				// New language, insert
-				$insert_id = $wpdb->replace($wpdb->nL_languages, $values, $formats);
+				$wpdb->replace($wpdb->nL_languages, $values, $formats);
 
 				// Check if this new language was set to be the new default langauge,
 				// updated the $_POST value for it to the $insert_id
 				if(isset($_POST['nLingual-options']['default_lang']) && $_POST['nLingual-options']['default_lang'] == $lang_id){
-					$_POST['nLingual-options']['default_lang'] = $id;
+					$_POST['nLingual-options']['default_lang'] = $wpdb->insert_id;
 				}
 			}
 		}
