@@ -40,10 +40,11 @@ jQuery(function($){
 		var preset = $('#nLingual_language_preset').val();
 		var $new_row = $($('#nLingual_language_template').html());
 
-		$new_row.find('input[type="text"]').each(function(){
-			$(this).attr('name', $(this).attr('name').replace('-1', lang_id));
+		$new_row.find('input').each(function(){
+			$(this).attr('name', $(this).attr('name').replace('[-1]', '['+lang_id+']'));
 		});
-		$new_row.find('.language-delete input').val(lang_id);
+		$new_row.find('.language-default input[type="radio"]').val(lang_id);
+		$new_row.find('.language-delete input[type="checkbox"]').val(lang_id);
 
 		if(preset){ // Load with selected preset data
 			var lang = nLingual_preset_languages[preset];
