@@ -12,8 +12,9 @@ if(WP_UNINSTALL_PLUGIN != 'nLingual/nLingual.php')
 
 global $wpdb, $table_prefix;
 
-// Now, delete the translations table if it exists
-$wpdb->query("DROP TABLE `{$table_prefix}nL_translations`");
+// Now, delete the language and translation table if it exists
+$wpdb->query("DROP TABLE IF EXISTS `{$table_prefix}nL_languages`");
+$wpdb->query("DROP TABLE IF EXISTS `{$table_prefix}nL_translations`");
 
 // Oh, and delete the options
 delet_option('nLingual-options');
