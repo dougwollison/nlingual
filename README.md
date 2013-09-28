@@ -12,7 +12,7 @@ There are typically two ways of tackling multilingual in WordPress (shy of a mul
 
 By going this route, you have more control over each translation. If you wanted, you can have different authors for the different languges, or have custom fields be translated, or use different terms for them.
 
-Having said that, there will of course be plenty of instances where you'll want some information to be kept the same across versions; nLingual has post synchronization for that (more on that later).
+Having said that, there will of course be plenty of instances where you'll want some information to be kept the same across versions; nLingual has post synchronization for that ([more on that later](#post-data-synchronization)).
 
 ### Two Step Language Detection
 
