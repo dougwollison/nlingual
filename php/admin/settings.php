@@ -283,11 +283,11 @@ function _nLingual_language_editor($language = array()){
 		'list_order'=>''
 	), $language));
 
-	$default = nL_default_lang();
+	$default = nL_get_option('default_lang');
 	?>
 	<tr>
 		<td class="language-default">
-			<input type="radio" name="nLingual-options[default_lang]" value="<?php echo $slug?>" <?php if($default == $slug) echo 'checked'?>>
+			<input type="radio" name="nLingual-options[default_lang]" value="<?php echo $lang_id?>" <?php if($lang_id && $default == $lang_id) echo 'checked'?>>
 			<input type="hidden" name="nLingual-languages[<?php echo $lang_id?>][list_order]" value="<?php echo $list_order?>" class="list_order">
 		</td>
 		<td class="language-system_name">
