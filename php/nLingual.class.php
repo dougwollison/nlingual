@@ -110,24 +110,10 @@ class nLingual{
 		");
 
 		// Load languages
-		$languages = $wpdb->get_results("SELECT * FROM $wpdb->nL_languages ORDER BY list_order ASC", OBJECT);
-		// Default to english if no langauges are set
-		if(!$languages) $languages = array(
-			(object) array(
-				'lang_id'		=> 1,
-				'system_name'	=> 'English',
-				'native_name'	=> 'English',
-				'short_name'	=> 'En',
-				'slug'			=> 'en',
-				'iso'			=> 'en',
-				'mo'			=> 'english',
-				'list_order'	=> 0,
-			)
-		);
-		self::$languages = $languages;
+		self::$languages = $wpdb->get_results("SELECT * FROM $wpdb->nL_languages ORDER BY list_order ASC", OBJECT);
 
 		// Loop through the languages and create a lang_id and slug indexed version
-		foreach($languages as $lang){
+		foreach(self::$languages as $lang){
 			self::$languages_by_id[$lang->lang_id] = $lang;
 			self::$languages_by_slug[$lang->slug] = $lang;
 		}
@@ -463,7 +449,7 @@ class nLingual{
 		}
 
 		self::_lang($lang);
-		
+
 		// If the $lang is -1, delete the translation link
 		if($lang = -1){
 			$wpdb->delete($wpdb->nL_translations, array('post_id' => $id), array('%d'));
