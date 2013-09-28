@@ -121,7 +121,7 @@ class nLingual{
 		// Load options
 		self::$options = wp_parse_args((array) get_option('nLingual-options'), array(
 			// Default language
-			'default_lang' => $languages[0]->lang_id,
+			'default_lang' => 0,
 
 			// Redirection settings
 			'method' => NL_REDIRECT_USING_ACCEPT,
