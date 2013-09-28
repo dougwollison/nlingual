@@ -28,6 +28,10 @@ msgid "None"
 msgstr ""
 
 #: ../php/admin/misc.php:17
+msgid "No post selected to edit."
+msgstr ""
+
+#: ../php/admin/misc.php:18
 msgid "Are you sure you wish to erase all language and translation data?"
 msgstr ""
 
