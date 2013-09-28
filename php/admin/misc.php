@@ -14,6 +14,7 @@ function nLingual_enqueue_scripts(){
 	// Admin javascript
 	wp_register_script('nLingual-admin-js', plugins_url('js/admin.js', NL_SELF), array('jquery-ui-sortable'), '1.0');
 	wp_localize_script('nLingual-admin-js', 'nLingual_l10n', array(
+		'NoPostSelected' => __('No post selected to edit.', NL_TXTDMN),
 		'EraseDataConfirm' => __('Are you sure you wish to erase all language and translation data?', NL_TXTDMN)
 	));
 
