@@ -75,9 +75,39 @@ function nLingual_save_post($post_id){
 }
 
 /*
- * Delete post hook for updating translation links
+ * Delete post hook for deleting translation links or the sister posts (depending on settings)
  */
-add_action('delete_post', 'nL_delete_translation', 999);
+add_action('deleted_post', 'nLingual_deleted_post');
+function nLingual_deleted_post($post_id){
+	// Delete the translation
+	delete_translation($post_id);
+	
+	if(nL_get_option('delete_sisters')){
+		foreach(nL_associated_posts($post_id) as $post_id){
+			wp_delete_post($post_id, true);
+		}
+	}
+}
+
+/*
+ * Trash post hook for moving sister posts to the trash
+ */
+add_action('trashed_post', 'nLingual_trashed_post');
+function nLingual_trashed_post($post_id){
+	foreach(nL_associated_posts($post_id) as $post_id){
+		wp_trash_post($post_id);
+	}
+}
+
+/*
+ * Untrash post hook for restoring sister posts to the trash
+ */
+add_action('untrashed_post', 'nLingual_untrashed_post');
+function nLingual_untrashed_post($post_id){
+	foreach(nL_associated_posts($post_id) as $post_id){
+		wp_untrash_post($post_id);
+	}
+}
 
 /*
  * Bulk edit interception
