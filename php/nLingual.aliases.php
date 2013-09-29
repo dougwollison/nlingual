@@ -153,6 +153,10 @@ function nL_translate_link($path, $post_type = null, $lang = null, $echo = true)
 	return nL::translate_link($path, $post_type, $lang, $echo);
 }
 
+function nL_localize_here($lang = null){
+	return nL::localize_here($lang);
+}
+
 function nL_lang_links($echo = false, $prefix = '', $sep = ' '){
 	return nL::lang_links($echo, $prefix, $sep);
 }
