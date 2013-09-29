@@ -25,7 +25,7 @@ function nLingual_detect_requested_language(){
 		$lang = $result['lang'];
 		// Update host & uri with processed versions
 		$_SERVER['HTTP_HOST'] = $result['host'];
-		$_SERVER['REQUEST_URI'] = $result['uri'];
+		$_SERVER['REQUEST_URI'] = $result['path'];
 	}
 
 	// Override with get_var method if present and valid
