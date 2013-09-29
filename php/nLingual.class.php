@@ -84,9 +84,9 @@ class nLingual{
 		$wpdb->nL_translations = $table_prefix.'nL_translations';
 		$wpdb->query("
 		CREATE TABLE IF NOT EXISTS `$wpdb->nL_translations` (
-			`group_id` bigint(20) NOT NULL,
-			`lang_id` bigint(20) NOT NULL,
-			`post_id` bigint(20) NOT NULL,
+			`group_id` bigint(20) UNSIGNED NOT NULL,
+			`lang_id` bigint(20) UNSIGNED NOT NULL,
+			`post_id` bigint(20) UNSIGNED NOT NULL,
 			UNIQUE KEY `post` (`post_id`),
 			UNIQUE KEY `translation` (`group_id`, `lang_id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -96,14 +96,14 @@ class nLingual{
 		$wpdb->nL_languages = $table_prefix.'nL_languages';
 		$wpdb->query("
 		CREATE TABLE IF NOT EXISTS `$wpdb->nL_languages` (
-			`lang_id` bigint(20) NOT NULL AUTO_INCREMENT,
+			`lang_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			`system_name` varchar(255) CHARACTER SET utf8 NOT NULL,
 			`native_name` varchar(255) CHARACTER SET utf8 NOT NULL,
 			`short_name` varchar(10) CHARACTER SET utf8 NOT NULL,
 			`slug` char(2) NOT NULL,
 			`iso` char(2) NOT NULL,
 			`mo` varchar(100) NOT NULL,
-			`list_order` int(11) NOT NULL,
+			`list_order` int(11) UNSIGNED NOT NULL,
 			PRIMARY KEY (`lang_id`),
 			UNIQUE KEY `slug` (`slug`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -759,8 +759,8 @@ class nLingual{
 	 */
 	public static function localize_url($url, $lang = null, $relocalize = false){
 		global $pagenow;
-		if(defined('WP_ADMIN') || in_array($pagenow, array('wp-login.php', 'wp-register.php')))
-			return $url; // Don't mess with the url when in the wp-admin/login/register pages
+		if(defined('WP_ADMIN') || preg_match('/wp-(admin|login|signup|register)/', $pagenow))
+			return $url; // Don't mess with the url when in the wp-admin/login/signup/register pages
 
 		if(!$lang) $lang = self::$current;
 
@@ -793,9 +793,7 @@ class nLingual{
 			// Go ahead and localize the URL
 			if(
 				(!$processed || $relocalize)
-				&& strpos($url_data['path'], '/wp-admin/') === false
-				&& strpos($url_data['path'], '/wp-login.php') === false
-				&& strpos($url_data['path'], '/wp-register.php') === false
+				&& !preg_match('#^/wp-(login.php|signup.php|register.php|admin/)#', $url_data['path'])
 				&& ($lang != self::$default || !self::get_option('skip_default_l10n'))
 			){
 				switch(self::get_option('method')){
