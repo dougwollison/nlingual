@@ -811,7 +811,7 @@ class nLingual{
 		echo $prefix;
 		$links = array();
 		foreach(self::$languages as $lang){
-			$links[] = sprintf('<a href="%s">%s</a>', self::get_permalink(get_queried_object()->ID, $lang['slug'], false), $lang['native']);
+			$links[] = sprintf('<a href="%s">%s</a>', self::get_permalink(get_queried_object()->ID, $lang->slug, false), $lang->native_name);
 		}
 
 		if($echo) echo $prefix.implode($sep, $links);
