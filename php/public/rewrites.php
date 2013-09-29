@@ -66,6 +66,14 @@ function nLingual_localize_post_permalink($link, $post){
 	return $link;
 }
 
+add_filter('redirect_canonical', 'nLingual_localize_redirect', 10, 2);
+function nLingual_localize_redirect($redirect_url, $requested_url){
+	if(nL_localize_url($redirect_url) == nL_localize_url($requested_url))
+		return false;
+		
+	return $redirect_url;
+}
+
 /*
  * If l10n_dateformat option is true, add fitler for localizing the date_format vlaue
  */
