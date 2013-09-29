@@ -689,6 +689,9 @@ class nLingual{
 
 		// Strip the home path from the beginning of the path
 		$path = substr($path, strlen($home)); // Now /en/... or /mysite/en/... will become en/...
+		
+		// If substr didn't work (e.g. $path == $home), return $home
+		if(!$path) return $home;
 
 		// Check if a language slug is present and is an existing language
 		if(preg_match('#^([a-z]{2})(/.*)?$#i', $path, $match) && self::lang_exists($match[1])){
