@@ -854,21 +854,79 @@ class nLingual{
 
 		return self::get_permalink($post->ID, $lang, $echo);
 	}
+	
+	/*
+	 * Return the current URL, translated for the provided language
+	 *
+	 * @uses self::_lang()
+	 * @uses self::get_permalink()
+	 * @uses self::localize_url()
+	 *
+	 * @param string $lang The langauge to translate the url to.
+	 *
+	 * @return string $url The localized url
+	 */
+	public static function localize_here($lang = null){
+		self::_lang($lang);
+		
+		// Get the current URI
+		$uri = $_SERVER['REQUEST_URI'];
+		
+		// Get where we are now and what the new URL should be
+		switch(true){
+			case is_front_page():
+				$here = get_option('home');
+				$url = self::localize_url($here, $lang);
+				break;
+			case is_home():
+				$page = get_option('page_for_posts');
+				$here = get_permalink($page);
+				$url = self::get_permalink($page, $lang);
+				break;
+			case is_singular():
+				$post = get_queried_object()->ID;
+				$here = get_permalink($post);
+				$url = self::get_permalink($post, $lang);
+				break;
+			default: // Just localize the literal URL
+				return self::localize_url(site_url($uri), $lang);
+		}
+		
+		// Now, check for any extra stuff in the URL after the main one
+		
+		// Parse and process the $here URL
+		$url_data = parse_url($here);
+		$url_data = self::process_url($url_data);
+		
+		// Process the URI
+		$uri = self::process_path($uri);
+		
+		// Build the $here version of the REQUEST_URI
+		$path = $url_data['path'].(isset($url_data['query']) ? '?'.$url_data['query'] : '');
+		
+		// See if it matches, tack on the extra bits
+		if(strpos($uri, $path) === 0){
+			$extra = substr($uri, strlen($path));
+			$url .= $extra;
+		}
+		
+		return $url;
+	}
 
 	/*
 	 * Return or print a list of links to the current page in all available languages
 	 *
-	 * @uses self::get_permalink()
+	 * @uses self::localize_here()
 	 *
 	 * @param bool $echo Wether or not to echo the imploded list of links
 	 * @param string $prefix The text to preceded the link list with
 	 * @param string $sep The text to separate each link with
 	 */
 	public static function lang_links($echo = false, $prefix = '', $sep = ' '){
-		echo $prefix;
 		$links = array();
 		foreach(self::$languages as $lang){
-			$links[] = sprintf('<a href="%s">%s</a>', self::get_permalink(get_queried_object()->ID, $lang->slug, false), $lang->native_name);
+			$url = self::localize_here($lang->slug);
+			$links[] = sprintf('<a href="%s">%s</a>', $url, $lang->native_name);
 		}
 
 		if($echo) echo $prefix.implode($sep, $links);
