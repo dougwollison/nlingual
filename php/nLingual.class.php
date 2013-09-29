@@ -588,6 +588,8 @@ class nLingual{
 			$lang_id = self::lang_id($lang);
 			$values[] = $wpdb->prepare("(%d,%s,%d)", $group_id, $lang_id, $id);
 		}
+		
+		if(!$values) return;
 
 		$query .=  implode(',', $values);
 
