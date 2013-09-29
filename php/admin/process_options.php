@@ -33,6 +33,11 @@ function nLingual_process_options(){
 				}
 			}
 		}
+		
+		// If no default_lang was passed, make it the first language passed
+		if(!isset($_POST['nLingual-options']['default_lang'])){
+			$_POST['nLingual-options']['default_lang'] = key(reset($_POST['nLingual-languages']));
+		}
 
 		// Now, update/insert the remaining languages
 		foreach($_POST['nLingual-languages'] as $lang_id => $data){
