@@ -77,7 +77,7 @@ function nLingual_register_settings(){
 		printf(
 			'<label><input id="skip_default_l10n" type="checkbox" name="nLingual-options[skip_default_l10n]" value="1" %s> %s</label>',
 			$bool ? 'checked' : '',
-			__('Skip on urls in the default language', NL_TXTDMN)
+			__('Do not use a subdomain or path prefix for the default langauge', NL_TXTDMN)
 		);
 	}, 'nLingual', 'nLingual-options');
 

@@ -110,7 +110,7 @@ msgid "None, use visitors native language, if applicable"
 msgstr "Aucune. Utiliser les réglages de langue du visiteur, si disponibles."
 
 #: ../php/admin/settings.php:80
-msgid "Skip on urls in the default language"
+msgid "Do not use a subdomain or path prefix for the default langauge"
 msgstr "Ne pas utiliser les chemins ou préfixes de sous-domaines pour la langue principale."
 
 #: ../php/admin/settings.php:84
