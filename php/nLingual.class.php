@@ -639,6 +639,21 @@ class nLingual{
 	}
 	
 	/*
+	 * Internal version of parse_url; defaults path value to /
+	 */
+	public static function parse_url($url){
+		$url_data = array_merge(
+			array(
+				'host' => '',
+				'path' => '/'
+			),
+			parse_url($url)
+		);
+		
+		return $url_data;
+	}
+	
+	/*
 	 * Process just the hostname portion of a URL and get the language
 	 *
 	 * @uses self::lang_exists()
@@ -670,7 +685,7 @@ class nLingual{
 	 */
 	public static function process_path($path, &$lang = null){
 		// Get the path of the home URL, with trailing slash
-		$home = trailingslashit(parse_url(get_option('home'), PHP_URL_PATH));
+		$home = trailingslashit(self::parse_url(get_option('home'), PHP_URL_PATH));
 
 		// Strip the home path from the beginning of the path
 		$path = substr($path, strlen($home)); // Now /en/... or /mysite/en/... will become en/...
@@ -754,12 +769,12 @@ class nLingual{
 			return $cached;
 		}
 
-		$home = trailingslashit(get_option('home'));
+		$home = get_option('home');
 
 		// Only proceed if it's a proper absolute URL for within the site
 		if(strpos($url, $home) !== false){
 			// Parse and process the url
-			$url_data = parse_url($url);
+			$url_data = self::parse_url($url);
 			$processed = self::process_url($url_data);
 
 			// If successfully processed and $relocalize is true,
@@ -898,8 +913,10 @@ class nLingual{
 		// Now, check for any extra stuff in the URL after the main one
 		
 		// Parse and process the $here URL
-		$url_data = parse_url($here);
-		$url_data = self::process_url($url_data);
+		$url_data = self::parse_url($here);
+		if($processed = self::process_url($url_data)){
+			$url_data = $processed;
+		}
 		
 		// Process the URI
 		$uri = self::process_path($uri);
