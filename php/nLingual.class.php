@@ -691,7 +691,7 @@ class nLingual{
 	public static function localize_url($url, $lang = null, $relocalize = false){
 		global $pagenow;
 		if(defined('WP_ADMIN') || in_array($pagenow, array('wp-login.php', 'wp-register.php')))
-			return $url; // Don't bother in Admin mode
+			return $url; // Don't mess with the url when in the wp-admin/login/register pages
 
 		if(!$lang) $lang = self::$current;
 
