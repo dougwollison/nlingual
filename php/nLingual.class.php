@@ -136,7 +136,10 @@ class nLingual{
 			'split_separator' => '//',
 
 			// Auto localize...
-			'l10n_dateformat' => true
+			'l10n_dateformat' => true,
+
+			// Delete sisters...
+			'delete_sisters' => false
 		));
 
 		// Load sync rules
