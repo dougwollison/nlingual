@@ -451,7 +451,7 @@ class nLingual{
 		self::_lang($lang);
 
 		// If the $lang is -1, delete the translation link
-		if($lang = -1){
+		if($lang == -1){
 			$wpdb->delete($wpdb->nL_translations, array('post_id' => $id), array('%d'));
 			self::cache_set($id, false, 'language');
 			return;
@@ -691,7 +691,7 @@ class nLingual{
 	public static function localize_url($url, $lang = null, $relocalize = false){
 		global $pagenow;
 		if(defined('WP_ADMIN') || in_array($pagenow, array('wp-login.php', 'wp-register.php')))
-			return $url; // Don't mess with the url when in the wp-admin/login/register pages
+			return $url; // Don't bother in Admin mode
 
 		if(!$lang) $lang = self::$current;
 
