@@ -56,13 +56,13 @@ add_filter('year_link',						'nL_localize_url');
 
 add_filter('page_link', 'nLingual_localize_page_permalink', 10, 2);
 function nLingual_localize_page_permalink($link, $post_id){
-	$link = nL_localize_url($link, nL_get_post_lang($post_id), false, true);
+	$link = nL_localize_url($link, nL_get_post_lang($post_id), true);
 	return $link;
 }
 
 add_filter('post_link', 'nLingual_localize_post_permalink', 10, 2);
 function nLingual_localize_post_permalink($link, $post){
-	$link = nL_localize_url($link, nL_get_post_lang($post->ID), false, true);
+	$link = nL_localize_url($link, nL_get_post_lang($post->ID), true);
 	return $link;
 }
 
