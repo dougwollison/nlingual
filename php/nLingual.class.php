@@ -634,47 +634,93 @@ class nLingual{
 
 		return $posts;
 	}
+	
+	/*
+	 * Process just the hostname portion of a URL and get the language
+	 *
+	 * @uses self::lang_exists()
+	 *
+	 * @param string $host The hostname to process
+	 * @param string &$lang Optional the variable to store the langauge data in
+	 *
+	 * @return string $host The processed hostname with the language removed.
+	 */
+	public static function process_domain($host, &$lang = null){
+		// Check if a language slug is present and is an existing language
+		if(preg_match('#^([a-z]{2})\.#i', $host, $match) && self::lang_exists($match[1])){
+			$lang = $match[1];
+			$host = substr($host, 3); // Recreate the hostname sans the language slug at the beginning
+		}
+		
+		return $host;
+	}
+	
+	/*
+	 * Process just the path portion of a URL and get the language
+	 *
+	 * @uses self::lang_exists()
+	 *
+	 * @param string $path The path to process
+	 * @param string &$lang Optional the variable to store the langauge data in
+	 *
+	 * @return string $path The processed path with the language removed.
+	 */
+	public static function process_path($path, &$lang = null){
+		// Get the path of the home URL, with trailing slash
+		$home = trailingslashit(parse_url(get_option('home'), PHP_URL_PATH));
+
+		// Strip the home path from the beginning of the path
+		$path = substr($path, strlen($home)); // Now /en/... or /mysite/en/... will become en/...
+
+		// Check if a language slug is present and is an existing language
+		if(preg_match('#^([a-z]{2})(/.*)?$#i', $path, $match) && self::lang_exists($match[1])){
+			$lang = $match[1];
+			$path = substr($path, 3); // Recreate the url sans the language slug and slash after it
+		}
+		
+		return $home.$path;
+	}
 
 	/*
-	 * Process a URL (the host and uri portions) and get the language, along with update host/uri
+	 * Process a full URL (the host and uri portions) and get the language
 	 *
 	 * @uses self::get_option()
-	 * @uses self::lang_exists()
+	 * @uses self::process_domain()
+	 * @uses self::process_path()
 	 *
 	 * @param string $host The host name
 	 * @param string $uri The requested uri
 	 * @return array $result An array of the resulting language, host name and requested uri
 	 */
-	public static function process_url($host, $uri){
+	public static function process_url($host, $path = null){
 		$lang = null;
+		
+		$url_data = array();
+		
+		if(is_array($host)){
+			$url_data = $host;
+			$host = $url_data['host'];
+			$path = $url_data['path'];
+		}
 
 		// Proceed based on method
 		switch(self::get_option('method')){
 			case NL_REDIRECT_USING_DOMAIN:
-				// Check if a language slug is present and is an existing language
-				if(preg_match('#^([a-z]{2})\.#i', $host, $match) && self::lang_exists($match[1])){
-					$lang = $match[1];
-					$host = substr($host, 3); // Recreate the hostname sans the language slug at the beginning
-				}
+				$host = self::process_domain($host, $lang);
 				break;
 			case NL_REDIRECT_USING_PATH:
-				// Get the path of the home URL, with trailing slash
-				$home = trailingslashit(parse_url(get_option('home'), PHP_URL_PATH));
-
-				// Strip the home path from the beginning of the URI
-				$uri = substr($uri, strlen($home)); // Now /en/... or /mysite/en/... will become en/...
-
-				// Check if a language slug is present and is an existing language
-				if(preg_match('#^([a-z]{2})(/.*)?$#i', $uri, $match) && self::lang_exists($match[1])){
-					$lang = $match[1];
-					$uri = $home.substr($uri, 3); // Recreate the url sans the language slug and slash after it
-				}
+				$path = self::process_path($path, $lang);
 				break;
 		}
 
 		if($lang){
-			return array('lang' => $lang, 'host' => $host, 'uri' => $uri);
+			$url_data['lang'] = $lang;
+			$url_data['host'] = $host;
+			$url_data['path'] = $path;
+			return $url_data;
 		}
+		
+		return false;
 	}
 
 	/*
@@ -711,13 +757,12 @@ class nLingual{
 		if(strpos($url, $home) !== false){
 			// Parse and process the url
 			$url_data = parse_url($url);
-			$processed = self::process_url($url_data['host'], $url_data['path']);
+			$processed = self::process_url($url_data);
 
 			// If successfully processed and $relocalize is true,
 			// update $url_data with the $processed info, and rebuild $url
 			if($relocalize && $processed){
-				$url_data['host'] = $processed['host'];
-				$url_data['path'] = substr($processed['uri'], intval(strpos($processed['uri'], '?')));
+				$url_data = $processed;
 				$url = sprintf('%s://%s%s', $url_data['scheme'], $url_data['host'], $url_data['path']);
 			}
 
