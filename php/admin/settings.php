@@ -145,6 +145,16 @@ function nLingual_register_settings(){
 		);
 	}, 'nLingual', 'nLingual-options');
 
+	add_settings_field('delete_sisters', __('Delete sister posts?', NL_TXTDMN), function(){
+		$bool = nL_get_option('delete_sisters');
+
+		printf(
+			'<label><input id="delete_sisters" type="checkbox" name="nLingual-options[delete_sisters]" value="1" %s> %s</label>',
+			$bool ? 'checked' : '',
+			__('When permanently deleting a post, delete it’s sister translations.', NL_TXTDMN)
+		);
+	}, 'nLingual', 'nLingual-options');
+
 	add_settings_field('erase_translations', __('Erase translation data?', NL_TXTDMN), function(){
 		$erase_url = admin_url(sprintf('?_nL_nonce=%s', wp_create_nonce('nLingual_erase_translations')));
 		printf(
