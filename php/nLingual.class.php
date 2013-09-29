@@ -805,19 +805,31 @@ class nLingual{
 	 *
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
 	 * @param string $lang The slug of the language requested (defaults to current language)
-	 * @param bool $echo Wether or not to echo the resulting $link
+	 *
+	 * @return string $link The permalink to the translated post
 	 */
-	public static function get_permalink($id = null, $lang = null, $echo = true){
+	public static function get_permalink($id = null, $lang = null){
 		global $wpdb;
 
 		self::_lang($lang);
 
 		$link = get_permalink(self::get_translation($id, $lang));
 
-		$link = self::localize_url($link, $lang);
+		$link = self::localize_url($link, $lang, true);
 
-		if($echo) echo $link;
 		return $link;
+	}
+
+	/*
+	 * Echo's the results of self::get_permalink
+	 *
+	 * @uses self::get_permalink()
+	 *
+	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
+	 * @param string $lang The slug of the language requested (defaults to current language)
+	 */
+	public static function the_permalink($id = null, $lang = null){
+		echo self::get_permalink($id, $lang);
 	}
 
 	/*
