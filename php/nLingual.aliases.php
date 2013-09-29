@@ -141,8 +141,12 @@ function nL_localize_url($url = null, $lang = null, $relocalize = false){
 	return nL::localize_url($url, $lang, $relocalize);
 }
 
-function nL_get_permalink($id = null, $lang = null, $echo = true){
-	return nL::get_permalink($id, $lang, $echo);
+function nL_get_permalink($id = null, $lang = null){
+	return nL::get_permalink($id, $lang);
+}
+
+function nL_the_permalink($id = null, $lang = null){
+	return nL::the_permalink($id, $lang);
 }
 
 function nL_translate_link($path, $post_type = null, $lang = null, $echo = true){
