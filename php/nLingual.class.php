@@ -300,7 +300,7 @@ class nLingual{
 	 */
 	public static function post_type_supported($type = 'post', $all = true){
 		if(!$type) $type = 'post';
-		
+
 		if($type == 'any') return true;
 
 		if(is_array($type)){
@@ -593,7 +593,7 @@ class nLingual{
 			$lang_id = self::lang_id($lang);
 			$values[] = $wpdb->prepare("(%d,%s,%d)", $group_id, $lang_id, $id);
 		}
-		
+
 		if(!$values) return;
 
 		$query .=  implode(',', $values);
@@ -639,22 +639,7 @@ class nLingual{
 
 		return $posts;
 	}
-	
-	/*
-	 * Internal version of parse_url; defaults path value to /
-	 */
-	public static function parse_url($url){
-		$url_data = array_merge(
-			array(
-				'host' => '',
-				'path' => '/'
-			),
-			parse_url($url)
-		);
-		
-		return $url_data;
-	}
-	
+
 	/*
 	 * Process just the hostname portion of a URL and get the language
 	 *
@@ -671,10 +656,10 @@ class nLingual{
 			$lang = $match[1];
 			$host = substr($host, 3); // Recreate the hostname sans the language slug at the beginning
 		}
-		
+
 		return $host;
 	}
-	
+
 	/*
 	 * Process just the path portion of a URL and get the language
 	 *
@@ -691,7 +676,7 @@ class nLingual{
 
 		// Strip the home path from the beginning of the path
 		$path = substr($path, strlen($home)); // Now /en/... or /mysite/en/... will become en/...
-		
+
 		// If substr didn't work (e.g. $path == $home), return $home
 		if(!$path) return $home;
 
@@ -700,7 +685,7 @@ class nLingual{
 			$lang = $match[1];
 			$path = substr($path, 3); // Recreate the url sans the language slug and slash after it
 		}
-		
+
 		return $home.$path;
 	}
 
@@ -717,9 +702,9 @@ class nLingual{
 	 */
 	public static function process_url($host, $path = null){
 		$lang = null;
-		
+
 		$url_data = array();
-		
+
 		if(is_array($host)){
 			$url_data = $host;
 			$host = $url_data['host'];
@@ -742,7 +727,7 @@ class nLingual{
 			$url_data['path'] = $path;
 			return $url_data;
 		}
-		
+
 		return false;
 	}
 
@@ -779,7 +764,7 @@ class nLingual{
 		// Only proceed if it's a proper absolute URL for within the site
 		if(strpos($url, $home) !== false){
 			// Parse and process the url
-			$url_data = self::parse_url($url);
+			$url_data = parse_url($url);
 			$processed = self::process_url($url_data);
 
 			// If successfully processed and $relocalize is true,
@@ -875,7 +860,7 @@ class nLingual{
 
 		return self::get_permalink($post->ID, $lang, $echo);
 	}
-	
+
 	/*
 	 * Return the current URL, translated for the provided language
 	 *
@@ -889,10 +874,10 @@ class nLingual{
 	 */
 	public static function localize_here($lang = null){
 		self::_lang($lang);
-		
+
 		// Get the current URI
 		$uri = $_SERVER['REQUEST_URI'];
-		
+
 		// Get where we are now and what the new URL should be
 		switch(true){
 			case is_front_page():
@@ -912,27 +897,27 @@ class nLingual{
 			default: // Just localize the literal URL
 				return self::localize_url(site_url($uri), $lang, true);
 		}
-		
+
 		// Now, check for any extra stuff in the URL after the main one
-		
+
 		// Parse and process the $here URL
-		$url_data = self::parse_url($here);
+		$url_data = parse_url($here);
 		if($processed = self::process_url($url_data)){
 			$url_data = $processed;
 		}
-		
+
 		// Process the URI
 		$uri = self::process_path($uri);
-		
+
 		// Build the $here version of the REQUEST_URI
 		$path = $url_data['path'].(isset($url_data['query']) ? '?'.$url_data['query'] : '');
-		
+
 		// See if it matches, tack on the extra bits
 		if(strpos($uri, $path) === 0){
 			$extra = substr($uri, strlen($path));
 			$url .= $extra;
 		}
-		
+
 		return $url;
 	}
 
