@@ -66,17 +66,40 @@ function nL_do_language_column($column, $post_id){
  * Quick edit field for language
  */
 add_action('quick_edit_custom_box', 'nLingual_quick_edit_box', 10, 2);
-add_action('bulk_edit_custom_box', 'nLingual_quick_edit_box', 10, 2);
 function nLingual_quick_edit_box($column, $post_type){
 	if(!nL_post_type_supported($post_type)) return;
 
-	if($column == 'language'): wp_nonce_field(NL_SELF, 'nLingual_language');
+	if($column == 'language'): wp_nonce_field('nLingual_set_language', 'nL_lang');
 	?>
-    <fieldset class="inline-edit-col-right inline-edit-book">
+    <fieldset class="inline-edit-col-right inline-edit-<?php echo $post_type?>">
       <div class="inline-edit-col column-<?php echo $column ?>">
         <label class="inline-edit-group">
         	<?php _e('Language', NL_TXTDMN)?>
         	<select name="language">
+				<option value="-1"><?php _e('None', NL_TXTDMN)?></option>
+			<?php foreach(nL_languages() as $lang):?>
+				<option value="<?php echo $lang->slug?>"><?php echo $lang->system_name?></option>
+			<?php endforeach;?>
+			</select>
+        </label>
+      </div>
+    </fieldset>
+    <?php
+    endif;
+}
+
+add_action('bulk_edit_custom_box', 'nLingual_bulk_edit_box', 10, 2);
+function nLingual_bulk_edit_box($column, $post_type){
+	if(!nL_post_type_supported($post_type)) return;
+
+	if($column == 'language'): wp_nonce_field('nLingual_set_language', 'nL_lang');
+	?>
+    <fieldset class="inline-edit-col-right inline-edit-<?php echo $post_type?>">
+      <div class="inline-edit-col column-<?php echo $column ?>">
+        <label class="inline-edit-group">
+        	<?php _e('Language', NL_TXTDMN)?>
+        	<select name="language">
+				<option value="-1">&mdash; <?php _e('No change', NL_TXTDMN)?> &mdash;</option>
 			<?php foreach(nL_languages() as $lang):?>
 				<option value="<?php echo $lang->slug?>"><?php echo $lang->system_name?></option>
 			<?php endforeach;?>

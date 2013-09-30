@@ -77,7 +77,7 @@ function nLingual_register_settings(){
 		printf(
 			'<label><input id="skip_default_l10n" type="checkbox" name="nLingual-options[skip_default_l10n]" value="1" %s> %s</label>',
 			$bool ? 'checked' : '',
-			__('Skip on urls in the default language', NL_TXTDMN)
+			__('Do not use a subdomain or path prefix for the default langauge', NL_TXTDMN)
 		);
 	}, 'nLingual', 'nLingual-options');
 
@@ -142,6 +142,16 @@ function nLingual_register_settings(){
 		printf(
 			'<p class="description">%s</p>',
 			__('Use if any of your languages use custom date formats.', NL_TXTDMN)
+		);
+	}, 'nLingual', 'nLingual-options');
+
+	add_settings_field('delete_sisters', __('Delete sister posts?', NL_TXTDMN), function(){
+		$bool = nL_get_option('delete_sisters');
+
+		printf(
+			'<label><input id="delete_sisters" type="checkbox" name="nLingual-options[delete_sisters]" value="1" %s> %s</label>',
+			$bool ? 'checked' : '',
+			__('When permanently deleting a post, delete it’s sister translations.', NL_TXTDMN)
 		);
 	}, 'nLingual', 'nLingual-options');
 

@@ -125,20 +125,36 @@ function nL_associated_posts($post_id, $include_self = false){
 	return nL::associated_posts($post_id, $include_self);
 }
 
-function nL_process_url($host, $uri){
+function nL_process_domain($host, &$lang = null){
+	return nL::process_domain($host, $lang);
+}
+
+function nL_process_path($uri, &$lang = null){
+	return nL::process_path($uri, $lang);
+}
+
+function nL_process_url($host, $uri = null){
 	return nL::process_url($host, $uri);
 }
 
-function nL_localize_url($url = null, $lang = null, $force_admin = false, $relocalize = false){
-	return nL::localize_url($url, $lang, $force_admin, $relocalize);
+function nL_localize_url($url = null, $lang = null, $relocalize = false){
+	return nL::localize_url($url, $lang, $relocalize);
 }
 
-function nL_get_permalink($id = null, $lang = null, $echo = true){
-	return nL::get_permalink($id, $lang, $echo);
+function nL_get_permalink($id = null, $lang = null){
+	return nL::get_permalink($id, $lang);
+}
+
+function nL_the_permalink($id = null, $lang = null){
+	return nL::the_permalink($id, $lang);
 }
 
 function nL_translate_link($path, $post_type = null, $lang = null, $echo = true){
 	return nL::translate_link($path, $post_type, $lang, $echo);
+}
+
+function nL_localize_here($lang = null){
+	return nL::localize_here($lang);
 }
 
 function nL_lang_links($echo = false, $prefix = '', $sep = ' '){

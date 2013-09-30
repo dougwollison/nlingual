@@ -84,9 +84,9 @@ class nLingual{
 		$wpdb->nL_translations = $table_prefix.'nL_translations';
 		$wpdb->query("
 		CREATE TABLE IF NOT EXISTS `$wpdb->nL_translations` (
-			`group_id` bigint(20) NOT NULL,
-			`lang_id` bigint(20) NOT NULL,
-			`post_id` bigint(20) NOT NULL,
+			`group_id` bigint(20) UNSIGNED NOT NULL,
+			`lang_id` bigint(20) UNSIGNED NOT NULL,
+			`post_id` bigint(20) UNSIGNED NOT NULL,
 			UNIQUE KEY `post` (`post_id`),
 			UNIQUE KEY `translation` (`group_id`, `lang_id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -96,14 +96,14 @@ class nLingual{
 		$wpdb->nL_languages = $table_prefix.'nL_languages';
 		$wpdb->query("
 		CREATE TABLE IF NOT EXISTS `$wpdb->nL_languages` (
-			`lang_id` bigint(20) NOT NULL AUTO_INCREMENT,
+			`lang_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			`system_name` varchar(255) CHARACTER SET utf8 NOT NULL,
 			`native_name` varchar(255) CHARACTER SET utf8 NOT NULL,
 			`short_name` varchar(10) CHARACTER SET utf8 NOT NULL,
 			`slug` char(2) NOT NULL,
 			`iso` char(2) NOT NULL,
 			`mo` varchar(100) NOT NULL,
-			`list_order` int(11) NOT NULL,
+			`list_order` int(11) UNSIGNED NOT NULL,
 			PRIMARY KEY (`lang_id`),
 			UNIQUE KEY `slug` (`slug`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -136,7 +136,10 @@ class nLingual{
 			'split_separator' => '//',
 
 			// Auto localize...
-			'l10n_dateformat' => true
+			'l10n_dateformat' => true,
+
+			// Delete sisters...
+			'delete_sisters' => false
 		));
 
 		// Load sync rules
@@ -297,6 +300,8 @@ class nLingual{
 	 */
 	public static function post_type_supported($type = 'post', $all = true){
 		if(!$type) $type = 'post';
+		
+		if($type == 'any') return true;
 
 		if(is_array($type)){
 			$match = array_intersect($type, self::$post_types);
@@ -451,7 +456,7 @@ class nLingual{
 		self::_lang($lang);
 
 		// If the $lang is -1, delete the translation link
-		if($lang = -1){
+		if($lang == -1){
 			$wpdb->delete($wpdb->nL_translations, array('post_id' => $id), array('%d'));
 			self::cache_set($id, false, 'language');
 			return;
@@ -588,6 +593,8 @@ class nLingual{
 			$lang_id = self::lang_id($lang);
 			$values[] = $wpdb->prepare("(%d,%s,%d)", $group_id, $lang_id, $id);
 		}
+		
+		if(!$values) return;
 
 		$query .=  implode(',', $values);
 
@@ -632,47 +639,111 @@ class nLingual{
 
 		return $posts;
 	}
+	
+	/*
+	 * Internal version of parse_url; defaults path value to /
+	 */
+	public static function parse_url($url){
+		$url_data = array_merge(
+			array(
+				'host' => '',
+				'path' => '/'
+			),
+			parse_url($url)
+		);
+		
+		return $url_data;
+	}
+	
+	/*
+	 * Process just the hostname portion of a URL and get the language
+	 *
+	 * @uses self::lang_exists()
+	 *
+	 * @param string $host The hostname to process
+	 * @param string &$lang Optional the variable to store the langauge data in
+	 *
+	 * @return string $host The processed hostname with the language removed.
+	 */
+	public static function process_domain($host, &$lang = null){
+		// Check if a language slug is present and is an existing language
+		if(preg_match('#^([a-z]{2})\.#i', $host, $match) && self::lang_exists($match[1])){
+			$lang = $match[1];
+			$host = substr($host, 3); // Recreate the hostname sans the language slug at the beginning
+		}
+		
+		return $host;
+	}
+	
+	/*
+	 * Process just the path portion of a URL and get the language
+	 *
+	 * @uses self::lang_exists()
+	 *
+	 * @param string $path The path to process
+	 * @param string &$lang Optional the variable to store the langauge data in
+	 *
+	 * @return string $path The processed path with the language removed.
+	 */
+	public static function process_path($path, &$lang = null){
+		// Get the path of the home URL, with trailing slash
+		$home = trailingslashit(parse_url(get_option('home'), PHP_URL_PATH));
+
+		// Strip the home path from the beginning of the path
+		$path = substr($path, strlen($home)); // Now /en/... or /mysite/en/... will become en/...
+		
+		// If substr didn't work (e.g. $path == $home), return $home
+		if(!$path) return $home;
+
+		// Check if a language slug is present and is an existing language
+		if(preg_match('#^([a-z]{2})(/.*|$)$#i', $path, $match) && self::lang_exists($match[1])){
+			$lang = $match[1];
+			$path = substr($path, 3); // Recreate the url sans the language slug and slash after it
+		}
+		
+		return $home.$path;
+	}
 
 	/*
-	 * Process a URL (the host and uri portions) and get the language, along with update host/uri
+	 * Process a full URL (the host and uri portions) and get the language
 	 *
 	 * @uses self::get_option()
-	 * @uses self::lang_exists()
+	 * @uses self::process_domain()
+	 * @uses self::process_path()
 	 *
 	 * @param string $host The host name
 	 * @param string $uri The requested uri
 	 * @return array $result An array of the resulting language, host name and requested uri
 	 */
-	public static function process_url($host, $uri){
+	public static function process_url($host, $path = null){
 		$lang = null;
+		
+		$url_data = array();
+		
+		if(is_array($host)){
+			$url_data = $host;
+			$host = $url_data['host'];
+			$path = $url_data['path'];
+		}
 
 		// Proceed based on method
 		switch(self::get_option('method')){
 			case NL_REDIRECT_USING_DOMAIN:
-				// Check if a language slug is present and is an existing language
-				if(preg_match('#^([a-z]{2})\.#i', $host, $match) && self::lang_exists($match[1])){
-					$lang = $match[1];
-					$host = substr($host, 3); // Recreate the hostname sans the language slug at the beginning
-				}
+				$host = self::process_domain($host, $lang);
 				break;
 			case NL_REDIRECT_USING_PATH:
-				// Get the path of the home URL, with trailing slash
-				$home = trailingslashit(parse_url(get_option('home'), PHP_URL_PATH));
-
-				// Strip the home path from the beginning of the URI
-				$uri = substr($uri, strlen($home)); // Now /en/... or /mysite/en/... will become en/...
-
-				// Check if a language slug is present and is an existing language
-				if(preg_match('#^([a-z]{2})(/.*)?$#i', $uri, $match) && self::lang_exists($match[1])){
-					$lang = $match[1];
-					$uri = $home.substr($uri, 3); // Recreate the url sans the language slug and slash after it
-				}
+				$path = self::process_path($path, $lang);
 				break;
 		}
 
 		if($lang){
-			return array('lang' => $lang, 'host' => $host, 'uri' => $uri);
+			$url_data['lang'] = $lang;
+			$url_data['host'] = $host;
+			$url_data['path'] = $path;
+			return $url_data;
 		}
+		
+		return false;
 	}
 
 	/*
@@ -686,11 +757,12 @@ class nLingual{
 	 *
 	 * @param string $url The URL to localize
 	 * @param string $lang The language to localize with (default's to current language)
-	 * @param bool $force_admin Wether or not to run it within the admin
 	 * @param bool $relocalize Wether or not to relocalize the url if it already is
 	 */
-	public static function localize_url($url, $lang = null, $force_admin = false, $relocalize = false){
-		if(defined('WP_ADMIN') && !$force_admin) return $url; // Don't bother in Admin mode
+	public static function localize_url($url, $lang = null, $relocalize = false){
+		global $pagenow;
+		if(defined('WP_ADMIN') || preg_match('/wp-(admin|login|signup|register)/', $pagenow))
+			return $url; // Don't mess with the url when in the wp-admin/login/signup/register pages
 
 		if(!$lang) $lang = self::$current;
 
@@ -702,29 +774,28 @@ class nLingual{
 			return $cached;
 		}
 
-		$home = trailingslashit(get_option('home'));
+		$home = get_option('home');
 
 		// Only proceed if it's a proper absolute URL for within the site
 		if(strpos($url, $home) !== false){
 			// Parse and process the url
-			$url_data = parse_url($url);
-			$processed = self::process_url($url_data['host'], $url_data['path']);
+			$url_data = self::parse_url($url);
+			$processed = self::process_url($url_data);
 
 			// If successfully processed and $relocalize is true,
 			// update $url_data with the $processed info, and rebuild $url
 			if($relocalize && $processed){
-				$url_data['host'] = $processed['host'];
-				$url_data['path'] = substr($processed['uri'], intval(strpos($processed['uri'], '?')));
+				$url_data = $processed;
 				$url = sprintf('%s://%s%s', $url_data['scheme'], $url_data['host'], $url_data['path']);
 			}
 
 			// If processing failed (or $relocalize is true,
-			// and if the URL is not a wp-admin one,
+			// and if the URL is not a wp-admin/[anything].php one,
 			// and if we're not in the default language (or if skil_default_l10n is disabled)
 			// Go ahead and localize the URL
 			if(
 				(!$processed || $relocalize)
-				&& strpos($url_data['path'], '/wp-admin/') === false
+				&& !preg_match('#^/wp-([\w-]+.php|admin/)#', $url_data['path'])
 				&& ($lang != self::$default || !self::get_option('skip_default_l10n'))
 			){
 				switch(self::get_option('method')){
@@ -755,19 +826,31 @@ class nLingual{
 	 *
 	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
 	 * @param string $lang The slug of the language requested (defaults to current language)
-	 * @param bool $echo Wether or not to echo the resulting $link
+	 *
+	 * @return string $link The permalink to the translated post
 	 */
-	public static function get_permalink($id = null, $lang = null, $echo = true){
+	public static function get_permalink($id = null, $lang = null){
 		global $wpdb;
 
 		self::_lang($lang);
 
 		$link = get_permalink(self::get_translation($id, $lang));
 
-		$link = self::localize_url($link, $lang);
+		$link = self::localize_url($link, $lang, true);
 
-		if($echo) echo $link;
 		return $link;
+	}
+
+	/*
+	 * Echo's the results of self::get_permalink
+	 *
+	 * @uses self::get_permalink()
+	 *
+	 * @param mixed $id The ID or object of the post in question (defaults to current $post)
+	 * @param string $lang The slug of the language requested (defaults to current language)
+	 */
+	public static function the_permalink($id = null, $lang = null){
+		echo self::get_permalink($id, $lang);
 	}
 
 	/*
@@ -792,21 +875,81 @@ class nLingual{
 
 		return self::get_permalink($post->ID, $lang, $echo);
 	}
+	
+	/*
+	 * Return the current URL, translated for the provided language
+	 *
+	 * @uses self::_lang()
+	 * @uses self::get_permalink()
+	 * @uses self::localize_url()
+	 *
+	 * @param string $lang The langauge to translate the url to.
+	 *
+	 * @return string $url The localized url
+	 */
+	public static function localize_here($lang = null){
+		self::_lang($lang);
+		
+		// Get the current URI
+		$uri = $_SERVER['REQUEST_URI'];
+		
+		// Get where we are now and what the new URL should be
+		switch(true){
+			case is_front_page():
+				$here = get_option('home');
+				$url = self::localize_url($here, $lang);
+				break;
+			case is_home():
+				$page = get_option('page_for_posts');
+				$here = get_permalink($page);
+				$url = self::get_permalink($page, $lang);
+				break;
+			case is_singular():
+				$post = get_queried_object()->ID;
+				$here = get_permalink($post);
+				$url = self::get_permalink($post, $lang);
+				break;
+			default: // Just localize the literal URL
+				return self::localize_url(site_url($uri), $lang, true);
+		}
+		
+		// Now, check for any extra stuff in the URL after the main one
+		
+		// Parse and process the $here URL
+		$url_data = self::parse_url($here);
+		if($processed = self::process_url($url_data)){
+			$url_data = $processed;
+		}
+		
+		// Process the URI
+		$uri = self::process_path($uri);
+		
+		// Build the $here version of the REQUEST_URI
+		$path = $url_data['path'].(isset($url_data['query']) ? '?'.$url_data['query'] : '');
+		
+		// See if it matches, tack on the extra bits
+		if(strpos($uri, $path) === 0){
+			$extra = substr($uri, strlen($path));
+			$url .= $extra;
+		}
+		
+		return $url;
+	}
 
 	/*
 	 * Return or print a list of links to the current page in all available languages
 	 *
-	 * @uses self::get_permalink()
+	 * @uses self::localize_here()
 	 *
 	 * @param bool $echo Wether or not to echo the imploded list of links
 	 * @param string $prefix The text to preceded the link list with
 	 * @param string $sep The text to separate each link with
 	 */
 	public static function lang_links($echo = false, $prefix = '', $sep = ' '){
-		echo $prefix;
 		$links = array();
 		foreach(self::$languages as $lang){
-			$links[] = sprintf('<a href="%s">%s</a>', self::get_permalink(get_queried_object()->ID, $lang['slug'], false), $lang['native']);
+			$url = self::localize_here($lang->slug);
+			$links[] = sprintf('<a href="%s">%s</a>', $url, $lang->native_name);
 		}
 
 		if($echo) echo $prefix.implode($sep, $links);

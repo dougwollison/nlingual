@@ -23,8 +23,13 @@ msgid "Language"
 msgstr ""
 
 #: ../php/admin/editor.php:46
+#: ../php/admin/editor.php:79
 #: ../php/admin/post_meta.php:59
 msgid "None"
+msgstr ""
+
+#: ../php/admin/editor.php:102
+msgid "No Change"
 msgstr ""
 
 #: ../php/admin/misc.php:17
@@ -104,7 +109,7 @@ msgid "None, use visitors native language, if applicable"
 msgstr ""
 
 #: ../php/admin/settings.php:80
-msgid "Skip on urls in the default language"
+msgid "Do not use a subdomain or path prefix for the default langauge"
 msgstr ""
 
 #: ../php/admin/settings.php:84
@@ -151,56 +156,64 @@ msgid "Use if any of your languages use custom date formats."
 msgstr ""
 
 #: ../php/admin/settings.php:148
-msgid "Erase translation data?"
+msgid "Delete sister posts?"
 msgstr ""
 
 #: ../php/admin/settings.php:153
+msgid "When permanently deleting a post, delete it’s sister translations."
+msgstr ""
+
+#: ../php/admin/settings.php:158
+msgid "Erase translation data?"
+msgstr ""
+
+#: ../php/admin/settings.php:163
 msgid "Clear the translations table for this site?"
 msgstr ""
 
-#: ../php/admin/settings.php:157
+#: ../php/admin/settings.php:167
 msgid ""
 "This will erase all language information, and translation links, for all "
 "posts (actual posts will be unaffected)."
 msgstr ""
 
-#: ../php/admin/settings.php:169
+#: ../php/admin/settings.php:179
 #, php-format
 msgid "Check off the fields that should be synchronized between sister %s."
 msgstr ""
 
-#: ../php/admin/settings.php:196
+#: ../php/admin/settings.php:206
 msgid "Check off the taxonomies that should be synchronized."
 msgstr ""
 
-#: ../php/admin/settings.php:213
+#: ../php/admin/settings.php:223
 msgid "List the meta field that should be synchronized, one per line."
 msgstr ""
 
-#: ../php/admin/settings.php:238
+#: ../php/admin/settings.php:248
 msgid "Custom"
 msgstr ""
 
-#: ../php/admin/settings.php:244
+#: ../php/admin/settings.php:254
 msgid "Add Language"
 msgstr ""
 
-#: ../php/admin/settings.php:252
-#: ../php/admin/settings.php:299
+#: ../php/admin/settings.php:262
+#: ../php/admin/settings.php:309
 msgid "A shorthand name for the language."
 msgstr ""
 
-#: ../php/admin/settings.php:253
-#: ../php/admin/settings.php:302
+#: ../php/admin/settings.php:263
+#: ../php/admin/settings.php:312
 msgid "The name (minus extension) of the .MO file use for localization."
 msgstr ""
 
-#: ../php/admin/settings.php:254
-#: ../php/admin/settings.php:305
+#: ../php/admin/settings.php:264
+#: ../php/admin/settings.php:315
 msgid "A unique identifier for this language."
 msgstr ""
 
-#: ../php/admin/settings.php:255
-#: ../php/admin/settings.php:308
+#: ../php/admin/settings.php:265
+#: ../php/admin/settings.php:318
 msgid "The official 2 letter code identifying this language."
 msgstr ""
