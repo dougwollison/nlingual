@@ -300,6 +300,8 @@ class nLingual{
 	 */
 	public static function post_type_supported($type = 'post', $all = true){
 		if(!$type) $type = 'post';
+		
+		if($type == 'any') return true;
 
 		if(is_array($type)){
 			$match = array_intersect($type, self::$post_types);
