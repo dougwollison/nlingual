@@ -25,7 +25,7 @@ function nLingual_detect_requested_language(){
 		$lang = $result['lang'];
 		// Update host & uri with processed versions
 		$_SERVER['HTTP_HOST'] = $result['host'];
-		$_SERVER['REQUEST_URI'] = $result['uri'];
+		$_SERVER['REQUEST_URI'] = $result['path'];
 	}
 
 	// Override with get_var method if present and valid
@@ -42,35 +42,6 @@ function nLingual_detect_requested_language(){
 
 	// Set the language if determined, but don't lock it
 	if($lang) nL_set_lang($lang, false);
-}
-
-/*
- * Check if a translated version of the front page is being requested,
- * adjust query to treat it as the front page
- */
-add_action('parse_request', 'nLingual_check_alternate_frontpage');
-function nLingual_check_alternate_frontpage(&$wp){
-	global $wpdb;
-	if(!is_admin() && isset($wp->query_vars['pagename'])){
-		$name = basename($wp->query_vars['pagename']);
-		$id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_type != 'revision'", $name));
-
-		if(!nL_in_default_lang($id)){
-			$lang = nL_get_post_lang($id);
-			$orig = nL_get_translation($id, true);
-
-			if($orig == get_option('page_on_front')){
-				$wp->query_vars = array();
-				$wp->request = null;
-				$wp->matched_rule = null;
-				$wp->matched_query = null;
-			}
-
-			// Primarily if it's the Front or Posts page,
-			// we need to set the language here and now
-			nL_set_lang($lang);
-		}
-	}
 }
 
 /*
