@@ -17,7 +17,9 @@ function nLingual_langauge_var($vars){
  */
 add_action('parse_query', 'nLingual_set_language_query_var');
 function nLingual_set_language_query_var(&$wp_query){
-	if(!is_admin() && nL_post_type_supported($wp_query->query_vars['post_type']) && !isset($wp_query->query_vars['language'])){
+	if(!is_admin() && (is_archive() || is_home())
+	&& nL_post_type_supported($wp_query->query_vars['post_type'])
+	&& !isset($wp_query->query_vars['language'])){
 		$wp_query->query_vars['language'] = nL_current_lang();
 	}
 }
