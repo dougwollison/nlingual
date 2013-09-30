@@ -951,20 +951,40 @@ class nLingual{
 		switch(true){
 			case is_front_page():
 				$here = get_option('home');
-				$url = self::localize_url($here, $lang);
+				$url = self::localize_url($here, $lang).'/';
 				break;
 			case is_home():
 				$page = get_option('page_for_posts');
-				$here = get_permalink($page);
 				$url = self::get_permalink($page, $lang);
 				break;
 			case is_singular():
 				$post = get_queried_object()->ID;
-				$here = get_permalink($post);
 				$url = self::get_permalink($post, $lang);
+				break;
+			case is_tax() || is_tag() || is_category():
+				$here = get_term_link(get_queried_object());
+				break;
+			case is_day():
+				$here = get_day_link(get_query_var('year'), get_query_var('monthnum'), get_query_var('day'));
+				break;
+			case is_month():
+				$here = get_day_link(get_query_var('year'), get_query_var('monthnum'));
+				break;
+			case is_year():
+				$here = get_year_link(get_query_var('year'));
 				break;
 			default: // Just localize the literal URL
 				return self::localize_url(site_url($uri), $lang, true);
+		}
+
+		// Check if paged, add page/n to $here
+		if(is_paged()){
+			$here .= sprintf('page/%d/', get_query_var('paged'));
+		}
+
+		// Localize $here to create $url if it's not set
+		if($url === false){
+			$url = self::localize_url($here, $lang, true);
 		}
 
 		// Now, check for any extra stuff in the URL after the main one
