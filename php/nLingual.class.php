@@ -685,7 +685,7 @@ class nLingual{
 	 */
 	public static function process_path($path, &$lang = null){
 		// Get the path of the home URL, with trailing slash
-		$home = trailingslashit(self::parse_url(get_option('home'), PHP_URL_PATH));
+		$home = trailingslashit(parse_url(get_option('home'), PHP_URL_PATH));
 
 		// Strip the home path from the beginning of the path
 		$path = substr($path, strlen($home)); // Now /en/... or /mysite/en/... will become en/...
@@ -694,7 +694,7 @@ class nLingual{
 		if(!$path) return $home;
 
 		// Check if a language slug is present and is an existing language
-		if(preg_match('#^([a-z]{2})(/.*)?$#i', $path, $match) && self::lang_exists($match[1])){
+		if(preg_match('#^([a-z]{2})(/.*|$)$#i', $path, $match) && self::lang_exists($match[1])){
 			$lang = $match[1];
 			$path = substr($path, 3); // Recreate the url sans the language slug and slash after it
 		}
@@ -908,7 +908,7 @@ class nLingual{
 				$url = self::get_permalink($post, $lang);
 				break;
 			default: // Just localize the literal URL
-				return self::localize_url(site_url($uri), $lang);
+				return self::localize_url(site_url($uri), $lang, true);
 		}
 		
 		// Now, check for any extra stuff in the URL after the main one
