@@ -63,7 +63,7 @@ function nLingual_translations_metabox($post){
 			<?php endforeach;?>
 			</select>
 			<a href="<?php echo admin_url("/post.php?post=%d&action=edit")?>" class="button-primary edit-translation"><?php _e('Edit', NL_TXTDMN)?></a>
-			or <a href="<?php echo admin_url(sprintf('?nL_new_translation=%d&language=%s&_nL_nonce=%s', $post->ID, $lang->slug, wp_create_nonce('nLingual_new_translation')))?>" class="button-secondary">
+			or <a href="<?php echo admin_url(sprintf('?nL_new_translation=%d&language=%s&_nL_nonce=%s', $post->ID, $lang->slug, wp_create_nonce('nLingual_new_translation')))?>" class="button-secondary" target="_blank">
 				<?php _ef('Create a new %1$s %2$s', NL_TXTDMN, strtolower($lang->system_name), strtolower(get_post_type_object($post->post_type)->labels->singular_name))?>
 			</a>
 		</p>
