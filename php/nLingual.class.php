@@ -1011,6 +1011,28 @@ class nLingual{
 	}
 
 	/*
+	 * Checks if redirection is needed such as forced language specification or trainling slashes
+	 */
+	public static function maybe_redirect(){
+		// Don't bother unless WP is done/in progress
+		if(!did_action('wp')) return;
+
+		// Get the current URL
+		$requested = self::$here;
+
+		// Check in case it's just the home page
+		if(rtrim($requested, '/') == self::delocalize_url(get_option('home'))) return;
+
+		// Get where we should be in the current language
+		$redirect = self::localize_here();
+
+		if($requested != $redirect){
+			wp_redirect($redirect, 301);
+			exit;
+		}
+	}
+
+	/*
 	 * Return or print a list of links to the current page in all available languages
 	 *
 	 * @uses self::localize_here()

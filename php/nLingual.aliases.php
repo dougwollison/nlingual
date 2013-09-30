@@ -165,6 +165,10 @@ function nL_localize_here($lang = null){
 	return nL::localize_here($lang);
 }
 
+function nL_maybe_redirect(){
+	return nL::maybe_redirect();
+}
+
 function nL_lang_links($echo = false, $prefix = '', $sep = ' '){
 	return nL::lang_links($echo, $prefix, $sep);
 }
