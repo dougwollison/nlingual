@@ -641,26 +641,6 @@ class nLingual{
 	}
 
 	/*
-	 * Process just the hostname portion of a URL and get the language
-	 *
-	 * @uses self::lang_exists()
-	 *
-	 * @param string $host The hostname to process
-	 * @param string &$lang Optional the variable to store the langauge data in
-	 *
-	 * @return string $host The processed hostname with the language removed.
-	 */
-	public static function process_domain($host, &$lang = null){
-		// Check if a language slug is present and is an existing language
-		if(preg_match('#^([a-z]{2})\.#i', $host, $match) && self::lang_exists($match[1])){
-			$lang = $match[1];
-			$host = substr($host, 3); // Recreate the hostname sans the language slug at the beginning
-		}
-
-		return $host;
-	}
-
-	/*
 	 * Utility for building URLs
 	 *
 	 * @param array $data The parse_url data to build with
@@ -707,6 +687,26 @@ class nLingual{
 			$url .= '#'.$data['fragment'];
 
 		return $url;
+	}
+
+	/*
+	 * Process just the hostname portion of a URL and get the language
+	 *
+	 * @uses self::lang_exists()
+	 *
+	 * @param string $host The hostname to process
+	 * @param string &$lang Optional the variable to store the langauge data in
+	 *
+	 * @return string $host The processed hostname with the language removed.
+	 */
+	public static function process_domain($host, &$lang = null){
+		// Check if a language slug is present and is an existing language
+		if(preg_match('#^([a-z]{2})\.#i', $host, $match) && self::lang_exists($match[1])){
+			$lang = $match[1];
+			$host = substr($host, 3); // Recreate the hostname sans the language slug at the beginning
+		}
+
+		return $host;
 	}
 
 	/*
