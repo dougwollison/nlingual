@@ -807,14 +807,15 @@ class nLingual{
 		// Create an identifier for the url for caching
 		$id = "[$lang]$url";
 
-		// Check if this URL has been taken care of, return cached result
+		// Check if this URL has been taken care of before,
+		// return cached result
 		if($cached = self::cache_get($id, 'url')){
 			return $cached;
 		}
 
-		$home = get_option('home');
+		$home = trailingslashit(get_option('home'));
 
-		// Only proceed if it's a local url
+		// Only proceed if it's a local url (and not simply the unslashed $home url)
 		if(strpos($url, $home) !== false){
 			// If $relocalized is true, delocalize the URL first
 			$url = self::delocalize_url($url);
