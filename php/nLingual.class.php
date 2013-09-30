@@ -788,12 +788,12 @@ class nLingual{
 			}
 
 			// If processing failed (or $relocalize is true,
-			// and if the URL is not a wp-admin/login/register one,
+			// and if the URL is not a wp-admin/[anything].php one,
 			// and if we're not in the default language (or if skil_default_l10n is disabled)
 			// Go ahead and localize the URL
 			if(
 				(!$processed || $relocalize)
-				&& !preg_match('#^/wp-(login.php|signup.php|register.php|admin/)#', $url_data['path'])
+				&& !preg_match('#^/wp-([\w-]+.php|admin/)#', $url_data['path'])
 				&& ($lang != self::$default || !self::get_option('skip_default_l10n'))
 			){
 				switch(self::get_option('method')){
