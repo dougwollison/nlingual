@@ -661,6 +661,55 @@ class nLingual{
 	}
 
 	/*
+	 * Utility for building URLs
+	 *
+	 * @param array $data The parse_url data to build with
+	 */
+	public static function build_url($data){
+		$url = '';
+
+		$data = array_merge(array(
+			'scheme'=>'',
+			'user'=>'',
+			'pass'=>'',
+			'host'=>'',
+			'port'=>'',
+			'path'=>'',
+			'query'=>'',
+			'fragment'=>''
+		), $data);
+
+		if($data['scheme'])
+			$url .= $data['scheme'].'://';
+
+		if($data['user'])
+			$url .= $data['user'];
+
+		if($data['pass'])
+			$url .= ':'.$data['pass'];
+
+		if($data['user'])
+			$url .= '@';
+
+		if($data['host'])
+			$url .= $data['host'];
+
+		if($data['port'])
+			$url .= ':'.$data['port'];
+
+		if($data['path'])
+			$url .= $data['path'];
+
+		if($data['query'])
+			$url .= '?'.$data['query'];
+
+		if($data['fragment'])
+			$url .= '#'.$data['fragment'];
+
+		return $url;
+	}
+
+	/*
 	 * Process just the path portion of a URL and get the language
 	 *
 	 * @uses self::lang_exists()

@@ -125,6 +125,10 @@ function nL_associated_posts($post_id, $include_self = false){
 	return nL::associated_posts($post_id, $include_self);
 }
 
+function nL_build_url($data){
+	return nL::build_url($data);
+}
+
 function nL_process_domain($host, &$lang = null){
 	return nL::process_domain($host, $lang);
 }
