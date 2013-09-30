@@ -756,9 +756,12 @@ class nLingual{
 
 		if(is_array($host)){
 			$url_data = $host;
+			$url_data = array_merge(array('host'=>'', 'path'=>'/'), $url_data);
 			$host = $url_data['host'];
 			$path = $url_data['path'];
 		}
+
+		if(!$path) $path = '/';
 
 		// Proceed based on method
 		switch(self::get_option('method')){
