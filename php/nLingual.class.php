@@ -798,9 +798,14 @@ class nLingual{
 	 */
 	public static function localize_url($url, $lang = null, $relocalize = false){
 		global $pagenow;
-		if(defined('WP_ADMIN')
-		|| preg_match('/wp-(admin|login|signup|register)/', $pagenow))
-			return $url; // Don't mess with the url when in the wp-admin/login/signup/register pages
+
+		// Get the vanilla and slashed home_url
+		$_home = get_option('home');
+		$home = trailingslashit($_home);
+
+		// Don't mess with the url when in the admin or if it's the vanilla home_url
+		if(defined('WP_ADMIN') || $url == $_home)
+			return $url;
 
 		if(!$lang) $lang = self::$current;
 
@@ -812,8 +817,6 @@ class nLingual{
 		if($cached = self::cache_get($id, 'url')){
 			return $cached;
 		}
-
-		$home = trailingslashit(get_option('home'));
 
 		// Only proceed if it's a local url (and not simply the unslashed $home url)
 		if(strpos($url, $home) !== false){
