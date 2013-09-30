@@ -29,9 +29,14 @@ msgid "Language"
 msgstr "Langues"
 
 #: ../php/admin/editor.php:46
+#: ../php/admin/editor.php:79
 #: ../php/admin/post_meta.php:59
 msgid "None"
 msgstr "Aucune"
+
+#: ../php/admin/editor.php:102
+msgid "No Change"
+msgstr ""
 
 #: ../php/admin/misc.php:17
 msgid "No post selected to edit."
@@ -151,6 +156,14 @@ msgid "Use if any of your languages use custom date formats."
 msgstr "Sélectionnez si les langues de votre site utilisent des formats de dates particuliers."
 
 #: ../php/admin/settings.php:148
+msgid "Delete sister posts?"
+msgstr ""
+
+#: ../php/admin/settings.php:153
+msgid "When permanently deleting a post, delete it’s sister translations."
+msgstr ""
+
+#: ../php/admin/settings.php:148
 msgid "Erase translation data?"
 msgstr "Supprimer les données de traduction"
 
@@ -158,20 +171,20 @@ msgstr "Supprimer les données de traduction"
 msgid "Clear the translations table for this site?"
 msgstr "Supprimer les données de nLingual"
 
-#: ../php/admin/settings.php:157
+#: ../php/admin/settings.php:167
 msgid "This will erase all language information, and translation links, for all posts (actual posts will be unaffected)."
 msgstr "Cette action supprimera toutes les données de langues, et les liens de traductions, pour tous les articles/pages (les articles/pages ne seront pas affectés)."
 
-#: ../php/admin/settings.php:169
+#: ../php/admin/settings.php:179
 #, php-format
 msgid "Check off the fields that should be synchronized between sister %s."
 msgstr "Sélectionnez tous les champs à synchroniser entre les %s lié(e)s."
 
-#: ../php/admin/settings.php:196
+#: ../php/admin/settings.php:206
 msgid "Check off the taxonomies that should be synchronized."
 msgstr "Sélectionnez les taxonomies à synchroniser."
 
-#: ../php/admin/settings.php:213
+#: ../php/admin/settings.php:223
 msgid "List the meta field that should be synchronized, one per line."
 msgstr "Entrez les champs personnalisés à synchroniser, un par ligne. "
 
