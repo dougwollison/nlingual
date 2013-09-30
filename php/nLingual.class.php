@@ -948,6 +948,8 @@ class nLingual{
 	public static function localize_here($lang = null){
 		self::_lang($lang);
 
+		$url = false;
+
 		// Get the current URI
 		$uri = $_SERVER['REQUEST_URI'];
 
