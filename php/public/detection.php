@@ -66,3 +66,8 @@ function nLingual_detect_requested_post_language(&$wp){
 		$wp_locale = new nLingual_WP_Locale();
 	}
 }
+
+/*
+ * Run nL_maybe_redirect to check if any redirection is needed
+ */
+add_action('wp', 'nL_maybe_redirect');
