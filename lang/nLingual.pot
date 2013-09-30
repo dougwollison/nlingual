@@ -23,8 +23,13 @@ msgid "Language"
 msgstr ""
 
 #: ../php/admin/editor.php:46
+#: ../php/admin/editor.php:79
 #: ../php/admin/post_meta.php:59
 msgid "None"
+msgstr ""
+
+#: ../php/admin/editor.php:102
+msgid "No Change"
 msgstr ""
 
 #: ../php/admin/misc.php:17
