@@ -21,10 +21,7 @@ class nLingual{
 	protected static $current;
 	protected static $current_cache;
 	protected static $loaded_textdomains = array();
-	protected static $domains = array(
-		'theme' => 'default',
-		'plugin' => 'nLingual'
-	);
+	protected static $here;
 
 	/*
 	 * Utility function, make $lang the default if === true, the current if === null
@@ -79,6 +76,9 @@ class nLingual{
 	 */
 	public static function init(){
 		global $wpdb, $table_prefix;
+
+		// Get the current URL
+		self::$here = (is_ssl() ? 'https://' : 'http://').$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 
 		// Create and register the translations table
 		$wpdb->nL_translations = $table_prefix.'nL_translations';
