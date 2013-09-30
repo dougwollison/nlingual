@@ -44,6 +44,7 @@ add_filter('day_link',						'nL_localize_url');
 add_filter('feed_link',						'nL_localize_url');
 add_filter('get_comment_author_url_link',	'nL_localize_url');
 add_filter('get_pagenum_link',				'nL_localize_url');
+add_filter('home_url',						'nL_localize_url');
 add_filter('month_link',					'nL_localize_url');
 add_filter('post_comments_feed_link',		'nL_localize_url');
 add_filter('tag_feed_link',					'nL_localize_url');
@@ -51,17 +52,6 @@ add_filter('tag_link',						'nL_localize_url');
 add_filter('term_link',						'nL_localize_url');
 add_filter('the_permalink',					'nL_localize_url');
 add_filter('year_link',						'nL_localize_url');
-
-add_filter('home_url', 'nLingual_localize_root');
-add_filter('site_url', 'nLingual_localize_root');
-function nLingual_localize_root($url){
-	// So as not to screw up WP request parsing,
-	// don't change anything untill after parse_request has been done.
-	if(did_action('parse_request')){
-		$url = nL_localize_url($url);
-	}
-	return $url;
-}
 
 add_filter('page_link', 'nLingual_localize_page_permalink', 10, 2);
 function nLingual_localize_page_permalink($link, $post_id){
@@ -71,14 +61,14 @@ function nLingual_localize_page_permalink($link, $post_id){
 	}else{
 		$link = nL_localize_url($link, $lang, true);
 	}
-	
+
 	return $link;
 }
 
 add_filter('post_link', 'nLingual_localize_post_permalink', 10, 2);
 function nLingual_localize_post_permalink($link, $post){
 	$link = nL_localize_url($link, nL_get_post_lang($post->ID), true);
-	
+
 	return $link;
 }
 
@@ -86,7 +76,7 @@ add_filter('redirect_canonical', 'nLingual_localize_redirect', 10, 2);
 function nLingual_localize_redirect($redirect_url, $requested_url){
 	if(nL_localize_url($redirect_url) == nL_localize_url($requested_url))
 		return false;
-		
+
 	return $redirect_url;
 }
 
