@@ -798,7 +798,8 @@ class nLingual{
 	 */
 	public static function localize_url($url, $lang = null, $relocalize = false){
 		global $pagenow;
-		if(defined('WP_ADMIN') || preg_match('/wp-(admin|login|signup|register)/', $pagenow))
+		if(defined('WP_ADMIN')
+		|| preg_match('/wp-(admin|login|signup|register)/', $pagenow))
 			return $url; // Don't mess with the url when in the wp-admin/login/signup/register pages
 
 		if(!$lang) $lang = self::$current;
@@ -813,38 +814,37 @@ class nLingual{
 
 		$home = get_option('home');
 
-		// Only proceed if it's a proper absolute URL for within the site
+		// Only proceed if it's a local url
 		if(strpos($url, $home) !== false){
+			// If $relocalized is true, delocalize the URL first
+			$url = self::delocalize_url($url);
+
 			// Parse and process the url
 			$url_data = parse_url($url);
 			$processed = self::process_url($url_data);
 
-			// If successfully processed and $relocalize is true,
-			// update $url_data with the $processed info, and rebuild $url
-			if($relocalize && $processed){
-				$url_data = $processed;
-				$url = sprintf('%s://%s%s', $url_data['scheme'], $url_data['host'], $url_data['path']);
-			}
-
-			// If processing failed (or $relocalize is true,
+			// If processing failed (i.e. not yet localized),
 			// and if the URL is not a wp-admin/[anything].php one,
-			// and if we're not in the default language (or if skil_default_l10n is disabled)
+			// and if we're not in the default language (or if skip_default_l10n is disabled)
 			// Go ahead and localize the URL
 			if(
-				(!$processed || $relocalize)
-				&& !preg_match('#^/wp-([\w-]+.php|admin/)#', $url_data['path'])
+				(!$processed)
+				&& !preg_match('#^/wp-([\w-]+.php|(admin|content|includes)/)#', $url_data['path'])
 				&& ($lang != self::$default || !self::get_option('skip_default_l10n'))
 			){
 				switch(self::get_option('method')){
 					case NL_REDIRECT_USING_DOMAIN:
-						$url = sprintf('%s://%s.%s%s', $url_data['scheme'], $lang, $url_data['host'], $url_data['path']);
+						$url_data['host'] = "$lang.{$url_data['host']}";
 						break;
 					case NL_REDIRECT_USING_PATH:
-						$url = sprintf('%s://%s/%s%s', $url_data['scheme'], $url_data['host'], $lang, $url_data['path']);
+						$url_data['path'] = "/$lang{$url_data['path']}";
 						break;
 					default:
-						$url .= '?'.self::get_option('get_var').'='.$lang;
+						$arg = self::get_option('get_var').'='.$lang;
+						$url_data['query'] = $url_data['query'] ? '&'.$arg : $arg;
 				}
+
+				$url = self::build_url($url_data);
 			}
 		}
 
