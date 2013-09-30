@@ -855,6 +855,23 @@ class nLingual{
 	}
 
 	/*
+	 * Delocalize a URL; remove language information
+	 *
+	 * @param string $url The URL to delocalize
+	 */
+	public static function delocalize_url($url){
+		// Parse and process the url
+		$url_data = parse_url($url);
+
+		// If successfully processed update $url_data with the $processed info, and rebuild $url
+		if($processed = self::process_url($url_data)){
+			$url = self::build_url($processed);
+		}
+
+		return $url;
+	}
+
+	/*
 	 * Get the permalink of the specified post in the specified language
 	 *
 	 * @uses self::_lang()

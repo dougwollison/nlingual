@@ -145,6 +145,10 @@ function nL_localize_url($url = null, $lang = null, $relocalize = false){
 	return nL::localize_url($url, $lang, $relocalize);
 }
 
+function nL_delocalize_url($url){
+	return nL::delocalize_url($url);
+}
+
 function nL_get_permalink($id = null, $lang = null){
 	return nL::get_permalink($id, $lang);
 }
