@@ -822,7 +822,7 @@ class nLingual{
 
 		// Don't mess with the url when in the admin or if it's the vanilla home_url
 		if(defined('WP_ADMIN') || $old_url == $_home)
-			return $url;
+			return $old_url;
 
 		if(!$lang) $lang = self::$current;
 
