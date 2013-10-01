@@ -658,6 +658,10 @@ class nLingual{
 			'query'=>'',
 			'fragment'=>''
 		), $data);
+		
+		if(is_array($data['args'])){
+			$data['query'] = http_build_query($data['args']);
+		}
 
 		if($data['scheme'])
 			$url .= $data['scheme'].'://';
