@@ -8,10 +8,8 @@
  */
 add_action('plugins_loaded', 'nLingual_detect_requested_language', 0);
 function nLingual_detect_requested_language(){
-	// Get the accepted language, host name and requested uri
+	// Get the accepted language
 	$alang = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-	$host = $_SERVER['HTTP_HOST'];
-	$uri = $_SERVER['REQUEST_URI'];
 
 	$lang = null;
 
@@ -20,12 +18,12 @@ function nLingual_detect_requested_language(){
 		$lang = $alang;
 	}
 
-	// Process the host & uri and get the language
-	if($result = nL_process_url($host, $uri)){
+	// Process the $here url (within nLingual) and get the language
+	if($result = nL_process_url()){
 		$lang = $result['lang'];
 		// Update host & uri with processed versions
 		$_SERVER['HTTP_HOST'] = $result['host'];
-		$_SERVER['REQUEST_URI'] = $result['path'];
+		$_SERVER['REQUEST_URI'] = $result['path'].($result['query'] ? '?'.$result['query'] : '');
 	}
 
 	// Override with get_var method if present and valid
