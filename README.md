@@ -22,14 +22,7 @@ When detecting the language your site should be displayed in, nLingual has 3 opt
 - Path Prefix method (e.g. `mydomain.com/fr/`)
 - Plain old GET/POST arguments (e.g. `?lang=fr`) as well as detecting the visitors browser language.
 
-This detection is run as soon as possible, however, this can be overridden should the actual post being loaded be of a different language.
-
-Since you have full control over the details of each version of a post, the actual URLs will be different (e.g. mydomain.com/about vs mydomain.com/a-propos), so it's kind of redundant to specify the language in the domain or path prefix when it's already obvious in the requested post name. When the actual post is found and pulled from the database, nLingual will check its language and apply it should it be different (don't worry, it also takes care of updating all the text domains to match).
-
-This way, both URLs are valid:
-
-- mydomain.com/a-propos <= The simple
-- fr.mydomain.com/a-propos <= The explicit
+This detection is run as soon as possible, however, this can be overridden should the actual post being loaded be of a different language (and redirect to the proper URL for SEO purposes).
 
 As mentioned, nLingual will make sure to reload any text domains when the language is changed, so any localization will reflect the new language. (Note: this functionality is not guaranteed; it works by logging all text domains loaded AFTER the plugin itself is loaded, though steps have been taken to make sure just about any domain loading is caught).
 
