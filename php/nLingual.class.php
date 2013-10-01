@@ -753,7 +753,7 @@ class nLingual{
 	 *
 	 * @return array $result An array of the resulting language, host name and requested uri
 	 */
-	public static function process_url($host, $path = null){
+	public static function process_url($url_data){
 		$lang = null;
 	
 		// If no URL, use $here
