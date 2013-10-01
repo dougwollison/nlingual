@@ -758,11 +758,19 @@ class nLingual{
 
 		$url_data = array();
 
-		if(is_array($host)){
-			$url_data = $host;
-			$url_data = array_merge(array('host'=>'', 'path'=>'/'), $url_data);
+		if(is_array($host) || is_null($host)){
+			if(!$host){ // Nothing passed, parse the $here url
+				$url_data = parse_url(self::$here);
+			}else{ // parse_url array passed, assign it
+				$url_data = $host;
+			}
+			
+			// Default host/path/query keys
+			$url_data = array_merge(array('host'=>'', 'path'=>'/', 'query' => ''), $url_data);
+			
 			$host = $url_data['host'];
 			$path = $url_data['path'];
+			parse_str($url_data['query'], $query);
 		}
 
 		if(!$path) $path = '/';
@@ -775,12 +783,17 @@ class nLingual{
 			case NL_REDIRECT_USING_PATH:
 				$path = self::process_path($path, $lang);
 				break;
+			default:
+				$lang = $query['lang'];
+				unset($query['lang']);
+				break;
 		}
 
 		if($lang){
 			$url_data['lang'] = $lang;
 			$url_data['host'] = $host;
 			$url_data['path'] = $path;
+			$url_data['args'] = $query;
 			return $url_data;
 		}
 
@@ -825,7 +838,9 @@ class nLingual{
 		// Only proceed if it's a local url (and not simply the unslashed $home url)
 		if(strpos($url, $home) !== false){
 			// If $relocalized is true, delocalize the URL first
-			$url = self::delocalize_url($url);
+			if($relocalize){
+				$url = self::delocalize_url($url);
+			}
 
 			// Parse and process the url
 			$url_data = parse_url($url);
@@ -848,8 +863,9 @@ class nLingual{
 						$url_data['path'] = "/$lang{$url_data['path']}";
 						break;
 					default:
-						$arg = self::get_option('get_var').'='.$lang;
-						$url_data['query'] = $url_data['query'] ? '&'.$arg : $arg;
+						parse_str($url_data['query'], $url_data['args']);
+						$url_data['args'][self::get_option('get_var')] = $lang;
+						break;
 				}
 
 				$url = self::build_url($url_data);
@@ -960,8 +976,7 @@ class nLingual{
 		// Get where we are now and what the new URL should be
 		switch(true){
 			case is_front_page():
-				$here = get_option('home');
-				$url = self::localize_url($here, $lang).'/';
+				$here = home_url('/');
 				break;
 			case is_home():
 				$page = get_option('page_for_posts');
@@ -984,17 +999,17 @@ class nLingual{
 				$here = get_year_link(get_query_var('year'));
 				break;
 			default: // Just localize the literal URL
-				return self::localize_url(site_url($uri), $lang, true);
-		}
-
-		// Check if paged, add page/n to $here
-		if(is_paged()){
-			$here .= sprintf('page/%d/', get_query_var('paged'));
+				return self::localize_url(home_url($uri), $lang, true);
 		}
 
 		// Localize $here to create $url if it's not set
 		if($url === false){
 			$url = self::localize_url($here, $lang, true);
+		}
+
+		// Check if paged, add page/n to $url
+		if(is_paged()){
+			$url .= sprintf('page/%d/', get_query_var('paged'));
 		}
 
 		// Now, check for any extra stuff in the URL after the main one
