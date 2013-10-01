@@ -749,31 +749,32 @@ class nLingual{
 	 * @uses self::process_domain()
 	 * @uses self::process_path()
 	 *
-	 * @param string $host The host name
-	 * @param string $uri The requested uri
+	 * @param mixed $url_data The URL string or parsed array to proces
+	 *
 	 * @return array $result An array of the resulting language, host name and requested uri
 	 */
 	public static function process_url($host, $path = null){
 		$lang = null;
-
-		$url_data = array();
-
-		if(is_array($host) || is_null($host)){
-			if(!$host){ // Nothing passed, parse the $here url
-				$url_data = parse_url(self::$here);
-			}else{ // parse_url array passed, assign it
-				$url_data = $host;
-			}
-			
-			// Default host/path/query keys
-			$url_data = array_merge(array('host'=>'', 'path'=>'/', 'query' => ''), $url_data);
-			
-			$host = $url_data['host'];
-			$path = $url_data['path'];
-			parse_str($url_data['query'], $query);
+	
+		// If no URL, use $here
+		if(is_null($url_data)) $url_data = self::$here;
+		
+		// If not already an array, parse it
+		if(!is_array($url_data)){
+			$url_data = parse_url($url_data);
 		}
-
-		if(!$path) $path = '/';
+		
+		// Default the host/path/query keys
+		$url_data = array_merge(array('host'=>'', 'path'=>'/', 'query' => ''), $url_data);
+		
+		extract($url_data);
+		
+		parse_str($url_data['query'], $args);
+		
+		if(isset($args['lang'])){
+			$lang = $args['lang'];
+			unset($args['lang']);
+		}
 
 		// Proceed based on method
 		switch(self::get_option('method')){
@@ -783,21 +784,17 @@ class nLingual{
 			case NL_REDIRECT_USING_PATH:
 				$path = self::process_path($path, $lang);
 				break;
-			default:
-				$lang = $query['lang'];
-				unset($query['lang']);
-				break;
 		}
 
-		if($lang){
-			$url_data['lang'] = $lang;
-			$url_data['host'] = $host;
-			$url_data['path'] = $path;
-			$url_data['args'] = $query;
-			return $url_data;
-		}
-
-		return false;
+		$url_data['lang'] = $lang;
+		$url_data['host'] = $host;
+		$url_data['path'] = $path;
+		$url_data['args'] = $args;
+		
+		// Run through the filter
+		$url_data = apply_filters('nLingual_process_url', $url_data);
+		
+		return $url_data;
 	}
 
 	/*
@@ -809,25 +806,28 @@ class nLingual{
 	 * @uses self::get_option()
 	 * @uses self::process_url()
 	 *
-	 * @param string $url The URL to localize
+	 * @param string $old_url The URL to localize
 	 * @param string $lang The language to localize with (default's to current language)
 	 * @param bool $relocalize Wether or not to relocalize the url if it already is
 	 */
-	public static function localize_url($url, $lang = null, $relocalize = false){
+	public static function localize_url($old_url, $lang = null, $relocalize = false){
 		global $pagenow;
+		
+		// Copy to new_url
+		$new_url = $old_url;
 
 		// Get the vanilla and slashed home_url
 		$_home = get_option('home');
 		$home = trailingslashit($_home);
 
 		// Don't mess with the url when in the admin or if it's the vanilla home_url
-		if(defined('WP_ADMIN') || $url == $_home)
+		if(defined('WP_ADMIN') || $old_url == $_home)
 			return $url;
 
 		if(!$lang) $lang = self::$current;
 
 		// Create an identifier for the url for caching
-		$id = "[$lang]$url";
+		$id = "[$lang]$old_url";
 
 		// Check if this URL has been taken care of before,
 		// return cached result
@@ -836,22 +836,21 @@ class nLingual{
 		}
 
 		// Only proceed if it's a local url (and not simply the unslashed $home url)
-		if(strpos($url, $home) !== false){
+		if(strpos($new_url, $home) !== false){
 			// If $relocalized is true, delocalize the URL first
 			if($relocalize){
-				$url = self::delocalize_url($url);
+				$new_url = self::delocalize_url($new_url);
 			}
 
-			// Parse and process the url
-			$url_data = parse_url($url);
-			$processed = self::process_url($url_data);
+			// Process the url
+			$url_data = self::process_url($new_url);
 
 			// If processing failed (i.e. not yet localized),
 			// and if the URL is not a wp-admin/[anything].php one,
 			// and if we're not in the default language (or if skip_default_l10n is disabled)
 			// Go ahead and localize the URL
 			if(
-				(!$processed)
+				(!$url_data['lang'])
 				&& !preg_match('#^/wp-([\w-]+.php|(admin|content|includes)/)#', $url_data['path'])
 				&& ($lang != self::$default || !self::get_option('skip_default_l10n'))
 			){
@@ -867,15 +866,21 @@ class nLingual{
 						$url_data['args'][self::get_option('get_var')] = $lang;
 						break;
 				}
+				
+				// Run through the filter
+				$url_data = apply_filters('nLingual_localize_url_array', $url_data, $old_url, $lang, $relocalize);
 
-				$url = self::build_url($url_data);
+				$new_url = self::build_url($url_data);
 			}
 		}
+		
+		// Run through the filter
+		$new_url = apply_filters('nLingual_localize_url', $new_url, $old_url, $lang, $relocalize);
 
 		// Store the URL in the cache
-		self::cache_set($id, $url, 'url');
+		self::cache_set($id, $new_url, 'url');
 
-		return $url;
+		return $new_url;
 	}
 
 	/*
@@ -885,10 +890,10 @@ class nLingual{
 	 */
 	public static function delocalize_url($url){
 		// Parse and process the url
-		$url_data = parse_url($url);
+		$url_data = self::process_url($url);
 
-		// If successfully processed update $url_data with the $processed info, and rebuild $url
-		if($processed = self::process_url($url_data)){
+		// If a langauge was extracted, rebuild the $url
+		if($processed['lang']){
 			$url = self::build_url($processed);
 		}
 
