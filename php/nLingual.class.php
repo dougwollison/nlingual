@@ -998,39 +998,31 @@ class nLingual{
 			case is_year():
 				$here = get_year_link(get_query_var('year'));
 				break;
+			case is_search():
+				$here = home_url('/?s='.get_query_var('s'));
+				break;
 			default: // Just localize the literal URL
-				return self::localize_url(home_url($uri), $lang, true);
+				$url = self::localize_url(home_url($uri), $lang, true);
+				$url = apply_filters('nLingual_localize_here', $url);
+				return $url;
 		}
-
-		// Localize $here to create $url if it's not set
+		
+		// If $url hasn't been set, localize $here to create it
 		if($url === false){
 			$url = self::localize_url($here, $lang, true);
 		}
 
-		// Check if paged, add page/n to $url
+		// Parse the $url
+		$url_data = parse_url($url);
+		
+		// If paged, add page/n to the $url_data path
 		if(is_paged()){
-			$url .= sprintf('page/%d/', get_query_var('paged'));
+			$url_data['path'] .= sprintf('page/%d/', get_query_var('paged'));
+			$url = self::build_url($url_data);
 		}
-
-		// Now, check for any extra stuff in the URL after the main one
-
-		// Parse and process the $here URL
-		$url_data = parse_url($here);
-		if($processed = self::process_url($url_data)){
-			$url_data = $processed;
-		}
-
-		// Process the URI
-		$uri = self::process_path($uri);
-
-		// Build the $here version of the REQUEST_URI
-		$path = $url_data['path'].(isset($url_data['query']) ? '?'.$url_data['query'] : '');
-
-		// See if it matches, tack on the extra bits
-		if(strpos($uri, $path) === 0){
-			$extra = substr($uri, strlen($path));
-			$url .= $extra;
-		}
+		
+		// Build the URL
+		$url = self::build_url($url_data);
 
 		return $url;
 	}
