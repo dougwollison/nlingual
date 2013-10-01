@@ -1021,6 +1021,9 @@ class nLingual{
 			$url = self::build_url($url_data);
 		}
 		
+		// Apply any filters
+		$url_data = apply_filters('nLingual_localize_here_array', $url_data);
+		
 		// Build the URL
 		$url = self::build_url($url_data);
 
