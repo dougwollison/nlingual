@@ -58,7 +58,7 @@ function nLingual_register_settings(){
 		$compare = nL_get_option('method');
 		$options = array(
 			NL_REDIRECT_USING_DOMAIN	=> __('Subdomain (e.g. <code>%1$s.%2$s</code>)', NL_TXTDMN),
-			NL_REDIRECT_USING_PATH		=> __('Path prefix (e.g. <code>%2$s/%1$s</code>)', NL_TXTDMN),
+			NL_REDIRECT_USING_PATH		=> __('Path prefix (e.g. <code>%2$s/%1$s/</code>)', NL_TXTDMN),
 			NL_REDIRECT_USING_ACCEPT	=> __('None, use visitors native language, if applicable', NL_TXTDMN)
 		);
 
