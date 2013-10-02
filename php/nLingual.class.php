@@ -1436,9 +1436,9 @@ class nLingual{
 
 		$post = get_page_by_path(trim($path, '/'), OBJECT, $post_type);
 
-		$link = self::get_permalink($post->ID, $lang, $echo);
-		
-		return $link;
+		if($echo) self::the_permalink($post->ID, $lang);
+
+		return self::get_permalink($post->ID, $lang);
 	}
 	
 	// ========================= //
