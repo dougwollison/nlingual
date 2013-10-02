@@ -81,6 +81,10 @@ class nLingual{
 	 *
 	 * @global $wpdb
 	 *
+	 * @uses self::$home_url
+	 * @uses self::$home
+	 * @uses self::$here_url
+	 * @uses self::$here
 	 * @uses self::$langauges
 	 * @uses self::$options
 	 * @uses self::$sync_rules
@@ -1184,7 +1188,7 @@ class nLingual{
 	/**
 	 * Checks if redirection is needed such as forced language specification or trainling slashes
 	 *
-	 * @uses self::$here
+	 * @uses self::$here_url
 	 * @uses self::delocalize_url()
 	 * @uses self::localize_here()
 	 */
@@ -1193,7 +1197,7 @@ class nLingual{
 		if(!did_action('wp')) return;
 
 		// Get the current URL
-		$requested = self::$here;
+		$requested = self::$here_url;
 
 		// Check in case it's just the home page
 		if(rtrim($requested, '/') == self::delocalize_url(get_option('home'))) return;
