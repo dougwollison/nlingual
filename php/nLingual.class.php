@@ -1042,8 +1042,8 @@ class nLingual{
 		$url_data = self::process_url($url);
 
 		// If a langauge was extracted, rebuild the $url
-		if($processed['lang']){
-			$url = self::build_url($processed);
+		if($url_data['lang']){
+			$url = self::build_url($url_data);
 		}
 
 		return $url;
