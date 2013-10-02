@@ -1,8 +1,6 @@
 <?php
 /**
- * The nLingual class
- *
- * Static class for utilizing options and handling language/translation/url processing
+ * nLingual API
  *
  * @package nLingual
  *
@@ -30,6 +28,17 @@ define('NL_REDIRECT_USING_DOMAIN', 'NL_REDIRECT_USING_DOMAIN');
  */
 define('NL_REDIRECT_USING_ACCEPT', 'NL_REDIRECT_USING_ACCEPT');
 
+/**
+ * nLingual API class
+ *
+ * API and utility collection for language, translation, and url processing/handling.
+ * This class is intended to be used in a static fashion; global function-style
+ * aliases can be found in nLingual.aliases.php.
+ *
+ * @package nLingual
+ *
+ * @since 1.0
+ */
 class nLingual{
 	// ============ //
 	//  Properties  //
