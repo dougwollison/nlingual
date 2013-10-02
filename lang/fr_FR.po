@@ -36,7 +36,7 @@ msgstr "Aucune"
 
 #: ../php/admin/editor.php:102
 msgid "No Change"
-msgstr ""
+msgstr "Aucun changement"
 
 #: ../php/admin/misc.php:17
 msgid "No post selected to edit."
@@ -157,11 +157,11 @@ msgstr "Sélectionnez si les langues de votre site utilisent des formats de date
 
 #: ../php/admin/settings.php:148
 msgid "Delete sister posts?"
-msgstr ""
+msgstr "Supprimer les articles/pages associé(e)s"
 
 #: ../php/admin/settings.php:153
 msgid "When permanently deleting a post, delete it’s sister translations."
-msgstr ""
+msgstr "Supprimer les articles/pages associé(e)s en même temps que l'original."
 
 #: ../php/admin/settings.php:148
 msgid "Erase translation data?"
