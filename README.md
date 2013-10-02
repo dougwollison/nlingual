@@ -1,7 +1,7 @@
 nLingual
 ========
 
-nLingual is a simple and flexible multilingual system for WordPress. It operates on a one language per post basis, allowing you to keep different languages separate, and for the custom fields and other metadata to be translated easily as well. It also comes with a host of general utilities that expand on the built-in localization functions. It also gives you complete control over the languages the system uses, and allows for the synchronization of sister posts.
+nLingual is a simple and flexible multilingual system for WordPress. It operates on a one language per post basis, allowing you to keep different languages separate, and for the custom fields and other metadata to be translated easily as well. It also comes with a host of general utilities that expand on the built-in localization functions. What's more, it gives you complete control over the languages the system uses, and allows for the synchronization of sister posts.
 
 Features
 --------
