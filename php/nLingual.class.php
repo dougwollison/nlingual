@@ -21,6 +21,9 @@ class nLingual{
 	protected static $current;
 	protected static $current_cache;
 	protected static $loaded_textdomains = array();
+	protected static $home_url;
+	protected static $home;
+	protected static $here_url;
 	protected static $here;
 
 	/**
@@ -90,8 +93,15 @@ class nLingual{
 	public static function init(){
 		global $wpdb, $table_prefix;
 
+		// Get the parsed Home URL
+		self::$home_url = get_option('home');
+		// Parse it
+		self::$home = parse_url(self::$home_url);
+
 		// Get the current URL
-		self::$here = (is_ssl() ? 'https://' : 'http://').$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+		self::$here_url = (is_ssl() ? 'https://' : 'http://').$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+		// Parse it
+		self::$here = parse_url(self::$here_url);
 
 		// Create and register the translations table
 		$wpdb->nL_translations = $table_prefix.'nL_translations';
@@ -874,7 +884,7 @@ class nLingual{
 	public static function process_url($url_data){
 		$lang = null;
 	
-		// If no URL, use $here
+		// If no URL, use $here_parsed
 		if(is_null($url_data)) $url_data = self::$here;
 		
 		// If not already an array, parse it
@@ -885,29 +895,23 @@ class nLingual{
 		// Default the host/path/query keys
 		$url_data = array_merge(array('host'=>'', 'path'=>'/', 'query' => ''), $url_data);
 		
-		extract($url_data);
+		// Parse the query string into new args entry
+		parse_str($url_data['query'], $url_data['args']);
 		
-		parse_str($url_data['query'], $args);
-		
-		if(isset($args['lang'])){
-			$lang = $args['lang'];
-			unset($args['lang']);
+		if(isset($url_data['args']['lang'])){
+			$url_data['lang'] = $url_data['args']['lang'];
+			unset($url_data['args']['lang']);
 		}
 
 		// Proceed based on method
 		switch(self::get_option('method')){
 			case NL_REDIRECT_USING_DOMAIN:
-				$host = self::process_domain($host, $lang);
+				$url_data['host'] = self::process_domain($url_data['host'], $url_data['lang']);
 				break;
 			case NL_REDIRECT_USING_PATH:
-				$path = self::process_path($path, $lang);
+				$url_data['path'] = self::process_path($url_data['path'], $url_data['lang']);
 				break;
 		}
-
-		$url_data['lang'] = $lang;
-		$url_data['host'] = $host;
-		$url_data['path'] = $path;
-		$url_data['args'] = $args;
 		
 		// Run through the filter
 		$url_data = apply_filters('nLingual_process_url', $url_data);
@@ -918,6 +922,7 @@ class nLingual{
 	/**
 	 * Localize the URL with the supplied language
 	 *
+	 * @uses self::$home
 	 * @uses self::cache_get()
 	 * @uses self::cache_set()
 	 * @uses self::current_lang()
@@ -931,6 +936,17 @@ class nLingual{
 	 * @return string The localized url
 	 */
 	public static function localize_url($old_url, $lang = null, $relocalize = false){
+		// Check if it's a URI (path only, no hostname),
+		// prefix with the domain of the home url if so
+		if(!parse_url($old_url, PHP_URL_HOST)){
+			// Make a copy of the $home property
+			$home = self::$home;
+			// Change the path to the URI
+			$home['path'] = $old_url;
+			// Rebuild it as a full URL
+			$old_url = self::build_url($home);
+		}
+	
 		// Copy to new_url
 		$new_url = $old_url;
 
@@ -977,7 +993,13 @@ class nLingual{
 						$url_data['host'] = "$lang.{$url_data['host']}";
 						break;
 					case NL_REDIRECT_USING_PATH:
-						$url_data['path'] = "/$lang{$url_data['path']}";
+						if(self::$home['path']){ // $home has a base path, need to insert $lang AFTER it
+							$home = preg_quote(self::$home['path'],'#');
+							$url_data['path'] = preg_replace("#^($home)(/.*|$)#", "$1/$lang$2", $url_data['path']);
+						}else{
+							// $home is the domain root, just need to prefix the whole path
+							$url_data['path'] = "/$lang{$url_data['path']}";
+						}
 						break;
 					default:
 						parse_str($url_data['query'], $url_data['args']);
@@ -1130,8 +1152,8 @@ class nLingual{
 			case is_search():
 				$here = home_url('/?s='.get_query_var('s'));
 				break;
-			default: // Just localize the literal URL
-				$url = self::localize_url(home_url($uri), $lang, true);
+			default: // Just localize the URI
+				$url = self::localize_url($uri, $lang, true);
 				$url = apply_filters('nLingual_localize_here', $url);
 				return $url;
 		}
