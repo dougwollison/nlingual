@@ -79,8 +79,8 @@ function nLingual_save_post($post_id){
  */
 add_action('deleted_post', 'nLingual_deleted_post');
 function nLingual_deleted_post($post_id){
-	// Delete the translation
-	delete_translation($post_id);
+	// Delete the language link
+	delete_post_lang($post_id);
 	
 	if(nL_get_option('delete_sisters')){
 		foreach(nL_associated_posts($post_id) as $post_id){

@@ -97,8 +97,8 @@ function nL_set_post_lang($id = null, $lang = null){
 	return nL::set_post_lang($id, $lang);
 }
 
-function nL_delete_translation($id = null, $lang = null){
-	return nL::delete_translation($id, $lang);
+function nL_delete_post_lang($id = null, $lang = null){
+	return nL::delete_post_lang($id, $lang);
 }
 
 function nL_in_this_lang($id = null, $lang){

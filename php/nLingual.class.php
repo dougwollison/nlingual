@@ -592,7 +592,7 @@ class nLingual{
 	 *
 	 * @return mixed The result of $wpdb->delete
 	 */
-	public static function delete_translation($id){
+	public static function delete_post_lang($id){
 		global $wpdb;
 
 		return $wpdb->delete(
