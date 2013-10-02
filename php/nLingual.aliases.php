@@ -137,8 +137,8 @@ function nL_process_path($uri, &$lang = null){
 	return nL::process_path($uri, $lang);
 }
 
-function nL_process_url($host, $uri = null){
-	return nL::process_url($host, $uri);
+function nL_process_url($url_data = null){
+	return nL::process_url($url_data);
 }
 
 function nL_localize_url($url = null, $lang = null, $relocalize = false){
