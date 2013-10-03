@@ -40,7 +40,7 @@ function nL_do_language_column($column, $post_id){
 		// Print out the language it's in
 		$lang = nL_get_post_lang($post_id);
 
-		printf('<input type="hidden" value="%s">', $lang);
+		printf('<input type="hidden" name="_language" value="%s">', $lang);
 
 		if(!$lang){
 			_e('None', NL_TXTDMN);
@@ -51,6 +51,7 @@ function nL_do_language_column($column, $post_id){
 
 		if($associated = nL_associated_posts($post_id)){
 			foreach($associated as $lang => $pid){
+				printf('<input type="hidden" name="_translation_%s" value="%s">', $lang, $pid);
 				printf('<br>%s: <a href="%s">%s</a> | <a href="%s">View</a>',
 					nL_get_lang('name', $lang),
 					admin_url("/post.php?post=$pid&action=edit"),
@@ -69,12 +70,14 @@ add_action('quick_edit_custom_box', 'nLingual_quick_edit_box', 10, 2);
 function nLingual_quick_edit_box($column, $post_type){
 	if(!nL_post_type_supported($post_type)) return;
 
-	if($column == 'language'): wp_nonce_field('nLingual_set_language', 'nL_lang');
+	if($column == 'language'):
+	wp_nonce_field('nLingual_set_language', 'nL_lang');
+	wp_nonce_field('nLingual_set_translations', 'nL_link');
 	?>
-    <fieldset class="inline-edit-col-right inline-edit-<?php echo $post_type?>">
+    <fieldset class="inline-edit-col-left inline-edit-<?php echo $post_type?>">
       <div class="inline-edit-col column-<?php echo $column ?>">
         <label class="inline-edit-group">
-        	<?php _e('Language', NL_TXTDMN)?>
+        	<span class="title"><?php _e('Language', NL_TXTDMN)?></span>
         	<select name="language">
 				<option value="-1"><?php _e('None', NL_TXTDMN)?></option>
 			<?php foreach(nL_languages() as $lang):?>
@@ -82,6 +85,26 @@ function nLingual_quick_edit_box($column, $post_type){
 			<?php endforeach;?>
 			</select>
         </label>
+        <?php foreach(nL_languages() as $lang):
+        	if(nL_in_this_lang($post->ID, $lang->slug)) continue;
+	        $lang_posts = new WP_Query(array(
+				'post_type' => $post_type,
+				'posts_per_page' => -1,
+				'language' => $lang->slug,
+				'orderby' => 'post_title',
+				'order' => 'ASC',
+			));
+			?>
+	        <label class="inline-edit-group">
+	        	<span class="title" title="<?php echo $lang->system_name?>"><?php echo $lang->short_name?></span>
+	        	<select name="translations[<?php echo $lang->slug?>]" class="translations">
+					<option value="-1"><?php _e('None', NL_TXTDMN)?></option>
+				<?php foreach($lang_posts->posts as $lang_post):?>
+					<option value="<?php echo $lang_post->ID?>"><?php echo $lang_post->post_title?></option>
+				<?php endforeach;?>
+				</select>
+	        </label>
+        <?php endforeach;?>
       </div>
     </fieldset>
     <?php

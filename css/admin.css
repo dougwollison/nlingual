@@ -32,3 +32,8 @@
 #nLingual_languages .language-delete{
 	width: 50px;
 }
+
+.inline-edit-col .translations{
+	max-width: 80%;
+	width: 500px;
+}

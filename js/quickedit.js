@@ -18,12 +18,19 @@
 			var edit_row = $('#edit-' + post_id);
 
 			// get the data
-			var lang = $('.column-language input', post_row).val();
+			var lang = $('.column-language [name="_language"]', post_row).val();
 
 			if(!lang) return;
 
 			// populate the data
 			$('select[name="language"]', edit_row).val(lang);
+
+			$('.column-language [name^="_translation_"]', post_row).each(function(){
+				var lang = $(this).attr('name').replace('_translation_', '');
+				var id = $(this).val();
+
+				$('select[name="translations['+lang+']"]', edit_row).val(id);
+			});
 		}
 	};
 })(jQuery);
