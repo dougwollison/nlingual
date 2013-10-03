@@ -181,8 +181,8 @@ function nL_maybe_redirect(){
 	return nL::maybe_redirect();
 }
 
-function nL_lang_links($echo = false, $prefix = '', $sep = ' '){
-	return nL::lang_links($echo, $prefix, $sep);
+function nL_lang_links($echo = false, $prefix = '', $sep = ' ', $skip_current = false){
+	return nL::lang_links($echo, $prefix, $sep, $skip_current);
 }
 
 function nL_split_langs($text, $lang = null, $sep = null, $force = false){
