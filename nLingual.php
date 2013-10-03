@@ -3,9 +3,10 @@
 Plugin Name: nLingual
 Plugin URI: https://github.com/dougwollison/nLingual
 Description: Easy to manage Multilingual system, with theme development utilities and post data synchronization.
-Version: 1.0
+Version: 1.1.2
 Author: Doug Wollison
 Author URI: http://dougw.me
+Tags: multilingual, multi, language, admin, bilingual, switcher, translation, nlingual
 License: GPL2
 */
 
