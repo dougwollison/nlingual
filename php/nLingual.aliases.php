@@ -41,6 +41,10 @@ function nL_current_lang(){
 	return nL::current_lang();
 }
 
+function nL_other_lang(){
+	return nL::other_lang();
+}
+
 function nL_is_lang($lang){
 	return nL::is_lang($lang);
 }
@@ -111,6 +115,10 @@ function nL_in_default_lang($id = null){
 
 function nL_in_current_lang($id = null){
 	return nL::in_current_lang($id);
+}
+
+function nL_in_other_lang($id = null){
+	return nL::in_other_lang($id);
 }
 
 function nL_get_translation($id, $lang = null, $return_self = true){
