@@ -992,7 +992,7 @@ class nLingual{
 	/**
 	 * Delete a translation link for the provided post in the provided language
 	 *
-	 * @since 1.0
+	 * @since 1.0.1
 	 *
 	 * @global wpdb $wpdb The database abstraction class
 	 *
