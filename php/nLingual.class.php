@@ -43,7 +43,7 @@ class nLingual{
 	// ============ //
 	//  Properties  //
 	// ============ //
-	
+
 	/**
 	 * The options storage array
 	 *
@@ -54,7 +54,7 @@ class nLingual{
 	 * @var array
 	 */
 	protected static $options = array();
-	
+
 	/**
 	 * The synchronization rules storage array
 	 *
@@ -65,7 +65,7 @@ class nLingual{
 	 * @var array
 	 */
 	protected static $sync_rules = array();
-	
+
 	/**
 	 * The list of languages
 	 *
@@ -76,7 +76,7 @@ class nLingual{
 	 * @var array
 	 */
 	protected static $languages = array();
-	
+
 	/**
 	 * The list of languages, sorted by ID
 	 *
@@ -87,7 +87,7 @@ class nLingual{
 	 * @var array
 	 */
 	protected static $languages_by_id = array();
-	
+
 	/**
 	 * The list of languages, sorted by slug
 	 *
@@ -98,7 +98,7 @@ class nLingual{
 	 * @var array
 	 */
 	protected static $languages_by_slug = array();
-	
+
 	/**
 	 * The list of supported post types
 	 *
@@ -109,7 +109,7 @@ class nLingual{
 	 * @var array
 	 */
 	protected static $post_types = array();
-	
+
 	/**
 	 * The separate for split_langs()
 	 *
@@ -120,7 +120,7 @@ class nLingual{
 	 * @var string
 	 */
 	protected static $separator;
-	
+
 	/**
 	 * The slug of the default language
 	 *
@@ -131,7 +131,7 @@ class nLingual{
 	 * @var string
 	 */
 	protected static $default;
-	
+
 	/**
 	 * The slug of the current language
 	 *
@@ -142,7 +142,7 @@ class nLingual{
 	 * @var string
 	 */
 	protected static $current;
-	
+
 	/**
 	 * A copy of $current for use in switch_lang()
 	 *
@@ -153,7 +153,7 @@ class nLingual{
 	 * @var string
 	 */
 	protected static $current_cache;
-	
+
 	/**
 	 * An internal cache array for post languages and urls
 	 *
@@ -164,7 +164,7 @@ class nLingual{
 	 * @var array
 	 */
 	protected static $cache = array();
-	
+
 	/**
 	 * The list of loaded text domains for reload_textdomains()
 	 *
@@ -175,7 +175,7 @@ class nLingual{
 	 * @var array
 	 */
 	protected static $loaded_textdomains = array();
-	
+
 	/**
 	 * The blog home url (so we don't have to call home_url or get_option every time)
 	 *
@@ -186,7 +186,7 @@ class nLingual{
 	 * @var string
 	 */
 	protected static $home_url;
-	
+
 	/**
 	 * The parse_url array of $home_url
 	 *
@@ -197,7 +197,7 @@ class nLingual{
 	 * @var array
 	 */
 	protected static $home;
-	
+
 	/**
 	 * The current URL (https?://$_SERVER['HOST_NAME']$_SERVER['REQUEST_URI'])
 	 *
@@ -210,7 +210,7 @@ class nLingual{
 	 * @var string
 	 */
 	protected static $here_url;
-	
+
 	/**
 	 * The parse_url array of $here_url
 	 *
@@ -221,7 +221,7 @@ class nLingual{
 	 * @var array
 	 */
 	protected static $here;
-	
+
 	// ================= //
 	//  Utility Methods  //
 	// ================= //
@@ -280,7 +280,7 @@ class nLingual{
 
 		return $translation_id;
 	}
-	
+
 	// ================================= //
 	//  Initialization and Hook Methods  //
 	// ================================= //
@@ -416,7 +416,7 @@ class nLingual{
 		if(!isset(self::$loaded_textdomains[$domain]) && !$force)
 			self::$loaded_textdomains[$domain] = $mofile;
 	}
-	
+
 	// ========================= //
 	//  Property Access Methods  //
 	// ========================= //
@@ -542,7 +542,7 @@ class nLingual{
 	public static function current_lang(){
 		return self::$current;
 	}
-	
+
 	// =============== //
 	//  Cache Methods  //
 	// =============== //
@@ -577,7 +577,7 @@ class nLingual{
 	public static function cache_set($id, $data, $section){
 		self::$cache[$section][$id] = $data;
 	}
-	
+
 	// ============================= //
 	//  Basic Value Testing Methods  //
 	// ============================= //
@@ -649,7 +649,7 @@ class nLingual{
 
 		return in_array($type, self::$post_types);
 	}
-	
+
 	// ======================= //
 	//  Language Data Methods  //
 	// ======================= //
@@ -769,7 +769,7 @@ class nLingual{
 	public static function restore_lang(){
 		self::$current = self::$current_cache;
 	}
-	
+
 	// ======================= //
 	//  Post Langauge Methods  //
 	// ======================= //
@@ -792,7 +792,7 @@ class nLingual{
 	 */
 	public static function get_post_lang($id = null){
 		global $wpdb;
-		
+
 		if(is_null($id)){
 			// Get the current post ID
 			global $post;
@@ -884,7 +884,7 @@ class nLingual{
 			array('%d')
 		);
 	}
-	
+
 	// =============================== //
 	//  Post Language Testing Methods  //
 	// =============================== //
@@ -935,7 +935,7 @@ class nLingual{
 	public static function in_current_lang($id){
 		return self::in_this_lang($id, self::$current);
 	}
-	
+
 	// ==================== //
 	//  Transation Methods  //
 	// ==================== //
@@ -990,6 +990,34 @@ class nLingual{
 	}
 
 	/**
+	 * Delete a translation link for the provided post in the provided language
+	 *
+	 * @since 1.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class
+	 *
+	 * @uses self::_translation_group_id()
+	 *
+	 * @param int $post_id The id of the post to use as an achor
+	 * @param int|string $lang The language slug or id to unlink
+	 */
+	public static function unlink_translation($post_id, $lang){
+		global $wpdb;
+
+		// Get a/the group ID for this post
+		$group_id = self::_translation_group_id($post_id);
+
+		$wpdb->delete(
+			$wpdb->nL_translations,
+			array(
+				'group_id' => $group_id,
+				'lang_id' => self::lang_id($lang)
+			),
+			array('%d', '%d')
+		);
+	}
+
+	/**
 	 * Associate translations together in the nL_translations table
 	 *
 	 * @since 1.0
@@ -1015,9 +1043,13 @@ class nLingual{
 
 		$values = array();
 		foreach($posts as $lang => $id){
-			if($id <= 0) continue; // Not an actual post
-			$lang_id = self::lang_id($lang);
-			$values[] = $wpdb->prepare("(%d,%s,%d)", $group_id, $lang_id, $id);
+			if($id <= 0){
+				// Not a post, unlink the translation
+				self::unlink_translation($post_id, $lang);
+			}else{
+				$lang_id = self::lang_id($lang);
+				$values[] = $wpdb->prepare("(%d,%s,%d)", $group_id, $lang_id, $id);
+			}
 		}
 
 		if(!$values) return;
@@ -1071,7 +1103,7 @@ class nLingual{
 
 		return $posts;
 	}
-	
+
 	// ======================== //
 	//  URL Processing Methods  //
 	// ======================== //
@@ -1098,7 +1130,7 @@ class nLingual{
 			'query'=>'',
 			'fragment'=>''
 		), $data);
-		
+
 		if(is_array($data['args'])){
 			$data['query'] = http_build_query($data['args']);
 		}
@@ -1202,21 +1234,21 @@ class nLingual{
 	 */
 	public static function process_url($url_data){
 		$lang = null;
-	
+
 		// If no URL, use $here_parsed
 		if(is_null($url_data)) $url_data = self::$here;
-		
+
 		// If not already an array, parse it
 		if(!is_array($url_data)){
 			$url_data = parse_url($url_data);
 		}
-		
+
 		// Default the host/path/query keys
 		$url_data = array_merge(array('host'=>'', 'path'=>'/', 'query' => ''), $url_data);
-		
+
 		// Parse the query string into new args entry
 		parse_str($url_data['query'], $url_data['args']);
-		
+
 		if(isset($url_data['args']['lang'])){
 			$url_data['lang'] = $url_data['args']['lang'];
 			unset($url_data['args']['lang']);
@@ -1231,13 +1263,13 @@ class nLingual{
 				$url_data['path'] = self::process_path($url_data['path'], $url_data['lang']);
 				break;
 		}
-		
+
 		// Run through the filter
 		$url_data = apply_filters('nLingual_process_url', $url_data);
-		
+
 		return $url_data;
 	}
-	
+
 	// ======================== //
 	//  URL Conversion Methods  //
 	// ======================== //
@@ -1271,7 +1303,7 @@ class nLingual{
 			// Rebuild it as a full URL
 			$old_url = self::build_url($home);
 		}
-	
+
 		// Copy to new_url
 		$new_url = $old_url;
 
@@ -1331,14 +1363,14 @@ class nLingual{
 						$url_data['args'][self::get_option('get_var')] = $lang;
 						break;
 				}
-				
+
 				// Run through the filter
 				$url_data = apply_filters('nLingual_localize_url_array', $url_data, $old_url, $lang, $relocalize);
 
 				$new_url = self::build_url($url_data);
 			}
 		}
-		
+
 		// Run through the filter
 		$new_url = apply_filters('nLingual_localize_url', $new_url, $old_url, $lang, $relocalize);
 
@@ -1371,7 +1403,7 @@ class nLingual{
 
 		return $url;
 	}
-	
+
 	// ========================= //
 	//  Translation URL Methods  //
 	// ========================= //
@@ -1440,7 +1472,7 @@ class nLingual{
 
 		return self::get_permalink($post->ID, $lang);
 	}
-	
+
 	// ========================= //
 	//  URL Redirection Methods  //
 	// ========================= //
@@ -1500,7 +1532,7 @@ class nLingual{
 				$url = apply_filters('nLingual_localize_here', $url);
 				return $url;
 		}
-		
+
 		// If $url hasn't been set, localize $here to create it
 		if($url === false){
 			$url = self::localize_url($here, $lang, true);
@@ -1508,16 +1540,16 @@ class nLingual{
 
 		// Parse the $url
 		$url_data = parse_url($url);
-		
+
 		// If paged, add page/n to the $url_data path
 		if(is_paged()){
 			$url_data['path'] .= sprintf('page/%d/', get_query_var('paged'));
 			$url = self::build_url($url_data);
 		}
-		
+
 		// Apply any filters
 		$url_data = apply_filters('nLingual_localize_here_array', $url_data);
-		
+
 		// Build the URL
 		$url = self::build_url($url_data);
 
@@ -1551,7 +1583,7 @@ class nLingual{
 			exit;
 		}
 	}
-	
+
 	// ============================== //
 	//  General Use & Filter Methods  //
 	// ============================== //
@@ -1624,7 +1656,7 @@ class nLingual{
 
 		return $text;
 	}
-	
+
 	// ================================== //
 	//  Text Domain Manipulation Methods  //
 	// ================================== //
