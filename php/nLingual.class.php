@@ -558,10 +558,12 @@ class nLingual{
 
 	/**
 	 * Return the other language
+	 * Will use get_other_lang() if not set yet
 	 *
 	 * @since 1.1.0
 	 *
 	 * @uses self::$other
+	 * @uses self::get_other_lang()
 	 *
 	 * @return string The other langauge
 	 */
@@ -766,11 +768,13 @@ class nLingual{
 	/**
 	 * Set the current langauge
 	 *
+	 * @since 1.1.0 Added self::get_other_lang() usage
 	 * @since 1.0.0
 	 *
 	 * @uses self::$current
 	 * @uses self::$current_cache
 	 * @uses self::lang_exists()
+	 * @uses self::get_other_lang()
 	 * @uses self::reload_textdomains()
 	 *
 	 * @param string $lang The language to set/switchto
@@ -801,9 +805,11 @@ class nLingual{
 	/**
 	 * Switch to the specified language (does not affect loaded text domain)
 	 *
+	 * @since 1.1.0 Added self::get_other_lang() usage
 	 * @since 1.0.0
 	 *
 	 * @uses self::$current
+	 * @uses self::get_other_lang()
 	 */
 	public static function switch_lang($lang){
 		self::$current = $lang;
@@ -815,10 +821,12 @@ class nLingual{
 	/**
 	 * Restore the current language to what it was before
 	 *
+	 * @since 1.1.0 Added self::get_other_lang() usage
 	 * @since 1.0.0
 	 *
 	 * @uses self::$current
 	 * @uses self::$current_cache
+	 * @uses self::get_other_lang()
 	 */
 	public static function restore_lang(){
 		self::$current = self::$current_cache;
@@ -1093,11 +1101,13 @@ class nLingual{
 	/**
 	 * Associate translations together in the nL_translations table
 	 *
+	 * @since 1.0.1 Added self::unlink_translation() usage
 	 * @since 1.0.0
 	 *
 	 * @global wpdb $wpdb The database abstraction class
 	 *
 	 * @uses self::_translation_group_id()
+	 * @uses self::unlink_translation()
 	 *
 	 * @param int $post_id The id of the post to use as an achor
 	 * @param array The ids of the other posts to link together (in lang => post_id format)
@@ -1664,22 +1674,31 @@ class nLingual{
 	/**
 	 * Return or print a list of links to the current page in all available languages
 	 *
+	 * @since 1.1.1 Added $skip_current argument
 	 * @since 1.0.0
 	 *
 	 * @uses self::$languages
+	 * @uses self::$current
 	 * @uses self::localize_here()
 	 *
 	 * @param bool $echo Wether or not to echo the imploded list of links
 	 * @param string $prefix The text to preceded the link list with
 	 * @param string $sep The text to separate each link with
+	 * @param bool $skip_current Wether or not to include the current language link
 	 *
 	 * @return array The array of HTML links
 	 */
-	public static function lang_links($echo = false, $prefix = '', $sep = ' '){
+	public static function lang_links($echo = false, $prefix = '', $sep = ' ', $skip_current = false){
 		$links = array();
 		foreach(self::$languages as $lang){
+			// If skip_current is true and this is the current language, skip
+			if($skip_current && $lang->slug == self::$current) continue;
+
+			// Get the localized version of the current URL
 			$url = self::localize_here($lang->slug);
-			$links[] = sprintf('<a href="%s">%s</a>', $url, $lang->native_name);
+
+			// Create and append the HTML link to the list
+			$links[$lang->slug] = sprintf('<a href="%s">%s</a>', $url, $lang->native_name);
 		}
 
 		if($echo) echo $prefix.implode($sep, $links);
