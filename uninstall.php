@@ -17,6 +17,4 @@ $wpdb->query("DROP TABLE IF EXISTS `{$table_prefix}nL_languages`");
 $wpdb->query("DROP TABLE IF EXISTS `{$table_prefix}nL_translations`");
 
 // Oh, and delete the options
-delet_option('nLingual-options');
-delet_option('nLingual-sync_rules');
-delet_option('nLingual-languages');
+$wpdb->query("DELETE FORM $wpdb->options WHERE option_name like 'nLingual-%'");
