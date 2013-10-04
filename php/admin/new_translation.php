@@ -3,12 +3,13 @@
 //	New Translation Action  //
 // ======================== //
 
-/*
+/**
  * Handle request for a new translation of a post
  * Will create a new post with the data copied over,
  * and direct you to the edit page of the new post
+ *
+ * @since 1.0.0
  */
-add_action('admin_init', 'nLingual_new_translation');
 function nLingual_new_translation(){
 	global $wpdb;
 	if(isset($_GET['nL_new_translation'])){
@@ -67,3 +68,4 @@ function nLingual_new_translation(){
 		exit;
 	}
 }
+add_action('admin_init', 'nLingual_new_translation');

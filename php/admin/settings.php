@@ -3,10 +3,12 @@
 //	Settings Hooks and Callbacks  //
 // ============================== //
 
-/*
- * Add settings page
+/**
+ * Admin menu hook
+ * Adds the Languages settings menu
+ *
+ * @since 1.0.0
  */
-add_action('admin_menu', 'nLingual_options_menu');
 function nLingual_options_menu(){
 	add_options_page(
 		__('Language Settings', NL_TXTDMN),
@@ -16,7 +18,14 @@ function nLingual_options_menu(){
 		'nLingual_settings_page'
 	);
 }
+add_action('admin_menu', 'nLingual_options_menu');
 
+/**
+ * Settings page callback
+ * Prints out the settings page, printing the settings fields/sections
+ *
+ * @since 1.0.0
+ */
 function nLingual_settings_page(){
 	?>
 	<div class="wrap">
@@ -34,10 +43,12 @@ function nLingual_settings_page(){
 	<?php
 }
 
-/*
+/**
  * Register settings for options page
+ *
+ * @since 1.1.3 Fixed processing of meta ruleset
+ * @since 1.0.0
  */
-add_action('admin_init', 'nLingual_register_settings');
 function nLingual_register_settings(){
 	add_settings_section('nLingual-options', __('Options', NL_TXTDMN), 'nLingual_manage_options', 'nLingual');
 	add_settings_section('nLingual-sync_rules', __('Synchronization Rules', NL_TXTDMN), 'nLingual_manage_sync', 'nLingual');
@@ -46,7 +57,10 @@ function nLingual_register_settings(){
 	register_setting('nLingual', 'nLingual-options');
 	register_setting('nLingual', 'nLingual-sync_rules', function($data){
 		foreach($data as &$ruleset){
-			$ruleset['meta'] = explode("\n", $ruleset['meta']);
+			// Split the metadata rule into separate lines
+			$ruleset['meta'] = preg_split('/[\n\r]+/', $ruleset['meta']);
+			array_walk($ruleset['meta'], 'trim'); // Also run trim on each line
+
 			if(in_array('post_date', $ruleset['data'])) $ruleset['data'][] = 'post_date_gmt';
 			if(in_array('post_modified', $ruleset['data'])) $ruleset['data'][] = 'post_modified_gmt';
 		}
@@ -77,7 +91,7 @@ function nLingual_register_settings(){
 		printf(
 			'<label><input id="skip_default_l10n" type="checkbox" name="nLingual-options[skip_default_l10n]" value="1" %s> %s</label>',
 			$bool ? 'checked' : '',
-			__('Do not use a subdomain or path prefix for the default langauge', NL_TXTDMN)
+			__('Do not use a subdomain or path prefix for the default language', NL_TXTDMN)
 		);
 	}, 'nLingual', 'nLingual-options');
 
@@ -231,15 +245,35 @@ function nLingual_register_settings(){
 		}, 'nLingual', 'nLingual-sync_rules');
 	}
 }
+add_action('admin_init', 'nLingual_register_settings');
 
+/**
+ * Options settings section callback
+ * Simply prints out the individual fields
+ *
+ * @since 1.0.0
+ */
 function nLingual_manage_options(){
 	do_settings_fields('nLingual', 'options');
 }
 
+/**
+ * Sync settings section callback
+ * Simply prints out the individual fields
+ *
+ * @since 1.0.0
+ */
 function nLingual_manage_sync(){
 	do_settings_fields('nLingual', 'sync');
 }
 
+/**
+ * Languages settings section callback
+ * Prints out the interface for managing languages,
+ * including the currently registered ones.
+ *
+ * @since 1.0.0
+ */
 function nLingual_manage_languages(){
 	global $nLingual_preset_languages;
 	$languages = nL_languages();
@@ -279,6 +313,13 @@ function nLingual_manage_languages(){
 	<?php
 }
 
+
+/**
+ * Prints out a row for the languages editor table
+ * (including the blank one for the javascript template)
+ *
+ * @since 1.0.0
+ */
 function _nLingual_language_editor($language = array()){
 	$language = array_map('esc_textarea', $language);
 

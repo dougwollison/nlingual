@@ -3,10 +3,14 @@
 //	Language Dections Hooks  //
 // ========================= //
 
-/*
- * Detect and set the requested language
+/**
+ * Plugins loaded hook
+ * Detect what the requested language is (based on method option)
+ * overriding if the $_GET or $_POST variables are set, and then
+ * applies the language via nL_set_lang()
+ *
+ * @since 1.0.0
  */
-add_action('plugins_loaded', 'nLingual_detect_requested_language', 0);
 function nLingual_detect_requested_language(){
 	// Get the accepted language
 	$alang = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
@@ -41,11 +45,15 @@ function nLingual_detect_requested_language(){
 	// Set the language if determined, but don't lock it
 	if($lang) nL_set_lang($lang, false);
 }
+add_action('plugins_loaded', 'nLingual_detect_requested_language', 0);
 
-/*
- * Detect the language of the requested post and apply
+/**
+ * WP setup hook
+ * Detect the language of the requested post and apply it
+ * Also replace the $wp_locale with the custom one
+ *
+ * @since 1.0.0
  */
-add_action('wp', 'nLingual_detect_requested_post_language');
 function nLingual_detect_requested_post_language(&$wp){
 	global $wp_query;
 	if(!is_admin()){
@@ -64,8 +72,12 @@ function nLingual_detect_requested_post_language(&$wp){
 		$wp_locale = new nLingual_WP_Locale();
 	}
 }
+add_action('wp', 'nLingual_detect_requested_post_language');
 
-/*
+/**
+ * WP setup hook
  * Run nL_maybe_redirect to check if any redirection is needed
+ *
+ * @since 1.0.0
  */
 add_action('wp', 'nL_maybe_redirect');

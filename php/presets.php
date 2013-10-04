@@ -1,6 +1,8 @@
 <?php
-/*
+/**
  * Preset Languages available for quicker registration
+ *
+ * @since 1.0.0
  */
 
 $nLingual_preset_languages = array();

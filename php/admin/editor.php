@@ -3,10 +3,12 @@
 //	Editor Screen Hooks  //
 // ===================== //
 
-/*
- * Add posts filter for language
+/**
+ * Restrict manage posts hook
+ * Adds custom select input for choosing language to filter with
+ *
+ * @since 1.0.0
  */
-add_action('restrict_manage_posts', 'nLingual_manage_post_language_filter');
 function nLingual_manage_post_language_filter(){
 	global $typenow;
 	if(nL_post_type_supported($typenow)):
@@ -22,19 +24,36 @@ function nLingual_manage_post_language_filter(){
 		</select>
 	<?php endif;
 }
+add_action('restrict_manage_posts', 'nLingual_manage_post_language_filter');
 
-/*
- * Add language column to editor tables
+/**
+ * Add language column to editor tables for each post type registered with nLingual
+ *
+ * @since 1.0.0
  */
 foreach(nL_post_types() as $post_type){
 	add_filter("manage_{$post_type}_posts_columns", 'nL_add_language_column', 999);
 	add_action("manage_{$post_type}_posts_custom_column", 'nL_do_language_column', 10, 2);
 }
+
+/**
+ * Post columns callback
+ * Adds the language column
+ *
+ * @since 1.0.0
+ */
 function nL_add_language_column($columns){
 	$columns['language'] = __('Language', NL_TXTDMN);
 
 	return $columns;
 }
+
+/**
+ * Post custom column callback
+ * Prints out the language and translation information for the current post
+ *
+ * @since 1.0.0
+ */
 function nL_do_language_column($column, $post_id){
 	if($column == 'language'){
 		// Print out the language it's in
@@ -63,10 +82,14 @@ function nL_do_language_column($column, $post_id){
 	}
 }
 
-/*
- * Quick edit field for language
+/**
+ * Quick edit box hook
+ * Adds custom edit box for quickly editing language
+ * and translations for the current post
+ *
+ * @since 1.0.1 Added translation managment
+ * @since 1.0.0
  */
-add_action('quick_edit_custom_box', 'nLingual_quick_edit_box', 10, 2);
 function nLingual_quick_edit_box($column, $post_type){
 	if(!nL_post_type_supported($post_type)) return;
 
@@ -110,8 +133,15 @@ function nLingual_quick_edit_box($column, $post_type){
     <?php
     endif;
 }
+add_action('quick_edit_custom_box', 'nLingual_quick_edit_box', 10, 2);
 
-add_action('bulk_edit_custom_box', 'nLingual_bulk_edit_box', 10, 2);
+
+/**
+ * Bulk edit box hook
+ * Adds custom edit box for bulk editing language
+ *
+ * @since 1.0.0
+ */
 function nLingual_bulk_edit_box($column, $post_type){
 	if(!nL_post_type_supported($post_type)) return;
 
@@ -133,3 +163,4 @@ function nLingual_bulk_edit_box($column, $post_type){
     <?php
     endif;
 }
+add_action('bulk_edit_custom_box', 'nLingual_bulk_edit_box', 10, 2);

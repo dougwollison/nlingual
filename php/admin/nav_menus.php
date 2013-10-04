@@ -3,10 +3,11 @@
 //	Menus Screen Hooks  //
 // ==================== //
 
-/*
- * Langlinks for nav menus
+/**
+ * Adds special metabox to the nav menus screen
+ *
+ * @since 1.0.0
  */
-add_action('admin_head', 'nLingual_special_metaboxes');
 function nLingual_special_metaboxes(){
 	add_meta_box(
 		'add-langlink',
@@ -16,7 +17,16 @@ function nLingual_special_metaboxes(){
 		'side'
 	);
 }
+add_action('admin_head', 'nLingual_special_metaboxes');
 
+/**
+ * Langlinks metabox callback
+ * Prints out a page selector like interface for adding
+ * special language links (the current page in another
+ * language) to the admin menu
+ *
+ * @since 1.0.0
+ */
 function nLingual_add_langlinks(){
 	global $_nav_menu_placeholder, $nav_menu_selected_id;
 

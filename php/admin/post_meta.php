@@ -3,10 +3,13 @@
 //	Metabox Hooks/Callbacks  //
 // ========================= //
 
-/*
- * Add language and traslations metaboxes
+/**
+ * Add meta boxes hook
+ * Adds the language and translations meta boxes
+ * to the post types registered with nLingual
+ *
+ * @since 1.0.0
  */
-add_action('add_meta_boxes', 'nLingual_add_meta_box');
 function nLingual_add_meta_box(){
 	foreach(nL_post_types() as $type){
 		add_meta_box(
@@ -23,7 +26,14 @@ function nLingual_add_meta_box(){
 		);
 	}
 }
+add_action('add_meta_boxes', 'nLingual_add_meta_box');
 
+/**
+ * Language metabox callback
+ * Prints out select input for choosing post language
+ *
+ * @since 1.0.0
+ */
 function nLingual_language_metabox($post){
 	wp_nonce_field('nLingual_set_language', 'nL_lang');
 	?>
@@ -36,6 +46,12 @@ function nLingual_language_metabox($post){
 	<?php
 }
 
+/**
+ * Translations metabox callback
+ * Prints out select inputs for choosing translations for each language
+ *
+ * @since 1.0.0
+ */
 function nLingual_translations_metabox($post){
 	wp_nonce_field('nLingual_set_translations', 'nL_link');
 

@@ -3,8 +3,12 @@
 //	Nav Menu Related Hooks  //
 // ======================== //
 
-/*
- * Alter nav menus; add duplicates for each language
+/**
+ * After theme setup hook
+ * Alters the registered nav menus, creating new
+ * langauge specific versions to use
+ *
+ * @since 1.0.0
  */
 add_action('after_setup_theme', 'nLingual_alter_registered_nav_menus', 999);
 function nLingual_alter_registered_nav_menus(){
@@ -27,8 +31,13 @@ function nLingual_alter_registered_nav_menus(){
 	$_wp_registered_nav_menus = $localized_menus;
 }
 
-/*
- * Alter wp_nav_menu $args to localize theme_location
+/**
+ * Nav menu arguments filter
+ * Alter wp_nav_menu $args to change theme_location to the localized version
+ * Will only change it if menu items exist for the menu at that location
+ * Falling back to the default language version and finally the unlocalized one
+ *
+ * @since 1.0.0
  */
 add_filter('wp_nav_menu_args', 'nLingual_localize_nav_menu_args', 999);
 function nLingual_localize_nav_menu_args($args){
@@ -38,8 +47,8 @@ function nLingual_localize_nav_menu_args($args){
 		// First check if it's already localized, abort if so
 		if(preg_match('/--([a-z]{2})$/i', $args['theme_location'])) return $args;
 
-		$location = $args['theme_location'].'--'.nL_current_lang(); // current langauge version
-		$_location = $args['theme_location'].'--'.nL_default_lang(); // default langauge version
+		$location = $args['theme_location'].'--'.nL_current_lang(); // current language version
+		$_location = $args['theme_location'].'--'.nL_default_lang(); // default language version
 
 		// Next, check that the location exists and that there are menu items in it
 		if(isset($menus[$location]) && ($menu_term = get_term_by('id', $menus[$location], 'nav_menu')) && $menu_term->count > 0){
@@ -56,8 +65,11 @@ function nLingual_localize_nav_menu_args($args){
 	return $args;
 }
 
-/*
- * Process the langlink menu items
+/**
+ * Nav menu objects filter
+ * Finds and processes the langlink menu items
+ *
+ * @since 1.0.0
  */
 add_filter('wp_nav_menu_objects', 'nLingual_process_menu_objects', 10, 2);
 function nLingual_process_menu_objects($items, $args){

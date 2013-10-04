@@ -3,10 +3,13 @@
 //	Save/Delete Post Hooks  //
 // ======================== //
 
-/*
- * Save post hook for saving and updating translation links
+/**
+ * Save post hook
+ * Processes language setting, translation linking, and data synchronization
+ *
+ * @since 1.1.3 Rewrote meta_field updating functionality
+ * @since 1.0.0
  */
-add_action('save_post', 'nLingual_save_post', 999);
 function nLingual_save_post($post_id){
 	global $wpdb;
 
@@ -66,53 +69,75 @@ function nLingual_save_post($post_id){
 	}
 	if($meta_fields = nL_sync_rules($post_type, 'meta')){
 		foreach($meta_fields as $field){
-			$data = get_post_meta($post_id, $field, true);
 			foreach($associated as $id){
-				update_post_meta($id, $field, $data);
+				// Delete all meta data for this field on this post
+				delete_post_meta($id, $field);
+
+				// Now, insert the new meta for this field from the newly saved post
+				$wpdb->query($wpdb->prepare("
+					INSERT INTO $wpdb->postmeta
+						(post_id, meta_key, meta_value)
+					SELECT %d, meta_key, meta_value
+					FROM $wpdb->postmeta
+					WHERE post_id = %d
+					AND meta_key = %s
+				", $id, $post_id, $field));
 			}
 		}
 	}
 }
+add_action('save_post', 'nLingual_save_post', 999);
 
-/*
- * Delete post hook for deleting translation links or the sister posts (depending on settings)
+/**
+ * Delete post hook
+ * Deletes the post's language link, and sister posts if delete_sisters option is set
+ *
+ * @since 1.0.0
  */
-add_action('deleted_post', 'nLingual_deleted_post');
 function nLingual_deleted_post($post_id){
 	// Delete the language link
-	delete_post_lang($post_id);
-	
+	nL_delete_post_lang($post_id);
+
 	if(nL_get_option('delete_sisters')){
 		foreach(nL_associated_posts($post_id) as $post_id){
 			wp_delete_post($post_id, true);
 		}
 	}
 }
+add_action('deleted_post', 'nLingual_deleted_post');
 
-/*
- * Trash post hook for moving sister posts to the trash
+/**
+ * Trash post hook
+ * Moves sister posts to the trash along with it
+ *
+ * @since 1.0.0
  */
-add_action('trashed_post', 'nLingual_trashed_post');
 function nLingual_trashed_post($post_id){
 	foreach(nL_associated_posts($post_id) as $post_id){
 		wp_trash_post($post_id);
 	}
 }
+add_action('trashed_post', 'nLingual_trashed_post');
 
-/*
- * Untrash post hook for restoring sister posts to the trash
+/**
+ * Untrash post hook
+ * Restores sister posts from the trash along with it
+ *
+ * @since 1.0.0
  */
-add_action('untrashed_post', 'nLingual_untrashed_post');
 function nLingual_untrashed_post($post_id){
 	foreach(nL_associated_posts($post_id) as $post_id){
 		wp_untrash_post($post_id);
 	}
 }
+add_action('untrashed_post', 'nLingual_untrashed_post');
 
-/*
+/**
  * Bulk edit interception
+ * Handles bulk_edit requests for setting language
+ *
+ * @since 1.0.0
  */
-add_action('admin_init', 'nLingual_bulk_edit');
 function nLingual_bulk_edit(){
 	if(isset($_GET['bulk_edit'])
 	&& isset($_GET['nL_lang'])
@@ -123,3 +148,4 @@ function nLingual_bulk_edit(){
 		}
 	}
 }
+add_action('admin_init', 'nLingual_bulk_edit');

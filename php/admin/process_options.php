@@ -3,11 +3,12 @@
 //	Hooks for Processing Exteral Options  //
 // ====================================== //
 
-/*
- * Handle the erasing of the translations table
- * Handle the rewriting of the languages table
+/**
+ * Handles processing of the erase_translations option
+ * Also handles processing of language registration
+ *
+ * @since 1.0.0
  */
-add_action('admin_init', 'nLingual_process_options');
 function nLingual_process_options(){
 	global $wpdb;
 
@@ -33,7 +34,7 @@ function nLingual_process_options(){
 				}
 			}
 		}
-		
+
 		// If no default_lang was passed, make it the first language passed
 		if(!isset($_POST['nLingual-options']['default_lang'])){
 			$_POST['nLingual-options']['default_lang'] = key(reset($_POST['nLingual-languages']));
@@ -79,7 +80,7 @@ function nLingual_process_options(){
 				// New language, insert
 				$wpdb->replace($wpdb->nL_languages, $values, $formats);
 
-				// Check if this new language was set to be the new default langauge,
+				// Check if this new language was set to be the new default language,
 				// updated the $_POST value for it to the $insert_id
 				if(isset($_POST['nLingual-options']['default_lang']) && $_POST['nLingual-options']['default_lang'] == $lang_id){
 					$_POST['nLingual-options']['default_lang'] = $wpdb->insert_id;
@@ -88,3 +89,4 @@ function nLingual_process_options(){
 		}
 	}
 }
+add_action('admin_init', 'nLingual_process_options');

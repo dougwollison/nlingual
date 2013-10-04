@@ -3,17 +3,22 @@
 //	Query Rewriting Hooks  //
 // ======================= //
 
-/*
- * Register langauge query_var
+/**
+ * Query variables filter
+ * Register language variable
+ *
+ * @since 1.0.0
  */
-add_filter('query_vars', 'nLingual_langauge_var');
-function nLingual_langauge_var($vars){
+add_filter('query_vars', 'nLingual_language_var');
+function nLingual_language_var($vars){
 	$vars[] = 'language';
 	return $vars;
 }
 
-/*
+/**
  * Set the language query_var if on the front end and requesting a language supporting post type
+ *
+ * @since 1.0.0
  */
 add_action('parse_query', 'nLingual_set_language_query_var');
 function nLingual_set_language_query_var(&$wp_query){
@@ -24,12 +29,12 @@ function nLingual_set_language_query_var(&$wp_query){
 	}
 }
 
-/*
- * Filters for join/where parts of WP_Query statements to match languages
+/**
+ * Posts query JOIN filter
+ * Adds join statement for the translations table (if language query var is present)
  *
- * Will skip if not a supported post type, or language is blank/not set
+ * @since 1.0.0
  */
-add_filter('posts_join_request', 'nLingual_posts_join_request', 10, 2);
 function nLingual_posts_join_request($join, &$query){
 	global $wpdb;
 	if(!nL_post_type_supported($query->query_vars['post_type'])
@@ -40,8 +45,15 @@ function nLingual_posts_join_request($join, &$query){
 
 	return $join;
 }
+add_filter('posts_join_request', 'nLingual_posts_join_request', 10, 2);
 
-add_filter('posts_where_request', 'nLingual_posts_where_request', 10, 2);
+
+/**
+ * Posts query WHERE filter
+ * Adds fitler to return only posts in the desired langauge (if language query var is present)
+ *
+ * @since 1.0.0
+ */
 function nLingual_posts_where_request($where, &$query){
 	if(!nL_post_type_supported($query->query_vars['post_type'])
 	|| !isset($query->query_vars['language'])
@@ -53,24 +65,28 @@ function nLingual_posts_where_request($where, &$query){
 
 	return $where;
 }
+add_filter('posts_where_request', 'nLingual_posts_where_request', 10, 2);
 
-/*
- * Fitlers for adjusting the next/previous posts query parts to return only those in the current language
+/**
+ * Next/previous post where/join filters
+ * Adds filters for the the join and where compontents of the ajacent post queries,
+ * altering the query to join with the translations table and filter by the current
+ * language.
  *
- * Unfortunately, this will run indiscriminately so long as the "post" post type is supported
+ * Currently is only added when the post post type is registered with nLingaul
+ *
+ * @since 1.0.0
  */
 if(nL_post_type_supported('post')){
-	add_filter('get_previous_post_join', 'nLingual_adjacent_post_join');
-	add_filter('get_next_post_join', 'nLingual_adjacent_post_join');
 	function nLingual_adjacent_post_join($join){
 		global $wpdb;
 		$join .= " INNER JOIN $wpdb->nL_translations AS nL ON p.ID = nL.post_id";
 
 		return $join;
 	}
+	add_filter('get_previous_post_join', 'nLingual_adjacent_post_join');
+	add_filter('get_next_post_join', 'nLingual_adjacent_post_join');
 
-	add_filter('get_previous_post_where', 'nLingual_adjacent_post_where');
-	add_filter('get_next_post_where', 'nLingual_adjacent_post_where');
 	function nLingual_adjacent_post_where($where){
 		$lang = nL_lang_id();
 
@@ -78,4 +94,6 @@ if(nL_post_type_supported('post')){
 
 		return $where;
 	}
+	add_filter('get_previous_post_where', 'nLingual_adjacent_post_where');
+	add_filter('get_next_post_where', 'nLingual_adjacent_post_where');
 }

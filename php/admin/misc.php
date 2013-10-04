@@ -3,10 +3,13 @@
 //	Miscellaneous Hooks  //
 // ===================== //
 
-/*
- * Enqueue admin styles/scripts
+/**
+ * Admin enqueue scripts hook
+ * Enqueues plugin specific JavasScript and CSS
+ * Also localizes admin javascript
+ *
+ * @since 1.0.0
  */
-add_action('admin_enqueue_scripts', 'nLingual_enqueue_scripts');
 function nLingual_enqueue_scripts(){
 	// Admin styling
 	wp_register_style('nLingual-admin', plugins_url('css/admin.css', NL_SELF), '1.0', 'screen');
@@ -25,11 +28,14 @@ function nLingual_enqueue_scripts(){
 	wp_enqueue_script('nLingual-admin-js');
 	wp_enqueue_script('nLingual-quickedit-js');
 }
+add_action('admin_enqueue_scripts', 'nLingual_enqueue_scripts');
 
-/*
+/**
+ * Plugin action links filter
  * Add link to settings page from plugin entry on Plugins page
+ *
+ * @since 1.0.0
  */
-add_filter('plugin_action_links', 'nLingual_plugin_links', 10, 2);
 function nLingual_plugin_links($links, $file){
 	global $this_plugin;
 	if(!$this_plugin) $this_plugin = plugin_basename(NL_SELF);
@@ -41,13 +47,17 @@ function nLingual_plugin_links($links, $file){
 
 	return $links;
 }
+add_filter('plugin_action_links', 'nLingual_plugin_links', 10, 2);
 
-/*
- * Admin Notices for any specific actions
+/**
+ * Admin notices filter
+ * Adds notices for any nLingual related actions
+ *
+ * @since 1.0.0
  */
-add_action('admin_notices', 'nLingual_admin_notices');
 function nLingual_admin_notices(){
 	if(isset($_GET['nLingual-erase']) && $_GET['nLingual-erase']){
 		printf('<div class="updated"><p>%s</p></div>', __('The translation table has been successfully erased.', NL_TXTDMN));
 	}
 }
+add_action('admin_notices', 'nLingual_admin_notices');
