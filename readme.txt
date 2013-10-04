@@ -1,0 +1,106 @@
+=== Plugin Name ===
+Contributors: dougwollison
+Tags: multilingual, multi, language, admin, bilingual, switcher, translation, nlingual
+Requires at least: 3.5
+Tested up to: 3.6.1
+Stable tag: 1.1.3
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+
+A simple but flexible multilingual system. Features custom langauge management, post data synchronization and theme/plugin development utilities.
+
+== Description ==
+
+nLingual is a simple and flexible multilingual system for WordPress. It operates on a one language per post basis, allowing you to keep different languages separate, and for the custom fields and other metadata to be translated easily as well. It also comes with a host of general utilities that expand on the built-in localization functions. What's more, it gives you complete control over the languages the system uses, and allows for the synchronization of sister posts.
+
+## Features
+
+### 1 Post : 1 Translation
+
+There are typically two ways of tackling multilingual in WordPress (shy of a multisite solution; but let's not talk about that). You can usually either have the translations separate as independent posts, or merged together as a single post. The latter can result in bugs and can potentially break stuff, and, depending on the solution, has very limited control; nLingual uses the former method.
+
+By going this route, you have more control over each translation. If you wanted, you can have different authors for the different languages, or have custom fields be translated, or use different terms for them.
+
+Having said that, there will of course be plenty of instances where you'll want some information to be kept the same across versions; nLingual has post synchronization for that ([more on that later](#post-data-synchronization)).
+
+### Two Step Language Detection
+
+When detecting the language your site should be displayed in, nLingual has 3 options:
+
+- Subdomain method (e.g. `fr.mydomain.com`)
+- Path Prefix method (e.g. `mydomain.com/fr/`)
+- Plain old GET/POST arguments (e.g. `?lang=fr`) as well as detecting the visitors browser language.
+
+This detection is run as soon as possible, however, this can be overridden should the actual post being loaded be of a different language (and redirect to the proper URL for SEO purposes).
+
+As mentioned, nLingual will make sure to reload any text domains when the language is changed, so any localization will reflect the new language. (Note: this functionality is not guaranteed; it works by logging all text domains loaded AFTER the plugin itself is loaded, though steps have been taken to make sure just about any domain loading is caught).
+
+### Easy Translation Creation and Management
+
+Managing translations is available within each post, offering a list of existing posts in each language to select as the translated version. What's better, creating a new translation of the current post you're editing is easy: click the "Create new [language] [post type]" button to generate a new post in the selected language with all the data copied over and open for editing in a new tab.
+
+For already existing posts, nLingual adds a Language select input to the Quick and Bulk edit interfaces on the editor screens.
+
+### Post Data Synchronization
+
+There will of course be some bits of data for posts that you'll want to keep the same between translations; perhaps the status, the page template, and/or the categories/tags. nLingual allows you to set which post columns, metadata fields, and terms are kept synchronized, and will update the sister posts when one translation is saved.
+
+The synchronization rules are managed on a per post type basis, allowing you to have different sync settings between, say, posts and pages. (Note: Currently, there is no override on an individual post basis).
+
+### Flexible Language Management
+
+This is admitedly a feature few will need, but it's a godsend for those that do. When configuring what languages nLingual uses, you can define your own or modify existing ones. Each language in the system has 6 important fields:
+
+1. System Name: the name use to refer to the language within the admin.
+2. Native Name: the name in the actual language, for use mostly on the front end.
+3. Short Name: a shorthand version of the native name, if applicable.
+4. ISO Code: the official ISO 639-1 code for the language (two letters).
+5. Slug: normally the same as the ISO, but can be different (used for identifying the language in URLs).
+6. Locale: the locale to use with this language, used for loading the appropriate .mo files.
+
+nLingual comes preloaded with a number of languages to choose from, and in most cases you won't need to customize any. For the sake of argument though, let's say you have a site that's written in English and both forms of Chinese (simplified and traditional). For a site like this to work, you'd need two copies of the Chinese language registered for the sytem to use, with slugs and locale names different from the expected "zh" one.
+
+### Toolkit for Theme Development
+
+Included in this plugin are a number of functions that will be quite useful for theme development.
+
+#### Extra Localization Functions
+
+WordPress itself comes with a number of short and sweet localization functions; `__`, `_e`, `_x`, `_ex`, etc. nLingual however adds a few of its own: `_f`, `_ef`, `_fx`, `_efx`, `_a`, and `_xa`. Details about these functions and how to use them can be found in `php/utilities.php`.
+
+#### The nLingual Class
+
+The nLingual class is a static class with a host of functions for getting and manipulating language and translation data in the system. Included are alias functions: `nLingual::get_post_lang` can be called through `nL_get_post_lang`. Details about these functions and how to use them can be found in `php/nLingual.class.php` and `php/nLingual.aliases.php`.
+
+== Installation ==
+
+1. Upload the contents of `nLingual.tar.gz` to your `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Go into the plugin settings page under Settings > Langauges to configure your options and registered languages
+4. Start assigning languages to posts and linking translations.
+
+== Changelog ==
+
+= 1.1.3 =
+Fixed issue with metadata synchronization. Also added more commenting on PHP files.
+
+= 1.1.2 =
+Updated version number in main plugin file (was still at 1.0). Hehe, oops.
+
+= 1.1.1 =
+Added skip current language feature to lang_links (also minor commenting updates).
+
+The nL_lang_links function now offers a $skip_current argument (#4).
+
+= 1.1.0 =
+Added other_lang methods.
+
+The new features in this update are largely only useful for bilingual setups. Now in addition to the current_lang functions, you can use other_lang functions, which get or test using the language that isn't the current one (in multilingual setups, it's the first one in the languages list that isn't the current one).
+
+= 1.0.1 =
+Fixed associate_posts and added translation management to quickedit.
+
+Discovered an issue where associate_posts wasn't set to delete links when the post_id passed was -1 ("None" in the interface). Also added translation management to the quick edit form.
+
+= 1.0 =
+Initial public release.
