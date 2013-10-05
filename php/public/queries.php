@@ -30,7 +30,7 @@ function nLingual_set_language_query_var(&$wp_query){
  *
  * @since 1.0.0
  */
-if(nL_post_type_supported('post') && nL_active()){
+if(nL_post_type_supported('post')){
 	function nLingual_adjacent_post_join($join){
 		global $wpdb;
 		$join .= " INNER JOIN $wpdb->nL_translations AS nL ON p.ID = nL.post_id";
