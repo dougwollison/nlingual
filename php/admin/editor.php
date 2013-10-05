@@ -11,14 +11,17 @@
  */
 function nLingual_manage_post_language_filter(){
 	global $typenow;
+	// Get the query var we should use
+	$qvar = nL_query_var();
+	
 	if(nL_post_type_supported($typenow)):
-		$selected = isset($_REQUEST['language']) ? $_REQUEST['language'] : '';
+		$selected = isset($_REQUEST[$qvar]) ? $_REQUEST[$qvar] : '';
 		?>
-		<select name="language" class="postform">
+		<select name="<?php echo $qvar?>" class="postform">
 			<option value=""><?php _e('Show all languages', NL_TXTDMN)?></option>
 			<?php
 			foreach(nL_languages() as $lang){
-			    echo '<option value="'.$lang->slug.'"'.($_GET['language'] == $lang->slug ? ' selected' : '').'>'.$lang->system_name.'</option>';
+			    echo '<option value="'.$lang->slug.'"'.($_GET[$qvar] == $lang->slug ? ' selected' : '').'>'.$lang->system_name.'</option>';
 			}
 			?>
 		</select>
@@ -43,7 +46,10 @@ foreach(nL_post_types() as $post_type){
  * @since 1.0.0
  */
 function nL_add_language_column($columns){
-	$columns['language'] = __('Language', NL_TXTDMN);
+	// Get the query var we should use
+	$qvar = nL_query_var();
+	
+	$columns[$qvar] = __('Language', NL_TXTDMN);
 
 	return $columns;
 }
@@ -55,7 +61,10 @@ function nL_add_language_column($columns){
  * @since 1.0.0
  */
 function nL_do_language_column($column, $post_id){
-	if($column == 'language'){
+	// Get the query var we should use
+	$qvar = nL_query_var();
+	
+	if($column == $qvar){
 		// Print out the language it's in
 		$lang = nL_get_post_lang($post_id);
 
@@ -91,9 +100,13 @@ function nL_do_language_column($column, $post_id){
  * @since 1.0.0
  */
 function nLingual_quick_edit_box($column, $post_type){
+	// Skip if not a supported post type
 	if(!nL_post_type_supported($post_type)) return;
+	
+	// Get the query var we should use
+	$qvar = nL_query_var();
 
-	if($column == 'language'):
+	if($column == $qvar):
 	wp_nonce_field('nLingual_set_language', 'nL_lang');
 	wp_nonce_field('nLingual_set_translations', 'nL_link');
 	?>
@@ -143,9 +156,14 @@ add_action('quick_edit_custom_box', 'nLingual_quick_edit_box', 10, 2);
  * @since 1.0.0
  */
 function nLingual_bulk_edit_box($column, $post_type){
+	// Skip if not a supported post type
 	if(!nL_post_type_supported($post_type)) return;
+	
+	// Get the query var we should use
+	$qvar = nL_query_var();
 
-	if($column == 'language'): wp_nonce_field('nLingual_set_language', 'nL_lang');
+	if($column == $qvar):
+	wp_nonce_field('nLingual_set_language', 'nL_lang');
 	?>
     <fieldset class="inline-edit-col-right inline-edit-<?php echo $post_type?>">
       <div class="inline-edit-col column-<?php echo $column ?>">

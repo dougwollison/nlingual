@@ -1,7 +1,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nLingual 1.0\n"
-"Language: LANGAUGE\n"
+"POT-Creation-Date: 2013-10-05 15:47-0500\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: Véronique Aubry <veronique@ninesides.com>\n"
+"Language: Français\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -10,209 +14,238 @@ msgstr ""
 "X-Poedit-KeywordsList: __;_x;_e;_ex;_f;_xf;_ef;_exf\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: Véronique Aubry <veronique@ninesides.com>\n"
-"X-Poedit-Language: French\n"
-"X-Poedit-Country: Canada\n"
-"X-Poedit-SearchPath-0: ../php/admin\n"
+"X-Poedit-SearchPath-0: ../php/global\n"
+"X-Poedit-SearchPath-1: ../php/admin\n"
+"X-Poedit-SearchPath-2: ../php/public\n"
 
-#: ../php/admin/editor.php:16
+#: ../php/admin/editor.php:21
 msgid "Show all languages"
 msgstr "Afficher toutes les langues"
 
-#: ../php/admin/editor.php:34
-#: ../php/admin/editor.php:78
-#: ../php/admin/post_meta.php:14
+#: ../php/admin/editor.php:52 ../php/admin/editor.php:116
+#: ../php/admin/editor.php:171 ../php/admin/post_meta.php:17
 msgid "Language"
 msgstr "Langues"
 
-#: ../php/admin/editor.php:46
-#: ../php/admin/editor.php:79
-#: ../php/admin/post_meta.php:59
+#: ../php/admin/editor.php:74 ../php/admin/editor.php:118
+#: ../php/admin/editor.php:137 ../php/admin/post_meta.php:41
+#: ../php/admin/post_meta.php:76
 msgid "None"
 msgstr "Aucune"
 
-#: ../php/admin/editor.php:102
-msgid "No Change"
+#: ../php/admin/editor.php:173
+msgid "No change"
 msgstr "Aucun changement"
 
-#: ../php/admin/misc.php:17
+#: ../php/admin/misc.php:20
 msgid "No post selected to edit."
 msgstr "Aucun article sélectionné."
 
-#: ../php/admin/misc.php:18
+#: ../php/admin/misc.php:21
 msgid "Are you sure you wish to erase all language and translation data?"
-msgstr "Voulez-vous vraiment supprimer toutes les langues et les données de traduction?"
+msgstr ""
+"Voulez-vous vraiment supprimer toutes les langues et les données de "
+"traduction?"
 
-#: ../php/admin/misc.php:37
+#: ../php/admin/misc.php:44
 msgid "Settings"
 msgstr "Réglages"
 
-#: ../php/admin/misc.php:50
+#: ../php/admin/misc.php:60
 msgid "The translation table has been successfully erased."
-msgstr "Les données associées à nLingual ont été supprimées de votre base de données."
+msgstr ""
+"Les données associées à nLingual ont été supprimées de votre base de données."
 
-#: ../php/admin/nav_menus.php:48
+#: ../php/admin/nav_menus.php:58
 msgid "Add to Menu"
 msgstr "Ajouter au menu"
 
-#: ../php/admin/new_translation.php:18
+#: ../php/admin/new_translation.php:19
 msgid "You do not have permission to do that."
 msgstr "Vous n'avez pas les permissions requises."
 
-#: ../php/admin/new_translation.php:21
+#: ../php/admin/new_translation.php:22
 msgid "Invalid language."
 msgstr "Langue non valide."
 
-#: ../php/admin/post_meta.php:20
+#: ../php/admin/post_meta.php:23
 msgid "Translations"
 msgstr "Traductions"
 
-#: ../php/admin/post_meta.php:64
+#: ../php/admin/post_meta.php:81
 msgid "Edit"
 msgstr "Modifier"
 
-#: ../php/admin/post_meta.php:66
+#: ../php/admin/post_meta.php:83
 #, php-format
 msgid "Create a new %1$s %2$s"
 msgstr "Créer un(e) %2$s en %1$s"
 
-#: ../php/admin/settings.php:12
+#: ../php/admin/settings.php:17
 msgid "Language Settings"
 msgstr "Préférences des langues et traductions"
 
-#: ../php/admin/settings.php:13
-#: ../php/admin/settings.php:44
+#: ../php/admin/settings.php:18 ../php/admin/settings.php:58
 msgid "Languages"
 msgstr "Langues"
 
-#: ../php/admin/settings.php:42
+#: ../php/admin/settings.php:56
 msgid "Options"
 msgstr "Options"
 
-#: ../php/admin/settings.php:43
+#: ../php/admin/settings.php:57
 msgid "Synchronization Rules"
 msgstr "Options de synchronisation"
 
-#: ../php/admin/settings.php:57
+#: ../php/admin/settings.php:74
+msgid "Admin only mode?"
+msgstr ""
+
+#: ../php/admin/settings.php:80
+msgid "Should only the admin-related features be enabled?"
+msgstr ""
+
+#: ../php/admin/settings.php:84
+msgid ""
+"Use if you want to set up languages and translations, but don’t want "
+"language detection and redirection running yet."
+msgstr ""
+
+#: ../php/admin/settings.php:88
 msgid "Language redirection method"
 msgstr "Méthode de redirection"
 
-#: ../php/admin/settings.php:60
+#: ../php/admin/settings.php:91
 #, php-format
 msgid "Subdomain (e.g. <code>%1$s.%2$s</code>)"
 msgstr "Sous-domaine (ex. : <code>%1$s.%2$s</code>)"
 
-#: ../php/admin/settings.php:61
+#: ../php/admin/settings.php:92
 #, php-format
-msgid "Path prefix (e.g. <code>%2$s/%1$s</code>)"
+msgid "Path prefix (e.g. <code>%2$s/%1$s/</code>)"
 msgstr "Chemin de préfixe (ex. : <code>%2$s/%1$s</code>)"
 
-#: ../php/admin/settings.php:62
-msgid "None, use visitors native language, if applicable"
-msgstr "Aucune. Utiliser les réglages de langue du visiteur, si disponibles."
+#: ../php/admin/settings.php:93
+#, php-format
+msgid "HTTP GET variable (e.g. <code>%2$s/?lang=%1$s</code>)"
+msgstr "HTTP GET variables (e.g. <code>%2$s/?lang=%1$s</code>)"
 
-#: ../php/admin/settings.php:80
-msgid "Do not use a subdomain or path prefix for the default langauge"
-msgstr "Ne pas utiliser les chemins ou préfixes de sous-domaines pour la langue principale."
+#: ../php/admin/settings.php:111
+msgid "Do not use a subdomain or path prefix for the default language."
+msgstr ""
+"Ne pas utiliser les chemins ou préfixes de sous-domaines pour la langue "
+"principale."
 
-#: ../php/admin/settings.php:84
+#: ../php/admin/settings.php:115
 msgid "POST & GET variable names"
 msgstr "POST & GET variables"
 
-#: ../php/admin/settings.php:90
-msgid "If these parameters are passed, they will override the language set via the redirection method."
-msgstr "Si définis, ces paramètres auront priorité sur la langue affichée via la méthode de redirection."
+#: ../php/admin/settings.php:121
+msgid ""
+"If these parameters are passed, they will override the language set via the "
+"redirection method."
+msgstr ""
+"Si définis, ces paramètres auront priorité sur la langue affichée via la "
+"méthode de redirection."
 
-#: ../php/admin/settings.php:102
+#: ../php/admin/settings.php:133
 msgid "Supported post types"
 msgstr "\"Post types\" à traduire"
 
-#: ../php/admin/settings.php:118
+#: ../php/admin/settings.php:149
 msgid "Split language separator"
 msgstr "Séparateur de langues"
 
-#: ../php/admin/settings.php:127
-msgid "Used for splitting things like the blog title and extracting the title for the appropriate language."
-msgstr "Utilisé pour séparer des éléments comme le titre du blog et pour extraire le titre dans la langue appropriée."
+#: ../php/admin/settings.php:158
+msgid ""
+"Used for splitting things like the blog title and extracting the title for "
+"the appropriate language."
+msgstr ""
+"Utilisé pour séparer des éléments comme le titre du blog et pour extraire le "
+"titre dans la langue appropriée."
 
-#: ../php/admin/settings.php:130
+#: ../php/admin/settings.php:161
 #, php-format
-msgid "Example: <strong>English Title %1$s French Title %1$s Spanish Title</strong> (if the language order is English, French, Spanish)"
-msgstr "Par exemple: <strong>Titre en français %1$s Titre en anglais %1$s Titre en espagnol</strong> (Si l'ordre des langues utilisées est: français, anglais, espagnol)."
+msgid ""
+"Example: <strong>English Title %1$s French Title %1$s Spanish Title</strong> "
+"(if the language order is English, French, Spanish)"
+msgstr ""
+"Par exemple: <strong>Titre en français %1$s Titre en anglais %1$s Titre en "
+"espagnol</strong> (Si l'ordre des langues utilisées est: français, anglais, "
+"espagnol)."
 
-#: ../php/admin/settings.php:134
+#: ../php/admin/settings.php:165
 msgid "Localize date format?"
 msgstr "Formats de date"
 
-#: ../php/admin/settings.php:140
+#: ../php/admin/settings.php:171
 msgid "Run localization on the date format string"
 msgstr "Traduire les formats de date."
 
-#: ../php/admin/settings.php:144
+#: ../php/admin/settings.php:175
 msgid "Use if any of your languages use custom date formats."
-msgstr "Sélectionnez si les langues de votre site utilisent des formats de dates particuliers."
+msgstr ""
+"Sélectionnez si les langues de votre site utilisent des formats de dates "
+"particuliers."
 
-#: ../php/admin/settings.php:148
+#: ../php/admin/settings.php:179
 msgid "Delete sister posts?"
 msgstr "Supprimer les articles/pages associé(e)s"
 
-#: ../php/admin/settings.php:153
+#: ../php/admin/settings.php:185
 msgid "When permanently deleting a post, delete it’s sister translations."
 msgstr "Supprimer les articles/pages associé(e)s en même temps que l'original."
 
-#: ../php/admin/settings.php:148
+#: ../php/admin/settings.php:189
 msgid "Erase translation data?"
 msgstr "Supprimer les données de traduction"
 
-#: ../php/admin/settings.php:153
+#: ../php/admin/settings.php:194
 msgid "Clear the translations table for this site?"
 msgstr "Supprimer les données de nLingual"
 
-#: ../php/admin/settings.php:167
-msgid "This will erase all language information, and translation links, for all posts (actual posts will be unaffected)."
-msgstr "Cette action supprimera toutes les données de langues, et les liens de traductions, pour tous les articles/pages (les articles/pages ne seront pas affectés)."
+#: ../php/admin/settings.php:198
+msgid ""
+"This will erase all language information, and translation links, for all "
+"posts (actual posts will be unaffected)."
+msgstr ""
+"Cette action supprimera toutes les données de langues, et les liens de "
+"traductions, pour tous les articles/pages (les articles/pages ne seront pas "
+"affectés)."
 
-#: ../php/admin/settings.php:179
+#: ../php/admin/settings.php:210
 #, php-format
 msgid "Check off the fields that should be synchronized between sister %s."
 msgstr "Sélectionnez tous les champs à synchroniser entre les %s lié(e)s."
 
-#: ../php/admin/settings.php:206
+#: ../php/admin/settings.php:237
 msgid "Check off the taxonomies that should be synchronized."
 msgstr "Sélectionnez les taxonomies à synchroniser."
 
-#: ../php/admin/settings.php:223
+#: ../php/admin/settings.php:254
 msgid "List the meta field that should be synchronized, one per line."
 msgstr "Entrez les champs personnalisés à synchroniser, un par ligne. "
 
-#: ../php/admin/settings.php:238
+#: ../php/admin/settings.php:299
 msgid "Custom"
 msgstr "Personnalisé"
 
-#: ../php/admin/settings.php:244
+#: ../php/admin/settings.php:305
 msgid "Add Language"
 msgstr "Ajouter une langue"
 
-#: ../php/admin/settings.php:252
-#: ../php/admin/settings.php:299
+#: ../php/admin/settings.php:313 ../php/admin/settings.php:367
 msgid "A shorthand name for the language."
 msgstr "Abréviation"
 
-#: ../php/admin/settings.php:253
-#: ../php/admin/settings.php:302
+#: ../php/admin/settings.php:314 ../php/admin/settings.php:370
 msgid "The name (minus extension) of the .MO file use for localization."
 msgstr "Le nom du fichier .MO (sans l'extension) utilisé pour la traduction."
 
-#: ../php/admin/settings.php:254
-#: ../php/admin/settings.php:305
+#: ../php/admin/settings.php:315 ../php/admin/settings.php:373
 msgid "A unique identifier for this language."
 msgstr "Une ID unique pour cette langue."
 
-#: ../php/admin/settings.php:255
-#: ../php/admin/settings.php:308
+#: ../php/admin/settings.php:316 ../php/admin/settings.php:376
 msgid "The official 2 letter code identifying this language."
 msgstr "Le code à 2 chiffres officiel pour cette langue."
-

@@ -26,7 +26,7 @@ define('NL_REDIRECT_USING_DOMAIN', 'NL_REDIRECT_USING_DOMAIN');
  *
  * @since 1.0.0
  */
-define('NL_REDIRECT_USING_ACCEPT', 'NL_REDIRECT_USING_ACCEPT');
+define('NL_REDIRECT_USING_GET', 'NL_REDIRECT_USING_GET');
 
 /**
  * nLingual API class
@@ -302,6 +302,7 @@ class nLingual{
 	 * Initialization method
 	 * Loads options into local properties
 	 *
+	 * @since 1.2.0 Added admin_only option default
 	 * @since 1.0.0
 	 *
 	 * @global wpdb $wpdb The database abstraction class
@@ -376,7 +377,8 @@ class nLingual{
 			'default_lang' => 0,
 
 			// Redirection settings
-			'method' => NL_REDIRECT_USING_ACCEPT,
+			'admin_only' => false, 
+			'method' => NL_REDIRECT_USING_GET,
 			'get_var' => 'lang',
 			'post_var' => 'lang',
 			'skip_default_l10n' => false,
@@ -677,6 +679,19 @@ class nLingual{
 
 		return in_array($type, self::$post_types);
 	}
+	
+	/**
+	 * Check if admin_only option is enabled
+	 *
+	 * @since 1.2.0
+	 *
+	 * @uses self::get_option()
+	 *
+	 * @return bool The value of the admin_only option
+	 */
+	public static function admin_only(){
+		return self::get_option('admin_only');
+	}
 
 	// ======================= //
 	//  Language Data Methods  //
@@ -833,6 +848,21 @@ class nLingual{
 
 		// Update the other langauge
 		self::get_other_lang();
+	}
+	
+	/**
+	 * Get the query var to use for language filtering;
+	 * - general "language" normally, or
+	 * - noconflict "nl_language" if in admin_only mode
+	 *
+	 * @since 1.2.0
+	 *
+	 * @uses self::admin_only
+	 *
+	 * @return string The query var to use
+	 */
+	public static function query_var(){
+		return self::admin_only() ? 'nl_language' : 'language';
 	}
 
 	// ======================= //
@@ -1670,25 +1700,22 @@ class nLingual{
 	// ============================== //
 	//  General Use & Filter Methods  //
 	// ============================== //
-
+	
 	/**
-	 * Return or print a list of links to the current page in all available languages
+	 * Get an array of URLs for each language
+	 * Returned in slug => url format
 	 *
-	 * @since 1.1.1 Added $skip_current argument
-	 * @since 1.0.0
+	 * @since 1.2.0
 	 *
 	 * @uses self::$languages
 	 * @uses self::$current
 	 * @uses self::localize_here()
 	 *
-	 * @param bool $echo Wether or not to echo the imploded list of links
-	 * @param string $prefix The text to preceded the link list with
-	 * @param string $sep The text to separate each link with
-	 * @param bool $skip_current Wether or not to include the current language link
+	 * @param bool $skip_current Wether or not to include the current language url (Default: true)
 	 *
-	 * @return array The array of HTML links
+	 * @return array The array of language links
 	 */
-	public static function lang_links($echo = false, $prefix = '', $sep = ' ', $skip_current = false){
+	public static function get_lang_links($skip_current = false){
 		$links = array();
 		foreach(self::$languages as $lang){
 			// If skip_current is true and this is the current language, skip
@@ -1698,10 +1725,33 @@ class nLingual{
 			$url = self::localize_here($lang->slug);
 
 			// Create and append the HTML link to the list
-			$links[$lang->slug] = sprintf('<a href="%s">%s</a>', $url, $lang->native_name);
+			$links[$lang->slug] = $url;
+		}
+	}
+	
+	/**
+	 * Print out the results from get_lang_links()
+	 *
+	 * @since 1.2.0
+	 *
+	 * @uses self::get_lang_links()
+	 * @uses self::get_lang()
+	 *
+	 * @param string $prefix The text to preceded the link list with (Default: "")
+	 * @param string $sep The text to separate each link with (Default: " ")
+	 * @param bool $skip_current Wether or not to include the current language link (Default: true)
+	 * @param bool $echo Wether or not to echo the html (Default: true)
+	 *
+	 * @return array The array of HTML links
+	 */
+	public static function print_lang_links($prefix = '', $sep = ' ', $skip_current = true, $echo = true){
+		$links = self::get_lang_links($skip_current);
+		foreach($links as $lang => &$link){
+			$link = sprintf('<a href="%s">%s</a>', $link, self::get_lang('native', $lang));
 		}
 
-		if($echo) echo $prefix.implode($sep, $links);
+		$html = $prefix.implode($sep, $links);
+		if($echo) echo $html;
 		return $links;
 	}
 
@@ -1780,5 +1830,38 @@ class nLingual{
 				load_textdomain($domain, $mofile);
 			}
 		}
+	}
+
+	// ===================== //
+	//  Depreciated Methods  //
+	// ===================== //
+
+	/**
+	 * Return or print a list of links to the current page in all available languages
+	 *
+	 * @depreciated Expect to be gone by version 1.5.0; use get_lang_links() or print_lang_links() instead
+	 *
+	 * @since 1.2.0 Move part of functionality to self::get_lang_links()
+	 * @since 1.1.1 Added $skip_current argument
+	 * @since 1.0.0
+	 *
+	 * @uses self::get_lang_links()
+	 * @uses self::get_lang()
+	 *
+	 * @param bool $echo Wether or not to echo the imploded list of links  (Default: false)
+	 * @param string $prefix The text to preceded the link list with (Default: "")
+	 * @param string $sep The text to separate each link with (Default: " ")
+	 * @param bool $skip_current Wether or not to include the current language link (Default: false)
+	 *
+	 * @return array The array of HTML links
+	 */
+	public static function lang_links($echo = false, $prefix = '', $sep = ' ', $skip_current = false){
+		$links = self::get_lang_links($skip_current);
+		foreach($links as $lang => &$link){
+			$link = sprintf('<a href="%s">%s</a>', $link, self::get_lang('native', $lang));
+		}
+
+		if($echo) echo $prefix.implode($sep, $links);
+		return $links;
 	}
 }

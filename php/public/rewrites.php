@@ -1,7 +1,7 @@
 <?php
-// ========================= //
-//	General Rewrite Filters  //
-// ========================= //
+// ======================== //
+//	Public Rewrite Filters  //
+// ======================== //
 
 /**
  * Intercept and replace the .mo filename to look for
@@ -29,15 +29,6 @@ function nLingual_get_curlang_version($value){
 	}
 	return $value;
 }
-
-/**
- * Add fitler for running split_langs on the blogname
- *
- * @since 1.0.0
- */
-add_filter('option_blogname', 'nL_split_langs');
-add_filter('option_blogdescription', 'nL_split_langs');
-add_filter('the_title', 'nL_split_langs');
 
 /**
  * Link filters

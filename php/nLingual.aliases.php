@@ -69,6 +69,10 @@ function nL_post_type_supported($type, $all = true){
 	return nL::post_type_supported($type, $all);
 }
 
+function nL_admin_only(){
+	return nL::admin_only();
+}
+
 function nL_get_lang($field = null, $lang = null){
 	return nL::get_lang($field, $lang);
 }
@@ -91,6 +95,10 @@ function nL_switch_lang($lang){
 
 function nL_restore_lang(){
 	return nL::restore_lang();
+}
+
+function nL_query_var(){
+	return nL::query_var();
 }
 
 function nL_get_post_lang($id = null){
@@ -181,8 +189,12 @@ function nL_maybe_redirect(){
 	return nL::maybe_redirect();
 }
 
-function nL_lang_links($echo = false, $prefix = '', $sep = ' ', $skip_current = false){
-	return nL::lang_links($echo, $prefix, $sep, $skip_current);
+function nL_get_lang_links($skip_current = false){
+	return nL::get_lang_links($skip_current);
+}
+
+function nL_print_lang_links($prefix = '', $sep = ' ', $skip_current = false){
+	return nL::print_lang_links($prefix, $sep, $skip_current);
 }
 
 function nL_split_langs($text, $lang = null, $sep = null, $force = false){
@@ -191,4 +203,9 @@ function nL_split_langs($text, $lang = null, $sep = null, $force = false){
 
 function nL_reload_textdomains($old_locale, $new_locale){
 	return nL::reload_textdomains($old_locale, $new_locale);
+}
+
+// Depreciated methods
+function nL_lang_links($echo = false, $prefix = '', $sep = ' ', $skip_current = false){
+	return nL::lang_links($echo, $prefix, $sep, $skip_current);
 }

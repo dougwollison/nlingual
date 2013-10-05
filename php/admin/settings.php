@@ -10,9 +10,12 @@
  * @since 1.0.0
  */
 function nLingual_options_menu(){
+	// Prefix both titles if in admin_only mode
+	$prefix = nL_admin_only() ? '[nLingual] ' : '';
+
 	add_options_page(
-		__('Language Settings', NL_TXTDMN),
-		__('Languages', NL_TXTDMN),
+		$prefix.__('Language Settings', NL_TXTDMN),
+		$prefix.__('Languages', NL_TXTDMN),
 		'manage_options',
 		'nLingual',
 		'nLingual_settings_page'
@@ -68,12 +71,26 @@ function nLingual_register_settings(){
 		return $data;
 	});
 
+	add_settings_field('admin_only', __('Admin only mode?', NL_TXTDMN), function(){
+		$bool = nL_get_option('admin_only');
+
+		printf(
+			'<label><input id="admin_only" type="checkbox" name="nLingual-options[admin_only]" value="1" %s> %s</label>',
+			$bool ? 'checked' : '',
+			__('Should only the admin-related features be enabled?', NL_TXTDMN)
+		);
+		printf(
+			'<p class="description">%s</p>',
+			__('Use if you want to set up languages and translations, but don’t want language detection and redirection running yet.', NL_TXTDMN)
+		);
+	}, 'nLingual', 'nLingual-options');
+
 	add_settings_field('redirection-method', __('Language redirection method', NL_TXTDMN), function(){
 		$compare = nL_get_option('method');
 		$options = array(
 			NL_REDIRECT_USING_DOMAIN	=> __('Subdomain (e.g. <code>%1$s.%2$s</code>)', NL_TXTDMN),
 			NL_REDIRECT_USING_PATH		=> __('Path prefix (e.g. <code>%2$s/%1$s/</code>)', NL_TXTDMN),
-			NL_REDIRECT_USING_ACCEPT	=> __('None, use visitors native language, if applicable', NL_TXTDMN)
+			NL_REDIRECT_USING_GET		=> __('HTTP GET variable (e.g. <code>%2$s/?lang=%1$s</code>)', NL_TXTDMN)
 		);
 
 		foreach($options as $value => $label){
@@ -91,7 +108,7 @@ function nLingual_register_settings(){
 		printf(
 			'<label><input id="skip_default_l10n" type="checkbox" name="nLingual-options[skip_default_l10n]" value="1" %s> %s</label>',
 			$bool ? 'checked' : '',
-			__('Do not use a subdomain or path prefix for the default language', NL_TXTDMN)
+			__('Do not use a subdomain or path prefix for the default language.', NL_TXTDMN)
 		);
 	}, 'nLingual', 'nLingual-options');
 

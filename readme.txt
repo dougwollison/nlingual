@@ -11,6 +11,8 @@ A simple but flexible multilingual system. Features custom langauge management, 
 
 == Description ==
 
+**NOTICE: The function `nL_lang_links` is being depreciated; please use `nL_get_lang_links` or `nL_print_lang_links` instead. This function is still valid, but shall be removed entirely by version 1.5.0.**
+
 nLingual is a simple and flexible multilingual system for WordPress. It operates on a one language per post basis, allowing you to keep different languages separate, and for the custom fields and other metadata to be translated easily as well. It also comes with a host of general utilities that expand on the built-in localization functions. What's more, it gives you complete control over the languages the system uses, and allows for the synchronization of sister posts.
 
 ### Features

@@ -1,35 +1,7 @@
 <?php
-// ======================== //
-//	Nav Menu Related Hooks  //
-// ======================== //
-
-/**
- * After theme setup hook
- * Alters the registered nav menus, creating new
- * langauge specific versions to use
- *
- * @since 1.0.0
- */
-add_action('after_setup_theme', 'nLingual_alter_registered_nav_menus', 999);
-function nLingual_alter_registered_nav_menus(){
-	global $_wp_registered_nav_menus;
-
-	// Loop through each registered nav menu and make copies for each language.
-	$localized_menus = array();
-	foreach($_wp_registered_nav_menus as $slug => $name){
-		foreach(nL_languages() as $lang){
-			$_slug = "$slug--$lang->slug";
-			$_name = "$name ($lang->system_name)";
-			$localized_menus[$_slug] = $_name;
-		}
-	}
-
-	// Cache the old version just in case
-	nL_cache_set('_wp_registered_nav_menus', $_wp_registered_nav_menus, 'vars');
-
-	// Replace the registered nav menu array with the new one
-	$_wp_registered_nav_menus = $localized_menus;
-}
+// ======================= //
+//	Public Nav Menu Hooks  //
+// ======================= //
 
 /**
  * Nav menu arguments filter
@@ -37,10 +9,13 @@ function nLingual_alter_registered_nav_menus(){
  * Will only change it if menu items exist for the menu at that location
  * Falling back to the default language version and finally the unlocalized one
  *
+ * @since 1.2.0 Only proceeds if nL_do_redirects() returns true
  * @since 1.0.0
  */
 add_filter('wp_nav_menu_args', 'nLingual_localize_nav_menu_args', 999);
 function nLingual_localize_nav_menu_args($args){
+	if(!nL_do_redirects()) return $args;
+	
 	$menus = get_theme_mod('nav_menu_locations');
 
 	if($args['theme_location']){ // Theme location set, localize it
@@ -69,10 +44,13 @@ function nLingual_localize_nav_menu_args($args){
  * Nav menu objects filter
  * Finds and processes the langlink menu items
  *
+ * @since 1.2.0 Only proceeds if nL_do_redirects() returns true
  * @since 1.0.0
  */
 add_filter('wp_nav_menu_objects', 'nLingual_process_menu_objects', 10, 2);
 function nLingual_process_menu_objects($items, $args){
+	if(!nL_do_redirects()) return $items;
+	
 	foreach($items as $item){
 		if($item->type == 'langlink'){ // Language link, set URL to the localized version of the current
 			$item->url = nL_localize_here($item->object);
