@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nLingual 1.0\n"
-"POT-Creation-Date: 2013-10-05 15:47-0500\n"
+"POT-Creation-Date: 2013-10-06 12:19-0500\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: Véronique Aubry <veronique@ninesides.com>\n"
@@ -28,8 +28,7 @@ msgid "Language"
 msgstr "Langues"
 
 #: ../php/admin/editor.php:74 ../php/admin/editor.php:118
-#: ../php/admin/editor.php:137 ../php/admin/post_meta.php:41
-#: ../php/admin/post_meta.php:76
+#: ../php/admin/editor.php:137 ../php/admin/post_meta.php:75
 msgid "None"
 msgstr "Aucune"
 
@@ -72,11 +71,11 @@ msgstr "Langue non valide."
 msgid "Translations"
 msgstr "Traductions"
 
-#: ../php/admin/post_meta.php:81
+#: ../php/admin/post_meta.php:80
 msgid "Edit"
 msgstr "Modifier"
 
-#: ../php/admin/post_meta.php:83
+#: ../php/admin/post_meta.php:82
 #, php-format
 msgid "Create a new %1$s %2$s"
 msgstr "Créer un(e) %2$s en %1$s"
@@ -234,18 +233,22 @@ msgstr "Personnalisé"
 msgid "Add Language"
 msgstr "Ajouter une langue"
 
-#: ../php/admin/settings.php:313 ../php/admin/settings.php:367
+#: ../php/admin/settings.php:311 ../php/admin/settings.php:363
+msgid "Should this language be active on the front-end?"
+msgstr ""
+
+#: ../php/admin/settings.php:314 ../php/admin/settings.php:372
 msgid "A shorthand name for the language."
 msgstr "Abréviation"
 
-#: ../php/admin/settings.php:314 ../php/admin/settings.php:370
+#: ../php/admin/settings.php:315 ../php/admin/settings.php:375
 msgid "The name (minus extension) of the .MO file use for localization."
 msgstr "Le nom du fichier .MO (sans l'extension) utilisé pour la traduction."
 
-#: ../php/admin/settings.php:315 ../php/admin/settings.php:373
+#: ../php/admin/settings.php:316 ../php/admin/settings.php:378
 msgid "A unique identifier for this language."
 msgstr "Une ID unique pour cette langue."
 
-#: ../php/admin/settings.php:316 ../php/admin/settings.php:376
+#: ../php/admin/settings.php:317 ../php/admin/settings.php:381
 msgid "The official 2 letter code identifying this language."
 msgstr "Le code à 2 chiffres officiel pour cette langue."

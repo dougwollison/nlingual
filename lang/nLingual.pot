@@ -28,8 +28,7 @@ msgid "Language"
 msgstr ""
 
 #: ../php/admin/editor.php:74 ../php/admin/editor.php:118
-#: ../php/admin/editor.php:137 ../php/admin/post_meta.php:41
-#: ../php/admin/post_meta.php:76
+#: ../php/admin/editor.php:137 ../php/admin/post_meta.php:75
 msgid "None"
 msgstr ""
 
@@ -69,11 +68,11 @@ msgstr ""
 msgid "Translations"
 msgstr ""
 
-#: ../php/admin/post_meta.php:81
+#: ../php/admin/post_meta.php:80
 msgid "Edit"
 msgstr ""
 
-#: ../php/admin/post_meta.php:83
+#: ../php/admin/post_meta.php:82
 #, php-format
 msgid "Create a new %1$s %2$s"
 msgstr ""
@@ -104,6 +103,9 @@ msgstr ""
 
 #: ../php/admin/settings.php:84
 msgid ""
+"Use if you want to set up languages and translations, but don’t want "
+"language detection and redirection running yet."
+msgstr ""
 
 #: ../php/admin/settings.php:88
 msgid "Language redirection method"
@@ -214,18 +216,22 @@ msgstr ""
 msgid "Add Language"
 msgstr ""
 
-#: ../php/admin/settings.php:313 ../php/admin/settings.php:367
+#: ../php/admin/settings.php:311 ../php/admin/settings.php:363
+msgid "Should this language be active on the front-end?"
+msgstr ""
+
+#: ../php/admin/settings.php:314 ../php/admin/settings.php:372
 msgid "A shorthand name for the language."
 msgstr ""
 
-#: ../php/admin/settings.php:314 ../php/admin/settings.php:370
+#: ../php/admin/settings.php:315 ../php/admin/settings.php:375
 msgid "The name (minus extension) of the .MO file use for localization."
 msgstr ""
 
-#: ../php/admin/settings.php:315 ../php/admin/settings.php:373
+#: ../php/admin/settings.php:316 ../php/admin/settings.php:378
 msgid "A unique identifier for this language."
 msgstr ""
 
-#: ../php/admin/settings.php:316 ../php/admin/settings.php:376
+#: ../php/admin/settings.php:317 ../php/admin/settings.php:381
 msgid "The official 2 letter code identifying this language."
 msgstr ""
