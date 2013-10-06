@@ -19,6 +19,7 @@
 #nLingual_languages .language-slug,
 #nLingual_languages .language-iso,
 #nLingual_languages .language-list_order,
+#nLingual_languages .language-active,
 #nLingual_languages .language-delete{
 	text-align: center;
 }
@@ -29,6 +30,7 @@
 #nLingual_languages .language-slug,
 #nLingual_languages .language-iso,
 #nLingual_languages .language-list_order,
+#nLingual_languages .language-active,
 #nLingual_languages .language-delete{
 	width: 50px;
 }

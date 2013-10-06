@@ -9,6 +9,7 @@
  * overriding if the $_GET or $_POST variables are set, and then
  * applies the language via nL_set_lang()
  *
+ * @since 1.2.0 Simplified URL processing; won't rewrite HTTP_HOST or REQUEST_URI
  * @since 1.0.0
  */
 function nLingual_detect_requested_language(){
@@ -25,9 +26,6 @@ function nLingual_detect_requested_language(){
 	// Process the $here url (within nLingual) and get the language
 	if($processed = nL_process_url()){
 		$lang = $processed['lang'];
-		// Update host & uri with processed versions
-		$_SERVER['HTTP_HOST'] = $processed['host'];
-		$_SERVER['REQUEST_URI'] = $processed['path'].($processed['query'] ? '?'.$processed['query'] : '');
 	}
 
 	// Override with get_var method if present and valid

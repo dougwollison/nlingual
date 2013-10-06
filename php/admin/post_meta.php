@@ -38,7 +38,6 @@ function nLingual_language_metabox($post){
 	wp_nonce_field('nLingual_set_language', 'nL_lang');
 	?>
 	<select name="language" style="width:100%">
-		<option value="-1"><?php _e('None', NL_TXTDMN)?></option>
 	<?php foreach(nL_languages() as $lang):?>
 		<option value="<?php echo $lang->slug?>" <?php if(nL_in_this_lang($post->ID, $lang->slug)) echo 'selected'?>><?php echo $lang->system_name?></option>
 	<?php endforeach;?>

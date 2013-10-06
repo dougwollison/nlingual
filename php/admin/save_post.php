@@ -30,11 +30,19 @@ function nLingual_save_post($post_id){
 
 	// Update translations if nLingual_translations nonce is verified
 	if(isset($_POST['nL_link']) && wp_verify_nonce($_POST['nL_link'], 'nLingual_set_translations') && isset($_POST['translations'])){
+		// Strip out the link for the post's langauge (only really applies when creating a new post)
+		$lang = nL_get_post_lang($post_id);
+		if(isset($_POST['translations'][$lang])){
+			unset($_POST['translations'][$lang]);
+		}
 		nL_associate_posts($post_id, $_POST['translations']);
 	}
 
 	// Loop through the sync options, and syncronize the fields with it's associated posts
 	$associated = nL_associated_posts($post_id);
+	
+	// Skip if no associated posts are found
+	if(!$associated) return;
 
 	if($data_fields = nL_sync_rules($post_type, 'data')){
 		$ids = implode(',', $associated);

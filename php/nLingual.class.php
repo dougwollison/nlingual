@@ -936,13 +936,9 @@ class nLingual{
 		}
 
 		self::_lang($lang);
-
-		// If the $lang is -1, delete the translation link
-		if($lang == -1){
-			self::delete_lang($id);
-			self::cache_set($id, false, 'lang');
-			return;
-		}
+		
+		// Abort if lang doesn't exist
+		if(!self::lang_exists($lang)) return;
 
 		// Run the REPLACE query
 		$wpdb->replace(
@@ -952,7 +948,7 @@ class nLingual{
 				'lang_id' => self::lang_id($lang),
 				'post_id' => $id
 			),
-			array('%d', '%s', '%d')
+			array('%d', '%d', '%d')
 		);
 
 		// Add/Update the cache of it, just in case
@@ -1420,12 +1416,11 @@ class nLingual{
 		// Copy to new_url
 		$new_url = $old_url;
 
-		// Get the vanilla and slashed home_url
-		$_home = get_option('home');
-		$home = trailingslashit($_home);
+		// Get the home url
+		$home = get_option('home');
 
-		// Don't mess with the url when in the admin or if it's the vanilla home_url
-		if(defined('WP_ADMIN') || $old_url == $_home)
+		// Don't mess with the url when in the admin
+		if(defined('WP_ADMIN'))
 			return $old_url;
 
 		if(!$lang) $lang = self::$current;
