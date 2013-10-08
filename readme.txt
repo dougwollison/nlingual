@@ -85,6 +85,9 @@ The nLingual class is a static class with a host of functions for getting and ma
 
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
 
+= 1.2.0 =
+Admin-only feature, numerous bug fixes, documentation improvements; a lot of stuff.
+
 = 1.1.4 =
 Fixed how uninstall.php deletes nLingual related options.
 
