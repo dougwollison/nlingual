@@ -363,11 +363,6 @@ class nLingual{
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 		");
 
-		// Check if the active column (added in 1.2.0) exists, add it if not.
-		if(!$wpdb->get_var($wpdb->prepare("SELECT TABLE_CATALOG FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s", DB_NAME, $wpdb->nL_languages, 'active'))){
-			$wpdb->query("ALTER TABLE $wpdb->nL_languages ADD COLUMN `active` BOOLEAN DEFAULT TRUE NOT NULL AFTER `lang_id`");
-		}
-
 		// Load languages (active only if is_admin is true)
 		$where = is_admin() ? '' : 'WHERE active = 1';
 		self::$languages = $wpdb->get_results("SELECT * FROM $wpdb->nL_languages $where ORDER BY list_order ASC", OBJECT);
