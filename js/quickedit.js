@@ -18,18 +18,18 @@
 			var edit_row = $('#edit-' + post_id);
 
 			// get the data
-			var lang = $('.column-language [name="_language"]', post_row).val();
+			var lang = $('.column-language [name="nL_language"]', post_row).val();
 
 			if(!lang) return;
 
 			// populate the data
-			$('select[name="language"]', edit_row).val(lang);
+			$('select[name="nL_language"]', edit_row).val(lang);
 
-			$('.column-language [name^="_translation_"]', post_row).each(function(){
-				var lang = $(this).attr('name').replace('_translation_', '');
+			$('.column-language [name^="nL_translation_"]', post_row).each(function(){
+				var lang = $(this).attr('name').replace('nL_translation_', '');
 				var id = $(this).val();
 
-				$('select[name="translations['+lang+']"]', edit_row).val(id);
+				$('select[name="nL_translations['+lang+']"]', edit_row).val(id);
 			});
 		}
 	};

@@ -4,11 +4,22 @@
 // ======================== //
 
 /**
- * Save post hook
- * Processes language setting, translation linking, and data synchronization
+ * save_post action.
  *
+ * Processes language setting, translation linking, and data synchronization.
+ *
+ * @since 1.2.0 Updated nonce/field names, fixed glitches with translation linking and synchronization.
  * @since 1.1.3 Rewrote meta_field updating functionality
  * @since 1.0.0
+ *
+ * @global wpdb $wpdb The database abstraction class instance.
+ *
+ * @uses nL_get_post_lang()
+ * @uses nL_associate_posts()
+ * @uses nL_associated_posts()
+ * @uses nL_sync_rules()
+ *
+ * @param int $post_id The ID of the post being saved.
  */
 function nLingual_save_post($post_id){
 	global $wpdb;
@@ -24,18 +35,18 @@ function nLingual_save_post($post_id){
 	elseif($post_type == 'page' && !current_user_can('edit_page', $post_id)) return;
 
 	// Set the language if nLingual_language nonce is verified
-	if(isset($_POST['nL_lang']) && wp_verify_nonce($_POST['nL_lang'], 'nLingual_set_language') && isset($_POST['language'])){
-		nL_set_post_lang($post_id, $_POST['language']);
+	if(isset($_POST['nL_lang_nonce']) && wp_verify_nonce($_POST['nL_lang_nonce'], 'nLingual_set_language') && isset($_POST['nL_language'])){
+		nL_set_post_lang($post_id, $_POST['nL_language']);
 	}
 
 	// Update translations if nLingual_translations nonce is verified
-	if(isset($_POST['nL_link']) && wp_verify_nonce($_POST['nL_link'], 'nLingual_set_translations') && isset($_POST['translations'])){
-		// Strip out the link for the post's langauge (only really applies when creating a new post)
+	if(isset($_POST['nL_link_nonce']) && wp_verify_nonce($_POST['nL_link_nonce'], 'nLingual_set_translations') && isset($_POST['nL_translations'])){
+		// Strip out the link for the post's language (only really applies when creating a new post)
 		$lang = nL_get_post_lang($post_id);
-		if(isset($_POST['translations'][$lang])){
-			unset($_POST['translations'][$lang]);
+		if(isset($_POST['nL_translations'][$lang])){
+			unset($_POST['nL_translations'][$lang]);
 		}
-		nL_associate_posts($post_id, $_POST['translations']);
+		nL_associate_posts($post_id, $_POST['nL_translations']);
 	}
 
 	// Loop through the sync options, and syncronize the fields with it's associated posts
@@ -97,10 +108,17 @@ function nLingual_save_post($post_id){
 add_action('save_post', 'nLingual_save_post', 999);
 
 /**
- * Delete post hook
- * Deletes the post's language link, and sister posts if delete_sisters option is set
+ * deleted_post action.
+ *
+ * Deletes the post's language link, and sister posts if delete_sisters option is set.
  *
  * @since 1.0.0
+ *
+ * @uses nL_delete_post_lang()
+ * @uses nL_get_option()
+ * @uses nL_associated_posts()
+ *
+ * @param int $post_id The ID of the post being saved.
  */
 function nLingual_deleted_post($post_id){
 	// Delete the language link
@@ -115,10 +133,15 @@ function nLingual_deleted_post($post_id){
 add_action('deleted_post', 'nLingual_deleted_post');
 
 /**
- * Trash post hook
- * Moves sister posts to the trash along with it
+ * trashed_post action.
+ *
+ * Moves sister posts to the trash along with it.
  *
  * @since 1.0.0
+ *
+ * @uses nL_associated_posts()
+ *
+ * @param int $post_id The ID of the post being saved.
  */
 function nLingual_trashed_post($post_id){
 	foreach(nL_associated_posts($post_id) as $post_id){
@@ -128,10 +151,15 @@ function nLingual_trashed_post($post_id){
 add_action('trashed_post', 'nLingual_trashed_post');
 
 /**
- * Untrash post hook
- * Restores sister posts from the trash along with it
+ * untrashed_post action.
+ *
+ * Restores sister posts from the trash along with it.
  *
  * @since 1.0.0
+ *
+ * @uses nL_associated_posts()
+ *
+ * @param int $post_id The ID of the post being saved.
  */
 function nLingual_untrashed_post($post_id){
 	foreach(nL_associated_posts($post_id) as $post_id){
@@ -141,18 +169,22 @@ function nLingual_untrashed_post($post_id){
 add_action('untrashed_post', 'nLingual_untrashed_post');
 
 /**
- * Bulk edit interception
- * Handles bulk_edit requests for setting language
+ * admin_init action.
  *
+ * Handles bulk_edit requests for setting language.
+ *
+ * @since 1.2.0 Updated nonce/field names.
  * @since 1.0.0
+ *
+ * @uses nL_set_post_lang()
  */
 function nLingual_bulk_edit(){
 	if(isset($_GET['bulk_edit'])
-	&& isset($_GET['nL_lang'])
-	&& $_GET['language'] != '-1'
-	&& wp_verify_nonce($_GET['nL_lang'], 'nLingual_set_language')){
+	&& isset($_GET['nL_lang_nonce'])
+	&& $_GET['nL_language'] != '-1'
+	&& wp_verify_nonce($_GET['nL_lang_nonce'], 'nLingual_set_language')){
 		foreach((array) $_GET['post'] as $post_id){
-			nL_set_post_lang($post_id, $_GET['language']);
+			nL_set_post_lang($post_id, $_GET['nL_language']);
 		}
 	}
 }

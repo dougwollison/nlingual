@@ -14,15 +14,15 @@ jQuery(function($){
 	// Settings Page Functionality //
 	// =========================== //
 
-	var $langauges = $('#nLingual_languages');
+	var $languages = $('#nLingual_languages');
 
 	var language_order = function(){
-		$langauges.find('tbody tr').each(function(i){
+		$languages.find('tbody tr').each(function(i){
 			$('.list_order',this).val(i);
 		});
 	}
 
-	$langauges.find('tbody').sortable({
+	$languages.find('tbody').sortable({
 		items: 'tr',
 		axis: 'y',
 		stop: language_order,
@@ -58,12 +58,12 @@ jQuery(function($){
 
 		lang_id--;
 
-		$langauges.find('tbody').append($new_row);
-		$langauges.find('tbody').sortable('refresh');
+		$languages.find('tbody').append($new_row);
+		$languages.find('tbody').sortable('refresh');
 		language_order();
 	});
 
-	$langauges.on('change', '.language-system_name input', function(){
+	$languages.on('change', '.language-system_name input', function(){
 		var text = $(this).val();
 		var parent = $(this).parents('tr');
 

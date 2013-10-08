@@ -4,14 +4,22 @@
 // ======================= //
 
 /**
- * Nav menu arguments filter
- * Alter wp_nav_menu $args to change theme_location to the localized version
- * Will only change it if menu items exist for the menu at that location
- * Falling back to the default language version and finally the unlocalized one
+ * wp_nav_menu_args filter.
+ *
+ * Alter wp_nav_menu() arguments to change theme_location to the localized version.
+ *
+ * Will only change it if menu items exist for the menu at that location,
+ * falling back to the default language version and finally the unlocalized one.
  *
  * @since 1.0.0
+ *
+ * @uses nL_current_lang()
+ * @uses nL_default_lang()
+ *
+ * @param array $args The wp_nav_menu() arguments.
+ *
+ * @param array $args The modified arguments list.
  */
-add_filter('wp_nav_menu_args', 'nLingual_localize_nav_menu_args', 999);
 function nLingual_localize_nav_menu_args($args){
 	$menus = get_theme_mod('nav_menu_locations');
 
@@ -36,16 +44,24 @@ function nLingual_localize_nav_menu_args($args){
 
 	return $args;
 }
+add_filter('wp_nav_menu_args', 'nLingual_localize_nav_menu_args', 999);
 
 /**
- * Nav menu objects filter
- * Finds and processes the langlink menu items
+ * wp_nav_menu_objects filter.
  *
- * @sicne 1.2.0 Removes langlinks if not for an existing/active language
+ * Finds and processes the langlink menu items.
+ *
+ * @since 1.2.0 Removes langlinks if not for an existing/active language
  * @since 1.0.0
+ *
+ * @uses nL_lang_exists()
+ * @uses nL_localize_here()
+ *
+ * @param array $items The list of nav menu items.
+ *
+ * @return array The modified list of nav menu items.
  */
-add_filter('wp_nav_menu_objects', 'nLingual_process_menu_objects', 10, 2);
-function nLingual_process_menu_objects($items, $args){
+function nLingual_process_menu_objects($items){
 	foreach($items as $i => $item){
 		if($item->type == 'langlink'){
 			// Language link, set URL to the localized version of the current
@@ -60,3 +76,4 @@ function nLingual_process_menu_objects($items, $args){
 
 	return $items;
 }
+add_filter('wp_nav_menu_objects', 'nLingual_process_menu_objects', 10, 2);

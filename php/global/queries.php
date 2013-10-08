@@ -4,24 +4,40 @@
 // ==================== //
 
 /**
- * Query variables filter
+ * query_vars filter.
+ *
  * Register language variable
  *
- * @since 1.2.0 Moved to global hooks folder
+ * @since 1.2.0 Moved to global hooks folder.
  * @since 1.0.0
+ *
+ * @uses nL_query_var()
+ *
+ * @param array $vars The public query variables whitelist.
+ *
+ * @return array The modified variables list.
  */
-add_filter('query_vars', 'nLingual_language_var');
 function nLingual_language_var($vars){
 	$vars[] = nL_query_var();
 	return $vars;
 }
+add_filter('query_vars', 'nLingual_language_var');
 
 /**
- * Posts query JOIN filter
- * Adds join statement for the translations table (if language query var is present)
+ * posts_join_request filter.
  *
- * @since 1.2.0 Moved to global hooks folder
+ * Adds nL_translations table to JOIN clause (if language query var is present).
+ *
+ * @since 1.2.0 Moved to global hooks folder.
  * @since 1.0.0
+ *
+ * @uses nL_query_var()
+ * @uses nL_post_type_supported()
+ *
+ * @param string   $join  The original JOIN clause.
+ * @param WP_Query $query The WP_Query instance.
+ *
+ * @return string The modified JOIN clause.
  */
 function nLingual_posts_join_request($join, $query){
 	global $wpdb;
@@ -39,13 +55,22 @@ function nLingual_posts_join_request($join, $query){
 }
 add_filter('posts_join_request', 'nLingual_posts_join_request', 10, 2);
 
-
 /**
- * Posts query WHERE filter
- * Adds fitler to return only posts in the desired langauge (if language query var is present)
+ * posts_where_request filter.
  *
- * @since 1.2.0 Moved to global hooks folder
+ * Adds nL_translations table to WHERE clause (if language query var is present).
+ *
+ * @since 1.2.0 Moved to global hooks folder.
  * @since 1.0.0
+ *
+ * @uses nL_query_var()
+ * @uses nL_post_type_supported()
+ * @uses nL_lang_id()
+ *
+ * @param string   $join  The original WHERE clause.
+ * @param WP_Query $query The WP_Query instance.
+ *
+ * @return string The modified WHERE clause.
  */
 function nLingual_posts_where_request($where, $query){
 	// Get the query var we should use

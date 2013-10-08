@@ -4,7 +4,9 @@
 // ==================== //
 
 /**
- * Adds special metabox to the nav menus screen
+ * admin_head action.
+ *
+ * Adds special metabox to the nav menus screen.
  *
  * @since 1.0.0
  */
@@ -20,22 +22,26 @@ function nLingual_special_metaboxes(){
 add_action('admin_head', 'nLingual_special_metaboxes');
 
 /**
- * Langlinks metabox callback
- * Prints out a page selector like interface for adding
- * special language links (the current page in another
- * language) to the admin menu
+ * add-langlink metabox callback.
+ *
+ * Prints out a page selector like interface for adding special language links
+ * (the current page in another language) to the admin menu.
  *
  * @since 1.0.0
+ *
+ * @global int $nav_menu_selected_id The id of the current menu being edited.
+ *
+ * @uses nL_languages()
  */
 function nLingual_add_langlinks(){
-	global $_nav_menu_placeholder, $nav_menu_selected_id;
+	global $nav_menu_selected_id;
 
 	?>
 	<div class="posttypediv" id="langlink">
 		<p>These links will go to the respective language versions of the current URL.</p>
 		<div id="tabs-panel-langlink-all" class="tabs-panel tabs-panel-active">
 			<ul id="pagechecklist-most-recent" class="categorychecklist form-no-clear">
-			<?php $i = -1; foreach(nL_languages() as $lang):?>
+			<?php $i = -1; foreach( nL_languages() as $lang ):?>
 				<li>
 					<label class="menu-item-title">
 						<input type="checkbox" class="menu-item-checkbox" name="menu-item[<?php echo $i?>][menu-item-object-id]" value="-1">

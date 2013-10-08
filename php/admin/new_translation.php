@@ -8,7 +8,15 @@
  * Will create a new post with the data copied over,
  * and direct you to the edit page of the new post
  *
+ * @since 1.2.0 Dropped language taxonomy handling, updated nonce/field names.
  * @since 1.0.0
+ *
+ * @global wpdb $wpdb The database abstraction class instance.
+ *
+ * @uses nL_lang_exists()
+ * @uses nL_get_lang()
+ * @uses nL_get_translation()
+ * @uses nL_associate_posts()
  */
 function nLingual_new_translation(){
 	global $wpdb;
@@ -18,10 +26,10 @@ function nLingual_new_translation(){
 		if(!isset($_GET['_nL_nonce']) || !wp_verify_nonce($_GET['_nL_nonce'], 'nLingual_new_translation'))
 			wp_die(__('You do not have permission to do that.', NL_TXTDMN));
 
-		if(!isset($_GET['language']) || !nL_lang_exists($_GET['language']))
+		if(!isset($_GET['nL_language']) || !nL_lang_exists($_GET['nL_language']))
 			wp_die(__('Invalid language.', NL_TXTDMN));
 
-		$lang = $_GET['language'];
+		$lang = $_GET['nL_language'];
 
 		// Load the original posts post/meta/tax data
 		$orig = $wpdb->get_row($wpdb->prepare("SELECT post_title, post_type, post_content, post_excerpt, post_parent, menu_order FROM $wpdb->posts WHERE ID = %d", $post_id), ARRAY_A);
@@ -29,15 +37,11 @@ function nLingual_new_translation(){
 		$orig_taxs = get_object_taxonomies($orig['post_type']);
 		$tax_query = array();
 
-		// Loop through the taxonomies for this post, and get the terms (execpt for language)
+		// Loop through the taxonomies for this post, and get the terms.
 		foreach($orig_taxs as $tax){
-			if($tax == 'language') continue;
 			$terms = wp_get_post_terms($post_id, $tax, array('fields' => 'ids'));
 			$tax_query[$tax] = $terms;
 		}
-
-		// Set the language term to the requested language
-		$tax_query['language'] = $lang;
 
 		// Build the arguments for wp_insert_args
 		$args = $orig;

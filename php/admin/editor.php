@@ -4,10 +4,18 @@
 // ===================== //
 
 /**
- * Restrict manage posts hook
- * Adds custom select input for choosing language to filter with
+ * restrict_manage_posts action.
  *
+ * Adds custom select input for choosing language to filter with.
+ *
+ * @since 1.2.0 Added nL_query_var() usage.
  * @since 1.0.0
+ *
+ * @global string $typenow The current post type.
+ *
+ * @uses nL_query_var()
+ * @uses nL_post_type_supported()
+ * @uses nL_languages()
  */
 function nLingual_manage_post_language_filter(){
 	global $typenow;
@@ -30,7 +38,7 @@ function nLingual_manage_post_language_filter(){
 add_action('restrict_manage_posts', 'nLingual_manage_post_language_filter');
 
 /**
- * Add language column to editor tables for each post type registered with nLingual
+ * Add language column to editor tables for each post type registered with nLingual.
  *
  * @since 1.0.0
  */
@@ -40,10 +48,18 @@ foreach(nL_post_types() as $post_type){
 }
 
 /**
- * Post columns callback
- * Adds the language column
+ * manage_{$post_type}_posts_columns filter.
  *
+ * Adds the language column.
+ *
+ * @since 1.2.0 Added nL_query_var() usage.
  * @since 1.0.0
+ *
+ * @use nL_query_var()
+ *
+ * @param array $columns The list of columns for the editor table.
+ *
+ * @return array The modified columns array.
  */
 function nL_add_language_column($columns){
 	// Get the query var we should use
@@ -55,10 +71,20 @@ function nL_add_language_column($columns){
 }
 
 /**
- * Post custom column callback
- * Prints out the language and translation information for the current post
+ * manage_{$post_type}_posts_custom_column action.
  *
+ * Prints out the language and translation information for the current post.
+ *
+ * @since 1.2.0 Added nL_query_var() usage, updated field names.
  * @since 1.0.0
+ *
+ * @uses nL_query_var()
+ * @uses nL_get_post_lang()
+ * @uses nL_get_lang()
+ * @uses nL_associated_posts()
+ *
+ * @param string $column  The current column.
+ * @param int    $post_id The current post id.
  */
 function nL_do_language_column($column, $post_id){
 	// Get the query var we should use
@@ -68,7 +94,7 @@ function nL_do_language_column($column, $post_id){
 		// Print out the language it's in
 		$lang = nL_get_post_lang($post_id);
 
-		printf('<input type="hidden" name="_language" value="%s">', $lang);
+		printf('<input type="hidden" name="nL_language" value="%s">', $lang);
 
 		if(!$lang){
 			_e('None', NL_TXTDMN);
@@ -79,7 +105,7 @@ function nL_do_language_column($column, $post_id){
 
 		if($associated = nL_associated_posts($post_id)){
 			foreach($associated as $lang => $pid){
-				printf('<input type="hidden" name="_translation_%s" value="%s">', $lang, $pid);
+				printf('<input type="hidden" name="nL_translation_%s" value="%s">', $lang, $pid);
 				printf('<br>%s: <a href="%s">%s</a> | <a href="%s">View</a>',
 					nL_get_lang('name', $lang),
 					admin_url("/post.php?post=$pid&action=edit"),
@@ -92,12 +118,17 @@ function nL_do_language_column($column, $post_id){
 }
 
 /**
- * Quick edit box hook
- * Adds custom edit box for quickly editing language
- * and translations for the current post
+ * quick_edit_custom_box action.
  *
- * @since 1.0.1 Added translation managment
+ * Adds custom edit box for quickly editing the language
+ * and translations for the current post.
+ *
+ * @since 1.2.0 Added nL_query_var() usage, updated nonce/field names.
+ * @since 1.0.1 Added translation managment.
  * @since 1.0.0
+ *
+ * @param string $column    The current column.
+ * @param string $post_type The current post type.
  */
 function nLingual_quick_edit_box($column, $post_type){
 	// Skip if not a supported post type
@@ -107,14 +138,14 @@ function nLingual_quick_edit_box($column, $post_type){
 	$qvar = nL_query_var();
 
 	if($column == $qvar):
-	wp_nonce_field('nLingual_set_language', 'nL_lang');
-	wp_nonce_field('nLingual_set_translations', 'nL_link');
+	wp_nonce_field('nLingual_set_language', 'nL_lang_nonce');
+	wp_nonce_field('nLingual_set_translations', 'nL_link_nonce');
 	?>
     <fieldset class="inline-edit-col-left inline-edit-<?php echo $post_type?>">
       <div class="inline-edit-col column-<?php echo $column ?>">
         <label class="inline-edit-group">
         	<span class="title"><?php _e('Language', NL_TXTDMN)?></span>
-        	<select name="language">
+        	<select name="nL_language">
 				<option value="-1"><?php _e('None', NL_TXTDMN)?></option>
 			<?php foreach(nL_languages() as $lang):?>
 				<option value="<?php echo $lang->slug?>"><?php echo $lang->system_name?></option>
@@ -133,7 +164,7 @@ function nLingual_quick_edit_box($column, $post_type){
 			?>
 	        <label class="inline-edit-group">
 	        	<span class="title" title="<?php echo $lang->system_name?>"><?php echo $lang->short_name?></span>
-	        	<select name="translations[<?php echo $lang->slug?>]" class="translations">
+	        	<select name="nL_translations[<?php echo $lang->slug?>]" class="translations">
 					<option value="-1"><?php _e('None', NL_TXTDMN)?></option>
 				<?php foreach($lang_posts->posts as $lang_post):?>
 					<option value="<?php echo $lang_post->ID?>"><?php echo $lang_post->post_title?></option>
@@ -150,10 +181,15 @@ add_action('quick_edit_custom_box', 'nLingual_quick_edit_box', 10, 2);
 
 
 /**
- * Bulk edit box hook
- * Adds custom edit box for bulk editing language
+ * bulk_edit_custom_box action.
  *
+ * Adds custom edit box for bulk editing the language.
+ *
+ * @since 1.2.0 Added nL_query_var() usage, updated nonce/field names.
  * @since 1.0.0
+ *
+ * @param string $column    The current column.
+ * @param string $post_type The current post type.
  */
 function nLingual_bulk_edit_box($column, $post_type){
 	// Skip if not a supported post type
@@ -163,13 +199,13 @@ function nLingual_bulk_edit_box($column, $post_type){
 	$qvar = nL_query_var();
 
 	if($column == $qvar):
-	wp_nonce_field('nLingual_set_language', 'nL_lang');
+	wp_nonce_field('nLingual_set_language', 'nL_lang_nonce');
 	?>
     <fieldset class="inline-edit-col-right inline-edit-<?php echo $post_type?>">
       <div class="inline-edit-col column-<?php echo $column ?>">
         <label class="inline-edit-group">
         	<?php _e('Language', NL_TXTDMN)?>
-        	<select name="language">
+        	<select name="nL_language">
 				<option value="-1">&mdash; <?php _e('No change', NL_TXTDMN)?> &mdash;</option>
 			<?php foreach(nL_languages() as $lang):?>
 				<option value="<?php echo $lang->slug?>"><?php echo $lang->system_name?></option>

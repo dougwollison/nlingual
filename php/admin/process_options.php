@@ -4,10 +4,15 @@
 // ====================================== //
 
 /**
- * Handles processing of the erase_translations option
- * Also handles processing of language registration
+ * admin_init action.
  *
+ * Handles processing of the erase_translations feature,
+ * as well as management of registered languages.
+ *
+ * @since 1.2.0 Updated nonce/field names, added 'active' field for languages.
  * @since 1.0.0
+ *
+ * @global wpdb $wpdb The database abstraction class instance.
  */
 function nLingual_process_options(){
 	global $wpdb;
@@ -51,6 +56,7 @@ function nLingual_process_options(){
 			// Default the values
 			$name = $data['system_name'];
 			$data = wp_parse_args($data, array(
+				'active' => 0,
 				'system_name' => $name,
 				'native_name' => $name,
 				'short_name' => $name,
@@ -61,6 +67,7 @@ function nLingual_process_options(){
 
 			// Build the $values array
 			$values = array(
+				'active' => intval($data['active']),
 				'system_name' => stripslashes($data['system_name']),
 				'native_name' => stripslashes($data['native_name']),
 				'short_name' => stripslashes($data['short_name']),
@@ -71,7 +78,7 @@ function nLingual_process_options(){
 			);
 
 			// Build the $formats array
-			$formats = array('%s', '%s', '%s', '%s', '%s', '%s', '%d');
+			$formats = array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d');
 
 			if($lang_id > 0){
 				// Exisiting language, update

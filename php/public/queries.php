@@ -4,11 +4,18 @@
 // ==================== //
 
 /**
- * Set the language query_var if on the front end and requesting a language supporting post type
+ * parse_query action.
+ *
+ * Set the language query_var if on the front end and requesting a language supporting post type.
  *
  * @since 1.0.0
+ *
+ * @uses nL_query_var()
+ * @uses nL_post_type_supported()
+ * @uses nL_current_lang()
+ *
+ * @param WP_Query $wp_query The WP_Query instance (by reference). 
  */
-add_action('parse_query', 'nLingual_set_language_query_var');
 function nLingual_set_language_query_var(&$wp_query){
 	// Get the query var we should use
 	$qvar = nL_query_var();
@@ -19,18 +26,20 @@ function nLingual_set_language_query_var(&$wp_query){
 		$wp_query->query_vars[$qvar] = nL_current_lang();
 	}
 }
+add_action('parse_query', 'nLingual_set_language_query_var');
 
-/**
- * Next/previous post where/join filters
- * Adds filters for the the join and where compontents of the ajacent post queries,
- * altering the query to join with the translations table and filter by the current
- * language.
- *
- * Currently is only added when the post post type is registered with nLingaul
- *
- * @since 1.0.0
- */
 if(nL_post_type_supported('post')){
+	/**
+	 * get_(next/previous)_post_join filters.
+	 *
+	 * Modifies the JOIN clause to include the nL_translations table.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $join The JOIN clause.
+	 *
+	 * @return string The modified JOIN clause.
+	 */
 	function nLingual_adjacent_post_join($join){
 		global $wpdb;
 		$join .= " INNER JOIN $wpdb->nL_translations AS nL ON p.ID = nL.post_id";
@@ -40,6 +49,19 @@ if(nL_post_type_supported('post')){
 	add_filter('get_previous_post_join', 'nLingual_adjacent_post_join');
 	add_filter('get_next_post_join', 'nLingual_adjacent_post_join');
 
+	/**
+	 * get_(next/previous)_post_where filters.
+	 *
+	 * Modifies the WHERE clause to filter by language.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @uses nL_lang_id()
+	 *
+	 * @param string $where The WHERE clause.
+	 *
+	 * @return string The modified WHERE clause.
+	 */
 	function nLingual_adjacent_post_where($where){
 		$lang = nL_lang_id();
 

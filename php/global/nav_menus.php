@@ -4,16 +4,22 @@
 // ======================= //
 
 /**
- * After theme setup hook
- * Alters the registered nav menus, creating new
- * langauge specific versions to use
+ * after_setup_theme action.
  *
- * @since 1.2.0 Moved to global hooks folder
+ * Alters the registered nav menus, creating new language specific versions to use.
+ *
+ * @since 1.2.0 Moved to global hooks folder.
  * @since 1.0.0
+ *
+ * @global array $_wp_registered_nav_menus The registered nav menus list.
+ *
+ * @uses nL_languages()
+ * @uses nL_cache_set()
  */
-add_action('after_setup_theme', 'nLingual_alter_registered_nav_menus', 999);
 function nLingual_alter_registered_nav_menus(){
 	global $_wp_registered_nav_menus;
+	
+	if(!$_wp_registered_nav_menus) return;
 
 	// Loop through each registered nav menu and make copies for each language.
 	$localized_menus = array();
@@ -31,3 +37,4 @@ function nLingual_alter_registered_nav_menus(){
 	// Replace the registered nav menu array with the new one
 	$_wp_registered_nav_menus = $localized_menus;
 }
+add_action('after_setup_theme', 'nLingual_alter_registered_nav_menus', 999);

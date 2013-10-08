@@ -8,9 +8,9 @@ nLingual::init();
 require(__DIR__.'/utilities.php');
 
 /**
- * Load the global and admin/public hooks
+ * Load the global and admin/public hooks.
  *
- * @since 1.2.0 Separated global hooks; public ones only run if not in the admin
+ * @since 1.2.0 Separated global hooks; public ones only run if not in the admin.
  * @since 1.0
  */
  

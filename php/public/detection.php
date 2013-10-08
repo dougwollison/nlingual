@@ -4,13 +4,19 @@
 // ========================= //
 
 /**
- * Plugins loaded hook
+ * plugins_loaded action.
+ *
  * Detect what the requested language is (based on method option)
  * overriding if the $_GET or $_POST variables are set, and then
- * applies the language via nL_set_lang()
+ * applies the language via nL_set_lang().
  *
- * @since 1.2.0 Simplified URL processing; won't rewrite HTTP_HOST or REQUEST_URI
+ * @since 1.2.0 Simplified URL processing; won't rewrite HTTP_HOST or REQUEST_URI.
  * @since 1.0.0
+ *
+ * @uses nL_lang_exists()
+ * @uses nL_process_url()
+ * @uses nL_get_option()
+ * @uses nL_set_lang()
  */
 function nLingual_detect_requested_language(){
 	// Get the accepted language
@@ -46,11 +52,20 @@ function nLingual_detect_requested_language(){
 add_action('plugins_loaded', 'nLingual_detect_requested_language', 0);
 
 /**
- * WP setup hook
+ * wp action.
+ *
  * Detect the language of the requested post and apply it
- * Also replace the $wp_locale with the custom one
+ * Also replace the $wp_locale with the custom one.
  *
  * @since 1.0.0
+ *
+ * @global WP_Query $wp_query The main WP_Query instance.
+ *
+ * @uses nL_get_post_lang()
+ * @uses nL_set_lang()
+ * @uses nLingual_WP_Locale
+ *
+ * @param WP $wp The WordPress environment instance (by reference).
  */
 function nLingual_detect_requested_post_language(&$wp){
 	global $wp_query;
@@ -73,9 +88,12 @@ function nLingual_detect_requested_post_language(&$wp){
 add_action('wp', 'nLingual_detect_requested_post_language');
 
 /**
- * WP setup hook
- * Run nL_maybe_redirect to check if any redirection is needed
+ * wp action.
+ *
+ * Run nL_maybe_redirect() to check if any redirection is needed.
  *
  * @since 1.0.0
+ *
+ * @see nLingual::maybe_redirect()
  */
 add_action('wp', 'nL_maybe_redirect');

@@ -6,13 +6,13 @@
  */
 
 /*
- * Localize format string
+ * Localize format string.
  *
  * @uses __()
  *
- * @param string $text The format string
- * @param string $domain The domain to use
- * @params mixed $arg1.. The arguments for vsprintf
+ * @param string $text The format string.
+ * @param string $domain The domain to use.
+ * @params mixed $arg1.. The arguments for vsprintf().
  */
 function _f($text, $domain){
 	$args = func_get_args();
@@ -22,14 +22,14 @@ function _f($text, $domain){
 }
 
 /*
- * Localize format string, with context
+ * Localize format string, with context.
  *
  * @uses __()
  *
- * @param string $text The format string
- * @param string $context The context to use
- * @param string $domain The domain to use
- * @params mixed $arg1.. The arguments for vsprintf
+ * @param string $text The format string.
+ * @param string $context The context to use.
+ * @param string $domain The domain to use.
+ * @params mixed $arg1.. The arguments for vsprintf()
  */
 function _fx($text, $context, $domain){
 	$args = func_get_args();
@@ -39,39 +39,39 @@ function _fx($text, $context, $domain){
 }
 
 /*
- * Echo result of _f
+ * Echo result of _f().
  *
  * @uses _f()
  *
- * @param string $text The format string
- * @param string $domain The domain to use
- * @params mixed $arg1.. The arguments for vsprintf
+ * @param string $text The format string.
+ * @param string $domain The domain to use.
+ * @params mixed $arg1.. The arguments for vsprintf().
  */
 function _ef($text, $domain){
 	echo call_user_func_array('_f', func_get_args());
 }
 
 /*
- * Echo result of _xf
+ * Echo result of _xf().
  *
  * @uses _xf()
  *
- * @param string $text The format string
- * @param string $context The context to use
- * @param string $domain The domain to use
- * @params mixed $arg1.. The arguments for vsprintf
+ * @param string $text The format string.
+ * @param string $context The context to use.
+ * @param string $domain The domain to use.
+ * @params mixed $arg1.. The arguments for vsprintf().
  */
 function _efx($text, $context, $domain){
 	echo call_user_func_array('_fx', func_get_args());
 }
 
 /*
- * Localize an array of strings
+ * Localize an array of strings.
  *
  * @uses __()
  *
- * @param array $array The array to be localized
- * @param string $domain The domain to use
+ * @param array $array The array to be localized.
+ * @param string $domain The domain to use.
  */
 function _a($array, $domain = 'default'){
 	$_array = array();
@@ -83,13 +83,13 @@ function _a($array, $domain = 'default'){
 }
 
 /*
- * Localize an array of strings
+ * Localize an array of strings.
  *
  * @uses _x()
  *
- * @param array $array The array to be localized
- * @param string $context The context to use
- * @param string $domain The domain to use
+ * @param array $array The array to be localized.
+ * @param string $context The context to use.
+ * @param string $domain The domain to use.
  */
 function _ax($array, $context, $domain = 'default'){
 	$_array = array();
