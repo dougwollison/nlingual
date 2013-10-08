@@ -363,6 +363,11 @@ class nLingual{
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 		");
 
+		// Check if the active column (added in 1.2.0) exists, add it if not.
+		if(!$wpdb->get_var($wpdb->prepare("SELECT TABLE_CATALOG FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s", DB_NAME, $wpdb->nL_languages, 'active'))){
+			$wpdb->query("ALTER TABLE $wpdb->nL_languages ADD COLUMN `active` BOOLEAN DEFAULT TRUE NOT NULL AFTER `lang_id`");
+		}
+
 		// Load languages (active only if is_admin is true)
 		$where = is_admin() ? '' : 'WHERE active = 1';
 		self::$languages = $wpdb->get_results("SELECT * FROM $wpdb->nL_languages $where ORDER BY list_order ASC", OBJECT);
@@ -379,7 +384,7 @@ class nLingual{
 			'default_lang' => 0,
 
 			// Redirection settings
-			'admin_only' => false, 
+			'admin_only' => false,
 			'method' => NL_REDIRECT_USING_GET,
 			'get_var' => 'lang',
 			'post_var' => 'lang',
@@ -684,7 +689,7 @@ class nLingual{
 
 		return in_array($type, self::$post_types);
 	}
-	
+
 	/**
 	 * Check if admin_only option is enabled.
 	 *
@@ -837,7 +842,7 @@ class nLingual{
 	 */
 	public static function switch_lang($lang){
 		self::_lang($lang);
-	
+
 		self::$current = $lang;
 
 		// Update the other language
@@ -860,7 +865,7 @@ class nLingual{
 		// Update the other language
 		self::get_other_lang();
 	}
-	
+
 	/**
 	 * Get the query var to use for language filtering;
 	 * - general "language" normally, or...
@@ -947,7 +952,7 @@ class nLingual{
 		}
 
 		self::_lang($lang);
-		
+
 		// Abort if lang doesn't exist
 		if(!self::lang_exists($lang)) return;
 
@@ -1355,7 +1360,7 @@ class nLingual{
 	 */
 	public static function process_url($url_data){
 		$lang = null;
-		
+
 		// Copy to $old_url_data
 		$old_url_data = $url_data;
 
@@ -1723,7 +1728,7 @@ class nLingual{
 	// ============================== //
 	//  General Use & Filter Methods  //
 	// ============================== //
-	
+
 	/**
 	 * Get an array of URLs for each language.
 	 *
@@ -1752,7 +1757,7 @@ class nLingual{
 			$links[$lang->slug] = $url;
 		}
 	}
-	
+
 	/**
 	 * Print out the results from get_lang_links().
 	 *
