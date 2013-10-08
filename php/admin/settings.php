@@ -244,7 +244,7 @@ function nLingual_register_settings(){
 	// Add Syncornization Rule managers for each post type
 	foreach(nL_post_types() as $post_type){
 		$post_type = get_post_type_object($post_type);
-		
+
 		/**
 		 * Print out the sync_rules manager for the current post type.
 		 *
@@ -449,7 +449,7 @@ function _nLingual_language_editor($language = array()){
 			<input type="hidden" name="nLingual-languages[<?php echo $lang_id?>][list_order]" value="<?php echo $list_order?>" class="list_order">
 		</td>
 		<td class="language-active" title="<?php _e('Should this language be active on the front-end?', NL_TXTDMN)?>">
-			<input type="checkbox" name="nLingual-languages[<?php echo $lang_id?>][active]" value="<?php echo $active?>">
+			<input type="checkbox" name="nLingual-languages[<?php echo $lang_id?>][active]" value="1" <?php if($active) echo 'checked'?>>
 		</td>
 		<td class="language-system_name">
 			<input type="text" name="nLingual-languages[<?php echo $lang_id?>][system_name]" value="<?php echo $system_name?>">
