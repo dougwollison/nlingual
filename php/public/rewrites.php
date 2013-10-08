@@ -194,7 +194,7 @@ function nLingual_add_language_body_class($classes){
 
 	// If the language is not in the default language, try to add
 	// the post name of the it's default language sister.
-	if(is_singular() && !nL_in_default_lang($object) && $orig = nL_get_post_translation($object->ID, true, false)){
+	if(is_singular() && !nL_in_default_lang($object) && $orig = nL_get_translation($object->ID, true, false)){
 		$orig_name = $wpdb->get_var($wpdb->prepare("SELECT post_name FROM $wpdb->posts WHERE ID = %d", $orig));
 		$classes[] = "$orig_name $orig_name--$lang";
 	}
