@@ -96,19 +96,33 @@ msgstr "Options"
 msgid "Synchronization Rules"
 msgstr "Options de synchronisation"
 
+# =========================================
+# RIPPED FROM GOOGLE TRANSLATE; PLEASE FIX!
+# =========================================
 #: ../php/admin/settings.php:74
 msgid "Admin only mode?"
-msgstr ""
+msgstr "Administrateur seul mode?"
 
+# =========================================
+# RIPPED FROM GOOGLE TRANSLATE; PLEASE FIX!
+# =========================================
 #: ../php/admin/settings.php:80
 msgid "Should only the admin-related features be enabled?"
 msgstr ""
+"Devraient uniquement les fonctionnalités d'administration liés à être "
+"activés?"
 
+# =========================================
+# RIPPED FROM GOOGLE TRANSLATE; PLEASE FIX!
+# =========================================
 #: ../php/admin/settings.php:84
 msgid ""
 "Use if you want to set up languages and translations, but don’t want "
 "language detection and redirection running yet."
 msgstr ""
+"Utilisez cette option si vous souhaitez configurer les langues et les "
+"traductions, mais ne veulent pas détection de la langue et la redirection "
+"courir encore."
 
 #: ../php/admin/settings.php:88
 msgid "Language redirection method"
@@ -233,9 +247,12 @@ msgstr "Personnalisé"
 msgid "Add Language"
 msgstr "Ajouter une langue"
 
+# =========================================
+# RIPPED FROM GOOGLE TRANSLATE; PLEASE FIX!
+# =========================================
 #: ../php/admin/settings.php:311 ../php/admin/settings.php:363
 msgid "Should this language be active on the front-end?"
-msgstr ""
+msgstr "Si cette langue être actif sur le front-end?"
 
 #: ../php/admin/settings.php:314 ../php/admin/settings.php:372
 msgid "A shorthand name for the language."
