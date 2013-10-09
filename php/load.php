@@ -1,4 +1,5 @@
 <?php
+require(__DIR__.'/PluginToolkit.php');
 require(__DIR__.'/nLingual.class.php');
 require(__DIR__.'/nLingual.aliases.php');
 

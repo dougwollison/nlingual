@@ -276,23 +276,26 @@ class nLingual{
 	/**
 	 * Utility function, get the translation_id to use for insert/replace/update queries.
 	 *
+	 * Leave blank to use 0, which will yeild a new group id.
+	 *
+	 * @since 1.2.0 Added default arg of 0 to get a new group id.
 	 * @since 1.0.0
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
-	 * @param int $id The post ID to find the existing translation_id for.
+	 * @param int $id The post ID to find the existing translation_id for (default: 0).
 	 *
 	 * @return int The id of the translation to use.
 	 */
-	public static function _translation_group_id($id){
+	public static function _translation_group_id($id = 0){
 		global $wpdb;
 
-		if(!($translation_id = $wpdb->get_var($wpdb->prepare("SELECT group_id FROM $wpdb->nL_translations WHERE post_id = %d", $id)))){
+		if(!($group_id = $wpdb->get_var($wpdb->prepare("SELECT group_id FROM $wpdb->nL_translations WHERE post_id = %d", $id)))){
 			// This will be new, so we have to get a new translation_id
-			$translation_id = $wpdb->get_var("SELECT MAX(group_id) + 1 FROM $wpdb->nL_translations");
+			$group_id = $wpdb->get_var("SELECT MAX(group_id) + 1 FROM $wpdb->nL_translations");
 		}
 
-		return $translation_id;
+		return $group_id;
 	}
 
 	// ================================= //
@@ -302,11 +305,12 @@ class nLingual{
 	/**
 	 * Loads options into local properties.
 	 *
-	 * @since 1.2.0 Added admin_only option default, and only get active languages when outside the admin.
+	 * @since 1.2.0 Admin_only option, active languages only one front end, Plugin::table() usage.
 	 * @since 1.0.0
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
+	 * @uses PluginToolkit::makeTable()
 	 * @uses nLingual::$home_url
 	 * @uses nLingual::$home
 	 * @uses nLingual::$here_url
@@ -333,35 +337,48 @@ class nLingual{
 		// Parse it
 		self::$here = parse_url(self::$here_url);
 
-		// Create and register the translations table
-		$wpdb->nL_translations = $table_prefix.'nL_translations';
-		$wpdb->query("
-		CREATE TABLE IF NOT EXISTS `$wpdb->nL_translations` (
-			`group_id` bigint(20) UNSIGNED NOT NULL,
-			`lang_id` bigint(20) UNSIGNED NOT NULL,
-			`post_id` bigint(20) UNSIGNED NOT NULL,
-			UNIQUE KEY `post` (`post_id`),
-			UNIQUE KEY `translation` (`group_id`, `lang_id`)
-		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-		");
-
-		// Create and register the languages table
-		$wpdb->nL_languages = $table_prefix.'nL_languages';
-		$wpdb->query("
-		CREATE TABLE IF NOT EXISTS `$wpdb->nL_languages` (
-			`lang_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-			`active` BOOLEAN DEFAULT TRUE NOT NULL,
-			`system_name` varchar(255) CHARACTER SET utf8 NOT NULL,
-			`native_name` varchar(255) CHARACTER SET utf8 NOT NULL,
-			`short_name` varchar(10) CHARACTER SET utf8 NOT NULL,
-			`slug` char(2) NOT NULL,
-			`iso` char(2) NOT NULL,
-			`mo` varchar(100) NOT NULL,
-			`list_order` int(11) UNSIGNED NOT NULL,
-			PRIMARY KEY (`lang_id`),
-			UNIQUE KEY `slug` (`slug`)
-		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-		");
+		if(is_admin()){
+			// Create and register the languages table
+			$wpdb->nL_languages = $table_prefix.'nL_languages';
+			PluginToolkit::makeTable(
+				$wpdb->nL_languages,
+				array(
+					'columns' => array(
+						'lang_id'     => 'bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT',
+						'active'      => 'BOOLEAN DEFAULT TRUE NOT NULL',
+						'system_name' => 'varchar(255) CHARACTER SET utf8 NOT NULL',
+						'native_name' => 'varchar(255) CHARACTER SET utf8 NOT NULL',
+						'short_name'  => 'varchar(255) CHARACTER SET utf8 NOT NULL',
+						'slug'        => 'char(2) NOT NULL',
+						'iso'         => 'char(2) NOT NULL',
+						'mo'          => 'char(2) NOT NULL',
+						'iso'         => 'varchar(100) NOT NULL',
+						'list_order'  => 'int(11) UNSIGNED NOT NULL'
+					),
+					'primary_key' => 'lang_id',
+					'unique_keys' => array(
+						'slug' => array('slug')
+					)
+				)
+			);
+	
+			// Create and register the translations table
+			$wpdb->nL_translations = $table_prefix.'nL_translations';
+			PluginToolkit::makeTable(
+				$wpdb->nL_translations,
+				array(
+					'columns' => array(
+						'group_id' => 'bigint(20) UNSIGNED NOT NULL',
+						'lang_id'  => 'bigint(20) UNSIGNED NOT NULL',
+						'post_id'  => 'bigint(20) UNSIGNED NOT NULL'
+					),
+					'unique_keys' => array(
+						'post'        => array('post_id'),
+						'translation' => array('group_id', 'lang_id')
+					)
+				)
+			);
+		}
 
 		// Load languages (active only if is_admin is true)
 		$where = is_admin() ? '' : 'WHERE active = 1';
@@ -376,26 +393,26 @@ class nLingual{
 		// Load options
 		self::$options = wp_parse_args((array) get_option('nLingual-options'), array(
 			// Default language
-			'default_lang' => 0,
+			'default_lang'      => 0,
 
 			// Redirection settings
-			'admin_only' => false,
-			'method' => NL_REDIRECT_USING_GET,
-			'get_var' => 'lang',
-			'post_var' => 'lang',
+			'admin_only'        => false,
+			'method'            => NL_REDIRECT_USING_GET,
+			'get_var'           => 'lang',
+			'post_var'          => 'lang',
 			'skip_default_l10n' => false,
 
 			// Supported post types
-			'post_types' => array('page', 'post'),
+			'post_types'        => array('page', 'post'),
 
 			// Split settings
-			'split_separator' => '//',
+			'split_separator'   => '//',
 
 			// Auto localize...
-			'l10n_dateformat' => true,
+			'l10n_dateformat'   => true,
 
 			// Delete sisters...
-			'delete_sisters' => false
+			'delete_sisters'    => false
 		));
 
 		// Load sync rules
@@ -1111,6 +1128,10 @@ class nLingual{
 	/**
 	 * Delete a translation link for the provided post in the provided language.
 	 *
+	 * In actuality, this simply changes the group ID for the post in that language,
+	 * otherwise it would delete the langauge for that post, which we don't want.
+	 *
+	 * @since 1.2.0 Fixed how translation link is deleted; no reassigns group ID.
 	 * @since 1.0.1
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
@@ -1123,15 +1144,23 @@ class nLingual{
 	public static function unlink_translation($post_id, $lang){
 		global $wpdb;
 
-		// Get a/the group ID for this post
+		// Get the group ID for this post
 		$group_id = self::_translation_group_id($post_id);
-
-		$wpdb->delete(
+		
+		// Get a group ID for the sister post
+		$new_group_id = self::_translation_group_id();
+		
+		// Update the group ID for the translation
+		$wpdb->update(
 			$wpdb->nL_translations,
+			array(
+				'group_id' => $new_group_id,
+			),
 			array(
 				'group_id' => $group_id,
 				'lang_id' => self::lang_id($lang)
 			),
+			array('%d'),
 			array('%d', '%d')
 		);
 	}
