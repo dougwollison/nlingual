@@ -337,9 +337,12 @@ class nLingual{
 		// Parse it
 		self::$here = parse_url(self::$here_url);
 
+		// Add custom tables to the $wpdb instance.
+		$wpdb->nL_languages = $table_prefix.'nL_languages';
+		$wpdb->nL_translations = $table_prefix.'nL_translations';
+		
 		if(is_admin()){
-			// Create and register the languages table
-			$wpdb->nL_languages = $table_prefix.'nL_languages';
+			// Create the languages table
 			PluginToolkit::makeTable(
 				$wpdb->nL_languages,
 				array(
@@ -362,8 +365,7 @@ class nLingual{
 				)
 			);
 	
-			// Create and register the translations table
-			$wpdb->nL_translations = $table_prefix.'nL_translations';
+			// Create the translations table
 			PluginToolkit::makeTable(
 				$wpdb->nL_translations,
 				array(
