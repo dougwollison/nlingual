@@ -63,7 +63,7 @@ if(nL_post_type_supported('post')){
 	 * @return string The modified WHERE clause.
 	 */
 	function nLingual_adjacent_post_where($where){
-		$lang = nL_lang_id();
+		$lang_id = nL_lang_id();
 
 		$where .= " AND nL.lang_id = '$lang_id'";
 
