@@ -4,7 +4,7 @@ jQuery(function($){
 	// ========================= //
 	$('.edit-translation').click(function(e){
 		e.preventDefault();
-		var post = $(this).prev('select.translations').val();
+		var post = $(this).prev('select.nL-translations').val();
 		if(parseInt(post,10) < 1) return alert(nLingual_l10n.NoPostSelected);
 		var url = $(this).attr('href').replace('%d', post);
 		window.open(url);
