@@ -340,7 +340,7 @@ class nLingual{
 		// Add custom tables to the $wpdb instance.
 		$wpdb->nL_languages = $table_prefix.'nL_languages';
 		$wpdb->nL_translations = $table_prefix.'nL_translations';
-		
+
 		if(is_admin()){
 			// Create the languages table
 			PluginToolkit::makeTable(
@@ -364,7 +364,7 @@ class nLingual{
 					)
 				)
 			);
-	
+
 			// Create the translations table
 			PluginToolkit::makeTable(
 				$wpdb->nL_translations,
@@ -943,6 +943,7 @@ class nLingual{
 	/**
 	 * Set the language of the post in question for the nL_translations table.
 	 *
+	 * @since 1.2.1 Delete's the original post language before inserting it.
 	 * @since 1.0.0
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
@@ -970,11 +971,14 @@ class nLingual{
 		// Abort if lang doesn't exist
 		if(!self::lang_exists($lang)) return;
 
+		// Delete the original post language first
+		self::delete_post_lang($id);
+
 		// Run the REPLACE query
 		$wpdb->replace(
 			$wpdb->nL_translations,
 			array(
-				'group_id' => self::_translation_group_id($id),
+				'group_id' => self::_translation_group_id(), // Just fetch a new group_id
 				'lang_id' => self::lang_id($lang),
 				'post_id' => $id
 			),
@@ -1148,10 +1152,10 @@ class nLingual{
 
 		// Get the group ID for this post
 		$group_id = self::_translation_group_id($post_id);
-		
+
 		// Get a group ID for the sister post
 		$new_group_id = self::_translation_group_id();
-		
+
 		// Update the group ID for the translation
 		$wpdb->update(
 			$wpdb->nL_translations,

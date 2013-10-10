@@ -31,6 +31,9 @@
 
 				$('select[name="nL_translations['+lang+']"]', edit_row).val(id);
 			});
+
+			// Hide the translation field for the post's own language
+			$('select[name="nL_translations['+lang+']"]', edit_row).parents('.inline-edit-group').hide();
 		}
 	};
 })(jQuery);

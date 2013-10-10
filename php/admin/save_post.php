@@ -51,7 +51,7 @@ function nLingual_save_post($post_id){
 
 	// Loop through the sync options, and syncronize the fields with it's associated posts
 	$associated = nL_associated_posts($post_id);
-	
+
 	// Skip if no associated posts are found
 	if(!$associated) return;
 
@@ -182,7 +182,7 @@ function nLingual_bulk_edit(){
 	if(isset($_GET['bulk_edit'])
 	&& isset($_GET['nL_lang_nonce'])
 	&& $_GET['nL_language'] != '-1'
-	&& wp_verify_nonce($_GET['nL_lang_nonce'], 'nLingual_set_language')){
+	&& wp_verify_nonce($_GET['nL_lang_nonce'], 'nLingual_bulk_set_language')){
 		foreach((array) $_GET['post'] as $post_id){
 			nL_set_post_lang($post_id, $_GET['nL_language']);
 		}
