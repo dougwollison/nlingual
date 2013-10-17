@@ -88,9 +88,17 @@ function nLingual_save_post($post_id){
 	}
 	if($meta_fields = nL_sync_rules($post_type, 'meta')){
 		foreach($meta_fields as $field){
+			// Prepare $field for use in a LIKE comparision
+			// Escape _ for LIKE and % for wpdb::prepare()
+			$field = str_replace(array('_','%'), array('\_','%%'), $wpdb->_real_escape($field));
+
 			foreach($associated as $id){
 				// Delete all meta data for this field on this post
-				delete_post_meta($id, $field);
+				$wpdb->query($wpdb->prepare("
+					DELETE FROM $wpdb->postmeta
+					WHERE post_id = %d
+					AND meta_key LIKE '$field'
+				", $id));
 
 				// Now, insert the new meta for this field from the newly saved post
 				$wpdb->query($wpdb->prepare("
@@ -99,8 +107,8 @@ function nLingual_save_post($post_id){
 					SELECT %d, meta_key, meta_value
 					FROM $wpdb->postmeta
 					WHERE post_id = %d
-					AND meta_key = %s
-				", $id, $post_id, $field));
+					AND meta_key LIKE '$field'
+				", $id, $post_id));
 			}
 		}
 	}
