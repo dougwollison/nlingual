@@ -438,7 +438,7 @@ class nLingual{
 	 * @since 1.0.0
 	 */
 	public static function onloaded(){
-		load_plugin_textdomain('nLingual', false, dirname(plugin_basename(NL_SELF)).'/lang/');
+		load_plugin_textdomain('nLingual', false, dirname(plugin_basename(NL_SELF)).'/lang');
 	}
 
 	/**
