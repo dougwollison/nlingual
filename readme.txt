@@ -3,7 +3,7 @@ Contributors: dougwollison
 Tags: multilingual, multi, language, admin, bilingual, switcher, translation, nlingual
 Requires at least: 3.5
 Tested up to: 3.6.1
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,9 @@ The nLingual class is a static class with a host of functions for getting and ma
 == Changelog ==
 
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
+
+= 1.2.2 =
+Bug fix with langauges table creation (props vianney)
 
 = 1.2.1 =
 Bug fixes and ACF compatability improvements.
