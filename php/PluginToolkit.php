@@ -42,7 +42,7 @@ abstract class PluginToolkit{
 			
 			$keys = array();
 			if(isset($primary_key)){
-				$_keys[] = "PRIMARY KEY `$primary_key`";
+				$keys[] = "PRIMARY KEY (`$primary_key`)";
 			}
 			
 			foreach(array('UNIQUE', 'INDEX', 'SPATIAL', 'FULLTEXT') as $keytype){
