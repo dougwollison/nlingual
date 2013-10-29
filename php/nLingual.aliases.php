@@ -177,7 +177,7 @@ function nL_query_var(){
  * @see nLingual::get_post_lang()
  */
 function nL_get_post_lang($id = null){
-	return nL::get_post_lang($id, $default);
+	return nL::get_post_lang($id);
 }
 
 /**

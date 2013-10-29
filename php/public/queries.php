@@ -19,9 +19,10 @@
 function nLingual_set_language_query_var(&$wp_query){
 	// Get the query var we should use
 	$qvar = nL_query_var();
+	$pt = isset($wp_query->query_vars['post_type']) ? $wp_query->query_vars['post_type'] : null;
 	
 	if(!is_admin() && (is_home() || is_archive() || is_search())
-	&& nL_post_type_supported($wp_query->query_vars['post_type'])
+	&& nL_post_type_supported($pt)
 	&& !isset($wp_query->query_vars[$qvar])){
 		$wp_query->query_vars[$qvar] = nL_current_lang();
 	}

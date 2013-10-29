@@ -28,7 +28,7 @@ function nLingual_save_post($post_id){
 	if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
 	elseif(wp_is_post_revision($post_id)) return;
 
-	$post_type = $_POST['post_type'];
+	$post_type = isset($_POST['post_type']) ? $_POST['post_type'] : null;
 
 	// Abort if they don't have permission to edit posts/pages
 	if($post_type == 'page' && !current_user_can('edit_page', $post_id)) return;
