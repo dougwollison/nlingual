@@ -354,8 +354,7 @@ class nLingual{
 						'short_name'  => 'varchar(255) CHARACTER SET utf8 NOT NULL',
 						'slug'        => 'char(2) NOT NULL',
 						'iso'         => 'char(2) NOT NULL',
-						'mo'          => 'char(5) NOT NULL',
-						'iso'         => 'varchar(100) NOT NULL',
+						'mo'          => 'varchar(100) NOT NULL',
 						'list_order'  => 'int(11) UNSIGNED NOT NULL'
 					),
 					'primary_key' => 'lang_id',

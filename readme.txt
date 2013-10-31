@@ -2,7 +2,7 @@
 Contributors: dougwollison
 Tags: multilingual, multi, language, admin, bilingual, switcher, translation, nlingual
 Requires at least: 3.5
-Tested up to: 3.7
+Tested up to: 3.7.x
 Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
