@@ -106,7 +106,7 @@ function nLingual_register_settings(){
 		);
 
 		foreach($options as $value => $label){
-			$label = sprintf($label, nL_default_lang(), parse_url(get_bloginfo('home'), PHP_URL_HOST));
+			$label = sprintf($label, nL_default_lang(), parse_url(get_bloginfo('url'), PHP_URL_HOST));
 			printf(
 				'<label><input type="radio" name="nLingual-options[method]" value="%s" %s> %s</label><br/>',
 				$value,
@@ -251,9 +251,8 @@ function nLingual_register_settings(){
 		 * @since 1.0.0
 		 *
 		 * @uses $post_type  The current post type object.
-		 * @uses $sync_rules The synchronization rules array.
 		 */
-		add_settings_field($post_type->name.'-sync_rules', $post_type->labels->name, function() use ($post_type, $sync_rules){
+		add_settings_field($post_type->name.'-sync_rules', $post_type->labels->name, function() use ($post_type){
 			$pt = $post_type->name;
 			$sync_data_rules = nL_sync_rules($pt, 'data');
 			printf(

@@ -354,7 +354,7 @@ class nLingual{
 						'short_name'  => 'varchar(255) CHARACTER SET utf8 NOT NULL',
 						'slug'        => 'char(2) NOT NULL',
 						'iso'         => 'char(2) NOT NULL',
-						'mo'          => 'char(2) NOT NULL',
+						'mo'          => 'char(5) NOT NULL',
 						'iso'         => 'varchar(100) NOT NULL',
 						'list_order'  => 'int(11) UNSIGNED NOT NULL'
 					),
@@ -614,7 +614,10 @@ class nLingual{
 	 * @return mixed The cached data.
 	 */
 	public static function cache_get($id, $section){
-		return self::$cache[$section][$id];
+		if(isset(self::$cache[$section][$id]))
+			return self::$cache[$section][$id];
+		else
+			return null;
 	}
 
 	/**
@@ -1287,7 +1290,7 @@ class nLingual{
 			'fragment'=>''
 		), $data);
 
-		if(is_array($data['args'])){
+		if(isset($data['args']) && is_array($data['args'])){
 			$data['query'] = http_build_query($data['args']);
 		}
 
@@ -1433,6 +1436,9 @@ class nLingual{
 		 */
 		$url_data = apply_filters('nLingual_process_url', $url_data, $old_url_data);
 
+		// Ensure $url_data['lang'] is always set
+		if(!isset($url_data['lang'])) $url_data['lang'] = null;
+
 		return $url_data;
 	}
 
@@ -1515,7 +1521,7 @@ class nLingual{
 						$url_data['host'] = "$lang.{$url_data['host']}";
 						break;
 					case NL_REDIRECT_USING_PATH:
-						if(self::$home['path']){ // $home has a base path, need to insert $lang AFTER it
+						if(isset(self::$home['path']) && self::$home['path']){ // $home has a base path, need to insert $lang AFTER it
 							$home = preg_quote(self::$home['path'],'#');
 							$url_data['path'] = preg_replace("#^($home)(/.*|$)#", "$1/$lang$2", $url_data['path']);
 						}else{
