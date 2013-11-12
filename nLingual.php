@@ -10,7 +10,7 @@ Tags: multilingual, multi, language, admin, bilingual, switcher, translation, nl
 License: GPL2
 */
 
-define('NL_SELF', __FILE__);
-define('NL_TXTDMN', 'nLingual');
+define( 'NL_SELF', __FILE__ );
+define( 'NL_TXTDMN', 'nLingual' );
 
-require(__DIR__.'/php/load.php');
+require( __DIR__ . '/php/load.php' );

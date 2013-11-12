@@ -1,6 +1,6 @@
 <?php
 // ===================== //
-//	Language Shortcodes  //
+// Language Shortcodes  //
 // ===================== //
 
 /**
@@ -12,20 +12,20 @@
  *
  * @uses nL_langs_by_slug()
  *
- * @param string $content The post content.
+ * @param string  $content The post content.
  *
  * @return string The modified post content.
  */
-function nLingual_shortcodes($content){
+function nLingual_shortcodes( $content ) {
 	global $languages;
 	//Strip closing p tags and opening p tags from beginning/end of string
-	$content = preg_replace('#^\s*(?:</p>)\s*([\s\S]+)\s*(?:<p.*?>)\s*$#', '$1', $content);
+	$content = preg_replace( '#^\s*(?:</p>)\s*([\s\S]+)\s*(?:<p.*?>)\s*$#', '$1', $content );
 	//Unwrap tags
-	$content = preg_replace('#(?:<p.*?>)?(\[/?(?:'.implode('|', array_keys(nL_langs_by_slug())).').*\])(?:</p>)?#', '$1', $content);
+	$content = preg_replace( '#(?:<p.*?>)?(\[/?(?:' . implode( '|', array_keys( nL_langs_by_slug() ) ) . ').*\])(?:</p>)?#', '$1', $content );
 
-	return trim($content);
+	return trim( $content );
 }
-add_filter('the_content', 'nLingual_shortcodes');
+add_filter( 'the_content', 'nLingual_shortcodes' );
 
 /**
  * [lang] shortcode.
@@ -36,14 +36,14 @@ add_filter('the_content', 'nLingual_shortcodes');
  *
  * @uses nL_current_lang()
  *
- * @param array  $atts    The tag attributes (ignored; there shouldn't be any).
- * @param string $content The tag content.
- * @param string $lang    The name of the tag (the language slug).
+ * @param array   $atts    The tag attributes (ignored; there shouldn't be any).
+ * @param string  $content The tag content.
+ * @param string  $lang    The name of the tag (the language slug).
  *
  * @return null|string NULL if not the current language, $content if so.
  */
-function nLingual_show_language($atts, $content, $lang){
-	if($lang == nL_current_lang()) return trim(do_shortcode($content));
+function nLingual_show_language( $atts, $content, $lang ) {
+	if ( $lang == nL_current_lang() ) return trim( do_shortcode( $content ) );
 	return null;
 }
 
@@ -54,6 +54,6 @@ function nLingual_show_language($atts, $content, $lang){
  *
  * @uses nL_languages()
  */
-foreach(nL_languages() as $lang){
-	add_shortcode($lang->slug, 'nLingual_show_language');
+foreach ( nL_languages() as $lang ) {
+	add_shortcode( $lang->slug, 'nLingual_show_language' );
 }

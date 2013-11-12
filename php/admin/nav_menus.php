@@ -1,6 +1,6 @@
 <?php
 // ==================== //
-//	Menus Screen Hooks  //
+// Menus Screen Hooks  //
 // ==================== //
 
 /**
@@ -19,7 +19,7 @@ function nLingual_special_metaboxes(){
 		'side'
 	);
 }
-add_action('admin_head', 'nLingual_special_metaboxes');
+add_action( 'admin_head', 'nLingual_special_metaboxes' );
 
 /**
  * add-langlink metabox callback.
@@ -36,12 +36,12 @@ add_action('admin_head', 'nLingual_special_metaboxes');
 function nLingual_add_langlinks(){
 	global $nav_menu_selected_id;
 
-	?>
+?>
 	<div class="posttypediv" id="langlink">
 		<p>These links will go to the respective language versions of the current URL.</p>
 		<div id="tabs-panel-langlink-all" class="tabs-panel tabs-panel-active">
 			<ul id="pagechecklist-most-recent" class="categorychecklist form-no-clear">
-			<?php $i = -1; foreach( nL_languages() as $lang ):?>
+			<?php $i = -1; foreach ( nL_languages() as $lang ):?>
 				<li>
 					<label class="menu-item-title">
 						<input type="checkbox" class="menu-item-checkbox" name="menu-item[<?php echo $i?>][menu-item-object-id]" value="-1">

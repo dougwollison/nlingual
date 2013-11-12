@@ -1,6 +1,6 @@
 <?php
 // ======================== //
-//	Global Rewrite Filters  //
+// Global Rewrite Filters  //
 // ======================== //
 
 /**
@@ -13,6 +13,6 @@
  *
  * @see nLingual::split_langs()
  */
-add_filter('option_blogname', 'nL_split_langs');
-add_filter('option_blogdescription', 'nL_split_langs');
-add_filter('the_title', 'nL_split_langs');
+add_filter( 'option_blogname', 'nL_split_langs' );
+add_filter( 'option_blogdescription', 'nL_split_langs' );
+add_filter( 'the_title', 'nL_split_langs' );

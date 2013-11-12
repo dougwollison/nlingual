@@ -14,11 +14,11 @@
  * @param string $domain The domain to use.
  * @params mixed $arg1.. The arguments for vsprintf().
  */
-function _f($text, $domain){
+function _f( $text, $domain ) {
 	$args = func_get_args();
-	$args = array_slice($args, 2);
+	$args = array_slice( $args, 2 );
 
-	return vsprintf(__($text, $domain), $args);
+	return vsprintf( __( $text, $domain ), $args );
 }
 
 /*
@@ -31,11 +31,11 @@ function _f($text, $domain){
  * @param string $domain The domain to use.
  * @params mixed $arg1.. The arguments for vsprintf()
  */
-function _fx($text, $context, $domain){
+function _fx( $text, $context, $domain ) {
 	$args = func_get_args();
-	$args = array_slice($args, 3);
+	$args = array_slice( $args, 3 );
 
-	return vsprintf(_x($text, $context, $domain), $args);
+	return vsprintf( _x( $text, $context, $domain ), $args );
 }
 
 /*
@@ -47,8 +47,8 @@ function _fx($text, $context, $domain){
  * @param string $domain The domain to use.
  * @params mixed $arg1.. The arguments for vsprintf().
  */
-function _ef($text, $domain){
-	echo call_user_func_array('_f', func_get_args());
+function _ef( $text, $domain ) {
+	echo call_user_func_array( '_f', func_get_args() );
 }
 
 /*
@@ -61,8 +61,8 @@ function _ef($text, $domain){
  * @param string $domain The domain to use.
  * @params mixed $arg1.. The arguments for vsprintf().
  */
-function _efx($text, $context, $domain){
-	echo call_user_func_array('_fx', func_get_args());
+function _efx( $text, $context, $domain ) {
+	echo call_user_func_array( '_fx', func_get_args() );
 }
 
 /*
@@ -73,10 +73,10 @@ function _efx($text, $context, $domain){
  * @param array $array The array to be localized.
  * @param string $domain The domain to use.
  */
-function _a($array, $domain = 'default'){
+function _a( $array, $domain = 'default' ) {
 	$_array = array();
-	foreach($array as $key => $value){
-		$_array[$key] = __($value, $domain);
+	foreach ( $array as $key => $value ) {
+		$_array[ $key ] = __( $value, $domain );
 	}
 
 	return $_array;
@@ -91,10 +91,10 @@ function _a($array, $domain = 'default'){
  * @param string $context The context to use.
  * @param string $domain The domain to use.
  */
-function _ax($array, $context, $domain = 'default'){
+function _ax( $array, $context, $domain = 'default' ) {
 	$_array = array();
-	foreach($array as $key => $value){
-		$_array[$key] = _x($value, $context, $domain);
+	foreach ( $array as $key => $value ) {
+		$_array[ $key ] = _x( $value, $context, $domain );
 	}
 
 	return $_array;
