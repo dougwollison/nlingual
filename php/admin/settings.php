@@ -327,15 +327,24 @@ add_action( 'admin_init', 'nLingual_register_settings' );
  * @return array The santizied option data.
  */
 function nLingual_sanitize_sync_rules( $data ) {
-	if( !is_array( $data ) ) return $data;
+	if( ! is_array( $data ) ) return $data;
 
 	foreach( $data as &$ruleset ) {
 		// Split the metadata rule into separate lines
 		$ruleset['meta'] = preg_split( '/[\n\r]+/', $ruleset['meta'] );
 		array_walk( $ruleset['meta'], 'trim' ); // Also run trim on each line
+		
+		// Make sure the postdata rule array exists
+		if( ! is_array( $ruleset['data'] ) ) {
+			$ruleset['data'] = array();
+		}
 
-		if( in_array( 'post_date', $ruleset['data'] ) ) $ruleset['data'][] = 'post_date_gmt';
-		if( in_array( 'post_modified', $ruleset['data'] ) ) $ruleset['data'][] = 'post_modified_gmt';
+		if( in_array( 'post_date', $ruleset['data'] ) ) {
+			$ruleset['data'][] = 'post_date_gmt';
+		}
+		if( in_array( 'post_modified', $ruleset['data'] ) ) {
+			$ruleset['data'][] = 'post_modified_gmt';
+		}
 	}
 
 	return $data;
