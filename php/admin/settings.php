@@ -319,6 +319,7 @@ add_action( 'admin_init', 'nLingual_register_settings' );
  *
  * Splits the meta list into an array, adds GMT versions of post_date/modified if set.
  *
+ * @since 1.2.4 Minor bug fix for when no postdata fields are checked off.
  * @since 1.2.0 Moved to external function, skips if not an array.
  * @since 1.0.0
  *
