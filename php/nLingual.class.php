@@ -1799,6 +1799,7 @@ class nLingual{
 			// Create and append the HTML link to the list
 			$links[ $lang->slug ] = $url;
 		}
+		return $links;
 	}
 
 	/**
