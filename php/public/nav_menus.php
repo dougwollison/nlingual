@@ -1,6 +1,6 @@
 <?php
 // ======================= //
-// Public Nav Menu Hooks  //
+// Public Nav Menu Hooks   //
 // ======================= //
 
 /**

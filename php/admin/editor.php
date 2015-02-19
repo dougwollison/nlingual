@@ -1,6 +1,6 @@
 <?php
 // ===================== //
-// Editor Screen Hooks  //
+// Editor Screen Hooks   //
 // ===================== //
 
 /**

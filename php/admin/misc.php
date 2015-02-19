@@ -1,6 +1,6 @@
 <?php
 // ===================== //
-// Miscellaneous Hooks  //
+// Miscellaneous Hooks   //
 // ===================== //
 
 /**

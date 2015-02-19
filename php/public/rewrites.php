@@ -1,6 +1,6 @@
 <?php
 // ======================== //
-// Public Rewrite Filters  //
+// Public Rewrite Filters   //
 // ======================== //
 
 /**

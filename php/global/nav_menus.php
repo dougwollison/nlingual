@@ -1,6 +1,6 @@
 <?php
 // ======================= //
-// Global Nav Menu Hooks  //
+// Global Nav Menu Hooks   //
 // ======================= //
 
 /**

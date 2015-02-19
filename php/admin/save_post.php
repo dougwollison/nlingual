@@ -1,6 +1,6 @@
 <?php
 // ======================== //
-// Save/Delete Post Hooks  //
+// Save/Delete Post Hooks   //
 // ======================== //
 
 /**

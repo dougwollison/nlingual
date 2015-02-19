@@ -1,6 +1,6 @@
 <?php
 // ====================================== //
-// Hooks for Processing Exteral Options  //
+// Hooks for Processing Exteral Options   //
 // ====================================== //
 
 /**

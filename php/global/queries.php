@@ -1,6 +1,6 @@
 <?php
 // ==================== //
-// Global Query Hooks  //
+// Global Query Hooks   //
 // ==================== //
 
 /**

@@ -1,6 +1,6 @@
 <?php
 // ===================== //
-// Language Shortcodes  //
+// Language Shortcodes   //
 // ===================== //
 
 /**

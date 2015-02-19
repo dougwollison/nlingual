@@ -1,6 +1,6 @@
 <?php
 // ======================== //
-// New Translation Action  //
+// New Translation Action   //
 // ======================== //
 
 /**

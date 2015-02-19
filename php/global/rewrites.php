@@ -1,6 +1,6 @@
 <?php
 // ======================== //
-// Global Rewrite Filters  //
+// Global Rewrite Filters   //
 // ======================== //
 
 /**

@@ -1,6 +1,6 @@
 <?php
 // ============================== //
-// Settings Hooks and Callbacks  //
+// Settings Hooks and Callbacks   //
 // ============================== //
 
 /**
@@ -334,7 +334,7 @@ function nLingual_sanitize_sync_rules( $data ) {
 		// Split the metadata rule into separate lines
 		$ruleset['meta'] = preg_split( '/[\n\r]+/', $ruleset['meta'] );
 		array_walk( $ruleset['meta'], 'trim' ); // Also run trim on each line
-		
+
 		// Make sure the postdata rule array exists
 		if( ! is_array( $ruleset['data'] ) ) {
 			$ruleset['data'] = array();

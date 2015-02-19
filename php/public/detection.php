@@ -1,6 +1,6 @@
 <?php
 // ========================= //
-// Language Dections Hooks  //
+// Language Dections Hooks   //
 // ========================= //
 
 /**

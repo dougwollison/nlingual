@@ -1,6 +1,6 @@
 <?php
 // ========================= //
-// Metabox Hooks/Callbacks  //
+// Metabox Hooks/Callbacks   //
 // ========================= //
 
 /**

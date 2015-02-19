@@ -1,6 +1,6 @@
 <?php
 // ==================== //
-// Public Query Hooks  //
+// Public Query Hooks   //
 // ==================== //
 
 /**

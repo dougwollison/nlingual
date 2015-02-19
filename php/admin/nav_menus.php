@@ -1,6 +1,6 @@
 <?php
 // ==================== //
-// Menus Screen Hooks  //
+// Menus Screen Hooks   //
 // ==================== //
 
 /**
