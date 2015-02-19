@@ -14,11 +14,12 @@ require( __DIR__.'/utilities.php' );
  * @since 1.2.0 Separated global hooks; public ones only run if not in the admin.
  * @since 1.0
  */
- 
+
 // Load global hooks
 require( __DIR__.'/global/nav_menus.php' );
 require( __DIR__.'/global/queries.php' );
 require( __DIR__.'/global/rewrites.php' );
+require( __DIR__.'/global/quickstart.php' );
 
 // Load admin hooks/callbacks
 if ( is_admin() ) {
