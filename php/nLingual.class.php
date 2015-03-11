@@ -1763,7 +1763,7 @@ class nLingual{
 		$redirect = self::localize_here();
 
 		if ( $requested != $redirect ) {
-			wp_redirect( $redirect, 301 );
+			wp_redirect( $redirect );
 			exit;
 		}
 	}
