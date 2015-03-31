@@ -86,7 +86,7 @@ The nLingual class is a static class with a host of functions for getting and ma
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
 
 = 1.2.4 =
-Minor bug fix to sync rules saving when no postdata fields are checked off.
+Minor bug fix to sync rules saving when no postdata fields are checked off. Also added adjustments to allow support for has_nav_menu() on the front end.
 
 = 1.2.3 =
 Coding improvements and language table adjustments (props vianney).
