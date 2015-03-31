@@ -1,7 +1,7 @@
 <?php
-require( __DIR__ . '/PluginToolkit.php' );
-require( __DIR__ . '/nLingual.class.php' );
-require( __DIR__ . '/nLingual.aliases.php' );
+require( __DIR__ . '/class-plugin-toolkit.php' );
+require( __DIR__ . '/class-nlingual.php' );
+require( __DIR__ . '/aliases.php' );
 
 //Initial nLingual
 nLingual::init();

@@ -7,7 +7,7 @@ if ( ! current_user_can( 'activate_plugins' ) )
 	return;
 
 // Or if this isn't the plugin we're supposed to uninstall
-if ( WP_UNINSTALL_PLUGIN != 'nLingual/nLingual.php' )
+if ( WP_UNINSTALL_PLUGIN != 'nlingual/nlingual.php' )
 	return;
 
 global $wpdb, $table_prefix;
