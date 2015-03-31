@@ -177,6 +177,7 @@ if( nL_get_option( 'l10n_dateformat' ) ) {
  * Fix class names that contain %'s (because their encoded non-ascii names,
  * attempts to add the name of it's default language post, and add the lang-[lang] class.
  *
+ * @since 1.2.4 Forgot to define $lang.
  * @since 1.0.0
  *
  * @global wpdb $wpdb The database abstraction class instance.
