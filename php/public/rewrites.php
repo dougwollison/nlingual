@@ -191,6 +191,8 @@ function nLingual_add_language_body_class( $classes ) {
 		// Fix class names that contain % signs.
 		$class = str_replace( '%', '-', $class );
 	}
+	
+	$lang = nL_current_lang();
 
 	// If the language is not in the default language, try to add
 	// the post name of the it's default language sister.
@@ -199,7 +201,7 @@ function nLingual_add_language_body_class( $classes ) {
 		$classes[] = "$orig_name $orig_name--$lang";
 	}
 
-	$classes[] = "lang-" . nL_current_lang();
+	$classes[] = "lang-$lang";
 
 	return $classes;
 }

@@ -4,6 +4,62 @@
 // ======================= //
 
 /**
+ * theme_mod_nav_menu_locations filter.
+ *
+ * Adds entries for the plain locations pointing to the current/default language's menu.
+ *
+ * This will allow functions like has_nav_menu() to run correctly since no plain locations will have menus set.
+ * For example, it will add an entry for the "primary" location that's the same as "primary--en".
+ *
+ * @since 1.3.0
+ *
+ * @uses nL_cache_get()
+ */
+function nLingual_alter_nav_menu_locations( $locations ) {
+	if ( ! is_array( $locations ) ) {
+		return $locations;
+	}
+
+	$clang = nL_current_lang();
+	$dlang = nL_default_lang();
+
+	// Get the original locations
+	$old_locations = nL_cache_get( '_wp_registered_nav_menus', 'vars' );
+
+	// Go through the old locations, and add entries for them pointing them to those for the current or default languages.
+	foreach ( $old_locations as $location => $menu ) {
+		if ( isset( $locations[ "$location--$clang" ] ) ) {
+			// Point the location to the version for the current language
+			$locations[ $location ] = $locations[ "$location--$clang" ];
+		} elseif ( isset( $locations[ "$location--$dlang" ] ) ) {
+			// Point the location to the version for the default language
+			$locations[ $location ] = $locations[ "$location--$dlang" ];
+		}
+	}
+
+	return $locations;
+}
+add_filter( 'theme_mod_nav_menu_locations', 'nLingual_alter_nav_menu_locations' );
+
+/**
+ * after_setup_theme action.
+ *
+ * Alter $_wp_registered_nav_menus to set the plain locations to the current/default language's menu.
+ *
+ * This will allow functions like has_nav_menu() to run correctly since no plain locations will have menus set.
+ *
+ * @since 1.3.0
+ *
+ * @uses nLingual_alter_nav_menu_locations()
+ */
+function nLingual_rewrite_register_nav_menus() {
+	global $_wp_registered_nav_menus;
+
+	$_wp_registered_nav_menus = nLingual_alter_nav_menu_locations( $_wp_registered_nav_menus );
+}
+add_filter( 'after_setup_theme', 'nLingual_rewrite_register_nav_menus', 999 ); // Run immediately after nLingual_alter_registered_nav_menus
+
+/**
  * wp_nav_menu_args filter.
  *
  * Alter wp_nav_menu() arguments to change theme_location to the localized version.
