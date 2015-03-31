@@ -1743,6 +1743,7 @@ class nLingual{
 	/**
 	 * Checks if redirection is needed such as forced language specification or trainling slashes.
 	 *
+	 * @since 1.2.4 No longer do 301 redirects.
 	 * @since 1.0.0
 	 *
 	 * @uses nLingual::$here_url
