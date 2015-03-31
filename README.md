@@ -61,4 +61,4 @@ WordPress itself comes with a number of short and sweet localization functions; 
 
 #### The nLingual Class
 
-The nLingual class is a static class with a host of functions for getting and manipulating language and translation data in the system. Included are alias functions: `nLingual::get_post_lang` can be called through `nL_get_post_lang`. Details about these functions and how to use them can be found in `php/nLingual.class.php` and `php/nLingual.aliases.php`.
+The nLingual class is a static class with a host of functions for getting and manipulating language and translation data in the system. Included are alias functions: `nLingual::get_post_lang` can be called through `nL_get_post_lang`. Details about these functions and how to use them can be found in `php/class-nlingual.php` and `php/aliases.php`.
