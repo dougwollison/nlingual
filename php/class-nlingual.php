@@ -1664,6 +1664,7 @@ class nLingual{
 	/**
 	 * Return the current URL, translated for the provided language.
 	 *
+	 * @sicne 1.2.5 Added use of $lang to hooks.
 	 * @since 1.0.0
 	 *
 	 * @uses nLingual::_lang()
@@ -1732,7 +1733,7 @@ class nLingual{
 		}
 
 		// Apply any filters
-		$url_data = apply_filters( 'nLingual_localize_here_array', $url_data );
+		$url_data = apply_filters( 'nLingual_localize_here_array', $url_data, $lang );
 
 		// Build the URL
 		$url = self::build_url( $url_data );
