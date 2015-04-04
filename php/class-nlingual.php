@@ -1713,7 +1713,7 @@ class nLingual{
 			break;
 		default: // Just localize the URI
 			$url = self::localize_url( $uri, $lang, true );
-			$url = apply_filters( 'nLingual_localize_here', $url );
+			$url = apply_filters( 'nLingual_localize_here', $url, $lang );
 			return $url;
 		}
 
