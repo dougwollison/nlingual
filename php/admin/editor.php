@@ -204,7 +204,7 @@ function nLingual_bulk_edit_box( $column, $post_type ) {
       <div class="inline-edit-col column-<?php echo $column ?>">
         <label class="inline-edit-group">
         	<?php _e( 'Language', NL_TXTDMN )?>
-        	<select name="nL_language">
+        	<select name="nL_bulk_language">
 				<option value="-1">&mdash; <?php _e( 'No change', NL_TXTDMN )?> &mdash;</option>
 			<?php foreach( nL_languages() as $lang ):?>
 				<option value="<?php echo $lang->slug?>"><?php echo $lang->system_name?></option>
