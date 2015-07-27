@@ -189,10 +189,10 @@ add_action( 'untrashed_post', 'nLingual_untrashed_post' );
 function nLingual_bulk_edit() {
 	if ( isset( $_GET['bulk_edit'] )
 		&& isset( $_GET['nL_lang_nonce'] )
-		&& $_GET['nL_language'] != '-1'
+		&& $_GET['nL_bulk_language'] != '-1'
 		&& wp_verify_nonce( $_GET['nL_lang_nonce'], 'nLingual_bulk_set_language' ) ) {
 		foreach ( (array) $_GET['post'] as $post_id ) {
-			nL_set_post_lang( $post_id, $_GET['nL_language'] );
+			nL_set_post_lang( $post_id, $_GET['nL_bulk_language'] );
 		}
 	}
 }
