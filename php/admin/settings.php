@@ -301,7 +301,7 @@ function nLingual_register_settings() {
 				printf(
 					'<br/><label for="%s-meta-sync_rules">%s</label><br>',
 					$pt,
-					__( 'List the meta field that should be synchronized, one per line.', NL_TXTDMN )
+					__( 'List the names of the custom fields that should be synchronized, one per line.', NL_TXTDMN )
 				);
 				printf(
 					'<textarea id="%s-meta-sync_rules" name="nLingual-sync_rules[%s][meta]" class="large-text code" rows="5">%s</textarea>',

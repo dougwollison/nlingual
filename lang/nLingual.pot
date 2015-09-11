@@ -205,7 +205,7 @@ msgid "Check off the taxonomies that should be synchronized."
 msgstr ""
 
 #: ../php/admin/settings.php:254
-msgid "List the meta field that should be synchronized, one per line."
+msgid "List the names of the custom fields that should be synchronized, one per line."
 msgstr ""
 
 #: ../php/admin/settings.php:299
