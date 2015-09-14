@@ -27,6 +27,16 @@ function nL_qs_hooks_setup(){
 			add_filter( 'nLingual_localize_here', 'nL_qs_index_localize', 10, 2 );
 		}
 
+		// Set language of new section to the parent's language
+		if ( current_theme_supports( 'quickstart-section_manager' ) ) {
+			function nL_qs_section_language( $section, $parent ){
+				if ( $lang = nL_get_post_lang( $parent ) ) {
+					nL_set_post_lang( $section->ID, $lang );
+				}
+			}
+			add_action( 'qs_create_section', 'nL_qs_section_language', 10, 2 );
+		}
+
 		// Add language filtering to queries made by QuickStart (i.e. order manager and parent filtering)
 		function nL_qs_admin_parse_query( $query ) {
 			if ( ! is_admin() || ! isset( $query->query_vars['qs-context'] ) ) {
@@ -42,14 +52,6 @@ function nL_qs_hooks_setup(){
 			}
 		}
 		add_filter( 'parse_query', 'nL_qs_admin_parse_query' );
-
-		// Set language of new section to the parent's language
-		function nL_qs_section_language( $section, $parent ){
-			if ( $lang = nL_get_post_lang( $parent ) ) {
-				nL_set_post_lang( $section->ID, $lang );
-			}
-		}
-		add_action( 'qs_create_section', 'nL_qs_section_language', 10, 2 );
 	}
 }
 add_action( 'after_setup_theme', 'nL_qs_hooks_setup', 999 );
