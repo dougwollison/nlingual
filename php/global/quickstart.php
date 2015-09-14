@@ -34,7 +34,7 @@ function nL_qs_hooks_setup(){
 					nL_set_post_lang( $section->ID, $lang );
 				}
 			}
-			add_action( 'qs_create_section', 'nL_qs_section_language', 10, 2 );
+			add_action( 'qs_section_create', 'nL_qs_section_language', 10, 2 );
 		}
 
 		// Add language filtering to queries made by QuickStart (i.e. order manager and parent filtering)
