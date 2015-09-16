@@ -40,9 +40,9 @@ define( 'NL_REDIRECT_USING_GET', 'NL_REDIRECT_USING_GET' );
  * @since 1.0.0
  */
 class nLingual{
-	// ============ //
-	//  Properties  //
-	// ============ //
+	// ============= //
+	// ! Properties  //
+	// ============= //
 
 	/**
 	 * The options storage array.
@@ -236,9 +236,9 @@ class nLingual{
 	 */
 	protected static $here;
 
-	// ================= //
-	//  Utility Methods  //
-	// ================= //
+	// ================== //
+	// ! Utility Methods  //
+	// ================== //
 
 	/**
 	 * Utility function, make $lang the default if === true, the current if === null.
@@ -298,13 +298,14 @@ class nLingual{
 		return $group_id;
 	}
 
-	// ================================= //
-	//  Initialization and Hook Methods  //
-	// ================================= //
+	// ================================== //
+	// ! Initialization and Hook Methods  //
+	// ================================== //
 
 	/**
 	 * Loads options into local properties.
 	 *
+	 * @since 1.3.1 Rewored table creation with version checking.
 	 * @since 1.2.0 Admin_only option, active languages only one front end, Plugin::table() usage.
 	 * @since 1.0.0
 	 *
@@ -341,44 +342,42 @@ class nLingual{
 		$wpdb->nL_languages = $table_prefix . 'nL_languages';
 		$wpdb->nL_translations = $table_prefix . 'nL_translations';
 
-		if ( is_admin() ) {
+		// Create/Update the tables if necessary
+		$db_version = get_option( 'nLingual-db-version' );
+		if ( is_admin() && version_compare( $db_version, NL_DB_VERSION, '<' ) ) {
+			// Load dbDelta utility
+			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
+			$charset_collate = $wpdb->get_charset_collate();
+
 			// Create the languages table
-			Plugin_Toolkit::makeTable(
-				$wpdb->nL_languages,
-				array(
-					'columns' => array(
-						'lang_id'     => 'bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT',
-						'active'      => 'BOOLEAN DEFAULT TRUE NOT NULL',
-						'system_name' => 'varchar(255) CHARACTER SET utf8 NOT NULL',
-						'native_name' => 'varchar(255) CHARACTER SET utf8 NOT NULL',
-						'short_name'  => 'varchar(255) CHARACTER SET utf8 NOT NULL',
-						'slug'        => 'char(2) NOT NULL',
-						'iso'         => 'char(2) NOT NULL',
-						'mo'          => 'varchar(100) NOT NULL',
-						'list_order'  => 'int(11) UNSIGNED NOT NULL'
-					),
-					'primary_key' => 'lang_id',
-					'unique_keys' => array(
-						'slug' => array( 'slug' )
-					)
-				)
-			);
+			$sql_languages = "CREATE TABLE $wpdb->nL_languages (
+				lang_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+				active tinyint(1) NOT NULL DEFAULT '1',
+				system_name varchar(255) DEFAULT '' NOT NULL,
+				native_name varchar(255) DEFAULT '' NOT NULL,
+				short_name varchar(255) DEFAULT '' NOT NULL,
+				slug char(2) DEFAULT '' NOT NULL,
+				iso char(2) DEFAULT '' NOT NULL,
+				mo varchar(100) DEFAULT '' NOT NULL,
+				list_order int(11) unsigned NOT NULL DEFAULT '0',
+				PRIMARY KEY  (lang_id),
+				UNIQUE KEY slug (slug)
+			) $charset_collate;";
+			dbDelta( $sql_languages );
 
 			// Create the translations table
-			Plugin_Toolkit::makeTable(
-				$wpdb->nL_translations,
-				array(
-					'columns' => array(
-						'group_id' => 'bigint(20) UNSIGNED NOT NULL',
-						'lang_id'  => 'bigint(20) UNSIGNED NOT NULL',
-						'post_id'  => 'bigint(20) UNSIGNED NOT NULL'
-					),
-					'unique_keys' => array(
-						'post'        => array( 'post_id' ),
-						'translation' => array( 'group_id', 'lang_id' )
-					)
-				)
-			);
+			$sql_languages = "CREATE TABLE $wpdb->nL_translations (
+				group_id bigint(20) unsigned NOT NULL,
+				lang_id bigint(20) unsigned NOT NULL,
+				post_id bigint(20) unsigned NOT NULL,
+				UNIQUE KEY post_id (post_id),
+				UNIQUE KEY group_lang (group_id, lang_id)
+			) $charset_collate;";
+			dbDelta( $sql_languages );
+
+			// Log the current database version
+			update_option( 'nLingual-db-version', NL_DB_VERSION );
 		}
 
 		// Load languages (active only if is_admin is true)
@@ -454,9 +453,9 @@ class nLingual{
 			self::$loaded_textdomains[ $domain ] = $mofile;
 	}
 
-	// ========================= //
-	//  Property Access Methods  //
-	// ========================= //
+	// ========================== //
+	// ! Property Access Methods  //
+	// ========================== //
 
 	/**
 	 * Return the value of a particular option.
@@ -596,9 +595,9 @@ class nLingual{
 		return self::$other ? self::$other : self::get_other_lang();
 	}
 
-	// =============== //
-	//  Cache Methods  //
-	// =============== //
+	// ================ //
+	// ! Cache Methods  //
+	// ================ //
 
 	/**
 	 * Get the cached data for an object.
@@ -634,9 +633,9 @@ class nLingual{
 		self::$cache[ $section ][ $id ] = $data;
 	}
 
-	// ============================= //
-	//  Basic Value Testing Methods  //
-	// ============================= //
+	// ============================== //
+	// ! Basic Value Testing Methods  //
+	// ============================== //
 
 	/**
 	 * Test if the current language is the specified language.
@@ -719,9 +718,9 @@ class nLingual{
 		return self::get_option( 'admin_only' );
 	}
 
-	// ======================= //
-	//  Language Data Methods  //
-	// ======================= //
+	// ======================== //
+	// ! Language Data Methods  //
+	// ======================== //
 
 	/**
 	 * Get the language property (or the full object) of a specified language.
@@ -905,9 +904,9 @@ class nLingual{
 		return self::admin_only() ? 'nl_language' : 'language';
 	}
 
-	// ======================= //
-	//  Post Language Methods  //
-	// ======================= //
+	// ======================== //
+	// ! Post Language Methods  //
+	// ======================== //
 
 	/**
 	 * Get the language of the post in question, according to the nL_translations table.
@@ -1020,9 +1019,9 @@ class nLingual{
 		);
 	}
 
-	// =============================== //
-	//  Post Language Testing Methods  //
-	// =============================== //
+	// ================================ //
+	// ! Post Language Testing Methods  //
+	// ================================ //
 
 	/**
 	 * Test if a post is in the specified language.
@@ -1088,9 +1087,9 @@ class nLingual{
 		return self::in_this_lang( $id, self::$other );
 	}
 
-	// ==================== //
-	//  Transation Methods  //
-	// ==================== //
+	// ===================== //
+	// ! Transation Methods  //
+	// ===================== //
 
 	/**
 	 * Get the translation of the post in the provided language, via the nL_translations table.
@@ -1270,9 +1269,9 @@ class nLingual{
 		return $posts;
 	}
 
-	// ======================== //
-	//  URL Processing Methods  //
-	// ======================== //
+	// ========================= //
+	// ! URL Processing Methods  //
+	// ========================= //
 
 	/**
 	 * Utility for building URLs.
@@ -1449,9 +1448,9 @@ class nLingual{
 		return $url_data;
 	}
 
-	// ======================== //
-	//  URL Conversion Methods  //
-	// ======================== //
+	// ========================= //
+	// ! URL Conversion Methods  //
+	// ========================= //
 
 	/**
 	 * Localize the URL with the supplied language.
@@ -1588,9 +1587,9 @@ class nLingual{
 		return $url;
 	}
 
-	// ========================= //
-	//  Translation URL Methods  //
-	// ========================= //
+	// ========================== //
+	// ! Translation URL Methods  //
+	// ========================== //
 
 	/**
 	 * Get the permalink of the specified post in the specified language.
@@ -1657,9 +1656,9 @@ class nLingual{
 		return self::get_permalink( $post->ID, $lang );
 	}
 
-	// ========================= //
-	//  URL Redirection Methods  //
-	// ========================= //
+	// ========================== //
+	// ! URL Redirection Methods  //
+	// ========================== //
 
 	/**
 	 * Return the current URL, translated for the provided language.
@@ -1770,9 +1769,9 @@ class nLingual{
 		}
 	}
 
-	// ============================== //
-	//  General Use & Filter Methods  //
-	// ============================== //
+	// =============================== //
+	// ! General Use & Filter Methods  //
+	// =============================== //
 
 	/**
 	 * Get an array of URLs for each language.
@@ -1874,9 +1873,9 @@ class nLingual{
 		return $text;
 	}
 
-	// ================================== //
-	//  Text Domain Manipulation Methods  //
-	// ================================== //
+	// =================================== //
+	// ! Text Domain Manipulation Methods  //
+	// =================================== //
 
 	/**
 	 * Reload all current text domains with those of the new current language.
@@ -1907,9 +1906,9 @@ class nLingual{
 		}
 	}
 
-	// ===================== //
-	//  Deprecated Methods  //
-	// ===================== //
+	// ====================== //
+	// ! Deprecated Methods  //
+	// ====================== //
 
 	/**
 	 * Return or print a list of links to the current page in all available languages.

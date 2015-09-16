@@ -1,5 +1,4 @@
 <?php
-require( __DIR__ . '/class-plugin-toolkit.php' );
 require( __DIR__ . '/class-nlingual.php' );
 require( __DIR__ . '/aliases.php' );
 
