@@ -9,6 +9,30 @@
 
 class nLingual {
 	// =========================
+	// ! Properties
+	// =========================
+
+	/**
+	 * The language directory.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected
+	 * @var nLingual_Languages
+	 */
+	protected static $languages;
+
+	/**
+	 * The synchronization rules.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected static $sync_rules = array();
+
+	// =========================
 	// ! Master Setup Method
 	// =========================
 
@@ -43,6 +67,19 @@ class nLingual {
 
 		// Add general actions
 		add_action( 'plugins_loaded', array( $class, 'ready' ) );
+	}
+
+	// =========================
+	// ! Utility/Callback Methods
+	// =========================
+
+	/**
+	 * Load the relevant options
+	 *
+	 * @since 2.0.0
+	 */
+	protected static function load_options() {
+
 	}
 
 	/**
