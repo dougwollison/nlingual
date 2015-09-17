@@ -5,7 +5,7 @@ spl_autoload_register( function( $class ) {
 	$file = 'class-' . strtolower( str_replace( '_', '-', $class ) ) . '.php';
 
 	// Make sure the file exists before loading it
-	if ( file_exists ( plugin_dir_path( __FILE__ ) . 'inc/' . $file ) ){
-        require( plugin_dir_path( __FILE__ ) . 'inc/' . $file );
+	if ( file_exists ( plugin_dir_path( __FILE__ ) . '/' . $file ) ){
+        require( plugin_dir_path( __FILE__ ) . '/' . $file );
     }
 });
