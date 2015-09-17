@@ -146,7 +146,7 @@ class nLingual_Loader {
 	}
 
 	/**
-	 * Delete database tables and add options.
+	 * Delete database tables and any options.
 	 *
 	 * @since 2.0.0
 	 */
@@ -154,5 +154,12 @@ class nLingual_Loader {
 		if ( ! static::plugin_security_check() ) {
 			return;
 		}
+
+		// Delete the object and string translation tables
+		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->nl_translations" );
+		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->nl_strings" );
+
+		// Dnd delete the options
+		$wpdb->query( "DELETE FORM $wpdb->options WHERE option_name like 'nlingual\_%'" );
 	}
 }
