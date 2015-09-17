@@ -102,7 +102,7 @@ class nLingual {
 	}
 
 	/**
-	 * Create database tables and add default options.
+	 * Load text domain for localizations
 	 *
 	 * @since 2.0.0
 	 */
