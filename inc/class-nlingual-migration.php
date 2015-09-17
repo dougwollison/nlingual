@@ -1,4 +1,6 @@
 <?php
+namespace nLingual;
+
 /**
  * nLingual Migration Utility
  *
@@ -7,7 +9,7 @@
  * @since 2.0.0
  */
 
-class nLingual_Migration {
+class Migration {
 	/**
 	 * Upgrade database structure from < 2.0.0
 	 *
@@ -67,7 +69,7 @@ class nLingual_Migration {
 		");
 
 		// Convert to new structure
-		$languages = new nLingual_Languages;
+		$languages = new Languages;
 		foreach ( $data as $i => $entry ) {
 			$languages->add( array(
 				'id'          => $entry->lang_id,

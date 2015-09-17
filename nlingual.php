@@ -22,4 +22,4 @@ require( NL_DIR . '/inc/presets.php' );
 require( NL_DIR . '/inc/autoloader.php' );
 
 // Setup
-nLingual::setup();
+nLingual\API::setup();

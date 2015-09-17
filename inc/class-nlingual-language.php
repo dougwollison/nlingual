@@ -1,4 +1,6 @@
 <?php
+namespace nLingual;
+
 /**
  * nLingual Language Model
  *
@@ -7,7 +9,7 @@
  * @since 2.0.0
  */
 
-class nLingual_Language {
+class Language {
 	/**
 	 * The ID of the language for the database
 	 *
@@ -149,7 +151,7 @@ class nLingual_Language {
 	 * @param string $name  The name of the property being change.
 	 * @param mixed  $value The new value of the property.
 	 */
-	public function __get( $name, $value ) {
+	public function __set( $name, $value ) {
 		if ( property_exists( $this, $name ) ) {
 			$this->$name = $value;
 		}

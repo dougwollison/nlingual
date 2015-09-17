@@ -1,4 +1,6 @@
 <?php
+namespace nLingual;
+
 /**
  * nLingual Languages Collection
  *
@@ -7,7 +9,7 @@
  * @since 2.0.0
  */
 
-class nLingual_Languages {
+class Languages {
 	/**
 	 * The language object index
 	 *
@@ -28,9 +30,12 @@ class nLingual_Languages {
 	public function __construct( $languages = array() ) {
 		if ( is_array( $languages ) && ! empty ( $languages ) ) {
 			foreach ( $languages as $language ) {
-				$this->add( $language );
+				$this->add( $language, false );
 			}
 		}
+
+		// Sort the collection
+		$this->sort();
 	}
 
 	/**
@@ -94,11 +99,12 @@ class nLingual_Languages {
 	 * @since 2.0.0
 	 *
 	 * @param array|nLingual_Language $language The language to add.
+	 * @param bool                    $sort     Wether or not to sort after adding.
 	 */
-	public function add( $language ) {
+	public function add( $language, $sort = true ) {
 		// Create new language object from array if needed
 		if ( is_array( $language ) ) {
-			$language = new nLingual_Language( $language );
+			$language = new Language( $language );
 		}
 
 		// Add to the index if successful
@@ -106,8 +112,10 @@ class nLingual_Languages {
 			$this->languages[] = $language;
 		}
 
-		// Sort the collection
-		$this->sort();
+		if ( $sort ) {
+			// Sort the collection
+			$this->sort();
+		}
 	}
 
 	/**
@@ -131,6 +139,30 @@ class nLingual_Languages {
 	}
 
 	/**
+	 * Return the $languages array with optional formatting.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses static::$languages
+	 *
+	 * @param string $key The key to use for building the array.
+	 *
+	 * @return array A numeric or associative array of nLingual_Language objects.
+	 */
+	public function as_array( $key = 'list_order' ) {
+		if ( $key == 'list_order' ) {
+			return $this->languages;
+		}
+
+		$array = array();
+		foreach ( $this->languages as $language ) {
+			$array[ $language->$key ] = $language;
+		}
+
+		return $array;
+	}
+
+	/**
 	 * Convert to a simple array for storage.
 	 *
 	 * @since 2.0.0
@@ -145,5 +177,14 @@ class nLingual_Languages {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Auto-sort once unserialized.
+	 *
+	 * @since 2.0.0
+	 */
+	public function __wakeup() {
+		$this->sort();
 	}
 }

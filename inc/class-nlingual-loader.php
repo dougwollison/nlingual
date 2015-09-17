@@ -1,4 +1,6 @@
 <?php
+namespace nLingual;
+
 /**
  * nLingual Logic
  *
@@ -7,7 +9,7 @@
  * @since 2.0.0
  */
 
-class nLingual_Loader {
+class Loader {
 	/**
 	 * Register the plugin hooks
 	 *
@@ -69,7 +71,7 @@ class nLingual_Loader {
 		if ( version_compare( $db_version, NL_DB_VERSION, '<' ) ) {
 			// Check if upgrading from before 2.0.0
 			if ( version_compare( $db_version, '2.0.0', '<' ) ) {
-				nLingual_Migration::upgrade_database();
+				Migration::upgrade_database();
 			}
 
 			// Just install/update the translations table as normal
