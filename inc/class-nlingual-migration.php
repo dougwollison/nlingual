@@ -54,14 +54,14 @@ class nLingual_Migration {
 		// Export the contents of the old languages table
 		$data = $wpdb->get_results("
 			SELECT
-				lang_id AS id,
+				lang_id,
 				active,
 				system_name,
 				native_name,
 				short_name,
 				slug,
 				iso,
-				mo,
+				mo
 			FROM {$wpdb->prefix}nL_languages
 			ORDER BY list_order
 		");
