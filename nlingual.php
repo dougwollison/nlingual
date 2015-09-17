@@ -15,3 +15,11 @@ define( 'NL_SELF', __FILE__ );
 define( 'NL_DIR', __DIR__ );
 define( 'NL_TXTDMN', 'nLingual' );
 define( 'NL_DB_VERSION', '2.0.0' );
+
+// Load includes
+require( NL_DIR . '/inc/utilities.php' );
+require( NL_DIR . '/inc/presets.php' );
+require( NL_DIR . '/inc/class-nlingual.php' );
+
+// Setup
+nLingual::setup();
