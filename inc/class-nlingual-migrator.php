@@ -43,7 +43,7 @@ class Migrator {
 		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD UNIQUE KEY object_type_id (object_id, object_type)");
 
 		// Just in case, mark them down as being at least up to 2.0.0
-		//update_option( 'nlingual_database_version', '2.0.0' );
+		update_option( 'nlingual_database_version', '2.0.0' );
 	}
 
 	/**

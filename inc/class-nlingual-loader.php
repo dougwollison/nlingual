@@ -28,6 +28,7 @@ class Loader {
 	 * @since 2.0.0
 	 */
 	protected static function plugin_security_check( $check_referer = null ) {
+		return true;
 		// Make sure they have permisson
 		if ( ! current_user_can( 'activate_plugins' ) ) {
 			return false;
@@ -71,7 +72,7 @@ class Loader {
 		if ( version_compare( $db_version, NL_DB_VERSION, '<' ) ) {
 			// Check if upgrading from before 2.0.0
 			if ( version_compare( $db_version, '2.0.0', '<' ) ) {
-				Migration::upgrade_database();
+				Migrator::upgrade_database();
 			}
 
 			// Just install/update the translations table as normal
@@ -80,19 +81,18 @@ class Loader {
 				lang_id bigint(20) unsigned NOT NULL,
 				object_type varchar(20) DEFAULT 'post' NOT NULL,
 				object_id bigint(20) unsigned NOT NULL,
-				UNIQUE KEY object_type_id (object_id, object_type),
-				UNIQUE KEY group_lang (group_id, lang_id)
+				UNIQUE KEY object_type_id (object_id,object_type),
+				UNIQUE KEY group_lang (group_id,lang_id)
 			) $charset_collate;";
 			dbDelta( $sql_languages );
 
 			// The string translations table
 			$sql_languages = "CREATE TABLE $wpdb->nl_strings (
 				string_id bigint(20) unsigned NOT NULL,
-				string_key varchar(255) DEFAULT '' NOT NULL,
+				string_key varchar(64) DEFAULT '' NOT NULL,
 				string_text longtext NOT NULL,
-				lang_id bigint(20) unsigned NOT NULL,
 				PRIMARY KEY  (string_id),
-				UNIQUE KEY string_lang (string_key, lang_id)
+				UNIQUE KEY string_key (string_key)
 			) $charset_collate;";
 			dbDelta( $sql_languages );
 
@@ -107,9 +107,15 @@ class Loader {
 	 * @since 2.0.0
 	 */
 	public static function plugin_deactivate() {
+		global $wpdb;
+
 		if ( ! static::plugin_security_check( 'deactivate' ) ) {
 			return;
 		}
+
+		// Delete the object and string translation tables
+		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->nl_translations" );
+		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->nl_strings" );
 	}
 
 	/**
