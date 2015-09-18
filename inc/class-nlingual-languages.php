@@ -18,7 +18,7 @@ class Languages {
 	 * @access protected
 	 * @var array
 	 */
-	protected $languages;
+	protected $languages = array();
 
 	/**
 	 * Setup the collection and add any languages passed.
