@@ -50,7 +50,7 @@ class API {
 		$class = get_called_class();
 
 		// Register the database tables (with backwards compatability for nL_ version)
-		$wpdb->nl_languages = $wpdb->nL_languages = $wpdb->prefix . 'nl_languages';
+		$wpdb->nl_translations = $wpdb->nL_translations = $wpdb->prefix . 'nl_translations';
 		$wpdb->nl_strings = $wpdb->prefix . 'nl_strings';
 
 		// Register the loader hooks
@@ -69,6 +69,56 @@ class API {
 
 		// Add general actions
 		add_action( 'plugins_loaded', array( $class, 'ready' ) );
+	}
+
+	// =========================
+	// ! Setup Utility Methods
+	// =========================
+
+	/**
+	 * Load the relevant options.
+	 *
+	 * @since 2.0.0
+	 */
+	protected static function load_options() {
+		// Load languages
+		static::$languages = get_option( 'nlingual_languages', new Languages );
+	}
+
+	/**
+	 * Register global hooks.
+	 *
+	 * @since 2.0.0
+	 */
+	protected static function setup_global_hooks() {
+
+	}
+
+	/**
+	 * Register frontend-only hooks.
+	 *
+	 * @since 2.0.0
+	 */
+	protected static function setup_frontend_hooks() {
+
+	}
+
+	/**
+	 * Register backend-only hooks.
+	 *
+	 * @since 2.0.0
+	 */
+	protected static function setup_backend_hooks() {
+
+	}
+
+	/**
+	 * Load text domain for localizations
+	 *
+	 * @since 2.0.0
+	 */
+	public static function ready() {
+		load_plugin_textdomain( NL_TXTDMN, false, NL_DIR . '/lang' );
 	}
 
 	// =========================
@@ -100,28 +150,5 @@ class API {
 	 */
 	public static function languages_by( $key ) {
 		return static::$languages->as_array( $key );
-	}
-
-	// =========================
-	// ! Utility/Callback Methods
-	// =========================
-
-	/**
-	 * Load the relevant options
-	 *
-	 * @since 2.0.0
-	 */
-	protected static function load_options() {
-		// Load languages
-		static::$languages = get_option( 'nlingual_languages', new Languages );
-	}
-
-	/**
-	 * Load text domain for localizations
-	 *
-	 * @since 2.0.0
-	 */
-	public static function ready() {
-		load_plugin_textdomain( NL_TXTDMN, false, NL_DIR . '/lang' );
 	}
 }
