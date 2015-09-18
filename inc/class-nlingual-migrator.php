@@ -2,14 +2,14 @@
 namespace nLingual;
 
 /**
- * nLingual Migration Utility
+ * nLingual Migrator Utility
  *
  * @package nLingual
  *
  * @since 2.0.0
  */
 
-class Migration {
+class Migrator {
 	/**
 	 * Upgrade database structure from < 2.0.0
 	 *
