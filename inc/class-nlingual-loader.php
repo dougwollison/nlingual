@@ -2,24 +2,41 @@
 namespace nLingual;
 
 /**
- * nLingual Logic
+ * nLingual Loader Functionality
  *
  * @package nLingual
  *
  * @since 2.0.0
  */
 
-class Loader {
+class Loader extends Functional {
+	// =========================
+	// ! Properties
+	// =========================
+
+	/**
+	 * The name of the class.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected static $name;
+
+	// =========================
+	// ! Methods
+	// =========================
+
 	/**
 	 * Register the plugin hooks
 	 *
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
-		$class = get_called_class();
-		register_activation_hook( NL_SELF, array( $class, 'plugin_activate' ) );
-		register_deactivation_hook( NL_SELF, array( $class, 'plugin_deactivate' ) );
-		register_uninstall_hook( NL_SELF, array( $class, 'plugin_uninstall' ) );
+		register_activation_hook( NL_SELF, array( static::$name, 'plugin_activate' ) );
+		register_deactivation_hook( NL_SELF, array( static::$name, 'plugin_deactivate' ) );
+		register_uninstall_hook( NL_SELF, array( static::$name, 'plugin_uninstall' ) );
 	}
 
 	/**
@@ -136,3 +153,6 @@ class Loader {
 		$wpdb->query( "DELETE FORM $wpdb->options WHERE option_name like 'nlingual\_%'" );
 	}
 }
+
+// Initialize
+Loader::init();
