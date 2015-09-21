@@ -177,7 +177,7 @@ class Languages implements \Iterator {
 	public function get( $value, $field = null ) {
 		// Guess $field based on nature of $language if not provided
 		if ( is_null( $field ) ) {
-			if ( is_numeric( $language ) ) {
+			if ( is_numeric( $value ) ) {
 				// Language ID
 				$field = 'id';
 			} else {
