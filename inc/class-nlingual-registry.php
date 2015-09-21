@@ -48,6 +48,17 @@ class Registry {
 	protected static $default_lang;
 
 	/**
+	 * The current language id.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var string
+	 */
+	protected static $current_lang;
+
+	/**
 	 * The language directory.
 	 *
 	 * @since 2.0.0
@@ -90,14 +101,15 @@ class Registry {
 	 * @since 2.0.0
 	 *
 	 * @param string $property The property name.
+	 * @param mixed  $default  Optional The default value to return.
 	 *
 	 * @return mixed The property value.
 	 */
-	public static function get( $property ) {
+	public static function get( $property, $default = null ) {
 		if ( property_exists( get_called_class(), $property ) ) {
 			return static::$$property;
 		}
-		return null;
+		return $default;
 	}
 
 	/**
@@ -108,10 +120,57 @@ class Registry {
 	 * @param string $filter Optional A filter property to pass to Languages->filter().
 	 * @param string $value  Optional A filter value to pass to Languages->filter().
 	 *
-	 * @return array An array of nLingual\Language objects.
+	 * @return Language The langauges collection (optionally filtered).
 	 */
 	public static function languages( $filter = null, $value = null ) {
 		return static::$languages->filter( $filter, $value );
+	}
+
+	/**
+	 * Get the info for a language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param int    $lang_id The ID of the language to get info for.
+	 * @param string $field   Optional The field to get from language.
+	 *
+	 * @return mixed The langauge or the value of the language's field.
+	 */
+	public static function get_lang( $lang_id, $field = null ) {
+		$language = static::$languages->get( $lang_id );
+		if ( is_null( $field ) ) {
+			return $language;
+		} else {
+			return $language->$field;
+		}
+	}
+
+	/**
+	 * Shortcut; get the default language or a field for it.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @see Registry::get_lang()
+	 *
+	 * @param string $field Optional The field to get from the langauge.
+	 */
+	public static function default_lang( $field = null ) {
+		$lang_id = static::get( 'default_lang' );
+		return static::get_lang( $lang_id, $field );
+	}
+
+	/**
+	 * Shortcut; get the current language or a field for it.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @see Registry::get_lang()
+	 *
+	 * @param string $field Optional The field to get from the langauge.
+	 */
+	public static function current_lang( $field = null ) {
+		$lang_id = static::get( 'current_lang' );
+		return static::get_lang( $lang_id, $field );
 	}
 
 	// =========================
@@ -199,6 +258,8 @@ class Registry {
 	 * @since 2.0.0
 	 *
 	 * @param string|array $post_type The post type(s) to check.
+	 *
+	 * @return bool Wether or not the post type(s) are supported.
 	 */
 	public static function is_post_type_supported() {
 
