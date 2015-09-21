@@ -1,0 +1,169 @@
+<?php
+namespace nLingual;
+
+/**
+ * nLingual Options Registry
+ *
+ * @package nLingual
+ *
+ * @since 2.0.0
+ */
+
+class Registry {
+	// =========================
+	// ! Properties
+	// =========================
+
+	/**
+	 * Internal cache array.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 * (static)
+	 * @var array
+	 */
+	protected static $cache = array();
+
+	/**
+	 * The language query var.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var string
+	 */
+	protected static $query_var;
+
+	/**
+	 * The default language id.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var string
+	 */
+	protected static $default_lang;
+
+	/**
+	 * The language directory.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var nLingualLanguages
+	 */
+	protected static $languages;
+
+	/**
+	 * The synchronization rules.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var array
+	 */
+	protected static $sync_rules = array();
+
+	// =========================
+	// ! Propert Access Methods
+	// =========================
+
+	/**
+	 * Retrieve a property value.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $property The property name.
+	 *
+	 * @return mixed The property value.
+	 */
+	public static function get_option( $property ) {
+		if ( property_exists( static::$name, $property ) ) {
+			return static::$property;
+		}
+		return null;
+	}
+
+	/**
+	 * Get the languages collection.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $filter Optional A filter property to pass to Languages->filter().
+	 * @param string $value  Optional A filter value to pass to Languages->filter().
+	 *
+	 * @return array An array of nLingual\Language objects.
+	 */
+	public static function languages( $filter = null, $value = null ) {
+		return static::$languages->filter( $filter, $value );
+	}
+
+	// =========================
+	// ! Cache Methods
+	// =========================
+
+	/**
+	 * Get the cached data for an object.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string     $section The section of the cache to look in.
+	 * @param int|string $id      The id of the cached object.
+	 *
+	 * @return mixed The cached data.
+	 */
+
+	// =========================
+	// ! Option Testing Methods
+	// =========================
+
+	/**
+	 * Test if the provided post type(s) are registered for translation.
+	 *
+	 * Will return true if at least 1 is supported.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string|array $post_type The post type(s) to check.
+	 */
+	public static function is_post_type_supported() {
+
+	}
+
+	// =========================
+	// ! Setup Method
+	// =========================
+
+	/**
+	 * Load the relevant options.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param bool $reload Should we reload the options?
+	 */
+	public static function load( $reload = false ) {
+		static $loaded = false;
+		if ( $loaded && ! $reload ) {
+			// Already did this
+			return;
+		}
+
+		// Load simple options
+		static::$query_var = get_option( 'nlingual_query_var', '' );
+		static::$default_lang = get_option( 'nlingual_default_language', 0 );
+
+		// Load languages
+		static::$languages = get_option( 'nlingual_languages', new Languages );
+
+		// Load sync rules
+		static::$sync_rules = get_option( 'nlingual_sync_rules', array() );
+
+		// Flag that we've loaded everything
+		$loaded = true;
+	}
+}

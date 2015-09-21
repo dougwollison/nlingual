@@ -19,84 +19,11 @@ class API extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access protected (static)
+	 *
 	 * @var string
 	 */
 	protected static $name;
-
-	/**
-	 * The language query var.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 * @var string
-	 */
-	protected static $query_var;
-
-	/**
-	 * The default language id.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 * @var string
-	 */
-	protected static $default_lang;
-
-	/**
-	 * The language directory.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 * @var nLingual_Languages
-	 */
-	protected static $languages;
-
-	/**
-	 * The synchronization rules.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 * @var array
-	 */
-	protected static $sync_rules = array();
-
-	// =========================
-	// ! Propert Access Methods
-	// =========================
-
-	/**
-	 * Retrieve a property value.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param string $property The property name.
-	 *
-	 * @return mixed The property value.
-	 */
-	public static function get_option( $property ) {
-		if ( property_exists( static::$name, $property ) ) {
-			return static::$property;
-		}
-		return null;
-	}
-
-	/**
-	 * Get an array of langauges by a certain key.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses static::$languages
-	 * @uses nLingual_Languages::as_array()
-	 *
-	 * @return array An array of nLingual_Language objects.
-	 */
-	public static function languages_by( $key ) {
-		return static::$languages->as_array( $key );
-	}
 
 	// =========================
 	// ! Master Setup Method
@@ -119,8 +46,8 @@ class API extends Functional {
 		// Register the loader hooks
 		Loader::register_hooks();
 
-		// Load options
-		static::load_options();
+		// Setup the registry
+		Registry::load();
 
 		// Register the action/filter hooks
 		static::register_hooks();
@@ -139,23 +66,6 @@ class API extends Functional {
 	// =========================
 
 	/**
-	 * Load the relevant options.
-	 *
-	 * @since 2.0.0
-	 */
-	protected static function load_options() {
-		// Load simple options
-		static::$query_var = get_option( 'nlingual_query_var', '' );
-		static::$default_lang = get_option( 'nlingual_default_language', 0 );
-
-		// Load languages
-		static::$languages = get_option( 'nlingual_languages', new Languages );
-
-		// Load sync rules
-		static::$sync_rules = get_option( 'nlingual_sync_rules', array() );
-	}
-
-	/**
 	 * Register hooks.
 	 *
 	 * @since 2.0.0
@@ -165,6 +75,9 @@ class API extends Functional {
 		static::add_filter( 'query_vars', 'add_language_var' );
 		static::add_filter( 'posts_join_request', 'add_translations_join_clause', 10, 2 );
 		static::add_filter( 'posts_where_request', 'add_translations_where_clause', 10, 2 );
+
+		// Theme Setup Actions
+		static::add_action( 'after_theme_setup', 'add_nav_menu_variations', 999 );
 	}
 
 	/**
@@ -190,8 +103,8 @@ class API extends Functional {
 	 * @return array The updated whitelist.
 	 */
 	public static function add_language_var( array $vars ) {
-		if ( static::$query_var ) {
-			$vars[] = static::$query_var;
+		if ( Registry::$query_var ) {
+			$vars[] = Registry::$query_var;
 		}
 		return $vars;
 	}
@@ -213,8 +126,8 @@ class API extends Functional {
 
 		// Check if the post type in question supports translation
 		// and that the language is specified in the query
-		if ( static::is_post_type_supported( $query->get('post_type') )
-		&& $query->get( static::$query_var ) ) {
+		if ( Registry::is_post_type_supported( $query->get('post_type') )
+		&& $query->get( Registry::$query_var ) ) {
 			$clause .= " INNER JOIN $wpdb->nl_translations ON ($wpdb->posts.ID = $wpdb->nl_translations.object_id AND $wpdb->nl_translations.object_type = 'post')";
 		}
 
@@ -239,13 +152,49 @@ class API extends Functional {
 		// Check if the post type in question supports translation,
 		// that the language is specified in the query,
 		// and that a registered langauge can be found.
-		if ( static::is_post_type_supported( $query->get('post_type') )
-		&& ( $lang = $query->get( static::$query_var ) )
-		&& ( $language = static::$languages->get( $lang ) ) ) {
+		if ( Registry::is_post_type_supported( $query->get('post_type') )
+		&& ( $lang = $query->get( Registry::$query_var ) )
+		&& ( $language = Registry::languages()->get( $lang ) ) ) {
 			$clause .= $wpdb->prepare( " AND $wpdb->nl_translations.lang_id = %d", $language->lang_id );
 		}
 
 		return $clause;
+	}
+
+	// =========================
+	// ! Theme Setup Methods
+	// =========================
+
+	/**
+	 * Replaces the registered nav menus with versions for each active language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global array $_wp_registered_nav_menus The registered nav menus list.
+	 */
+	public static function add_nav_menu_variations() {
+		global $_wp_registered_nav_menus;
+
+		// Abort if no menus are present
+		if ( ! $_wp_registered_nav_menus ) {
+			return;
+		}
+
+		// Build a new nav menu list; with copies of each menu for each language
+		$localized_menus = array();
+		foreach ( $_wp_registered_nav_menus as $slug => $name ) {
+			foreach ( Registry::languages() as $lang ) {
+				$new_slug = $slug . '--' . $lang->slug;
+				$new_name = $name . ' (' . $lang->system_name . ')';
+				$localized_menus[ $new_slug ] = $new_name;
+			}
+		}
+
+		// Cache the old version of the menus for refernce
+		Registry::cache_get( '_wp_registered_nav_menus', $_wp_registered_nav_menus, 'vars' );
+
+		// Replace the registered nav menu array with the new one
+		$_wp_registered_nav_menus = $localized_menus;
 	}
 }
 
