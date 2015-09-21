@@ -36,8 +36,8 @@ class Backend extends Functional {
 	 */
 	public static function register_hooks() {
 		// Theme Setup Actions
-		static::add_action( 'after_setup_theme', 'add_nav_menu_variations', 999 );
-		static::add_action( 'widgets_init', 'add_sidebar_variations', 999 );
+		static::add_action( 'after_setup_theme', 'register_localized_nav_menus', 999 );
+		static::add_action( 'widgets_init', 'register_localized_sidebars', 999 );
 	}
 
 	// =========================
@@ -45,38 +45,61 @@ class Backend extends Functional {
 	// =========================
 
 	/**
-	 * Replaces the registered nav menus with versions for each active language.
+	 * Shared logic for nav menu and sidebar localizing.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global array $_wp_registered_nav_menus The registered nav menus list.
+	 * @param string $type   The type of location being localized (singular).
+	 * @param string $global The global variable name to be edited.
 	 */
-	public static function add_nav_menu_variations() {
-		global $_wp_registered_nav_menus;
+	public static function register_localized_locations( $type, $global ) {
+		global $$global;
 
 		// Abort if not supported
-		if ( ! Registry::is_feature_localizable( 'nav_menus', $_wp_registered_nav_menus ) ) {
+		if ( ! Registry::is_feature_localizable( "{$type}_locations", $list ) ) {
 			return;
 		}
 
 		// Build a new nav menu list; with copies of each menu for each language
-		$localized_menus = array();
-		foreach ( $_wp_registered_nav_menus as $id => $name ) {
+		$localized_locations = array();
+		foreach ( $$global as $id => $data ) {
 			foreach ( Registry::languages() as $lang ) {
 				// Check if this location specifically supports localizing
 				if ( Registry::is_location_localizable( 'nav_menu', $id ) ) {
-					$new_id = $slug . '-lang' . $lang->id;
-					$new_name = $name . ' (' . $lang->system_name . ')';
-					$localized_menus[ $new_id ] = $new_name;
+					$new_id = $id . '-lang' . $lang->id;
+					$name_postfix = ' (' . $lang->system_name . ')';
+					if ( is_array( $data ) ) {
+						$new_name = $data['name'] . $name_postfix;
+						$localized_locations[ $new_id ] = array_merge( $data, array(
+							'id' => $new_id,
+							'name' => $new_name,
+						) );
+					} else {
+						$new_name = $data . $name_postfix;
+						$localized_locations[ $new_id ] = $new_name;
+					}
 				}
 			}
 		}
 
 		// Cache the old version of the menus for reference
-		Registry::cache_set( 'vars', '_wp_registered_nav_menus', $_wp_registered_nav_menus );
+		Registry::cache_set( 'vars', $global, $$global );
 
 		// Replace the registered nav menu array with the new one
-		$_wp_registered_nav_menus = $localized_menus;
+		$$global = $localized_locations;
+	}
+
+	/**
+	 * Replaces the registered nav menus with versions for each active language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @see Backend::register_localized_locations()
+	 *
+	 * @global array $_wp_registered_nav_menus The registered nav menus list.
+	 */
+	public static function register_localized_nav_menus() {
+		static::register_localized_locations( 'nav_menu', '_wp_registered_nav_menus' );
 	}
 
 	/**
@@ -84,37 +107,12 @@ class Backend extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @see Backend::register_localized_locations()
+	 *
 	 * @global array $wp_registered_sidebars The registered sidebars list.
 	 */
-	public static function add_sidebar_variations() {
-		global $wp_registered_sidebars;
-
-		// Abort if not supported
-		if ( ! Registry::is_feature_localizable( 'sidebars', $wp_registered_sidebars ) ) {
-			return;
-		}
-
-		// Build a new nav menu list; with copies of each menu for each language
-		$localized_sidebars = array();
-		foreach ( $wp_registered_sidebars as $id => $args ) {
-			foreach ( Registry::languages() as $lang ) {
-				// Check if this location specifically supports localizing
-				if ( Registry::is_location_localizable( 'sidebar', $id ) ) {
-					$new_id = $id . '-lang' . $lang->id;
-					$new_name = $args['name'] . ' (' . $lang->system_name . ')';
-					$localized_sidebars[ $new_id ] = array_merge( $args, array(
-						'id' => $new_id,
-						'name' => $new_name,
-					) );
-				}
-			}
-		}
-
-		// Cache the old version of the menus for reference
-		Registry::cache_set( 'vars', 'wp_registered_sidebars', $wp_registered_sidebars );
-
-		// Replace the registered nav menu array with the new one
-		$wp_registered_sidebars = $localized_sidebars;
+	public static function register_localized_sidebars() {
+		static::register_localized_locations( 'sidebar', 'wp_registered_sidebars' );
 	}
 }
 
