@@ -73,8 +73,8 @@ class API extends Functional {
 	public static function register_hooks() {
 		// Query Filters
 		static::add_filter( 'query_vars', 'add_language_var' );
-		static::add_filter( 'posts_join_request', 'add_translations_join_clause', 10, 2 );
-		static::add_filter( 'posts_where_request', 'add_translations_where_clause', 10, 2 );
+		static::add_filter( 'posts_join_request', 'add_post_translations_join_clause', 10, 2 );
+		static::add_filter( 'posts_where_request', 'add_post_translations_where_clause', 10, 2 );
 	}
 
 	/**
@@ -100,8 +100,8 @@ class API extends Functional {
 	 * @return array The updated whitelist.
 	 */
 	public static function add_language_var( array $vars ) {
-		if ( Registry::$query_var ) {
-			$vars[] = Registry::$query_var;
+		if ( $query_var = Registry::get( 'query_var' ) ) {
+			$vars[] = $query_var;
 		}
 		return $vars;
 	}
@@ -118,13 +118,13 @@ class API extends Functional {
 	 *
 	 * @return string The updated JOIN clauses.
 	 */
-	public static function add_post_translations_join_clause( $clause, WP_Query $query ) {
+	public static function add_post_translations_join_clause( $clause, \WP_Query $query ) {
 		global $wpdb;
 
 		// Check if the post type in question supports translation
 		// and that the language is specified in the query
 		if ( Registry::is_post_type_supported( $query->get('post_type') )
-		&& $query->get( Registry::$query_var ) ) {
+		&& $query->get( Registry::get( 'query_var' ) ) ) {
 			$clause .= " INNER JOIN $wpdb->nl_translations ON ($wpdb->posts.ID = $wpdb->nl_translations.object_id AND $wpdb->nl_translations.object_type = 'post')";
 		}
 
@@ -143,14 +143,14 @@ class API extends Functional {
 	 *
 	 * @return string The updated WHERE clauses.
 	 */
-	public static function add_post_translations_where_clause( $clause, WP_Query $query ) {
+	public static function add_post_translations_where_clause( $clause, \WP_Query $query ) {
 		global $wpdb;
 
 		// Check if the post type in question supports translation,
 		// that the language is specified in the query,
 		// and that a registered langauge can be found.
 		if ( Registry::is_post_type_supported( $query->get('post_type') )
-		&& ( $lang = $query->get( Registry::$query_var ) )
+		&& ( $lang = $query->get( Registry::get( 'query_var' ) ) )
 		&& ( $language = Registry::languages()->get( $lang ) ) ) {
 			$clause .= $wpdb->prepare( " AND $wpdb->nl_translations.lang_id = %d", $language->lang_id );
 		}
