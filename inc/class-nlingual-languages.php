@@ -9,16 +9,46 @@ namespace nLingual;
  * @since 2.0.0
  */
 
-class Languages {
+class Languages implements \Iterator {
+	// =========================
+	// ! Properties
+	// =========================
+
 	/**
 	 * The language object index
 	 *
 	 * @since 2.0.0
 	 *
 	 * @access protected
+	 *
 	 * @var array
 	 */
 	protected $languages = array();
+
+	// =========================
+	// ! Iterator Methods
+	// =========================
+
+	public function rewind() {
+		reset( $this->languages );
+	}
+	public function current() {
+		return current( $this->languages );
+	}
+	public function key() {
+		return key( $this->languages );
+	}
+	public function next() {
+		return next( $this->languages );
+	}
+	public function valid() {
+		$key = key( $this->languages );
+		return $key !== null && $key !== false;
+	}
+
+	// =========================
+	// ! Methods
+	// =========================
 
 	/**
 	 * Setup the collection and add any languages passed.
@@ -59,6 +89,19 @@ class Languages {
 		if ( $order != 'asc' ) {
 			$this->languages = array_reverse( $this->languages );
 		}
+	}
+
+	/**
+	 * Return a filtered copy of the collection.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $filter Optional The property to filter by.
+	 * @param string $value  Optional A specific value to filter by.
+	 *
+	 * @return nLingual\Languages A new collection of languages
+	 */
+	public function filter( $filter = null, $value = null ) {
 	}
 
 	/**
@@ -136,30 +179,6 @@ class Languages {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Return the $languages array with optional formatting.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses static::$languages
-	 *
-	 * @param string $key The key to use for building the array.
-	 *
-	 * @return array A numeric or associative array of nLingual_Language objects.
-	 */
-	public function as_array( $key = 'list_order' ) {
-		if ( $key == 'list_order' ) {
-			return $this->languages;
-		}
-
-		$array = array();
-		foreach ( $this->languages as $language ) {
-			$array[ $language->$key ] = $language;
-		}
-
-		return $array;
 	}
 
 	/**
