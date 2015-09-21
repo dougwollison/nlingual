@@ -113,6 +113,20 @@ class Registry {
 	}
 
 	/**
+	 * Override a property value.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $property The property name.
+	 * @param mixed  $value    The value to assign.
+	 */
+	public static function set( $property, $value = null ) {
+		if ( property_exists( get_called_class(), $property ) ) {
+			static::$$property = $value;
+		}
+	}
+
+	/**
 	 * Get the languages collection.
 	 *
 	 * @since 2.0.0
@@ -234,10 +248,10 @@ class Registry {
 	 * @param string $item The name of the localizable to check support for.
 	 * @param array  $list The list of registered objects.
 	 */
-	public static function is_localizable_supported( $item, $list ) {
+	public static function is_feature_localizable( $item, $list ) {
 		// Check if this feature is enabled
 		$localizables = static::get( 'localizables' );
-		if ( ! in_array( $item, $localizables ) ) {
+		if ( ! isset( $localizables[ $item ] ) || ! $localizables[ $item ] ) {
 			return false;
 		}
 
@@ -248,6 +262,36 @@ class Registry {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Check if a specific location is localizable.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $type     The type of location to check for.
+	 * @param string $location The ID of the location to check.
+	 *
+	 * @return bool Wether or not the location is localizable.
+	 */
+	public static function is_location_localizable( $type, $location ) {
+		// Check if type is present in localizables list
+		$localizables = static::get( 'localizables' );
+		if ( ! isset( $localizables[ $item ] ) ) {
+			return false;
+		}
+
+		// Check if any under $type should be localizable
+		if ( $localizables[ $item ] === true ) {
+			return true;
+		}
+
+		// Check if specified location is localizable
+		if ( in_array( $location, $localizables[ $item ] ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -294,7 +338,7 @@ class Registry {
 		static::$sync_rules = get_option( 'nlingual_sync_rules', array() );
 
 		// Localizables list
-		static::$localizables = get_option( 'nlingual_localizables', array( 'nav_menus', 'sidebars' ) );
+		static::$localizables = get_option( 'nlingual_localizables', array() );
 
 		// Flag that we've loaded everything
 		$loaded = true;

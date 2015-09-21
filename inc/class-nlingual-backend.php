@@ -55,17 +55,20 @@ class Backend extends Functional {
 		global $_wp_registered_nav_menus;
 
 		// Abort if not supported
-		if ( ! Registry::is_localizable_supported( 'nav_menus', $_wp_registered_nav_menus ) ) {
+		if ( ! Registry::is_feature_localizable( 'nav_menus', $_wp_registered_nav_menus ) ) {
 			return;
 		}
 
 		// Build a new nav menu list; with copies of each menu for each language
 		$localized_menus = array();
-		foreach ( $_wp_registered_nav_menus as $slug => $name ) {
+		foreach ( $_wp_registered_nav_menus as $id => $name ) {
 			foreach ( Registry::languages() as $lang ) {
-				$new_slug = $slug . '-lang' . $lang->id;
-				$new_name = $name . ' (' . $lang->system_name . ')';
-				$localized_menus[ $new_slug ] = $new_name;
+				// Check if this location specifically supports localizing
+				if ( Registry::is_location_localizable( 'nav_menu', $id ) ) {
+					$new_id = $slug . '-lang' . $lang->id;
+					$new_name = $name . ' (' . $lang->system_name . ')';
+					$localized_menus[ $new_id ] = $new_name;
+				}
 			}
 		}
 
@@ -87,7 +90,7 @@ class Backend extends Functional {
 		global $wp_registered_sidebars;
 
 		// Abort if not supported
-		if ( ! Registry::is_localizable_supported( 'sidebars', $wp_registered_sidebars ) ) {
+		if ( ! Registry::is_feature_localizable( 'sidebars', $wp_registered_sidebars ) ) {
 			return;
 		}
 
@@ -95,12 +98,15 @@ class Backend extends Functional {
 		$localized_sidebars = array();
 		foreach ( $wp_registered_sidebars as $id => $args ) {
 			foreach ( Registry::languages() as $lang ) {
-				$new_id = $id . '-lang' . $lang->id;
-				$new_name = $args['name'] . ' (' . $lang->system_name . ')';
-				$localized_sidebars[ $new_id ] = array_merge( $args, array(
-					'id' => $new_id,
-					'name' => $new_name,
-				) );
+				// Check if this location specifically supports localizing
+				if ( Registry::is_location_localizable( 'sidebar', $id ) ) {
+					$new_id = $id . '-lang' . $lang->id;
+					$new_name = $args['name'] . ' (' . $lang->system_name . ')';
+					$localized_sidebars[ $new_id ] = array_merge( $args, array(
+						'id' => $new_id,
+						'name' => $new_name,
+					) );
+				}
 			}
 		}
 
