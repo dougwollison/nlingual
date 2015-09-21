@@ -70,7 +70,7 @@ class Registry {
 	protected static $languages;
 
 	/**
-	 * The synchronization rules.
+	 * The supported post types.
 	 *
 	 * @since 2.0.0
 	 *
@@ -78,7 +78,7 @@ class Registry {
 	 *
 	 * @var array
 	 */
-	protected static $sync_rules = array();
+	protected static $post_types = array();
 
 	/**
 	 * The list of localizable features.
@@ -90,6 +90,17 @@ class Registry {
 	 * @var array
 	 */
 	protected static $localizables = array();
+
+	/**
+	 * The synchronization rules.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var array
+	 */
+	protected static $sync_rules = array();
 
 	// =========================
 	// ! Propert Access Methods
@@ -275,19 +286,22 @@ class Registry {
 	 * @return bool Wether or not the location is localizable.
 	 */
 	public static function is_location_localizable( $type, $location ) {
+		// Turn $type into proper key name
+		$type .= '_locations';
+
 		// Check if type is present in localizables list
 		$localizables = static::get( 'localizables' );
-		if ( ! isset( $localizables[ $item ] ) ) {
+		if ( ! isset( $localizables[ $type ] ) ) {
 			return false;
 		}
 
 		// Check if any under $type should be localizable
-		if ( $localizables[ $item ] === true ) {
+		if ( $localizables[ $type ] === true ) {
 			return true;
 		}
 
 		// Check if specified location is localizable
-		if ( in_array( $location, $localizables[ $item ] ) ) {
+		if ( in_array( $location, $localizables[ $type ] ) ) {
 			return true;
 		}
 
@@ -305,8 +319,10 @@ class Registry {
 	 *
 	 * @return bool Wether or not the post type(s) are supported.
 	 */
-	public static function is_post_type_supported() {
+	public static function is_post_type_supported( $post_types ) {
+		$post_types = (array) $post_types; // Covnert to array
 
+		return (bool) array_intersect( static::$post_types, $post_types );
 	}
 
 	// =========================
@@ -334,11 +350,14 @@ class Registry {
 		// Load languages
 		static::$languages = get_option( 'nlingual_languages', new Languages );
 
+		// Load supported post types list
+		static::$post_types = get_option( 'nlingual_post_types', array() );
+
+		// Load localizables list
+		static::$localizables = get_option( 'nlingual_localizables', array() );
+
 		// Load sync rules
 		static::$sync_rules = get_option( 'nlingual_sync_rules', array() );
-
-		// Localizables list
-		static::$localizables = get_option( 'nlingual_localizables', array() );
 
 		// Flag that we've loaded everything
 		$loaded = true;
