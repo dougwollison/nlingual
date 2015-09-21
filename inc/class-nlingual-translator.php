@@ -38,17 +38,18 @@ class Translator {
 	 *
 	 * @param string $type Optional The type of object.
 	 * @param int    $id   Optional The ID of the object.
+	 * @param bool   $inc  Optional Get new group ID if not found? (default true)
 	 *
 	 * @return int The existing or new group ID.
 	 */
-	protected static function _translation_group_id( $type = null, $id = null ) {
+	protected static function _translation_group_id( $type = null, $id = null, $inc = true ) {
 		global $wpdb;
 
 		// Attempt to retrieve the group ID for the object if present
 		$group_id = $wpdb->get_var( $wpdb->prepare( "SELECT group_id FROM $wpdb->nl_translations WHERE object_type = %s AND object_id = %d", $type, $id ) );
 
 		// Create a new one otherwise
-		if ( ! $group_id ) {
+		if ( ! $group_id && $inc ) {
 			$group_id = $wpdb->get_var( "SELECT MAX(group_id) + 1 FROM $wpdb->nl_translations" );
 		}
 
@@ -103,18 +104,19 @@ class Translator {
 
 		// Ensure $lang is a Language
 		if ( ! static::_lang( $lang ) ) {
-			return false;
+			return false; // Does not exist
 		}
 
 		// Delete the original translation entry
 		delete_object_language( $type, $id );
 
 		// Insert a new one
-		$wpdb->insert( $wpdb->nl_translations, array(
+		$wpdb->replace( $wpdb->nl_translations, array(
 			'group_id'    => static::_translation_group_id(),
 			'object_type' => $type,
 			'object_id'   => $id,
-		) );
+			'lang_id'     => $lang->id,
+		), array( '%d', '%s', '%d', '%d' ) );
 
 		// Add it to the cache
 		Registry::cache_set( "{$type}_language", $id, $language );
@@ -134,13 +136,8 @@ class Translator {
 	 *
 	 * @return bool If the deletion worked or not.
 	 */
-	public static function delete_object_language( $type, $id, $lang ) {
+	public static function delete_object_language( $type, $id ) {
 		global $wpdb;
-
-		// Ensure $lang is a Language
-		if ( ! static::_lang( $lang ) ) {
-			return false;
-		}
 
 		// Insert a new one
 		$wpdb->delete( $wpdb->nl_translations, array(
@@ -155,17 +152,190 @@ class Translator {
 	}
 
 	/**
-	 * Get the translation for an object.
+	 * Get all translations for an object.
 	 *
 	 * @since 2.0.0
 	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @param string $type         The type of object.
+	 * @param int    $id           The ID of the object.
+	 * @param bool   $include_self Optional Include this object in the list (default false).
+	 *
+	 * @return array An associative array of objects in lang_id => object_id format.
+	 */
+	public static function get_object_translations( $type, $id, $include_self = false ) {
+		global $wpdb;
+
+		$query = "
+			SELECT
+				t2.lang_id,
+				t2.object_id
+			FROM
+				$wpdb->nl_translations AS t1
+				LEFT JOIN
+					$wpdb->nl_translations AS t2
+					ON (t1.group_id = t2.group_id)
+			WHERE 1=1
+				AND t1.object_type = %s
+				AND t1.object_id = %1\$d
+		";
+
+		// Add the additional where clause if $include_self is false
+		if ( ! $include_self ) {
+			$query .= "AND t2.object_id != %1\$d";
+		}
+
+		// Get the results of the query
+		$results = $wpdb->get_results( $wpdb->prepare( $query, $post_id ) );
+
+		$objects = array();
+		foreach ( $results as $row ) {
+			$objects[ $row->lang_id ] = $row->object_id;
+		}
+
+		return $objects;
+	}
+
+	/**
+	 * Get specific translation for an object.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @param string $type        The type of object.
+	 * @param int    $id          The ID of the object.
+	 * @param mixed  $lang        The language to get the translation for.
+	 * @param bool   $return_self Optional Return $id if nothing found? (default false).
+	 *
+	 * @return int The ID of the object's counterpart in that language (false on failure).
+	 */
+	public static function get_object_translation( $type, $id, $lang, $return_self = false ) {
+		// Ensure $lang is a Language
+		if ( ! static::_lang( $lang ) ) {
+			return false; // Does not exist
+		}
+
+		// Query the translation table for a counterpart
+		$translation = $wpdb->get_var( $wpdb->prepare( "
+			SELECT
+				t2.object_id
+			FROM
+				$wpdb->nl_translations AS t1
+				LEFT JOIN
+					$wpdb->nl_translations AS t2
+					ON (t1.group_id = t2.group_id)
+			WHERE 1=1
+				AND t1.object_type = %s
+				AND t1.post_id = %d
+				AND t2.lang_id = %d
+		", $type, $id, $lang->id ) );
+
+		// Return the translation object ID if found
+		if ( $translation ) {
+			return $translation;
+		}
+
+		// Otherwise, return the original id or false, depending on $return_self
+		return $return_self ? $id : false;
+	}
+
+	/**
+	 * Delete the association between two objects.
+	 *
+	 * This moves the object's translation in the target language to a new group.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
 	 * @param string $type The type of object.
 	 * @param int    $id   The ID of the object.
-	 * @param mixed  $lang The language to get the translation for.
-	 *
-	 * @return int The ID of the objects counterpart in that language (false on failure).
+	 * @param mixed  $lang The language to remove the association for.
 	 */
-	public static function get_object_translation( $type, $id, $lang ) {
+	public static function unlink_translation( $type, $id, $lang ) {
+		global $wpdb;
 
+		// Ensure $lang is a Language
+		if ( ! static::_lang( $lang ) ) {
+			return false; // Does not exist
+		}
+
+		// Get the group ID for this object
+		$group_id = static::_translation_group_id( $type, $id );
+
+		// Get a new group ID for the sister object
+		$new_group_id = static::_translation_group_id();
+
+		// Update the group ID for the translation
+		$wpdb->update(
+			$wpdb->nl_translations,
+			array(
+				'group_id' => $new_group_id,
+			),
+			array(
+				'group_id' => $group_id,
+				'lang_id' => $lang->id
+			),
+			array( '%d' ),
+			array( '%d', '%d' )
+		);
+	}
+
+	/**
+	 * Associate objects together as translations of each other.
+	 *
+	 * Will fail if the primary isn't already in the database or if
+	 * any of the languages listed aren't valid.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @param string $type    The type of the objects.
+	 * @param int    $id      The ID of the primary object.
+	 * @param array  $objects A list of objects to associate (id => lang_id format).
+	 *
+	 * @param bool Wether or not the association could be done.
+	 */
+	public static function associate_objects( $type, $id, $objects ) {
+		global $wpdb;
+
+		// Get the group ID for this object
+		$group_id = static::_translation_group_id( $type, $id, false );
+
+		// If none was found, fail
+		if ( ! $group_id ) {
+			return false;
+		}
+
+		// Start the query
+		$query = "REPLACE INTO $wpdb->nl_translations (group_id, object_type, object_id, lang_id) VALUES ";
+
+		// Go through the $objects and handle accordingly
+		$values = array();
+		foreach ( $objects as $object_id => $lang ) {
+			// Ensure $lang is a Language
+			if ( ! static::_lang( $lang ) ) {
+				return false; // Does not exist
+			}
+
+			// If $object_id isn't valid, assume we want to unlink it
+			if ( $object_id <= 0 ) {
+				static::unlink_translation( $type, $id, $lang );
+			} else {
+				// Build the row data for the query
+				$values[] = $wpdb->prepare( "(%d, %s, %d, %d)", $group_id, $type, $object_id, $lang_id );
+			}
+		}
+
+		// Add the values to the query
+		$query .= implode( ',', $values );
+
+		// Run the query
+		$wpdb->query( $query );
+
+		return true;
 	}
 }
