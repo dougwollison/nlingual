@@ -10,12 +10,17 @@ namespace nLingual;
  */
 
 class Language {
+	// =========================
+	// ! Properties
+	// =========================
+
 	/**
 	 * The ID of the language for the database
 	 *
 	 * @since 2.0.0
 	 *
 	 * @access protected
+	 *
 	 * @var int
 	 */
 	protected $id = 0;
@@ -26,6 +31,7 @@ class Language {
 	 * @since 2.0.0
 	 *
 	 * @access protected
+	 *
 	 * @var bool
 	 */
 	protected $active = true;
@@ -36,6 +42,7 @@ class Language {
 	 * @since 2.0.0
 	 *
 	 * @access protected
+	 *
 	 * @var string
 	 */
 	protected $slug = '';
@@ -46,6 +53,7 @@ class Language {
 	 * @since 2.0.0
 	 *
 	 * @access protected
+	 *
 	 * @var string
 	 */
 	protected $system_name = '';
@@ -56,6 +64,7 @@ class Language {
 	 * @since 2.0.0
 	 *
 	 * @access protected
+	 *
 	 * @var string
 	 */
 	protected $native_name = '';
@@ -66,6 +75,7 @@ class Language {
 	 * @since 2.0.0
 	 *
 	 * @access protected
+	 *
 	 * @var string
 	 */
 	protected $short_name = '';
@@ -76,6 +86,7 @@ class Language {
 	 * @since 2.0.0
 	 *
 	 * @access protected
+	 *
 	 * @var string
 	 */
 	protected $locale_name = '';
@@ -86,6 +97,7 @@ class Language {
 	 * @since 2.0.0
 	 *
 	 * @access protected
+	 *
 	 * @var string
 	 */
 	protected $iso_code = '';
@@ -96,6 +108,7 @@ class Language {
 	 * @since 2.0.0
 	 *
 	 * @access protected
+	 *
 	 * @var int
 	 */
 	protected $list_order = '';
@@ -106,9 +119,14 @@ class Language {
 	 * @since 2.0.0
 	 *
 	 * @access protected
+	 *
 	 * @var array
 	 */
 	protected static $properties = array( 'id', 'slug', 'system_name', 'native_name', 'short_name', 'iso_code', 'locale_name', 'list_order' );
+
+	// =========================
+	// ! Methods
+	// =========================
 
 	/**
 	 * Setup the property values.
