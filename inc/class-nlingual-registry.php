@@ -247,6 +247,23 @@ class Registry {
 		static::$cache[ $section ][ $id ] = $value;
 	}
 
+	/**
+	 * Delete the cached data for an object.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string     $section The section of the cache to look in.
+	 * @param int|string $id      The id of the cached object.
+	 */
+	public static function cache_delete( $section, $id, $value = null ) {
+		// Skip if the section doesn't even exist
+		if ( ! isset( static::$cache[ $section ] ) ) {
+			return;
+		}
+
+		unset( static::$cache[ $section ][ $id ] );
+	}
+
 	// =========================
 	// ! Option Testing Methods
 	// =========================
