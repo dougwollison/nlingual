@@ -19,7 +19,8 @@ class Frontend extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access protected (static)
+	 *
 	 * @var string
 	 */
 	protected static $name;
