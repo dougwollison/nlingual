@@ -38,6 +38,9 @@ class Backend extends Functional {
 		// Theme Setup Actions
 		static::add_action( 'after_setup_theme', 'register_localized_nav_menus', 999 );
 		static::add_action( 'widgets_init', 'register_localized_sidebars', 999 );
+
+		// Menu Editor Metabox
+		static::add_action( 'admin_head', 'add_nav_menu_metabox' );
 	}
 
 	// =========================
@@ -113,6 +116,65 @@ class Backend extends Functional {
 	 */
 	public static function register_localized_sidebars() {
 		static::register_localized_locations( 'sidebar', 'wp_registered_sidebars' );
+	}
+
+	// =========================
+	// ! Menu Editor Metabox
+	// =========================
+
+	/**
+	 * Adds a new metabox to the menu editor for adding langauge links.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function add_nav_menu_metabox() {
+		add_meta_box(
+			'add-nl_langlink', // metabox id
+			__( 'Language Links', NL_TXTDMN ), // title
+			array( get_called_class(), 'do_nav_menu_metabox' ), // callback
+			'nav-menus', // screen
+			'side' // context
+		);
+	}
+
+	/**
+	 * The language links metabox.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function do_nav_menu_metabox() {
+		global $nav_menu_selected_id;
+		?>
+		<div class="posttypediv" id="nl_langlink">
+			<p><?php _e( 'These links will go to the respective language versions of the current URL.', NL_TXTDMN );?></p>
+			<div id="tabs-panel-nl_langlink-all" class="tabs-panel tabs-panel-active">
+				<ul id="pagechecklist-most-recent" class="categorychecklist form-no-clear">
+				<?php $i = -1; foreach ( Registry::languages() as $lang ):?>
+					<li>
+						<label class="menu-item-title">
+							<input type="checkbox" class="menu-item-checkbox" name="menu-item[<?php echo $i?>][menu-item-object-id]" value="-1">
+							<?php echo $lang->system_name?>
+						</label>
+						<input type="hidden" class="menu-item-type" name="menu-item[<?php echo $i?>][menu-item-type]" value="langlink">
+						<input type="hidden" class="menu-item-title" name="menu-item[<?php echo $i?>][menu-item-title]" value="<?php echo $lang->native_name?>">
+						<input type="hidden" class="menu-item-url" name="menu-item[<?php echo $i?>][menu-item-object]" value="<?php echo $lang->slug?>">
+					</li>
+				<?php $i--; endforeach;?>
+				</ul>
+			</div>
+
+			<p class="button-controls">
+				<span class="list-controls">
+					<a href="/wp-admin/nav-menus.php?langlink-tab=all&amp;selectall=1#nl_langlink" class="select-all">Select All</a>
+				</span>
+
+				<span class="add-to-menu">
+					<input type="submit"<?php wp_nav_menu_disabled_check( $nav_menu_selected_id ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( __( 'Add to Menu' ) ); ?>" name="add-post-type-menu-item" id="submit-nl_langlink" />
+					<span class="spinner"></span>
+				</span>
+			</p>
+		</div>
+		<?php
 	}
 }
 

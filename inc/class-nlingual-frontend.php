@@ -107,6 +107,35 @@ class Frontend extends Functional {
 
 		return $locations;
 	}
+
+	// =========================
+	// ! Nav Menu "Langlinks"
+	// =========================
+
+	/**
+	 * Process any langlink type menu items into proper links.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $items The nav menu items.
+	 *
+	 * @return array The modified items.
+	 */
+	public static function wp_nav_menu_objects( $items ) {
+		foreach ( $items as $i => $item ) {
+			if ( $item->type == 'langlink' ) {
+				// Language link, set URL to the localized version of the current location
+				// Delete the item if it's for a language that doesn't exist or is inactive
+				if ( Registry::language_exists( $item->object ) ) {
+					$item->url = API::localize_here( $item->object );
+				} else {
+					unset( $items[$i] );
+				}
+			}
+		}
+
+		return $items;
+	}
 }
 
 // Initialize
