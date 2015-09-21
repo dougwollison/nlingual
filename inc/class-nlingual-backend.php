@@ -37,7 +37,7 @@ class Backend extends Functional {
 	public static function register_hooks() {
 		// Theme Setup Actions
 		static::add_action( 'after_setup_theme', 'add_nav_menu_variations', 999 );
-		static::add_action( 'after_setup_theme', 'add_sidebar_variations', 999 );
+		static::add_action( 'widgets_init', 'add_sidebar_variations', 999 );
 	}
 
 	// =========================
@@ -63,13 +63,13 @@ class Backend extends Functional {
 		$localized_menus = array();
 		foreach ( $_wp_registered_nav_menus as $slug => $name ) {
 			foreach ( Registry::languages() as $lang ) {
-				$new_slug = $slug . '--' . $lang->slug;
+				$new_slug = $slug . '-lang' . $lang->id;
 				$new_name = $name . ' (' . $lang->system_name . ')';
 				$localized_menus[ $new_slug ] = $new_name;
 			}
 		}
 
-		// Cache the old version of the menus for refernce
+		// Cache the old version of the menus for reference
 		Registry::cache_set( 'vars', '_wp_registered_nav_menus', $_wp_registered_nav_menus );
 
 		// Replace the registered nav menu array with the new one
@@ -95,7 +95,7 @@ class Backend extends Functional {
 		$localized_sidebars = array();
 		foreach ( $wp_registered_sidebars as $id => $args ) {
 			foreach ( Registry::languages() as $lang ) {
-				$new_id = $id . '--' . $lang->slug;
+				$new_id = $id . '-lang' . $lang->id;
 				$new_name = $args['name'] . ' (' . $lang->system_name . ')';
 				$localized_sidebars[ $new_id ] = array_merge( $args, array(
 					'id' => $new_id,
@@ -104,7 +104,7 @@ class Backend extends Functional {
 			}
 		}
 
-		// Cache the old version of the menus for refernce
+		// Cache the old version of the menus for reference
 		Registry::cache_set( 'vars', 'wp_registered_sidebars', $wp_registered_sidebars );
 
 		// Replace the registered nav menu array with the new one
