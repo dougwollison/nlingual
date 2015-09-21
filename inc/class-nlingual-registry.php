@@ -114,9 +114,43 @@ class Registry {
 	 *
 	 * @param string     $section The section of the cache to look in.
 	 * @param int|string $id      The id of the cached object.
+	 * @param mixed      $default The default value to return if needed.
 	 *
 	 * @return mixed The cached data.
 	 */
+	public static function cache_get( $section, $id, $default = null ) {
+		// Check if section doesn't exist
+		if ( ! isset( static::$cache[ $section ] ) ) {
+			return $default;
+		}
+
+		// Check if object doesn't exist
+		if ( ! isset( static::$cache[ $section ][ $id ] ) ) {
+			return $default;
+		}
+
+		return static::$cache[ $section ][ $id ];
+	}
+
+	/**
+	 * Store the cached data for an object.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string     $section The section of the cache to look in.
+	 * @param int|string $id      The id of the cached object.
+	 * @param mixed      $value   The data to store.
+	 *
+	 * @return mixed The cached data.
+	 */
+	public static function cache_set( $section, $id, $value = null ) {
+		// Ensure the section exists
+		if ( ! isset( static::$cache[ $section ] ) ) {
+			static::$cache[ $section ] = array();
+		}
+
+		static::$cache[ $section ][ $id ] = $value;
+	}
 
 	// =========================
 	// ! Option Testing Methods
