@@ -29,21 +29,69 @@ class Languages implements \Iterator {
 	// ! Iterator Methods
 	// =========================
 
+	/**
+	 * Rewind iterator to the first element.
+	 *
+	 * @since 2.0.0
+	 */
 	public function rewind() {
 		reset( $this->languages );
 	}
+
+	/**
+	 * Return to the current element.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return mixed The current element.
+	 */
 	public function current() {
 		return current( $this->languages );
 	}
+
+	/**
+	 * Return to the key of the current element.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return int|string The current key.
+	 */
 	public function key() {
 		return key( $this->languages );
 	}
+
+	/**
+	 * Advance to the next element.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return mixed The next element.
+	 */
 	public function next() {
 		return next( $this->languages );
 	}
+
+	/**
+	 * Check if current position is valid.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return bool Wether or not the position is valid.
+	 */
 	public function valid() {
 		$key = key( $this->languages );
-		return $key !== null && $key !== false;
+		return isset( $this->languages[ $key ] );
+	}
+
+	/**
+	 * Get the length of the array.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return int The length of the array.
+	 */
+	public function count() {
+		return count( $this->languages );
 	}
 
 	// =========================
@@ -101,7 +149,19 @@ class Languages implements \Iterator {
 	 *
 	 * @return nLingual\Languages A new collection of languages
 	 */
-	public function filter( $filter = null, $value = null ) {
+	public function filter( $filter = null, $value = true ) {
+		if ( is_null( $filter ) ) {
+			return $this;
+		}
+
+		$filtered = new static;
+		foreach ( $this as $language ) {
+			if ( $language->$filter === $value ) {
+				$filtered->add( $language, false );
+			}
+		}
+
+		return $filtered;
 	}
 
 	/**
