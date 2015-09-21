@@ -124,7 +124,7 @@ class Languages implements \Iterator {
 	 * @param string $field Optional The field to sort by (defaults to list_order).
 	 * @param string $order Optional Which way to sort (defaults to ascending).
 	 */
-	public function sort( $field = null, $order = 'asc' ) {
+	public function sort( $field = 'list_order', $order = 'asc' ) {
 		usort( $this->languages, function( $a, $b ) use ( $field ) {
 			if ( $a->$field == $b->$field ) {
 				return 0;
