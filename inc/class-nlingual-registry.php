@@ -94,8 +94,8 @@ class Registry {
 	 * @return mixed The property value.
 	 */
 	public static function get_option( $property ) {
-		if ( property_exists( static::$name, $property ) ) {
-			return static::$property;
+		if ( property_exists( get_called_class(), $property ) ) {
+			return static::$$property;
 		}
 		return null;
 	}
@@ -168,6 +168,30 @@ class Registry {
 	// =========================
 
 	/**
+	 * Check if localizable feature is supported.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $item The name of the localizable to check support for.
+	 * @param array  $list The list of registered objects.
+	 */
+	public static function is_localizable_supported( $item, $list ) {
+		// Check if this feature is enabled
+		$localizables = static::get_option( 'localizables' );
+		if ( ! in_array( $item, $localizables ) ) {
+			return false;
+		}
+
+		// Check if there are items registered and languages are present
+		$languages = static::languages();
+		if ( ! $list || ! $languages->count() ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Test if the provided post type(s) are registered for translation.
 	 *
 	 * Will return true if at least 1 is supported.
@@ -209,7 +233,7 @@ class Registry {
 		static::$sync_rules = get_option( 'nlingual_sync_rules', array() );
 
 		// Localizables list
-		static::$localizables = get_option( 'nlingual_localizables', array() );
+		static::$localizables = get_option( 'nlingual_localizables', array( 'nav_menus', 'sidebars' ) );
 
 		// Flag that we've loaded everything
 		$loaded = true;
