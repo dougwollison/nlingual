@@ -93,7 +93,7 @@ class Registry {
 	 *
 	 * @return mixed The property value.
 	 */
-	public static function get_option( $property ) {
+	public static function get( $property ) {
 		if ( property_exists( get_called_class(), $property ) ) {
 			return static::$$property;
 		}
@@ -177,7 +177,7 @@ class Registry {
 	 */
 	public static function is_localizable_supported( $item, $list ) {
 		// Check if this feature is enabled
-		$localizables = static::get_option( 'localizables' );
+		$localizables = static::get( 'localizables' );
 		if ( ! in_array( $item, $localizables ) ) {
 			return false;
 		}
