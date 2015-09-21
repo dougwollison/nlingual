@@ -69,6 +69,17 @@ class Registry {
 	 */
 	protected static $sync_rules = array();
 
+	/**
+	 * The list of localizable features.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var array
+	 */
+	protected static $localizables = array();
+
 	// =========================
 	// ! Propert Access Methods
 	// =========================
@@ -196,6 +207,9 @@ class Registry {
 
 		// Load sync rules
 		static::$sync_rules = get_option( 'nlingual_sync_rules', array() );
+
+		// Localizables list
+		static::$localizables = get_option( 'nlingual_localizables', array() );
 
 		// Flag that we've loaded everything
 		$loaded = true;

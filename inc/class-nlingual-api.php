@@ -78,6 +78,7 @@ class API extends Functional {
 
 		// Theme Setup Actions
 		static::add_action( 'after_theme_setup', 'add_nav_menu_variations', 999 );
+		static::add_action( 'after_theme_setup', 'add_sidebar_variations', 999 );
 	}
 
 	/**
@@ -175,6 +176,12 @@ class API extends Functional {
 	public static function add_nav_menu_variations() {
 		global $_wp_registered_nav_menus;
 
+		// Cancel if this feature isn't enabled
+		$localizables = Registry::get_option( 'localizeables' );
+		if ( ! in_array( 'nav_menus', $localizables ) ) {
+			return;
+		}
+
 		// Abort if no menus are present
 		if ( ! $_wp_registered_nav_menus ) {
 			return;
@@ -191,10 +198,48 @@ class API extends Functional {
 		}
 
 		// Cache the old version of the menus for refernce
-		Registry::cache_get( '_wp_registered_nav_menus', $_wp_registered_nav_menus, 'vars' );
+		Registry::cache_set( 'vars', '_wp_registered_nav_menus', $_wp_registered_nav_menus );
 
 		// Replace the registered nav menu array with the new one
 		$_wp_registered_nav_menus = $localized_menus;
+	}
+
+	/**
+	 * Replaces the registered sidebars with versions for each active language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global array $wp_registered_sidebars The registered sidebars list.
+	 */
+	public static function add_sidebars_variations() {
+		global $wp_registered_sidebars;
+
+		// Cancel if this feature isn't enabled
+		$localizables = Registry::get_option( 'localizeables' );
+		if ( ! in_array( 'sidebars', $localizables ) ) {
+			return;
+		}
+
+		// Abort if no menus are present
+		if ( ! $localized_sidebars ) {
+			return;
+		}
+
+		// Build a new nav menu list; with copies of each menu for each language
+		$localized_sidebars = array();
+		foreach ( $localized_sidebars as $id => $args ) {
+			foreach ( Registry::languages() as $lang ) {
+				$new_id = $id . '--' . $lang->slug;
+				$args['name'] .= ' (' . $lang->system_name . ')';
+				$localized_sidebars[ $new_id ] = $args;
+			}
+		}
+
+		// Cache the old version of the menus for refernce
+		Registry::cache_set( 'vars', 'wp_registered_sidebars', $wp_registered_sidebars );
+
+		// Replace the registered nav menu array with the new one
+		$wp_registered_sidebars = $localized_sidebars;
 	}
 }
 
