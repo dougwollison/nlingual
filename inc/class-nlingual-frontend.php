@@ -54,7 +54,7 @@ class Frontend extends Functional {
 	 *
 	 * @return array The modified $locations with unlocalized versions updated.
 	 */
-	public static function localize_locations( $locations, $registered ) {
+	protected static function localize_locations( $locations, $registered ) {
 		// Get the default and current languages
 		$default_lang = Registry::get( 'default_lang', 0 );
 		$current_lang = Registry::get( 'current_lang', $default_lang );

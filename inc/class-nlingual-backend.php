@@ -52,7 +52,7 @@ class Backend extends Functional {
 	 * @param string $type   The type of location being localized (singular).
 	 * @param string $global The global variable name to be edited.
 	 */
-	public static function register_localized_locations( $type, $global ) {
+	protected static function register_localized_locations( $type, $global ) {
 		global $$global;
 
 		// Abort if not supported
