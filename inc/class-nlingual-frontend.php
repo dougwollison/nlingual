@@ -109,25 +109,34 @@ class Frontend extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param array $locations  The list of locatiosn to filter.
-	 * @param array $registered The list of register nav menus or sidebars.
+	 * @param string $type       The type of location.
+	 * @param array  $locations  The list of locations to filter.
+	 * @param array  $registered The list of orignially register locations.
 	 *
 	 * @return array The modified $locations with unlocalized versions updated.
 	 */
-	protected static function localize_locations( $locations, $registered ) {
+	protected static function localize_locations( $type, $locations, $registered ) {
+		// Abort if not supported
+		if ( ! Registry::is_feature_localizable( "{$type}_locations", true ) ) {
+			return;
+		}
+
 		// Get the default and current languages
-		$default_lang = Registry::get( 'default_lang', 0 );
-		$current_lang = Registry::get( 'current_lang', $default_lang );
+		$default_lang = Registry::default_lang( 'id' );
+		$current_lang = Registry::current_lang( 'id' ) ?: $default_lang;
 
 		// Ensure the unlocalized locations are set to the appropriate version.
 		foreach ( $registered as $slug => $name ) {
-			// Check if a location is set for the current language
-			if ( isset( $locations[ "{$slug}-lang{$current_lang}"] ) ) {
-				$locations[ $slug ] = $locations[ "{$slug}-lang{$current_lang}"];
-			} else
-			// Alternatively check if a location is set for the default one
-			if ( isset( $locations[ "{$slug}-lang{$default_lang}"] ) ) {
-				$locations[ $slug ] = $locations[ "{$slug}-lang{$default_lang}"];
+			// Check if this location specifically supports localizing
+			if ( Registry::is_location_localizable( $type, $slug ) ) {
+				// Check if a location is set for the current language
+				if ( isset( $locations[ "{$slug}-lang{$current_lang}"] ) ) {
+					$locations[ $slug ] = $locations[ "{$slug}-lang{$current_lang}"];
+				} else
+				// Alternatively check if a location is set for the default one
+				if ( isset( $locations[ "{$slug}-lang{$default_lang}"] ) ) {
+					$locations[ $slug ] = $locations[ "{$slug}-lang{$default_lang}"];
+				}
 			}
 		}
 
@@ -146,7 +155,7 @@ class Frontend extends Functional {
 	public static function localize_nav_menu_locations( $locations ) {
 		global $_wp_registered_nav_menus;
 
-		$locations = static::localize_locations( $locations, $_wp_registered_nav_menus );
+		$locations = static::localize_locations( 'nav_menu', $locations, $_wp_registered_nav_menus );
 
 		return $locations;
 	}
@@ -160,10 +169,10 @@ class Frontend extends Functional {
 	 *
 	 * @global array $wp_registered_sidebars The registered sidebars list.
 	 */
-	public static function localize_sidebar_locations( $sidebars ) {
+	public static function localize_sidebar_locations( $locations ) {
 		global $wp_registered_sidebars;
 
-		$locations = static::localize_locations( $locations, $wp_registered_sidebars );
+		$locations = static::localize_locations( 'sidebar', $locations, $wp_registered_sidebars );
 
 		return $locations;
 	}
