@@ -35,9 +35,69 @@ class Frontend extends Functional {
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
+		// Language Detection
+		static::add_action( 'plugins_loaded', 'detect_requested_language' );
+		static::add_action( 'wp', 'detect_queried_language' );
+
+		// Redirection
+		static::add_action( 'wp', 'maybe_redirect' );
+
 		// The Mod rewriting
 		static::add_filter( 'theme_mod_nav_menu_locations', 'localize_nav_menu_locations', 10, 1 );
 		static::add_filter( 'sidebars_widgets', 'localize_sidebar_locations', 10, 1 );
+	}
+
+	// =========================
+	// ! Language Detection Methods
+	// =========================
+
+	/**
+	 * Detect the language based on the request.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function detect_requested_language() {
+		// Get the accepted language
+		$accepted_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+
+		// Start with that if it exists
+		$language = Registry::languages()->get( $accepted_language );
+
+		// Override with result of url_process() if it works
+		$processed_url = Rewriter::process_url();
+		if ( $processed_url['lang'] ) {
+			$language = $processed_url['lang'];
+		}
+
+		// Override with $query_var if present
+		$query_var = Registry::get( 'query_var' );
+		if ( $query_var && isset( $_REQUEST[ $query_var ] )
+		&& $lang = Registry::languages()->get( $_REQUEST[ $query_var ] ) ) {
+			$language = $lang;
+		}
+
+		// Set the language if it worked, but don't lock it in
+		if ( $language ) {
+			API::set_language( $language );
+		}
+	}
+
+	/**
+	 * Detect the language based on the first queried post.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global WP_Query $wp_query The main WP_Query instance.
+	 */
+	public static function detect_queried_language() {
+		global $wp_query;
+
+		if ( isset( $wp_query->post ) ) {
+			$language = Translator::get_post_language( $wp_query->post->ID );
+
+			// Set the language and lock it
+			API::set_language( $language, true );
+		}
 	}
 
 	// =========================
