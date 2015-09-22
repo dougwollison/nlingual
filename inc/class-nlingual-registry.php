@@ -37,7 +37,7 @@ class Registry {
 	protected static $query_var;
 
 	/**
-	 * The language detection method.
+	 * The URL redirection method.
 	 *
 	 * @since 2.0.0
 	 *
@@ -45,7 +45,7 @@ class Registry {
 	 *
 	 * @var string
 	 */
-	protected static $detection_method;
+	protected static $redirection_method;
 
 	/**
 	 * The post language override option.
@@ -59,13 +59,24 @@ class Registry {
 	protected static $postlang_override;
 
 	/**
+	 * The skip default language localizing option.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var bool
+	 */
+	protected static $skip_default_l10n;
+
+	/**
 	 * The default language id.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @access protected (static)
 	 *
-	 * @var string
+	 * @var int
 	 */
 	protected static $default_lang;
 
@@ -76,7 +87,7 @@ class Registry {
 	 *
 	 * @access protected (static)
 	 *
-	 * @var string
+	 * @var int
 	 */
 	protected static $current_lang;
 
@@ -384,9 +395,10 @@ class Registry {
 
 		// Load simple options
 		static::$query_var = get_option( 'nlingual_query_var', '' );
-		static::$detection_method = get_option( 'nlingual_detection_method', '' );
+		static::$redirection_method = get_option( 'nlingual_redirection_method', '' );
 		static::$default_lang = get_option( 'nlingual_default_language', 0 );
 		static::$postlang_override = get_option( 'nlingual_postlang_override', 0 );
+		static::$skip_default_l10n = get_option( 'nlingual_skip_default_l10n', 0 );
 
 		// Load languages
 		static::$languages = get_option( 'nlingual_languages', new Languages );
