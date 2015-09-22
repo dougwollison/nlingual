@@ -361,4 +361,39 @@ class Translator {
 			array( '%d', '%d' )
 		);
 	}
+
+	// =========================
+	// ! Magic Methods
+	// =========================
+
+	/**
+	 * Overload to the various _object_ methods.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $name The name of the method being called.
+	 * @param array  $args The list of arguments for the method.
+	 *
+	 * @return mixed The result of the target method.
+	 */
+	public static function __callStatic( $name, $args ) {
+		// Check if $name matches an existing method with $type instead of object
+		if ( preg_match( '/^(get|set|delete)_(\w+?)_(language|translations?)$/', $name, $matches ) ) {
+			// Get the parts
+			list(, $action, $type, $meta ) = $matches;
+
+			// Build target method name
+			$method = $action . '_object_' . $meta;
+
+			// If it exists, call it and return the result
+			$class = get_called_class();
+			if ( method_exists( $class, $method ) ) {
+				// Add the $type argument
+				array_unshift( $args, $type );
+				call_user_func_array( array( $class, $method ), $args );
+			}
+		}
+
+		return null;
+	}
 }
