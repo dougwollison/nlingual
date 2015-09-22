@@ -48,6 +48,17 @@ class Registry {
 	protected static $detection_method;
 
 	/**
+	 * The post language override option.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var bool
+	 */
+	protected static $postlang_override;
+
+	/**
 	 * The default language id.
 	 *
 	 * @since 2.0.0
@@ -375,6 +386,7 @@ class Registry {
 		static::$query_var = get_option( 'nlingual_query_var', '' );
 		static::$detection_method = get_option( 'nlingual_detection_method', '' );
 		static::$default_lang = get_option( 'nlingual_default_language', 0 );
+		static::$postlang_override = get_option( 'nlingual_postlang_override', 0 );
 
 		// Load languages
 		static::$languages = get_option( 'nlingual_languages', new Languages );

@@ -92,6 +92,11 @@ class Frontend extends Functional {
 	public static function detect_queried_language() {
 		global $wp_query;
 
+		// Don't proceed if this feature is disabled
+		if ( ! Registry::get( 'postlang_override', 0 ) ) {
+			return;
+		}
+
 		if ( isset( $wp_query->post ) ) {
 			$language = Translator::get_post_language( $wp_query->post->ID );
 
