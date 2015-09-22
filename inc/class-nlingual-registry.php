@@ -37,6 +37,17 @@ class Registry {
 	protected static $query_var;
 
 	/**
+	 * The language detection method.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var string
+	 */
+	protected static $detection_method;
+
+	/**
 	 * The default language id.
 	 *
 	 * @since 2.0.0
