@@ -373,6 +373,7 @@ class Registry {
 
 		// Load simple options
 		static::$query_var = get_option( 'nlingual_query_var', '' );
+		static::$detection_method = get_option( 'nlingual_detection_method', '' );
 		static::$default_lang = get_option( 'nlingual_default_language', 0 );
 
 		// Load languages
