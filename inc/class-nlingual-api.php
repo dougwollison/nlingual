@@ -62,6 +62,31 @@ class API extends Functional {
 	}
 
 	// =========================
+	// ! Control Methods
+	// =========================
+
+	/**
+	 * Set the current language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param int  $lang The desired language id.
+	 * @param bool $lock Wether or not to lock the selection.
+	 */
+	public static function set_language( $lang, $lock = false ) {
+		if ( defined( 'NL_LANGUAGE_LOCKED' ) ) {
+			return;
+		}
+
+		Registry::set( 'current_lang', $lang );
+
+		if ( $lock ) {
+			// Lock the language from being changed again
+			define( 'NL_LANGUAGE_LOCKED', true );
+		}
+	}
+
+	// =========================
 	// ! Setup Utility Methods
 	// =========================
 
