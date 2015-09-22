@@ -361,12 +361,12 @@ class Rewriter {
 		// Home page? Get the translation permalink
 		if ( is_home() ) {
 			$page = get_option( 'page_for_posts' );
-			$url = static::get_permalink( $page, $language );
+			$url = Translator::get_permalink( $page, $language );
 		} else
 		// Singular? Get the translation permalink
 		if ( is_singular() ) {
 			$post = get_queried_object_id();
-			$url = static::get_permalink( $post, $language );
+			$url = Translator::get_permalink( $post, $language );
 		} else
 		// Term page? Get the term link
 		if ( is_tax() || is_tag() || is_category() ) {
