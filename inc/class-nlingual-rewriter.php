@@ -425,6 +425,6 @@ class Rewriter {
 		// Build the URL
 		$url = static::build_url( $url_data );
 
-		return $url_data;
+		return $url;
 	}
 }
