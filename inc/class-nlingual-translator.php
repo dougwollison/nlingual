@@ -50,7 +50,8 @@ class Translator {
 
 		// Create a new one otherwise
 		if ( ! $group_id && $inc ) {
-			$group_id = $wpdb->get_var( "SELECT MAX(group_id) + 1 FROM $wpdb->nl_translations" );
+			$group_id = $wpdb->get_var( "SELECT MAX(group_id) FROM $wpdb->nl_translations" );
+			$group_id = intval( $group_id ) + 1;
 		}
 
 		return $group_id;
@@ -112,7 +113,7 @@ class Translator {
 		}
 
 		// Delete the original translation entry
-		delete_object_language( $type, $id );
+		static::delete_object_language( $type, $id );
 
 		// Insert a new one
 		$wpdb->replace( $wpdb->nl_translations, array(
@@ -390,7 +391,7 @@ class Translator {
 			if ( method_exists( $class, $method ) ) {
 				// Add the $type argument
 				array_unshift( $args, $type );
-				call_user_func_array( array( $class, $method ), $args );
+				return call_user_func_array( array( $class, $method ), $args );
 			}
 		}
 
