@@ -57,6 +57,7 @@ class Backend extends Functional {
 	 */
 	protected static function register_localized_locations( $type, $global ) {
 		global $$global;
+		$list =& $$global;
 
 		// Abort if not supported
 		if ( ! Registry::is_feature_localizable( "{$type}_locations", $list ) ) {
@@ -65,10 +66,10 @@ class Backend extends Functional {
 
 		// Build a new nav menu list; with copies of each menu for each language
 		$localized_locations = array();
-		foreach ( $$global as $id => $data ) {
+		foreach ( $list as $id => $data ) {
 			foreach ( Registry::languages() as $lang ) {
 				// Check if this location specifically supports localizing
-				if ( Registry::is_location_localizable( 'nav_menu', $id ) ) {
+				if ( Registry::is_location_localizable( $type, $id ) ) {
 					$new_id = $id . '-lang' . $lang->id;
 					$name_postfix = ' (' . $lang->system_name . ')';
 					if ( is_array( $data ) ) {
@@ -86,10 +87,10 @@ class Backend extends Functional {
 		}
 
 		// Cache the old version of the menus for reference
-		Registry::cache_set( 'vars', $global, $$global );
+		Registry::cache_set( 'vars', $global, $list );
 
 		// Replace the registered nav menu array with the new one
-		$$global = $localized_locations;
+		$list = $localized_locations;
 	}
 
 	/**
