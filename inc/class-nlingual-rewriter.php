@@ -19,9 +19,12 @@ class Rewriter {
 	// =========================
 
 	/**
-	 * Build a URL from provided parts
+	 * Build a URL from provided parts.
 	 *
-	 * Stand in for http_build_url which is likely not present
+	 * Primarily a stand-in for http_build_url since it may
+	 * not be available. Can return a relative URL if no host
+	 * is specified and also supports a paged parameter for
+	 * pagination permalinks.
 	 *
 	 * @since 2.0.0
 	 *
@@ -32,53 +35,71 @@ class Rewriter {
 	public static function build_url( $data ) {
 		$url = '';
 
+		// Ensure all useable keys are present
 		$data = array_merge( array(
-			'scheme'   =>'',
-			'user'     =>'',
-			'pass'     =>'',
-			'host'     =>'',
-			'port'     =>'',
-			'path'     =>'',
-			'query'    =>'',
-			'fragment' =>''
+			'scheme'   => null,
+			'user'     => null,
+			'pass'     => null,
+			'host'     => null,
+			'port'     => null,
+			'path'     => null,
+			'paged'    => null,
+			'query'    => null,
+			'args'     => null,
+			'fragment' => null,
 		), $data );
 
-		if ( isset( $data['args'] ) && is_array( $data['args'] ) ) {
+		// Build the query string if args are present
+		if ( is_array( $data['args'] ) ) {
 			$data['query'] = http_build_query( $data['args'] );
 		}
 
+		// Add the paged parameter to the path if present
+		if ( $data['paged'] ) {
+			$data['path'] .= sprintf( 'page/%d/', $data['paged'] );
+		}
+
+		// Start with the scheme
 		if ( $data['scheme'] ) {
 			$url .= $data['scheme'] . '://';
+
+			// Next add the host
+			if ( $data['host'] ) {
+				// First add username/password (unlikely but why not?)
+				if ( $data['user'] ) {
+					$url .= $data['user'];
+
+					// Add password
+					if ( $data['pass'] ) {
+						$url .= ':' . $data['pass'];
+					}
+
+					// Finish with @ symbol
+					if ( $data['user'] ) {
+						$url .= '@';
+					}
+				}
+
+				$url .= $data['host'];
+
+				// Add the port
+				if ( $data['port'] ) {
+					$url .= ':' . $data['port'];
+				}
+			}
 		}
 
-		if ( $data['user'] ) {
-			$url .= $data['user'];
-		}
-
-		if ( $data['pass'] ) {
-			$url .= ':' . $data['pass'];
-		}
-
-		if ( $data['user'] ) {
-			$url .= '@';
-		}
-
-		if ( $data['host'] ) {
-			$url .= $data['host'];
-		}
-
-		if ( $data['port'] ) {
-			$url .= ':' . $data['port'];
-		}
-
+		// Add the path
 		if ( $data['path'] ) {
 			$url .= $data['path'];
 		}
 
+		// Add the query string
 		if ( $data['query'] ) {
 			$url .= '?' . $data['query'];
 		}
 
+		// Finishe with the fragment
 		if ( $data['fragment'] ) {
 			$url .= '#' . $data['fragment'];
 		}
@@ -277,12 +298,12 @@ class Rewriter {
 		/**
 		 * Filter the new localized URL.
 		 *
-		 * @since 1.1.3
+		 * @since 2.0.0
 		 *
-		 * @param string  $new_url    The new localized URL.
+		 * @param string  $url        The new localized URL.
 		 * @param string  $old_url    The original URL passed to this function.
 		 * @param string  $lang       The slug of the language requested.
-		 * @param bool    $relocalise Whether or not to forcibly relocalize the URL.
+		 * @param bool    $relocalize Whether or not to forcibly relocalize the URL.
 		 */
 		$url = apply_filters( 'nlingual_localize_url', $url, $old_url, $language, $relocalize );
 
@@ -311,5 +332,99 @@ class Rewriter {
 		}
 
 		return $url;
+	}
+
+	/**
+	 * Attempt to localize the current page URL.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param Langauge $language The language to localize the current page for.
+	 *
+	 * @return string The localized URL.
+	 */
+	public static function localize_here( Language $language = null ) {
+		// Default to the current language
+		if ( ! $language ) {
+			$language = Registry::current_lang();
+		}
+
+		$url = null; // For the end result URL
+		$here = null; // For a URL to (re)localize
+
+		// Try various conditional tags
+
+		// Front page? just use home_url()
+		if ( is_front_page() ) {
+			$here = home_url( '/' );
+		} else
+		// Home page? Get the translation permalink
+		if ( is_home() ) {
+			$page = get_option( 'page_for_posts' );
+			$url = static::get_permalink( $page, $language );
+		} else
+		// Singular? Get the translation permalink
+		if ( is_singular() ) {
+			$post = get_queried_object_id();
+			$url = static::get_permalink( $post, $language );
+		} else
+		// Term page? Get the term link
+		if ( is_tax() || is_tag() || is_category() ) {
+			$here = get_term_link( get_queried_object() );
+		} else
+		// Post type archive? Get the link
+		if ( is_post_type_archive() ) {
+			$here = get_post_type_archive_link( get_queried_object()->name );
+		} else
+		// Author archive? Get the link
+		if ( is_author() ) {
+			$here = get_author_posts_link( get_queried_object_id() );
+		} else
+		// Date archive? Get link
+		if ( is_day() ) {
+			$here = get_day_link( get_query_var( 'year' ), get_query_var( 'month' ), get_query_var( 'day' ) );
+		} else
+		// Month archive? Get link
+		if ( is_month() ) {
+			$here = get_month_link( get_query_var( 'year' ), get_query_var( 'month' ) );
+		} else
+		// Year archive? Get link
+		if ( is_year() ) {
+			$here = get_year_link( get_query_var( 'year' ) );
+		} else
+		// Search page? Rebuild the link
+		if ( is_search() ) {
+			$here = home_url( '/?s=' . get_query_var( 's' ) );
+		} else {
+			// Give up and just use the requested URI.
+			$here = $_SERVER['REQUEST_URI'];
+		}
+
+		// If $url hasn't been determined, localize $here
+		if ( $url === false ) {
+			$url = static::localize_url( $here, $language, true );
+		}
+
+		// Now parse the URL
+		$url_data = parse_url( $url );
+
+		// Check if paged and add entry to $url_data
+		if ( is_paged() ) {
+			$url_data['paged'] .= get_query_var( 'paged' );
+		}
+
+		/**
+		 * Filter the URL data array.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param array $url_data The parsed URL data.
+		 */
+		$url_data = apply_filters( 'nLingual_localize_here_array', $url_data, $language );
+
+		// Build the URL
+		$url = static::build_url( $url_data );
+
+		return $url_data;
 	}
 }
