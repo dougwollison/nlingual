@@ -401,7 +401,7 @@ class Rewriter {
 		}
 
 		// If $url hasn't been determined, localize $here
-		if ( $url === false ) {
+		if ( ! $url && $here ) {
 			$url = static::localize_url( $here, $language, true );
 		}
 
