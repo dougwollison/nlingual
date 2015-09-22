@@ -70,15 +70,15 @@ class API extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param int  $lang The desired language id.
-	 * @param bool $lock Wether or not to lock the selection.
+	 * @param Language $lang The desired language id.
+	 * @param bool     $lock Wether or not to lock the selection.
 	 */
-	public static function set_language( $lang, $lock = false ) {
+	public static function set_language( Language $lang, $lock = false ) {
 		if ( defined( 'NL_LANGUAGE_LOCKED' ) ) {
 			return;
 		}
 
-		Registry::set( 'current_lang', $lang );
+		Registry::set( 'current_lang', $lang->id );
 
 		if ( $lock ) {
 			// Lock the language from being changed again
