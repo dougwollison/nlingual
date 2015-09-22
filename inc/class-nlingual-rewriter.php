@@ -291,4 +291,25 @@ class Rewriter {
 
 		return $url;
 	}
+
+	/**
+	 * Delocalize a URL; remove language information.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $url The URL to delocalize.
+	 *
+	 * @return string The delocalized url.
+	 */
+	public static function delocalize_url( $url ) {
+		// Parse and process the url
+		$url_data = static::process_url( $url );
+
+		// If a language was extracted, rebuild the $url
+		if ( $url_data['lang'] ) {
+			$url = static::build_url( $url_data );
+		}
+
+		return $url;
+	}
 }
