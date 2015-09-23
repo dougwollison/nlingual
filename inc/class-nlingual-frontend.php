@@ -36,11 +36,15 @@ class Frontend extends Functional {
 	 */
 	public static function register_hooks() {
 		// Language Detection
-		static::add_action( 'plugins_loaded', 'detect_requested_language' );
-		static::add_action( 'wp', 'detect_queried_language' );
+		static::add_action( 'plugins_loaded', 'detect_requested_language', 10, 0 );
+		static::add_action( 'wp', 'detect_queried_language', 10, 0 );
 
-		// Redirection
-		static::add_action( 'wp', 'maybe_redirect' );
+		// URL Redirection
+		static::add_filter( 'redirect_canonical', 'localize_canonical', 10, 2 );
+		static::add_action( 'template_redirect', 'maybe_redirect', 10, 0 );
+
+		// URL Rewriting
+		static::add_filter( 'home_url', 'localize_home_url', 10, 4 );
 
 		// The Mod rewriting
 		static::add_filter( 'theme_mod_nav_menu_locations', 'localize_nav_menu_locations', 10, 1 );
@@ -48,7 +52,7 @@ class Frontend extends Functional {
 	}
 
 	// =========================
-	// ! Language Detection Methods
+	// ! Language Detection
 	// =========================
 
 	/**
@@ -72,7 +76,7 @@ class Frontend extends Functional {
 		// Override with $query_var if present
 		$query_var = Registry::get( 'query_var' );
 		if ( $query_var && isset( $_REQUEST[ $query_var ] )
-		&& $lang = Registry::languages()->get( $_REQUEST[ $query_var ] ) ) {
+		&& ( $lang = Registry::languages()->get( $_REQUEST[ $query_var ] ) ) ) {
 			$language = $lang;
 		}
 
@@ -103,6 +107,84 @@ class Frontend extends Functional {
 			// Set the language and lock it
 			API::set_language( $language, true );
 		}
+	}
+
+	// =========================
+	// ! Language Redirection
+	// =========================
+
+	/**
+	 * Check for proper localized redirection.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Rewriter::localize_url()
+	 *
+	 * @param string  $redirect_url  The intended redirect URL.
+	 * @param string  $requested_url The originally requested URL.
+	 *
+	 * @return bool|string False if localized versions of both URLs match,
+	 *                     otherwise the intended redirect URL.
+	 */
+	public static function localize_canonical( $redirect_url, $requested_url ) {
+		if( Rewriter::localize_url( $redirect_url ) == Rewriter::localize_url( $requested_url ) ) {
+			return false;
+		}
+
+		return $redirect_url;
+	}
+
+	/**
+	 * Check if language redirection is necessary.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Rewriter::localize_url()
+	 */
+	public static function maybe_redirect() {
+		// Get the plain home URL for comparison (allow unlocalized version)
+		$unlocalized_home = Rewriter::delocalize_url( home_url() );
+
+		// Abort if it's just the homepage
+		if ( untrailingslashit( NL_ORIGINAL_URL ) == $unlocalized_home ) {
+			return;
+		}
+
+		// Get the correct localized version of the URL
+		$redirect_url = Rewriter::localize_here();
+
+		// Perform the redirect if applicable
+		if ( NL_ORIGINAL_URL != $redirect_url ) {
+			wp_redirect( $redirect_url );
+			exit;
+		}
+	}
+
+	// =========================
+	// ! URL Rewriting
+	// =========================
+
+	/**
+	 * Localize the home URL.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string      $url     The complete home URL including scheme and path.
+	 * @param string      $path    Path relative to the home URL.
+	 * @param string|null $scheme  Scheme to give the home URL context.
+	 * @param int|null    $blog_id Blog ID, or null for the current blog.
+	 *
+	 * @return string The localized home URL.
+	 */
+	public static function localize_home_url( $url, $path, $scheme, $blog_id ) {
+		// Check if we shouldn't actually localize this
+		// (will be indicated by custom $scheme value)
+		if ( $scheme == NL_UNLOCALIZED ) {
+			return $url;
+		}
+
+		// Return the localized version of the URL
+		return Rewriter::localize_url( $url );
 	}
 
 	// =========================
