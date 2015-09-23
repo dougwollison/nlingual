@@ -10,6 +10,10 @@ namespace nLingual;
  */
 
 class Translator {
+	// =========================
+	// ! Utility Methods
+	// =========================
+
 	/**
 	 * Utility; convert $language passed into proper object format.
 	 *
@@ -361,6 +365,63 @@ class Translator {
 			array( '%d' ),
 			array( '%d', '%d' )
 		);
+	}
+
+	// =========================
+	// ! URL Translation Methods
+	// =========================
+
+	/**
+	 * Get the permalink for a post in the desired language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param int   $post_id The ID of the post.
+	 * @param mixed $lang    Optional The desired language.
+	 *
+	 * @return string The translation's permalink.
+	 */
+	public static function get_permalink( $post_id, $lang = null ) {
+		// Ensure $lang is a Language
+		if ( ! static::_lang( $lang ) ) {
+			// Doesn't exit; resort to original permalink
+			return get_permalink( $post_id );
+		}
+
+		// Get the translation counterpart
+		$translation_id = static::get_post_translation( $post_id, $lang );
+
+		// Return the translations permalink
+		return get_permalink( $translation_id );
+	}
+
+	/**
+	 * Get the translated version of the post based on the path.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $path      The path (in /parent/child/ or /page/ form) of the page to find.
+	 * @param string $post_type The post type it should be looking for (defaults to page).
+	 * @param mixed  $lang      The slug of the language requested (defaults to current language).
+	 *
+	 * @return string The translated permalink.
+	 */
+	public static function translate_link( $path, $post_type = null, $lang = null ) {
+		// Default to page for post type
+		if ( ! $post_type ) {
+			$post_type = 'page';
+		}
+
+		// Get the ID based on the path provided
+		$post = get_page_by_path( trim( $path, '/' ), OBJECT, $post_type );
+
+		// Abort if not found
+		if ( ! $post ) {
+			return null;
+		}
+
+		// Get the translation's permalink
+		return static::get_permalink( $post->ID, $lang );
 	}
 
 	// =========================
