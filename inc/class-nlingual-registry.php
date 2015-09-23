@@ -227,7 +227,7 @@ class Registry {
 	 * @param string $field Optional The field to get from the langauge.
 	 */
 	public static function current_lang( $field = null ) {
-		$lang_id = static::get( 'current_lang' );
+		$lang_id = static::get( 'current_lang' ) ?: static::get( 'default_lang' );
 		return static::get_lang( $lang_id, $field );
 	}
 
