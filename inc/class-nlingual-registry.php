@@ -136,7 +136,7 @@ class Registry {
 	protected static $sync_rules = array();
 
 	// =========================
-	// ! Propert Access Methods
+	// ! Propert Accessing
 	// =========================
 
 	/**
@@ -240,7 +240,7 @@ class Registry {
 	}
 
 	// =========================
-	// ! Cache Methods
+	// ! Cache Handling
 	// =========================
 
 	/**
@@ -312,7 +312,7 @@ class Registry {
 	}
 
 	// =========================
-	// ! Option Testing Methods
+	// ! Option Testinging
 	// =========================
 
 	/**

@@ -11,7 +11,7 @@ namespace nLingual;
 
 class Rewriter {
 	// =========================
-	// ! URL Building Methods
+	// ! URL Building
 	// =========================
 
 	/**
@@ -104,7 +104,7 @@ class Rewriter {
 	}
 
 	// =========================
-	// ! URL Processing Methods
+	// ! URL Processing
 	// =========================
 
 	/**
@@ -218,7 +218,7 @@ class Rewriter {
 	}
 
 	// =========================
-	// ! URL Conversion Methods
+	// ! URL Conversion
 	// =========================
 
 	/**

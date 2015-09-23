@@ -26,7 +26,7 @@ class Backend extends Functional {
 	protected static $name;
 
 	// =========================
-	// ! Methods
+	// ! Hook Registration
 	// =========================
 
 	/**
@@ -44,7 +44,7 @@ class Backend extends Functional {
 	}
 
 	// =========================
-	// ! Theme Setup Methods
+	// ! Menu/Sidebar Localization
 	// =========================
 
 	/**

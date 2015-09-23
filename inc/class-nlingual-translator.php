@@ -11,7 +11,7 @@ namespace nLingual;
 
 class Translator {
 	// =========================
-	// ! Utility Methods
+	// ! Utilities
 	// =========================
 
 	/**
@@ -64,7 +64,7 @@ class Translator {
 	}
 
 	// =========================
-	// ! Language Methods
+	// ! Language Handling
 	// =========================
 
 	/**
@@ -174,7 +174,7 @@ class Translator {
 	}
 
 	// =========================
-	// ! Translation Methods
+	// ! Translation Handling
 	// =========================
 
 	/**
@@ -392,7 +392,7 @@ class Translator {
 	}
 
 	// =========================
-	// ! URL Translation Methods
+	// ! URL Translation
 	// =========================
 
 	/**
@@ -454,7 +454,7 @@ class Translator {
 	}
 
 	// =========================
-	// ! Magic Methods
+	// ! Overloading
 	// =========================
 
 	/**

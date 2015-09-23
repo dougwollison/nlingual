@@ -68,7 +68,7 @@ class API extends Functional {
 	}
 
 	// =========================
-	// ! Control Methods
+	// ! Controls
 	// =========================
 
 	/**
@@ -95,7 +95,7 @@ class API extends Functional {
 	}
 
 	// =========================
-	// ! Setup Utility Methods
+	// ! Setup Utilities
 	// =========================
 
 	/**
@@ -120,7 +120,7 @@ class API extends Functional {
 	}
 
 	// =========================
-	// ! Query Filter Methods
+	// ! Query Filters
 	// =========================
 
 	/**

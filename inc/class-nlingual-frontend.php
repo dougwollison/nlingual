@@ -26,7 +26,7 @@ class Frontend extends Functional {
 	protected static $name;
 
 	// =========================
-	// ! Methods
+	// ! Hook Registration
 	// =========================
 
 	/**
@@ -204,7 +204,7 @@ class Frontend extends Functional {
 	}
 
 	// =========================
-	// ! Theme Setup Methods
+	// ! Menu/Sidebar Rewriting
 	// =========================
 
 	/**
@@ -286,7 +286,7 @@ class Frontend extends Functional {
 	}
 
 	// =========================
-	// ! Nav Menu "Langlinks"
+	// ! Langlinks Handler
 	// =========================
 
 	/**

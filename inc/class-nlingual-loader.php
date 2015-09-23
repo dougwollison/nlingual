@@ -26,7 +26,7 @@ class Loader extends Functional {
 	protected static $name;
 
 	// =========================
-	// ! Methods
+	// ! Hook Registration
 	// =========================
 
 	/**
@@ -44,6 +44,10 @@ class Loader extends Functional {
 		register_deactivation_hook( NL_SELF, array( static::$name, 'plugin_deactivate' ) );
 		register_uninstall_hook( NL_SELF, array( static::$name, 'plugin_uninstall' ) );
 	}
+
+	// =========================
+	// ! Utilities
+	// =========================
 
 	/**
 	 * Security check logic.
@@ -69,6 +73,10 @@ class Loader extends Functional {
 
 		return true;
 	}
+
+	// =========================
+	// ! Hook Handlers
+	// =========================
 
 	/**
 	 * Create database tables and add default options.
