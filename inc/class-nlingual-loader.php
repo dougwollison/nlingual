@@ -33,6 +33,11 @@ class Loader extends Functional {
 	 * Register the plugin hooks
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses NL_SELF to identify the plugin file.
+	 * @uses Loader::plugin_activate() as the activation hook.
+	 * @uses Loader::plugin_deactivate() as the deactivation hook.
+	 * @uses Loader::plugin_uninstall() as the uninstall hook.
 	 */
 	public static function register_hooks() {
 		register_activation_hook( NL_SELF, array( static::$name, 'plugin_activate' ) );
@@ -69,6 +74,8 @@ class Loader extends Functional {
 	 * Create database tables and add default options.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Loader::plugin_security_check() to check for activation nonce.
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 */
@@ -123,6 +130,10 @@ class Loader extends Functional {
 	 * Empty deactivation hook for now.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Loader::plugin_security_check() to check for deactivation nonce.
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
 	 */
 	public static function plugin_deactivate() {
 		global $wpdb;
@@ -130,16 +141,16 @@ class Loader extends Functional {
 		if ( ! static::plugin_security_check( 'deactivate' ) ) {
 			return;
 		}
-
-		// Delete the object and string translation tables
-		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->nl_translations" );
-		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->nl_strings" );
 	}
 
 	/**
 	 * Delete database tables and any options.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Loader::plugin_security_check() to check for WP_UNINSTALL_PLUGIN.
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
 	 */
 	public static function plugin_uninstall() {
 		if ( ! static::plugin_security_check() ) {
@@ -150,7 +161,7 @@ class Loader extends Functional {
 		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->nl_translations" );
 		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->nl_strings" );
 
-		// Dnd delete the options
+		// And delete the options
 		$wpdb->query( "DELETE FORM $wpdb->options WHERE option_name like 'nlingual\_%'" );
 	}
 }

@@ -175,10 +175,12 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Languages::filter() to filter the languages before returning it.
+	 *
 	 * @param string $filter Optional A filter property to pass to Languages->filter().
 	 * @param string $value  Optional A filter value to pass to Languages->filter().
 	 *
-	 * @return Language The langauges collection (optionally filtered).
+	 * @return Language The languages collection (optionally filtered).
 	 */
 	public static function languages( $filter = null, $value = null ) {
 		return static::$languages->filter( $filter, $value );
@@ -189,10 +191,12 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Languages::get() to validate/retrieve the language ID.
+	 *
 	 * @param int    $lang_id The ID of the language to get info for.
 	 * @param string $field   Optional The field to get from language.
 	 *
-	 * @return mixed The langauge or the value of the language's field.
+	 * @return mixed The language or the value of the language's field.
 	 */
 	public static function get_lang( $lang_id, $field = null ) {
 		$language = static::$languages->get( $lang_id );
@@ -208,9 +212,11 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @see Registry::get_lang()
+	 * @uses Registry::get() to get the default language ID.
 	 *
-	 * @param string $field Optional The field to get from the langauge.
+	 * @see Registry::get_lang() for details.
+	 *
+	 * @param string $field Optional The field to get from the language.
 	 */
 	public static function default_lang( $field = null ) {
 		$lang_id = static::get( 'default_lang' );
@@ -222,9 +228,11 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @see Registry::get_lang()
+	 * @uses Registry::get() to get the current or default language ID.
 	 *
-	 * @param string $field Optional The field to get from the langauge.
+	 * @see Registry::get_lang() for details.
+	 *
+	 * @param string $field Optional The field to get from the language.
 	 */
 	public static function current_lang( $field = null ) {
 		$lang_id = static::get( 'current_lang' ) ?: static::get( 'default_lang' );
@@ -239,6 +247,8 @@ class Registry {
 	 * Get the cached data for an object.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @see Registry::$cache for the property that store the data.
 	 *
 	 * @param string     $section The section of the cache to look in.
 	 * @param int|string $id      The id of the cached object.
@@ -265,6 +275,8 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @see Registry::$cache for the property that store the data.
+	 *
 	 * @param string     $section The section of the cache to look in.
 	 * @param int|string $id      The id of the cached object.
 	 * @param mixed      $value   The data to store.
@@ -284,6 +296,8 @@ class Registry {
 	 * Delete the cached data for an object.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @see Registry::$cache for the property that store the data.
 	 *
 	 * @param string     $section The section of the cache to look in.
 	 * @param int|string $id      The id of the cached object.
@@ -305,6 +319,9 @@ class Registry {
 	 * Check if localizable feature is supported.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Registry::get() to get the localizables option.
+	 * @uses Registry::languages() to get the registered languages.
 	 *
 	 * @param string $item The name of the localizable to check support for.
 	 * @param array  $list The list of registered objects.
@@ -329,6 +346,8 @@ class Registry {
 	 * Check if a specific location is localizable.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Registry::get() to get the localizables option.
 	 *
 	 * @param string $type     The type of location to check for.
 	 * @param string $location The ID of the location to check.
@@ -365,6 +384,8 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Registry::get() to get the post_types option.
+	 *
 	 * @param string|array $post_type The post type(s) to check.
 	 *
 	 * @return bool Wether or not the post type(s) are supported.
@@ -372,7 +393,10 @@ class Registry {
 	public static function is_post_type_supported( $post_types ) {
 		$post_types = (array) $post_types; // Covnert to array
 
-		return (bool) array_intersect( static::$post_types, $post_types );
+		// Get the supported post types list
+		$supported = static::get( 'post_types' );
+
+		return (bool) array_intersect( $supported, $post_types );
 	}
 
 	// =========================
@@ -383,6 +407,16 @@ class Registry {
 	 * Load the relevant options.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @see Registry::$query_var
+	 * @see Registry::$redirection_method
+	 * @see Registry::$default_lang
+	 * @see Registry::$postlang_override
+	 * @see Registry::$skip_default_l10n
+	 * @see Registry::$languages
+	 * @see Registry::$post_types
+	 * @see Registry::$localizables
+	 * @see Registry::$sync_rules
 	 *
 	 * @param bool $reload Should we reload the options?
 	 */

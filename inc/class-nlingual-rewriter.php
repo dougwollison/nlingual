@@ -112,6 +112,10 @@ class Rewriter {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses NL_UNLOCALIZED to get the unlocalized home URL.
+	 * @uses Registry::get() to get the query var and redirection method options.
+	 * @uses Registry::languages() to validate and retrieve the parsed language.
+	 *
 	 * @param mixed $url_data The URL string or parsed array to proces.
 	 *
 	 * @return array An array of the resulting language and true hostname/path.
@@ -224,6 +228,15 @@ class Rewriter {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Registry::current_lang() to get the current Language object if not passed.
+	 * @uses Registry::cache_get() to check if this URL has already been localized.
+	 * @uses Rewriter::delocalize_url() to clean the URL for relocalizing if desired.
+	 * @uses Rewriter::process_url() to process the URL into it's components.
+	 * @uses Registry::default_lang() to get the default Language object for comparison.
+	 * @uses Registry::get() to get the skip_default_l10n, redirection_method and query_var options.
+	 * @uses Rewriter::build_url() to assemble the new URL from the modified components.
+	 * @uses Registry::cache_set() to store the result for future reuse.
+	 *
 	 * @param string   $url        The URL or parsed URL data.
 	 * @param Language $language   Optional The desired language to localize to.
 	 * @param bool     $relocalize Optional Wether or not to relocalize the url if it already is.
@@ -329,6 +342,9 @@ class Rewriter {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Rewriter::process_url() to extract the language if present.
+	 * @uses Rewriter::build_url() to remake the URL sans-language.
+	 *
 	 * @param string $url The URL to delocalize.
 	 *
 	 * @return string The delocalized url.
@@ -350,7 +366,12 @@ class Rewriter {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param Langauge $language The language to localize the current page for.
+	 * @uses Registry::current_lang() to get the current Language object.
+	 * @uses Translator::get_permalink() to get the page/post translation's permalink.
+	 * @uses Rewriter::process_url() to localize the original URL of the page.
+	 * @uses Rewriter::build_url() to build the localized URL from it's components.
+	 *
+	 * @param Language $language The language to localize the current page for.
 	 *
 	 * @return string The localized URL.
 	 */
@@ -360,14 +381,11 @@ class Rewriter {
 			$language = Registry::current_lang();
 		}
 
-		$url = null; // For the end result URL
-		$here = null; // For a URL to (re)localize
-
 		// Try various conditional tags
 
 		// Front page? just use home_url()
 		if ( is_front_page() ) {
-			$here = home_url( '/' );
+			$url = home_url();
 		} else
 		// Home page? Get the translation permalink
 		if ( is_home() ) {
@@ -381,39 +399,34 @@ class Rewriter {
 		} else
 		// Term page? Get the term link
 		if ( is_tax() || is_tag() || is_category() ) {
-			$here = get_term_link( get_queried_object() );
+			$url = get_term_link( get_queried_object() );
 		} else
 		// Post type archive? Get the link
 		if ( is_post_type_archive() ) {
-			$here = get_post_type_archive_link( get_queried_object()->name );
+			$url = get_post_type_archive_link( get_queried_object()->name );
 		} else
 		// Author archive? Get the link
 		if ( is_author() ) {
-			$here = get_author_posts_link( get_queried_object_id() );
+			$url = get_author_posts_link( get_queried_object_id() );
 		} else
 		// Date archive? Get link
 		if ( is_day() ) {
-			$here = get_day_link( get_query_var( 'year' ), get_query_var( 'month' ), get_query_var( 'day' ) );
+			$url = get_day_link( get_query_var( 'year' ), get_query_var( 'month' ), get_query_var( 'day' ) );
 		} else
 		// Month archive? Get link
 		if ( is_month() ) {
-			$here = get_month_link( get_query_var( 'year' ), get_query_var( 'month' ) );
+			$url = get_month_link( get_query_var( 'year' ), get_query_var( 'month' ) );
 		} else
 		// Year archive? Get link
 		if ( is_year() ) {
-			$here = get_year_link( get_query_var( 'year' ) );
+			$url = get_year_link( get_query_var( 'year' ) );
 		} else
 		// Search page? Rebuild the link
 		if ( is_search() ) {
-			$here = home_url( '/?s=' . get_query_var( 's' ) );
+			$url = home_url( '/?s=' . get_query_var( 's' ) );
 		} else {
-			// Give up and just use the orignal requested URL.
-			$here = NL_ORIGINAL_URL;
-		}
-
-		// If $url hasn't been determined, localize $here
-		if ( ! $url && $here ) {
-			$url = static::localize_url( $here, $language, true );
+			// Give up and localize the orignally requested URL.
+			$url = static::localize_url( NL_ORIGINAL_URL, $language, true );
 		}
 
 		// Now parse the URL

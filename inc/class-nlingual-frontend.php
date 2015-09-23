@@ -59,6 +59,11 @@ class Frontend extends Functional {
 	 * Detect the language based on the request.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Registry::languages() to validate and retrieve the detected language.
+	 * @uses Rewriter::process_url() to parse the current page URL.
+	 * @uses Registry::get() to get the query var option.
+	 * @uses API::set_language() to tentatively apply the detected language.
 	 */
 	public static function detect_requested_language() {
 		// Get the accepted language
@@ -91,6 +96,10 @@ class Frontend extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Registry::get() to get the postlang_override option.
+	 * @uses Translator::get_object_language() to get the queried posts language.
+	 * @uses API::set_language() to permanently apply the detected language.
+	 *
 	 * @global WP_Query $wp_query The main WP_Query instance.
 	 */
 	public static function detect_queried_language() {
@@ -118,7 +127,7 @@ class Frontend extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Rewriter::localize_url()
+	 * @uses Rewriter::localize_url() to localize both URLs.
 	 *
 	 * @param string  $redirect_url  The intended redirect URL.
 	 * @param string  $requested_url The originally requested URL.
@@ -139,11 +148,15 @@ class Frontend extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses NL_UNLOCALIZED to get the unlocalized home URL.
+	 * @uses NL_ORIGINAL_URL for comparison.
+	 * @uses Rewriter::localize_here() to determine the proper URL.
+	 *
 	 * @uses Rewriter::localize_url()
 	 */
 	public static function maybe_redirect() {
 		// Get the plain home URL for comparison (allow unlocalized version)
-		$unlocalized_home = Rewriter::delocalize_url( home_url() );
+		$unlocalized_home = get_home_url( null, '', NL_UNLOCALIZED );
 
 		// Abort if it's just the homepage
 		if ( untrailingslashit( NL_ORIGINAL_URL ) == $unlocalized_home ) {
@@ -169,6 +182,9 @@ class Frontend extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses NL_UNLOCALIZED to prevent filter recursion.
+	 * @uses Rewriter::localize_url() to create the new url.
+	 *
 	 * @param string      $url     The complete home URL including scheme and path.
 	 * @param string      $path    Path relative to the home URL.
 	 * @param string|null $scheme  Scheme to give the home URL context.
@@ -179,7 +195,6 @@ class Frontend extends Functional {
 	public static function localize_home_url( $url, $path, $scheme, $blog_id ) {
 		// Check if we shouldn't actually localize this
 		// (will be indicated by custom $scheme value)
-		// This prevents home_url > localize_url recursion.
 		if ( $scheme == NL_UNLOCALIZED ) {
 			return $url;
 		}
@@ -196,6 +211,11 @@ class Frontend extends Functional {
 	 * Shared logic for menu/sidebar rewriting.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Registry::is_feature_localizable() to check for support.
+	 * @uses Registry::default_lang() to get the default language ID.
+	 * @uses Registry::current_lang() to get the current language ID.
+	 * @uses Registry::is_location_localizable() to check for support.
 	 *
 	 * @param string $type       The type of location.
 	 * @param array  $locations  The list of locations to filter.
@@ -274,6 +294,9 @@ class Frontend extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Registry::languages() to validate and retrieve the link's language.
+	 * @uses Rewriter::localize_here() to try and localize the current URL.
+	 *
 	 * @param array $items The nav menu items.
 	 *
 	 * @return array The modified items.
@@ -283,8 +306,8 @@ class Frontend extends Functional {
 			if ( $item->type == 'langlink' ) {
 				// Language link, set URL to the localized version of the current location
 				// Delete the item if it's for a language that doesn't exist or is inactive
-				if ( Registry::language_exists( $item->object ) ) {
-					$item->url = API::localize_here( $item->object );
+				if ( $language = Registry::languages()->get( $item->object ) ) {
+					$item->url = Rewriter::localize_here( $language );
 				} else {
 					unset( $items[$i] );
 				}

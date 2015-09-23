@@ -15,6 +15,8 @@ class Migrator {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Migrator::export_languages() for converting the languages table to an option.
+	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 */
 	public static function upgrade_database() {
@@ -50,6 +52,8 @@ class Migrator {
 	 * Export languages from database into options table.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Languages() to create a new language collection.
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 */

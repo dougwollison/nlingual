@@ -52,6 +52,11 @@ class Backend extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Registry::is_feature_localizable() to check for support.
+	 * @uses Registry::languages() to loop through all registered languages.
+	 * @uses Registry::is_location_localizable() to check for support.
+	 * @uses Registry::cache_set() to store the original global value.
+	 *
 	 * @param string $type   The type of location being localized (singular).
 	 * @param string $global The global variable name to be edited.
 	 */
@@ -124,7 +129,7 @@ class Backend extends Functional {
 	// =========================
 
 	/**
-	 * Adds a new metabox to the menu editor for adding langauge links.
+	 * Adds a new metabox to the menu editor for adding language links.
 	 *
 	 * @since 2.0.0
 	 */
@@ -142,6 +147,8 @@ class Backend extends Functional {
 	 * The language links metabox.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Registry::languages() to loop through all registered languages.
 	 */
 	public static function do_nav_menu_metabox() {
 		global $nav_menu_selected_id;

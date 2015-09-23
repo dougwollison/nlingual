@@ -34,6 +34,12 @@ class API extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Loader::register_hooks() to setup plugin management.
+	 * @uses Registry::load() to load the options.
+	 * @uses API::register_hooks() globally.
+	 * @uses Backend::register_hooks() if in the admin (and not AJAX).
+	 * @uses Frontend::register_hooks() if otherwise.
+	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 */
 	public static function setup() {
@@ -69,6 +75,8 @@ class API extends Functional {
 	 * Set the current language.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Registry::set() to store the new current language.
 	 *
 	 * @param Language $lang The desired language id.
 	 * @param bool     $lock Wether or not to lock the selection.
@@ -120,6 +128,8 @@ class API extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Registry::get() to get the query var option.
+	 *
 	 * @param array $vars The whitelist of query vars.
 	 *
 	 * @return array The updated whitelist.
@@ -135,6 +145,9 @@ class API extends Functional {
 	 * Adds JOIN clause for the translations table if needed.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Registry::is_post_type_supported()
+	 * @uses Registry::get() to get the query var option.
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
@@ -161,6 +174,10 @@ class API extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Registry::is_post_type_supported()
+	 * @uses Registry::get() to get the query var option.
+	 * @uses Registry::languages() to validate and retrieve the language.
+	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @param string   $clause The WHERE clause.
@@ -173,7 +190,7 @@ class API extends Functional {
 
 		// Check if the post type in question supports translation,
 		// that the language is specified in the query,
-		// and that a registered langauge can be found.
+		// and that a registered language can be found.
 		if ( Registry::is_post_type_supported( $query->get('post_type') )
 		&& ( $lang = $query->get( Registry::get( 'query_var' ) ) )
 		&& ( $language = Registry::languages()->get( $lang ) ) ) {
