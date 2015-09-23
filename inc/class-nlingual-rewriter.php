@@ -9,10 +9,6 @@ namespace nLingual;
  * @since 2.0.0
  */
 
-// Flags
-define( 'NL_REDIRECT_USING_DOMAIN', 'NL_REDIRECT_USING_DOMAIN' );
-define( 'NL_REDIRECT_USING_PATH', 'NL_REDIRECT_USING_PATH' );
-
 class Rewriter {
 	// =========================
 	// ! URL Building Methods
@@ -123,6 +119,9 @@ class Rewriter {
 	public static function process_url( $url_data = null ) {
 		$lang = null;
 
+		// Get the home URL (unlocalized)
+		$home = get_home_url( null, '', NL_UNLOCALIZED );
+
 		// Copy to $old_url_data for storage
 		$old_url_data = $url_data;
 
@@ -163,7 +162,7 @@ class Rewriter {
 		$lang =& $url_data['lang'];
 
 		// Try using the desired method
-		switch( Registry::get( 'detection_method' ) ) {
+		switch( Registry::get( 'redirection_method' ) ) {
 			case NL_REDIRECT_USING_DOMAIN:
 				// Check if a language slug is present, and if it's an existing language
 				if ( preg_match( '#^([a-z]{2})\.#i', $host, $matches ) ) {
@@ -174,9 +173,10 @@ class Rewriter {
 					$host = substr( $host, 3 );
 				}
 				break;
+
 			case NL_REDIRECT_USING_PATH:
 				// Get the path of the home URL, with trailing slash
-				$home = trailingslashit( parse_url( home_url(), PHP_URL_PATH ) );
+				$home = trailingslashit( parse_url( $home, PHP_URL_PATH ) );
 
 				// Subtract the home path from the start of the path provided
 				$path = substr( $path, strlen( $home ) );
@@ -214,7 +214,7 @@ class Rewriter {
 	}
 
 	// =========================
-	// ! URL Translation Methods
+	// ! URL Conversion Methods
 	// =========================
 
 	/**
@@ -231,17 +231,22 @@ class Rewriter {
 	 * @return string The new localized URL.
 	 */
 	public static function localize_url( $url, Language $language = null, $relocalize = false ) {
+		// If no $url is passed, use current URL
+		if ( is_null( $url ) ) {
+			$url = NL_ORIGINAL_URL;
+		}
+
+		// Get the home URL (unlocalized)
+		$home = get_home_url( null, '', NL_UNLOCALIZED );
+
 		// Check if it's just a URI,
 		// prefix with domain of home URL if so
 		if ( ! parse_url( $url, PHP_URL_HOST ) ) {
-			$url = site_url( $url );
+			$url = $home . $url;
 		}
 
 		// Copy the URL
 		$old_url = $url;
-
-		// Get the home URL
-		$home = home_url();
 
 		// Default to the current language
 		if ( ! $language ) {
@@ -257,8 +262,8 @@ class Rewriter {
 			return $cached;
 		}
 
-		// Proceed if it's a local url and also not just the home url
-		if ( strpos( $url, $home ) === 0 && $url !== $home ) {
+		// Proceed if it's a local url
+		if ( strpos( $url, $home ) === 0 ) {
 			// If $relocalize, delocalize first
 			if ( $relocalize ) {
 				$url = static::delocalize_url( $url );
@@ -273,17 +278,23 @@ class Rewriter {
 			// Go ahead and localize the URL
 			if ( is_null( $url_data['lang'] )
 			&& ! preg_match( '#^wp-([\w-]+.php|(admin|content|includes)/)#', $url_data['path'] )
-			&& ( $language !== Registry::default_lang() || ! Registry::get_option( 'skip_default_l10n' ) ) ) {
+			&& ( $language !== Registry::default_lang() || ! Registry::get( 'skip_default_l10n' ) ) ) {
 				switch ( Registry::get( 'redirection_method' ) ) {
 					case NL_REDIRECT_USING_DOMAIN:
 						// Prepend hostname with language slug
 						$url_data['host'] = "{$language->slug}.{$url_data['host']}";
 						break;
 					case NL_REDIRECT_USING_PATH:
-						// Prepend path with language slug (after any home path)
-						$home_path = parse_url( home_url(), PHP_URL_PATH ) ?: '';
+						// Add language slug to path (after any home path)
+						$home_path = parse_url( $home, PHP_URL_PATH ) ?: '';
 						$request_path = substr( $url_data['path'], strlen( $home_path ) );
-						$url_data['path'] = $home_path . "/{$language->slug}" . $request_path;
+
+						// Trim excess slashes
+						$home_path = trim( $home_path, '/' );
+						$request_path = trim( $request_path, '/' );
+
+						// Build the new path
+						$url_data['path'] = trailingslashit( $home_path . "/{$language->slug}/" . $request_path );
 						break;
 					default:
 						// Add the query argument
@@ -396,8 +407,8 @@ class Rewriter {
 		if ( is_search() ) {
 			$here = home_url( '/?s=' . get_query_var( 's' ) );
 		} else {
-			// Give up and just use the requested URI.
-			$here = $_SERVER['REQUEST_URI'];
+			// Give up and just use the orignal requested URL.
+			$here = NL_ORIGINAL_URL;
 		}
 
 		// If $url hasn't been determined, localize $here
