@@ -29,12 +29,30 @@ abstract class Functional {
 	}
 
 	/**
-	 * Alias; add internal method to an action hook.
+	 * Alias; add internal method from an action hook.
 	 *
 	 * @since 2.0.0
 	 */
 	final protected static function add_action() {
 		call_user_func_array( 'self::add_filter', func_get_args() );
+	}
+
+	/**
+	 * Remove an internal method to a filter hook.
+	 *
+	 * @since 2.0.0
+	 */
+	final protected static function remove_filter( $tag, $method, $priority = 10 ) {
+		add_filter( $tag, array( static::$name, $method ), $priority );
+	}
+
+	/**
+	 * Alias; remove internal method from an action hook.
+	 *
+	 * @since 2.0.0
+	 */
+	final protected static function remove_action() {
+		call_user_func_array( 'self::remove_filter', func_get_args() );
 	}
 
 	/**
