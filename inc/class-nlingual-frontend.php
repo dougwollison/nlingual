@@ -179,6 +179,7 @@ class Frontend extends Functional {
 	public static function localize_home_url( $url, $path, $scheme, $blog_id ) {
 		// Check if we shouldn't actually localize this
 		// (will be indicated by custom $scheme value)
+		// This prevents home_url > localize_url recursion.
 		if ( $scheme == NL_UNLOCALIZED ) {
 			return $url;
 		}
