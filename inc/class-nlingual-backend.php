@@ -36,7 +36,7 @@ class Backend extends Functional {
 	 */
 	public static function register_hooks() {
 		// Post Changes
-		static::add_filter( 'deleted_post', 'deleted_post', 10, 1 );
+		static::add_filter( 'deleted_post', 'deleted_post' );
 
 		// Script/Style Enqueues
 		static::add_action( 'admin_enqueue_scripts', 'enqueue_assets' );
@@ -47,6 +47,7 @@ class Backend extends Functional {
 
 		// Post Translations Meta Box
 		static::add_action( 'add_meta_boxes', 'add_translations_meta_box' );
+		static::add_action( 'save_post', 'save_translations_meta_box' );
 
 		// Menu Editor Meta Box
 		static::add_action( 'admin_head', 'add_nav_menu_meta_box' );
@@ -268,7 +269,6 @@ class Backend extends Functional {
 
 		<?php if ( $languages->count() > 1 ) : ?>
 		<h4 class="nl-heading"><?php _e( 'Translations', NLTXTDMN ); ?></h4>
-
 		<?php foreach ( $languages as $language ) : ?>
 		<div id="nlingual_lang<?php echo $language->id?>" class="nl-field nl-translation-field" data-langid="<?php echo $language->id?>">
 			<label for="nlingual_translation_<?php echo $language->id; ?>">
@@ -294,8 +294,61 @@ class Backend extends Functional {
 			</select>
 		</div>
 		<?php endforeach; ?>
-
 		<?php endif;
+
+		// Nonce field for save validation
+		wp_nonce_field( 'nlingual_translations-' . $post->ID, '_nl_nonce', false );
+	}
+
+	/**
+	 * Save settings from the translations meta box.
+	 *
+	 * Handles language assignment, translation linking,
+	 * and any enabled synchronizing with sister posts.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @param int $post_id The ID of the post being saved.
+	 */
+	public static function save_translations_meta_box( $post_id ) {
+		global $wpdb;
+
+		// Abort if doing auto save or it's a revision
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || wp_is_post_revision( $post_id ) ) {
+			return;
+		}
+
+		// Check for the nonce
+		if ( ! isset( $_POST['_nl_nonce'] ) ) {
+			return;
+		}
+
+		// Unhook to prevent infinite loop
+		static::remove_action( 'save_post', __FUNCTION__ );
+
+		// Fail if nonce is invalid
+		if ( ! wp_verify_nonce( $_POST['_nl_nonce'], 'nlingual_translations-' . $post_id ) ) {
+			wp_die( __( 'Cheatin&#8217; uh?' ) );
+		}
+
+		// Start by updating the language if set
+		if ( isset( $_POST['nlingual_language'] ) ) {
+			if ( ! Translator::set_post_language( $post_id, $_POST['nlingual_language'] ) ) {
+				wp_die( __( 'That language does not exist.', NLTXTDMN ) );
+			}
+		}
+
+		// Next, handle any translations
+		if ( isset( $_POST['nlingual_translation'] ) ) {
+			if ( ! Translator::set_post_translations( $post_id, $_POST['nlingual_translation'] ) ) {
+				wp_die( __( 'Error saving translations; one or more languages do not exist.', NLTXTDMN ) );
+			}
+		}
+
+		// Rehook now that we're done
+		static::add_action( 'save_post', __FUNCTION__ );
 	}
 
 	// =========================
