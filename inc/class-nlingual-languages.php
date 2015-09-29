@@ -252,7 +252,7 @@ class Languages implements \Iterator {
 		$data = array();
 
 		foreach ( $this->languages as $language ) {
-			$data[] = $language->export();
+			$data[ $language->id ] = $language->export();
 		}
 
 		return $data;
