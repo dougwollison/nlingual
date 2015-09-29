@@ -36,7 +36,7 @@ class AJAX extends Functional {
 	 */
 	public static function register_hooks() {
 		// Translation creation
-		static::add_action( 'wp_ajax_nl_new_translation', 'ajax_new_translation' );
+		static::add_action( 'wp_ajax_nl_new_translation', 'new_translation' );
 	}
 
 	// =========================
@@ -51,7 +51,7 @@ class AJAX extends Functional {
 	 * @uses Registry::languages() to validate the language requested.
 	 * @uses Synchronizer::clone_post() to create the cloned post.
 	 */
-	public static function ajax_new_translation() {
+	public static function new_translation() {
 		// Fail if no post/lang id or title is passed
 		if ( ! isset( $_REQUEST['post_id'] ) || ! isset( $_REQUEST['lang_id'] ) || ! isset( $_REQUEST['title'] ) ) {
 			return;
