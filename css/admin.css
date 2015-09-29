@@ -1,0 +1,26 @@
+.nl-heading {
+  font-size: 1em;
+  margin: 1em 0 .5em; }
+
+.nl-field label {
+  *zoom: 1;
+  display: block;
+  padding: 3px 0;
+  margin: 0 0 5px; }
+  .nl-field label:after {
+    content: "";
+    display: table;
+    clear: both; }
+.nl-field .button {
+  float: right;
+  margin: -3px 0; }
+.nl-field select {
+  clear: both;
+  display: block;
+  width: 100%; }
+
+.nl-language-field label {
+  font-weight: bold; }
+
+.nl-translation-field {
+  margin: 10px 0 5px; }
