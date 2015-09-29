@@ -204,16 +204,16 @@ class Translator {
 					ON (t1.group_id = t2.group_id)
 			WHERE 1=1
 				AND t1.object_type = %s
-				AND t1.object_id = %1\$d
+				AND t1.object_id = %2\$d
 		";
 
 		// Add the additional where clause if $include_self is false
 		if ( ! $include_self ) {
-			$query .= "AND t2.object_id != %1\$d";
+			$query .= "AND t2.object_id != %2\$d";
 		}
 
 		// Get the results of the query
-		$results = $wpdb->get_results( $wpdb->prepare( $query, $post_id ) );
+		$results = $wpdb->get_results( $wpdb->prepare( $query, $type, $id ) );
 
 		// Loop through the results and build the lang_id => object_id list
 		$objects = array();
@@ -294,7 +294,7 @@ class Translator {
 
 		// Go through the $objects and handle accordingly
 		$values = array();
-		foreach ( $objects as $object_id => $lang ) {
+		foreach ( $objects as $lang => $object_id ) {
 			// Ensure $lang is a Language
 			if ( ! static::_lang( $lang ) ) {
 				return false; // Does not exist
@@ -305,7 +305,7 @@ class Translator {
 				static::unlink_object_translation( $type, $id, $lang );
 			} else {
 				// Build the row data for the query
-				$values[] = $wpdb->prepare( "(%d, %s, %d, %d)", $group_id, $type, $object_id, $lang_id );
+				$values[] = $wpdb->prepare( "(%d, %s, %d, %d)", $group_id, $type, $object_id, $lang->id );
 			}
 		}
 
@@ -537,8 +537,9 @@ class Translator {
 		// Get the post object
 		$translation = get_post( $translation );
 
-		// Set the language of the translation
+		// Set the language of the translation and it's associate it with the original
 		static::set_post_language( $translation->ID, $language );
+		static::set_post_translation( $post->ID, $language, $translation->ID );
 
 		if ( isset( $rules['post_meta'] ) && $rules['post_meta'] ) {
 			// Now, copy over all meta data found
