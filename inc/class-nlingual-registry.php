@@ -439,8 +439,8 @@ class Registry {
 		}
 
 		// Load simple options
-		static::$query_var = get_option( 'nlingual_query_var', '' );
-		static::$redirection_method = get_option( 'nlingual_redirection_method', '' );
+		static::$query_var = get_option( 'nlingual_query_var', 'nl_language' );
+		static::$redirection_method = get_option( 'nlingual_redirection_method', NL_REDIRECT_USING_GET );
 		static::$default_lang = get_option( 'nlingual_default_language', 0 );
 		static::$postlang_override = get_option( 'nlingual_postlang_override', 0 );
 		static::$skip_default_l10n = get_option( 'nlingual_skip_default_l10n', 0 );
