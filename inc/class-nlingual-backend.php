@@ -47,6 +47,9 @@ class Backend extends Functional {
 
 		// Menu Editor Meta Box
 		static::add_action( 'admin_head', 'add_nav_menu_meta_box' );
+
+		// JavaScript Variables
+		static::add_action( 'admin_footer', 'print_javascript_vars' );
 	}
 
 	// =========================
@@ -69,8 +72,12 @@ class Backend extends Functional {
 		wp_enqueue_script( 'nlingual-admin-js', plugins_url( 'js/admin.js', NL_SELF ), array( 'jquery-ui-sortable' ), '2.0.0' );
 
 		// Localize the javascript
-		wp_localize_script( 'nlingual-admin-js', 'nlingual_l10n', array(
-			'NoPostSelected' => __( 'No post selected to edit.', NLTXTDMN ),
+		wp_localize_script( 'nlingual-admin-js', 'nlingualL10n', array(
+			'TranslationTitle'            => __( 'Enter the title for this translation.', NLTXTDMN ),
+			'TranslationTitlePlaceholder' => __( 'Translate to %s: %s', NLTXTDMN ),
+			'NewTranslationError'         => __( 'Error creating translation, please try again later or create one manually.', NLTXTDMN ),
+			'NoPostSelected'              => __( 'No post selected to edit.', NLTXTDMN ),
+			'NewTranslation'              => __( '[New]', NLTXTDMN ),
 		) );
 	}
 
@@ -217,7 +224,7 @@ class Backend extends Functional {
 			$lang_options[ $language->id ] = $language->system_name;
 
 			// Get all posts of this type for this language (excluding the current one)
-			$post_options[ $language->id ] = $wpdb->get_results( $wpdb->prepare("
+			$post_options[ $language->id ] = $wpdb->get_results( $wpdb->prepare( "
 				SELECT t.object_id, p.post_title
 				FROM $wpdb->nl_translations AS t
 				LEFT JOIN $wpdb->posts AS p ON (t.object_id = p.ID)
@@ -240,8 +247,8 @@ class Backend extends Functional {
 				<?php
 				// Print the options
 				foreach ( $lang_options as $value => $label ) {
-					$selected = $post_lang == $value ? 'selected' : '';
-					printf( '<option value="%s" %s>%s</option>', $value, $post_lang == $value ? 'selected' : '', $label );
+					$selected = $post_lang->id == $value ? 'selected' : '';
+					printf( '<option value="%s" %s>%s</option>', $value, $selected, $label );
 				}
 				?>
 			</select>
@@ -254,11 +261,12 @@ class Backend extends Functional {
 		<div id="nlingual_lang<?php echo $language->id?>" class="nl-field nl-translation-field" data-langid="<?php echo $language->id?>">
 			<label for="nlingual_translation_<?php echo $language->id; ?>">
 				<?php echo $language->system_name; ?>
-				<button type="button" class="button button-small nl-edit-translation" data-alt="<?php _e( 'Create', NLTXTDMN );?>" data-url="<?php echo admin_url( $post_type_object->_edit_link );?>"><?php _e( 'Edit', NLTXTDMN );?></button>
+				<button type="button" class="button button-small nl-edit-translation" data-alt="<?php _e( 'Create', NLTXTDMN );?>" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' );?>"><?php _e( 'Edit', NLTXTDMN );?></button>
 			</label>
-			<select name="nlingual_translation[<?php echo $language->id; ?>]" id="nlingual_translation_<?php echo $language->id; ?>" class="nl-input">
+
+			<select name="nlingual_translation[<?php echo $language->id; ?>]" id="nlingual_translation_<?php echo $language->id; ?>" class="nl-input nl-translation">
 				<option value="-1"><?php _ex( '&mdash; None &mdash;', 'no translation', NLTXTDMN ); ?></option>
-				<option value="new"><?php _ef( '&mdash; New %s %s &mdash;', NLTXTDMN, $language->system_name, $post_type->labels->singular_name ); ?></option>
+				<option value="new" class="nl-new-translation"><?php _ef( '&mdash; New %s %s &mdash;', NLTXTDMN, $language->system_name, $post_type->labels->singular_name ); ?></option>
 				<?php
 				// Print the options
 				foreach ( $post_options[ $language->id ] as $option ) {
@@ -336,6 +344,26 @@ class Backend extends Functional {
 				</span>
 			</p>
 		</div>
+		<?php
+	}
+
+	// =========================
+	// ! JavaScript Variables
+	// =========================
+
+	/**
+	 * Print relevent variables for JavaScript.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function print_javascript_vars() {
+		?>
+		<script>
+			if(typeof admin_url === 'undefined'){
+				var admin_url = '<?php echo admin_url(); ?>';
+			}
+			var NL_LANGUAGES = <?php echo json_encode( Registry::languages()->export() ); ?>
+		</script>
 		<?php
 	}
 }
