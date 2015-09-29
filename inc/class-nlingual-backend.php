@@ -35,6 +35,9 @@ class Backend extends Functional {
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
+		// Script/Style Enqueues
+		static::add_action( 'admin_enqueue_scripts', 'enqueue_assets' );
+
 		// Theme Setup Actions
 		static::add_action( 'after_setup_theme', 'register_localized_nav_menus', 999 );
 		static::add_action( 'widgets_init', 'register_localized_sidebars', 999 );
@@ -44,6 +47,31 @@ class Backend extends Functional {
 
 		// Menu Editor Meta Box
 		static::add_action( 'admin_head', 'add_nav_menu_meta_box' );
+	}
+
+	// =========================
+	// ! Script/Style Enqueues
+	// =========================
+
+	/**
+	 * Enqueue necessary styles and scripts.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function enqueue_assets(){
+		// Get the current screen
+		$screen = get_current_screen();
+
+		// Admin styling
+		wp_enqueue_style( 'nlingual-admin', plugins_url( 'css/admin.css', NL_SELF ), '2.0.0', 'screen' );
+
+		// Admin javascript
+		wp_enqueue_script( 'nlingual-admin-js', plugins_url( 'js/admin.js', NL_SELF ), array( 'jquery-ui-sortable' ), '2.0.0' );
+
+		// Localize the javascript
+		wp_localize_script( 'nlingual-admin-js', 'nlingual_l10n', array(
+			'NoPostSelected' => __( 'No post selected to edit.', NLTXTDMN ),
+		) );
 	}
 
 	// =========================
