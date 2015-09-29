@@ -260,6 +260,11 @@ class Backend extends Functional {
 			return;
 		}
 
+		// Abort if post's type not supported
+		if ( ! Registry::is_post_type_supported( get_post_type( $post_id ) ) ) {
+			return;
+		}
+
 		// Start by printing out the language
 		$language = Translator::get_post_language( $post_id );
 		if ( ! $language ) {
