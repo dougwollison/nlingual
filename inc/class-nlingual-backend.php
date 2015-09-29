@@ -35,6 +35,9 @@ class Backend extends Functional {
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
+		// Post Changes
+		static::add_filter( 'deleted_post', 'deleted_post', 10, 1 );
+
 		// Script/Style Enqueues
 		static::add_action( 'admin_enqueue_scripts', 'enqueue_assets' );
 
@@ -50,6 +53,15 @@ class Backend extends Functional {
 
 		// JavaScript Variables
 		static::add_action( 'admin_footer', 'print_javascript_vars' );
+	}
+
+	// =========================
+	// ! Post Changes
+	// =========================
+
+	public static function deleted_post( $post_id ) {
+		// Delete the language
+		Translator::delete_post_language( $post_id );
 	}
 
 	// =========================
