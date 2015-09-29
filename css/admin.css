@@ -1,3 +1,10 @@
+.fixed .column-nlingual {
+  width: 15%; }
+  .fixed .column-nlingual ul {
+    margin: 5px 0 0; }
+  .fixed .column-nlingual li {
+    margin: 0 0 3px; }
+
 .nl-heading {
   font-size: 1em;
   margin: 1em 0 .5em; }
