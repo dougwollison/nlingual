@@ -54,11 +54,19 @@ class Backend extends Functional {
 			static::add_filter( "manage_{$post_type}_posts_columns", 'add_language_column', 15 );
 			static::add_action( "manage_{$post_type}_posts_custom_column", 'do_language_column', 10, 2 );
 		}
-		static::add_action( 'quick_edit_custom_box', 'do_quick_edit_box', 10, 2 );
+
+		// Quick/Bulk Edit Interfaces
+		static::add_action( 'quick_edit_custom_box', 'quick_edit_language', 10, 2 );
+		static::add_action( 'quick_edit_custom_box', 'quick_edit_translations', 10, 2 );
+		static::add_action( 'bulk_edit_custom_box', 'bulk_edit_language', 10, 2 );
 
 		// Post Editor Interfaces
 		static::add_action( 'add_meta_boxes', 'add_post_meta_box' );
-		static::add_action( 'save_post', 'save_post_meta_box' );
+
+		// Save hooks
+		static::add_action( 'save_post', 'save_post_language' );
+		static::add_action( 'save_post', 'save_post_translations' );
+		static::add_action( 'save_post', 'save_bulk_post_language' );
 
 		// Menu Editor Meta Box
 		static::add_action( 'admin_head', 'add_nav_menu_meta_box' );
@@ -293,7 +301,7 @@ class Backend extends Functional {
 	 * @param string $column    The column this box corresponds to.
 	 * @param string $post_type The post type this is for.
 	 */
-	public static function do_quick_edit_box( $column, $post_type ) {
+	public static function quick_edit_language( $column, $post_type ) {
 		global $wpdb;
 
 		// Abort if not the correct column
@@ -305,26 +313,6 @@ class Backend extends Functional {
 		if ( ! Registry::is_post_type_supported( $post_type ) ) {
 			return;
 		}
-
-		$languages = Registry::languages();
-
-		// Build the language and translation option lists
-		$lang_options = array();
-		$post_options = array();
-		foreach ( $languages as $language ) {
-			$lang_options[ $language->id ] = $language->system_name;
-
-			// Get all posts of this type for this language (excluding the current one)
-			$post_options[ $language->id ] = $wpdb->get_results( $wpdb->prepare( "
-				SELECT p.ID, p.post_title
-				FROM $wpdb->nl_translations AS t
-				LEFT JOIN $wpdb->posts AS p ON (t.object_id = p.ID)
-				WHERE t.object_type = 'post'
-				AND t.lang_id = %d
-				AND t.object_id != %d
-				AND p.post_type = %d
-			", $language->id, $post->ID, $post->post_type ) );
-		}
 		?>
 		<br class="clear" />
 		<fieldset class="inline-edit-col-left">
@@ -335,25 +323,67 @@ class Backend extends Functional {
 						<option value="-1">&mdash; <?php _ex( 'None', 'no language', NLTXTDMN ); ?> &mdash;</option>
 						<?php
 						// Print the options
-						foreach ( $lang_options as $value => $label ) {
-							printf( '<option value="%s">%s</option>', $value, $label );
+						foreach ( Registry::languages() as $language ) {
+							printf( '<option value="%s">%s</option>', $language->id, $language->system_name );
 						}
 						?>
 					</select>
 				</label>
 			</div>
 		</fieldset>
+		<?php
+
+		// Nonce field for save validation
+		wp_nonce_field( 'nlingual_post_language', '_nl_lang_nonce', false );
+	}
+
+	/**
+	 * Print out the quick-edit box for post language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @uses Registry::is_post_type_supported() to check for support.
+	 * @uses Registry::languages() to loop through the active languages.
+	 *
+	 * @param string $column    The column this box corresponds to.
+	 * @param string $post_type The post type this is for.
+	 */
+	public static function quick_edit_translations( $column, $post_type ) {
+		global $wpdb;
+
+		// Abort if not the correct column
+		if ( $column != 'nlingual' ) {
+			return;
+		}
+
+		// Or if the post type isn't supported
+		if ( ! Registry::is_post_type_supported( $post_type ) ) {
+			return;
+		}
+		?>
 		<fieldset class="inline-edit-col-right" style="margin: 0;">
 			<div class="inline-edit-col">
 				<h4>Translations</h4>
-				<?php foreach ( $languages as $language ) : ?>
+				<?php foreach ( Registry::languages() as $language ) : ?>
 				<label id="nl_translation_<?php echo $language->id; ?>" class="nl-translation"  data-langid="<?php echo $language->id; ?>">
 					<span class="title"><?php echo $language->system_name;?></span>
 					<select name="nlingual_translation[<?php echo $language->id; ?>]">
 						<option value="-1">&mdash; <?php _ex( 'None', 'no translation', NLTXTDMN ); ?> &mdash;</option>
 						<?php
+						// Get all posts in this language
+						$posts = $wpdb->get_results( $wpdb->prepare( "
+							SELECT p.ID, p.post_title
+							FROM $wpdb->nl_translations AS t
+							LEFT JOIN $wpdb->posts AS p ON (t.object_id = p.ID)
+							WHERE t.object_type = 'post'
+							AND t.lang_id = %d
+							AND p.post_type = %s
+						", $language->id, $post_type ) );
+
 						// Print the options
-						foreach ( $post_options[ $language->id ] as $option ) {
+						foreach ( $posts as $option ) {
 							printf( '<option value="%s">%s</option>', $option->ID, $option->post_title );
 						}
 						?>
@@ -365,7 +395,51 @@ class Backend extends Functional {
 		<?php
 
 		// Nonce field for save validation
-		wp_nonce_field( 'nlingual_post_translations', '_nl_nonce', false );
+		wp_nonce_field( 'nlingual_post_translations', '_nl_link_nonce', false );
+	}
+
+	/**
+	 * Print out the bulk-edit box for post language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::is_post_type_supported() to check for support.
+	 * @uses Registry::languages() to loop through the active languages.
+	 *
+	 * @param string $column    The column this box corresponds to.
+	 * @param string $post_type The post type this is for.
+	 */
+	public static function bulk_edit_language( $column, $post_type ) {
+		// Abort if not the correct column
+		if ( $column != 'nlingual' ) {
+			return;
+		}
+
+		// Or if the post type isn't supported
+		if ( ! Registry::is_post_type_supported( $post_type ) ) {
+			return;
+		}
+		?>
+		<fieldset class="inline-edit-col-right">
+			<div class="inline-edit-col">
+				<label>
+					<span class="title"><?php _e( 'Language', NLTXTDMN );?></span>
+					<select name="nlingual_language" id="nl_language">
+						<option value="-1">&mdash; <?php _e( 'No Change', NLTXTDMN ); ?> &mdash;</option>
+						<?php
+						// Print the options
+						foreach ( Registry::languages() as $language ) {
+							printf( '<option value="%s">%s</option>', $language->id, $language->system_name );
+						}
+						?>
+					</select>
+				</label>
+			</div>
+		</fieldset>
+		<?php
+
+		// Nonce field for save validation
+		wp_nonce_field( 'nlingual_bulk_post_languages', '_nl_bulk_nonce', false );
 	}
 
 	// =========================
@@ -387,7 +461,7 @@ class Backend extends Functional {
 			add_meta_box(
 				'nlingual_translations', // id
 				__( 'Language & Translations', NLTXTDMN ), // title
-				array( get_called_class(), 'do_post_meta_box' ), // callback
+				array( get_called_class(), 'post_meta_box' ), // callback
 				$post_type, // screen
 				'side', // context
 				'default' // priority
@@ -408,7 +482,7 @@ class Backend extends Functional {
 	 *
 	 * @param WP_Post $post The post being edited.
 	 */
-	public static function do_post_meta_box( $post ) {
+	public static function post_meta_box( $post ) {
 		global $wpdb;
 
 		// Get the language list
@@ -437,7 +511,7 @@ class Backend extends Functional {
 				WHERE t.object_type = 'post'
 				AND t.lang_id = %d
 				AND t.object_id != %d
-				AND p.post_type = %d
+				AND p.post_type = %s
 			", $language->id, $post->ID, $post->post_type ) );
 
 			// Set translation to for this language to 0 if not present
@@ -489,9 +563,14 @@ class Backend extends Functional {
 		<?php endforeach; ?>
 		<?php endif;
 
-		// Nonce field for save validation
-		wp_nonce_field( 'nlingual_post_translations', '_nl_nonce', false );
+		// Nonce fields for save validation
+		wp_nonce_field( 'nlingual_post_language', '_nl_lang_nonce', false );
+		wp_nonce_field( 'nlingual_post_translations', '_nl_link_nonce', false );
 	}
+
+	// =========================
+	// ! Saving Post Data
+	// =========================
 
 	/**
 	 * Save settings from the translations meta box.
@@ -505,7 +584,7 @@ class Backend extends Functional {
 	 *
 	 * @param int $post_id The ID of the post being saved.
 	 */
-	public static function save_post_meta_box( $post_id ) {
+	public static function save_post_language( $post_id ) {
 		global $wpdb;
 
 		// Abort if doing auto save or it's a revision
@@ -513,35 +592,90 @@ class Backend extends Functional {
 			return;
 		}
 
-		// Check for the nonce
-		if ( ! isset( $_POST['_nl_nonce'] ) ) {
+		// Check for the nonce and language
+		if ( ! isset( $_REQUEST['_nl_lang_nonce'] ) || ! isset( $_REQUEST['nlingual_language'] ) ) {
 			return;
+		}
+
+		// Fail if nonce is invalid
+		if ( ! wp_verify_nonce( $_REQUEST['_nl_lang_nonce'], 'nlingual_post_language' ) ) {
+			wp_die( __( 'Cheatin&#8217; uh?' ) );
+		}
+
+		// Assign the post to the language, fail if there's an error.
+		if ( ! Translator::set_post_language( $post_id, $_REQUEST['nlingual_language'] ) ) {
+			wp_die( __( 'That language does not exist.', NLTXTDMN ) );
+		}
+	}
+
+	/**
+	 * Save settings from the translations meta box.
+	 *
+	 * Handles translation linking, and any enabled synchronizing with sister posts.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param int $post_id The ID of the post being saved.
+	 */
+	public static function save_post_translations( $post_id ) {
+		global $wpdb;
+
+		// Abort if doing auto save or it's a revision
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || wp_is_post_revision( $post_id ) ) {
+			return;
+		}
+
+		// Check for the nonce and translations list
+		if ( ! isset( $_REQUEST['_nl_link_nonce'] ) || ! isset( $_REQUEST['nlingual_translation'] ) ) {
+			return;
+		}
+
+		// Fail if nonce is invalid
+		if ( ! wp_verify_nonce( $_REQUEST['_nl_link_nonce'], 'nlingual_post_translations' ) ) {
+			wp_die( __( 'Cheatin&#8217; uh?' ) );
 		}
 
 		// Unhook to prevent infinite loop
 		static::remove_action( 'save_post', __FUNCTION__ );
 
-		// Fail if nonce is invalid
-		if ( ! wp_verify_nonce( $_POST['_nl_nonce'], 'nlingual_post_translations' ) ) {
-			wp_die( __( 'Cheatin&#8217; uh?' ) );
-		}
-
-		// Start by updating the language if set
-		if ( isset( $_POST['nlingual_language'] ) ) {
-			if ( ! Translator::set_post_language( $post_id, $_POST['nlingual_language'] ) ) {
-				wp_die( __( 'That language does not exist.', NLTXTDMN ) );
-			}
-		}
-
-		// Next, handle any translations
-		if ( isset( $_POST['nlingual_translation'] ) ) {
-			if ( ! Translator::set_post_translations( $post_id, $_POST['nlingual_translation'] ) ) {
-				wp_die( __( 'Error saving translations; one or more languages do not exist.', NLTXTDMN ) );
-			}
+		// Assign the translations, fail if there's an error
+		if ( ! Translator::set_post_translations( $post_id, $_REQUEST['nlingual_translation'] ) ) {
+			wp_die( __( 'Error saving translations; one or more languages do not exist.', NLTXTDMN ) );
 		}
 
 		// Rehook now that we're done
 		static::add_action( 'save_post', __FUNCTION__ );
+	}
+
+	/**
+	 * Save bulk edit language settings.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param int $post_id The ID of the current post in the bulk edit loop.
+	 */
+	public static function save_bulk_post_language( $post_id ) {
+		// Abort if doing auto save or it's a revision
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || wp_is_post_revision( $post_id ) ) {
+			return;
+		}
+
+		// Check for the nonce
+		if ( ! isset( $_REQUEST['_nl_bulk_nonce'] ) ) {
+			return;
+		}
+
+		// Fail if nonce is invalid
+		if ( ! wp_verify_nonce( $_REQUEST['_nl_bulk_nonce'], 'nlingual_bulk_post_languages' ) ) {
+			wp_die( __( 'Cheatin&#8217; uh?' ) );
+		}
+
+		// Updating the language if set
+		if ( isset( $_REQUEST['nlingual_language'] ) ) {
+			if ( ! Translator::set_post_language( $post_id, $_REQUEST['nlingual_language'] ) ) {
+				wp_die( __( 'That language does not exist.', NLTXTDMN ) );
+			}
+		}
 	}
 
 	// =========================
