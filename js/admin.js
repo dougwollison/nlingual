@@ -1,15 +1,15 @@
-/* globals console, inlineEditPost, inlineEditTax */
+/* globals console, alert, prompt, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n, NL_LANGUAGES */
 
 jQuery( function( $ ) {
 	// Update visible translation fields based on current language
-	$( '#nlingual_language' ).change( function() {
+	$( '#nl_language' ).change( function() {
 		var lang_id = $( this ).val();
 
 		// Show all translation fields by default
-		$( '.nl-translation-field' ).show();
+		$( '.nl-translation' ).show();
 
 		// Hide the one for the current language
-		$( '#nlingual_lang' + lang_id ).hide();
+		$( '#nl_translation_' + lang_id ).hide();
 
 	} ).change(); // Update on page load
 
@@ -88,16 +88,37 @@ jQuery( function( $ ) {
 	// Extend inlineEditPost if available
 	if ( typeof inlineEditPost === 'object' ) {
 		var wpInlineEditPost_edit = inlineEditPost.edit;
-		inlineEditPost.edit = function() {
+		inlineEditPost.edit = function( id ) {
 			// Start by calling the original for default behaviour
 			wpInlineEditPost_edit.apply( this, arguments );
+
+			// get the post ID
+			var post_id = 0;
+			if( typeof id === 'object' ) {
+				post_id = parseInt( this.getId( id ) );
+			}
+
+			// Get the post and edit rows
+			var $postRow = $( '#post-' + post_id ),
+				$editRow = $( '#edit-' + post_id );
+
+			// Update the language field
+			var post_lang = $postRow.find( '.nl-language' ).val();
+			$( '#nl_language' ).val( post_lang ).change();
+
+			// Update the translations fields
+			$editRow.find( '.nl-translation' ).each( function() {
+				var lang_id = $( this ).data( 'langid' );
+				var translation = $postRow.find( '.nl-translation-' + lang_id ).val();
+				$( this ).find( 'select' ).val( translation || -1 );
+			} );
 		};
 	}
 
 	// Extend inlineEditTax if available
 	if ( typeof inlineEditTax === 'object' ) {
 		var wpInlineEditTax_edit = inlineEditTax.edit;
-		inlineEditTax.edit = function() {
+		inlineEditTax.edit = function( id ) {
 			// Start by calling the original for default behaviour
 			wpInlineEditTax_edit.apply( this, arguments );
 		};
