@@ -251,6 +251,11 @@ class Backend extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Registry::is_post_type_supported() to check for support.
+	 * @uses Translator::get_object_language() to get the post's language.
+	 * @uses Translator::get_object_translations() to get the post's translations.
+	 * @uses Registry::languages() to retrieve/validate each translation's language.
+	 *
 	 * @param string $column  The ID of the current column.
 	 * @param int    $post_id The current post.
 	 */
@@ -458,6 +463,8 @@ class Backend extends Functional {
 	 * for the enabled post types.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Registry:get() to retrieve the supported post types.
 	 */
 	public static function add_post_meta_box() {
 		$post_types = Registry::get( 'post_types' );
@@ -587,6 +594,8 @@ class Backend extends Functional {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
+	 * @uses Translator::set_object_language() to assign/update the post's language.
+	 *
 	 * @param int $post_id The ID of the post being saved.
 	 */
 	public static function save_post_language( $post_id ) {
@@ -620,6 +629,9 @@ class Backend extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Translator::set_object_translations() to assign the translations to the post.
+	 * @uses Synchronizer::sync_post_with_sister() to handle post synchronizing.
+	 *
 	 * @param int $post_id The ID of the post being saved.
 	 */
 	public static function save_post_translations( $post_id ) {
@@ -631,7 +643,7 @@ class Backend extends Functional {
 		}
 
 		// Check for the nonce and translations list
-		if ( ! isset( $_REQUEST['_nl_link_nonce'] ) || ! isset( $_REQUEST['nlingual_translation'] ) ) {
+		if ( ! isset( $_REQUEST['_nl_link_nonce'] ) || ! isset( $_REQUEST['nlingual_translation'] ) || ! is_array( $_REQUEST['nlingual_translation'] ) ) {
 			return;
 		}
 
@@ -640,13 +652,16 @@ class Backend extends Functional {
 			wp_die( __( 'Cheatin&#8217; uh?' ) );
 		}
 
-		// Unhook to prevent infinite loop
-		static::remove_action( 'save_post', __FUNCTION__ );
-
 		// Assign the translations, fail if there's an error
 		if ( ! Translator::set_post_translations( $post_id, $_REQUEST['nlingual_translation'] ) ) {
 			wp_die( __( 'Error saving translations; one or more languages do not exist.', NLTXTDMN ) );
 		}
+
+		// Unhook to prevent infinite loop
+		static::remove_action( 'save_post', __FUNCTION__ );
+
+		// Now synchronize the post's translations
+		Synchronizer::sync_post_with_sisters( $post_id );
 
 		// Rehook now that we're done
 		static::add_action( 'save_post', __FUNCTION__ );
@@ -656,6 +671,8 @@ class Backend extends Functional {
 	 * Save bulk edit language settings.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Translator::set_object_language() to assign/update the post's language.
 	 *
 	 * @param int $post_id The ID of the current post in the bulk edit loop.
 	 */

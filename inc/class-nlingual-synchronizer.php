@@ -122,6 +122,25 @@ class Synchronizer {
 		return true;
 	}
 
+	/**
+	 * Call sync_posts() for the desired post and each of it's sisters.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Translator::get_object_translations() to get the posts sisters.
+	 * @uses Synchronizer::sync_posts() to sync the post with each sister.
+	 *
+	 * @param int $post_id The ID of the post to synchronize with.
+	 */
+	public static function sync_post_with_sisters( $post_id ) {
+		// Get the translations
+		$translations = Translator::get_post_translations( $post_id );
+
+		foreach ( $translations as $translation ) {
+			static::sync_posts( $post_id, $translation );
+		}
+	}
+
 	// =========================
 	// ! Translation Cloning
 	// =========================
