@@ -135,6 +135,17 @@ class Registry {
 	 */
 	protected static $sync_rules = array();
 
+	/**
+	 * The cloning rules.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var array
+	 */
+	protected static $clone_rules = array();
+
 	// =========================
 	// ! Propert Accessing
 	// =========================
@@ -443,8 +454,11 @@ class Registry {
 		// Load localizables list
 		static::$localizables = get_option( 'nlingual_localizables', array() );
 
-		// Load sync rules
+		// Load synchronization rules
 		static::$sync_rules = get_option( 'nlingual_sync_rules', array() );
+
+		// Load cloning rules
+		static::$clone_rules = get_option( 'nlingual_clone_rules', array() );
 
 		// Flag that we've loaded everything
 		$loaded = true;
