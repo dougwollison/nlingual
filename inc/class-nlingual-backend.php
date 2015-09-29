@@ -255,11 +255,11 @@ class Backend extends Functional {
 		// Start by printing out the language
 		$language = Translator::get_post_language( $post_id );
 		if ( ! $language ) {
-			echo '<input type="hidden" class="nlingual-language" value="0" />';
+			echo '<input type="hidden" class="nl-language" value="0" />';
 			_e( 'None', 'no language', NLTXTDMN );
 			return;
 		} else {
-			printf( '<input type="hidden" class="nlingual-language" value="%d" />', $language->id );
+			printf( '<input type="hidden" class="nl-language" value="%d" />', $language->id );
 			printf( '<strong>%s</strong>', $language->system_name );
 		}
 
@@ -270,7 +270,7 @@ class Backend extends Functional {
 			foreach ( $translations as $lang => $post ) {
 				if ( $lang = Registry::languages()->get( $lang ) ) {
 					echo '<li>';
-					printf( '<input type="hidden" class="nlingual-translation-%d" value="%d" />', $lang->id, $post->id );
+					printf( '<input type="hidden" class="nl-translation-%d" value="%d" />', $lang->id, $post );
 					$link = sprintf( '<a href="%s" target="_blank">%s</a>', get_edit_post_link( $post ), get_the_title( $post ) );
 					_efx( '%s: %s', 'language: title', NLTXTDMN, $lang->system_name, $link );
 					echo '<li>';
@@ -331,7 +331,7 @@ class Backend extends Functional {
 			<div class="inline-edit-col">
 				<label>
 					<span class="title"><?php _e( 'Language', NLTXTDMN );?></span>
-					<select name="nlingual_language" id="nlingual_language">
+					<select name="nlingual_language" id="nl_language">
 						<option value="-1">&mdash; <?php _ex( 'None', 'no language', NLTXTDMN ); ?> &mdash;</option>
 						<?php
 						// Print the options
@@ -347,7 +347,7 @@ class Backend extends Functional {
 			<div class="inline-edit-col">
 				<h4>Translations</h4>
 				<?php foreach ( $languages as $language ) : ?>
-				<label id="nlingual_translation_<?php echo $language->id; ?>"  class="nlingual-translation"  data-langid="<?php echo $language->id; ?>">
+				<label id="nl_translation_<?php echo $language->id; ?>" class="nl-translation"  data-langid="<?php echo $language->id; ?>">
 					<span class="title"><?php echo $language->system_name;?></span>
 					<select name="nlingual_translation[<?php echo $language->id; ?>]">
 						<option value="-1">&mdash; <?php _ex( 'None', 'no translation', NLTXTDMN ); ?> &mdash;</option>
@@ -444,8 +444,8 @@ class Backend extends Functional {
 		}
 		?>
 		<div class="nl-field nl-language-field">
-			<label for="nlingual_language" class="nl-field-label"><?php _e( 'Language', NLTXTDMN ); ?></label>
-			<select name="nlingual_language" id="nlingual_language" class="nl-input">
+			<label for="nl_language" class="nl-field-label"><?php _e( 'Language', NLTXTDMN ); ?></label>
+			<select name="nlingual_language" id="nl_language" class="nl-input">
 				<option value="-1">&mdash; <?php _ex( 'None', 'no language', NLTXTDMN ); ?> &mdash;</option>
 				<?php
 				// Print the options
@@ -460,13 +460,13 @@ class Backend extends Functional {
 		<?php if ( $languages->count() > 1 ) : ?>
 		<h4 class="nl-heading"><?php _e( 'Translations', NLTXTDMN ); ?></h4>
 		<?php foreach ( $languages as $language ) : ?>
-		<div id="nlingual_translation_<?php echo $language->id; ?>" class="nl-field nlingual-translation" data-langid="<?php echo $language->id?>">
-			<label for="nlingual_translation_<?php echo $language->id; ?>_input">
+		<div id="nl_translation_<?php echo $language->id; ?>" class="nl-field nl-translation" data-langid="<?php echo $language->id?>">
+			<label for="nl_translation_<?php echo $language->id; ?>_input">
 				<?php echo $language->system_name; ?>
 				<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' );?>"><?php _e( 'Edit', NLTXTDMN );?></button>
 			</label>
 
-			<select name="nlingual_translation[<?php echo $language->id; ?>]" id="nlingual_translation_<?php echo $language->id; ?>_input" class="nl-input">
+			<select name="nlingual_translation[<?php echo $language->id; ?>]" id="nl_translation_<?php echo $language->id; ?>_input" class="nl-input">
 				<option value="-1">&mdash; <?php _ex( 'None', 'no translation', NLTXTDMN ); ?> &mdash;</option>
 				<option value="new" class="nl-new-translation"><?php _ef( '&mdash; New %s %s &mdash;', NLTXTDMN, $language->system_name, $post_type->labels->singular_name ); ?></option>
 				<?php
