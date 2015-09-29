@@ -138,7 +138,7 @@ class Synchronizer {
 	 * @uses Synchronizer::sync_posts() to handle meta data and term copying.
 	 *
 	 * @param int|WP_Post  $post             The ID/object of the post to clone.
-	 * @param int|Language $langauge          The langauge to assign the clone to.
+	 * @param int|Language $language          The language to assign the clone to.
 	 * @param string       $title             Optional The custom title for the clone.
 	 * @param bool         $_title_is_default Optional Was $title the default "Translate to..."?
 	 *                                        Internal use only by Backend::ajax_new_translation()
@@ -156,7 +156,7 @@ class Synchronizer {
 			}
 		}
 
-		// Validate $langauge if an ID
+		// Validate $language if an ID
 		if ( ! is_a( $language, __NAMESPACE__ . '\\Language' ) ) {
 			$language = Registry::languages()->get( $language );
 			if ( ! $language ) {
