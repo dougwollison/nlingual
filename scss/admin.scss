@@ -1,0 +1,34 @@
+@import 'compass/utilities/general/clearfix';
+
+.nl-heading {
+	font-size: 1em;
+	margin: 1em 0 .5em;
+}
+
+.nl-field {
+	label {
+		@include pie-clearfix;
+		display: block;
+		padding: 3px 0;
+		margin: 0 0 5px;
+	}
+		.button {
+			float: right;
+			margin: -3px 0;
+		}
+	select {
+		clear: both;
+		display: block;
+		width: 100%;
+	}
+}
+
+.nl-language-field {
+	label {
+		font-weight: bold;
+	}
+}
+
+.nl-translation-field {
+	margin: 10px 0 5px;
+}
