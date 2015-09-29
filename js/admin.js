@@ -39,14 +39,18 @@ jQuery( function( $ ) {
 				url: ajaxurl,
 				data: {
 					action: 'nl_new_translation',
-					original: post_id,
-					language: lang_id,
+					post_id: post_id,
+					lang_id: lang_id,
 					title: translation_title,
 					custom_title: translation_title === placeholder
 				},
 				type: 'post',
 				dataType: 'json',
 				success: function( data ) {
+					if ( data === 0 ) {
+						return this.error();
+					}
+
 					// Replace the New option with that of the new post
 					$input.find( '.nl-new-translation' ).attr( 'value', data.id ).text( nlingualL10n.NewTranslation + ' ' + data.title );
 				},
