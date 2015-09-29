@@ -273,7 +273,7 @@ class Backend extends Functional {
 		<div id="nlingual_lang<?php echo $language->id?>" class="nl-field nl-translation-field" data-langid="<?php echo $language->id?>">
 			<label for="nlingual_translation_<?php echo $language->id; ?>">
 				<?php echo $language->system_name; ?>
-				<button type="button" class="button button-small nl-edit-translation" data-alt="<?php _e( 'Create', NLTXTDMN );?>" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' );?>"><?php _e( 'Edit', NLTXTDMN );?></button>
+				<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' );?>"><?php _e( 'Edit', NLTXTDMN );?></button>
 			</label>
 
 			<select name="nlingual_translation[<?php echo $language->id; ?>]" id="nlingual_translation_<?php echo $language->id; ?>" class="nl-input nl-translation">
