@@ -196,7 +196,7 @@ class API extends Functional {
 		if ( Registry::is_post_type_supported( $query->get('post_type') )
 		&& ( $lang = $query->get( Registry::get( 'query_var' ) ) )
 		&& ( $language = Registry::languages()->get( $lang ) ) ) {
-			$clause .= $wpdb->prepare( " AND $wpdb->nl_translations.lang_id = %d", $language->lang_id );
+			$clause .= $wpdb->prepare( " AND $wpdb->nl_translations.lang_id = %d", $language->id );
 		}
 
 		return $clause;
