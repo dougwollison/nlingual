@@ -2,7 +2,7 @@
 namespace nLingual;
 
 /**
- * nLingual Translator API
+ * nLingual Translation API
  *
  * @package nLingual
  *
@@ -121,6 +121,11 @@ class Translator {
 	 */
 	public static function set_object_language( $type, $id, $lang ) {
 		global $wpdb;
+
+		// Redirect to delete_object_language() if $lang is false-ish
+		if ( ! $lang ) {
+			return delete_object_language( $type, $id );
+		}
 
 		// Ensure $lang is a Language
 		if ( ! static::_lang( $lang ) ) {
@@ -284,6 +289,9 @@ class Translator {
 		// Get the group ID for this object
 		$group_id = static::_translation_group_id( $type, $id, false );
 
+		// Also get the language for this object
+		$language = static::get_object_language( $type, $id );
+
 		// If none was found, fail
 		if ( ! $group_id ) {
 			return false;
@@ -298,6 +306,11 @@ class Translator {
 			// Ensure $lang is a Language
 			if ( ! static::_lang( $lang ) ) {
 				return false; // Does not exist
+			}
+
+			// Skip if we're trying assign a translation for the object's language
+			if ( $language->id == $lang->id ) {
+				continue;
 			}
 
 			// If $object_id isn't valid, assume we want to unlink it
@@ -451,121 +464,6 @@ class Translator {
 
 		// Get the translation's permalink
 		return static::get_permalink( $post->ID, $lang );
-	}
-
-	// =========================
-	// ! Translation Cloning
-	// =========================
-
-	/**
-	 * Clone a post object for translation.
-	 *
-	 * All fields, meta data and terms are copied.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
-	 *
-	 * @uses Registry::languages() to validate/retrieve the desired language.
-	 * @uses Registry::get() to retrieve the cloning rules.
-	 *
-	 * @param int|WP_Post  $post             The ID/object of the post to clone.
-	 * @param int|Language $langauge          The langauge to assign the clone to.
-	 * @param string       $title             Optional The custom title for the clone.
-	 * @param bool         $_title_is_default Optional Was $title the default "Translate to..."?
-	 *                                        Internal use only by Backend::ajax_new_translation()
-	 *
-	 * @return WP_Post|false The cloned post or false on failure.
-	 */
-	public static function clone_post( $post, $language, $title = null, $_title_is_default = false ) {
-		global $wpdb;
-
-		// Validate $post if an ID
-		if ( ! is_a( $post, 'WP_Post' ) ) {
-			$post = get_post( $post );
-			if ( ! $post ) {
-				return false;
-			}
-		}
-
-		// Validate $langauge if an ID
-		if ( ! is_a( $language, __NAMESPACE__ . '\\Language' ) ) {
-			$language = Registry::languages()->get( $language );
-			if ( ! $language ) {
-				return false;
-			}
-		}
-
-		// Default title if not passed
-		if ( is_null( $title ) ) {
-			$title = _f( 'Translate to %s: %s', NLTXTDMN, $language->system_name, $post->post_title );
-			$_title_is_default = true;
-		}
-
-		// Get the cloning rules
-		$rules = Registry::get( 'clone_rules' );
-
-		// Create the new post
-		$post_data = array(
-			'post_author'    => $post->post_author,
-			'post_date'      => $post->post_date,
-			'post_content'   => $post->post_content,
-			'post_title'     => $title,
-			'post_excerpt'   => $post->post_excerpt,
-			'post_status'    => 'draft',
-			'comment_status' => $post->comment_status,
-			'post_password'  => $post->post_password,
-			'to_ping'        => $post->to_ping,
-			'pinged'         => $post->pinged,
-			'post_parent'    => static::get_post_translation( $post->post_parent, $language, true ),
-			'menu_order'     => $post->menu_order,
-			'post_type'      => $post->post_type,
-			'comment_count'  => $post->comment_count
-		);
-
-		// If using default title, create a default post_name
-		$post_data['post_name'] = $post->post_name . '-' . $language->slug;
-
-		// Insert and get the ID
-		$translation = wp_insert_post( $post_data );
-
-		// Check if it worked
-		if ( ! $translation ) {
-			return false;
-		}
-
-		// Get the post object
-		$translation = get_post( $translation );
-
-		// Set the language of the translation and it's associate it with the original
-		static::set_post_language( $translation->ID, $language );
-		static::set_post_translation( $post->ID, $language, $translation->ID );
-
-		if ( isset( $rules['post_meta'] ) && $rules['post_meta'] ) {
-			// Now, copy over all meta data found
-			$meta_data = $wpdb->get_results( $wpdb->prepare( "SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id = %d", $post->ID ) );
-
-			// Loop through and add to the translation
-			foreach ( $meta_data as $field ) {
-				add_post_meta( $translation->ID, $field->meta_key, $field->meta_value );
-			}
-		}
-
-		if ( isset( $rules['post_terms'] ) && $rules['post_terms'] ) {
-			// Next, assign to all the same terms
-			$taxonomies = get_object_taxonomies( $post->post_type );
-			foreach ( $taxonomies as $taxonomy ) {
-				$terms = wp_get_object_terms( $post->ID, $taxonomy, array( 'fields' => 'ids' ) );
-				$term_ids = array();
-				foreach ( $terms as $term ) {
-					$term_ids[] = $term->term_id;
-				}
-
-				wp_set_object_terms( $translation->ID, $term_ids, $taxonomy );
-			}
-		}
-
-		return $translation;
 	}
 
 	// =========================

@@ -49,7 +49,7 @@ class AJAX extends Functional {
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::languages() to validate the language requested.
-	 * @uses Translator::clone_post() to create the cloned post.
+	 * @uses Synchronizer::clone_post() to create the cloned post.
 	 */
 	public static function ajax_new_translation() {
 		// Fail if no post/lang id or title is passed
@@ -70,7 +70,7 @@ class AJAX extends Functional {
 		}
 
 		// Create the translated clone
-		$translation = Translator::clone_post( $post, $language, $_REQUEST['title'], isset( $_REQUEST['custom_title'] ) && $_REQUEST['custom_title'] );
+		$translation = Synchronizer::clone_post( $post, $language, $_REQUEST['title'], isset( $_REQUEST['custom_title'] ) && $_REQUEST['custom_title'] );
 
 		// Fail if error creating translation
 		if ( ! $translation ) {
