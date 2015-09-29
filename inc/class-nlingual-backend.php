@@ -33,6 +33,8 @@ class Backend extends Functional {
 	 * Register hooks.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Registry::get() to retrieve enabled post types.
 	 */
 	public static function register_hooks() {
 		// Post Changes
@@ -45,9 +47,18 @@ class Backend extends Functional {
 		static::add_action( 'after_setup_theme', 'register_localized_nav_menus', 999 );
 		static::add_action( 'widgets_init', 'register_localized_sidebars', 999 );
 
-		// Post Translations Meta Box
-		static::add_action( 'add_meta_boxes', 'add_translations_meta_box' );
-		static::add_action( 'save_post', 'save_translations_meta_box' );
+		// Posts Screen Interfaces
+		static::add_action( 'restrict_manage_posts', 'add_language_filter' );
+		$post_types = Registry::get( 'post_types' );
+		foreach ( $post_types as $post_type ) {
+			static::add_filter( "manage_{$post_type}_posts_columns", 'add_language_column', 15 );
+			static::add_action( "manage_{$post_type}_posts_custom_column", 'do_language_column', 10, 2 );
+		}
+		static::add_action( 'quick_edit_custom_box', 'do_quick_edit_box', 10, 2 );
+
+		// Post Editor Interfaces
+		static::add_action( 'add_meta_boxes', 'add_post_meta_box' );
+		static::add_action( 'save_post', 'save_post_meta_box' );
 
 		// Menu Editor Meta Box
 		static::add_action( 'admin_head', 'add_nav_menu_meta_box' );
@@ -176,7 +187,186 @@ class Backend extends Functional {
 	}
 
 	// =========================
-	// ! Transtions Meta Box
+	// ! Posts Screen Interfaces
+	// =========================
+
+	/**
+	 * Add <select> for filtering posts by language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::is_post_type_supported() to check for support.
+	 * @uses Registry::get() to retrieve the query var.
+	 * @uses Registry::languages() to loop through all registered languages.
+	 */
+	public static function add_language_filter() {
+		global $typenow, $wp_query;
+
+		// Abort if current post type isn't supported
+		if ( ! Registry::is_post_type_supported( $typenow ) ) {
+			return;
+		}
+
+		// Get the query var and it's current value
+		$query_var = Registry::get( 'query_var' );
+		$current = $wp_query->get( $query_var );
+		?>
+		<select name="<?php echo $query_var; ?>" class="postform">
+			<option value="-1"><?php _e( 'All Languages', NLTXTDMN ); ?></option>
+			<?php
+			foreach ( Registry::languages() as $language ) {
+				$selected = $current == $language->id;
+				printf( '<option value="%s" %s>%s</option>', $language->id, $selected ? 'selected' : '', $language->system_name );
+			}
+			?>
+		</select>
+		<?php
+	}
+
+
+	/**
+	 * Add the language/translations column to the post edit screen.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $columns The list of columns.
+	 *
+	 * @return array The modified list of columns.
+	 */
+	public static function add_language_column( $columns ) {
+		$columns['nlingual'] = _x( 'Language', NLTXTDMN );
+		return $columns;
+	}
+
+	/**
+	 * Print the content of the language/translations column.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $column  The ID of the current column.
+	 * @param int    $post_id The current post.
+	 */
+	public static function do_language_column( $column, $post_id ) {
+		// Abort if not the right column
+		if ( $column != 'nlingual' ) {
+			return;
+		}
+
+		// Start by printing out the language
+		$language = Translator::get_post_language( $post_id );
+		if ( ! $language ) {
+			echo '<input type="hidden" class="nlingual-language" value="0" />';
+			_e( 'None', 'no language', NLTXTDMN );
+			return;
+		} else {
+			printf( '<input type="hidden" class="nlingual-language" value="%d" />', $language->id );
+			printf( '<strong>%s</strong>', $language->system_name );
+		}
+
+		// Now print out the translations
+		$translations = Translator::get_post_translations( $post_id );
+		if ( $translations ) {
+			echo '<ul>';
+			foreach ( $translations as $lang => $post ) {
+				if ( $lang = Registry::languages()->get( $lang ) ) {
+					echo '<li>';
+					printf( '<input type="hidden" class="nlingual-translation-%d" value="%d" />', $lang->id, $post->id );
+					$link = sprintf( '<a href="%s" target="_blank">%s</a>', get_edit_post_link( $post ), get_the_title( $post ) );
+					_efx( '%s: %s', 'language: title', NLTXTDMN, $lang->system_name, $link );
+					echo '<li>';
+				}
+			}
+			echo '</ul>';
+		}
+	}
+
+	/**
+	 * Print out the quick-edit box for post language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @uses Registry::is_post_type_supported() to check for support.
+	 * @uses Registry::languages() to loop through the active languages.
+	 *
+	 * @param string $column    The column this box corresponds to.
+	 * @param string $post_type The post type this is for.
+	 */
+	public static function do_quick_edit_box( $column, $post_type ) {
+		global $wpdb;
+
+		// Abort if not the correct column
+		if ( $column != 'nlingual' ) {
+			return;
+		}
+
+		// Or if the post type isn't supported
+		if ( ! Registry::is_post_type_supported( $post_type ) ) {
+			return;
+		}
+
+		$languages = Registry::languages();
+
+		// Build the language and translation option lists
+		$lang_options = array();
+		$post_options = array();
+		foreach ( $languages as $language ) {
+			$lang_options[ $language->id ] = $language->system_name;
+
+			// Get all posts of this type for this language (excluding the current one)
+			$post_options[ $language->id ] = $wpdb->get_results( $wpdb->prepare( "
+				SELECT p.ID, p.post_title
+				FROM $wpdb->nl_translations AS t
+				LEFT JOIN $wpdb->posts AS p ON (t.object_id = p.ID)
+				WHERE t.object_type = 'post'
+				AND t.lang_id = %d
+				AND t.object_id != %d
+				AND p.post_type = %d
+			", $language->id, $post->ID, $post->post_type ) );
+		}
+		?>
+		<br class="clear" />
+		<fieldset class="inline-edit-col-left">
+			<div class="inline-edit-col">
+				<label>
+					<span class="title"><?php _e( 'Language', NLTXTDMN );?></span>
+					<select name="nlingual_language" id="nlingual_language">
+						<option value="-1">&mdash; <?php _ex( 'None', 'no language', NLTXTDMN ); ?> &mdash;</option>
+						<?php
+						// Print the options
+						foreach ( $lang_options as $value => $label ) {
+							printf( '<option value="%s">%s</option>', $value, $label );
+						}
+						?>
+					</select>
+				</label>
+			</div>
+		</fieldset>
+		<fieldset class="inline-edit-col-right" style="margin: 0;">
+			<div class="inline-edit-col">
+				<h4>Translations</h4>
+				<?php foreach ( $languages as $language ) : ?>
+				<label id="nlingual_translation_<?php echo $language->id; ?>"  class="nlingual-translation"  data-langid="<?php echo $language->id; ?>">
+					<span class="title"><?php echo $language->system_name;?></span>
+					<select name="nlingual_translation[<?php echo $language->id; ?>]">
+						<option value="-1">&mdash; <?php _ex( 'None', 'no translation', NLTXTDMN ); ?> &mdash;</option>
+						<?php
+						// Print the options
+						foreach ( $post_options[ $language->id ] as $option ) {
+							printf( '<option value="%s">%s</option>', $option->ID, $option->post_title );
+						}
+						?>
+					</select>
+				</label>
+				<?php endforeach; ?>
+			</div>
+		</fieldset>
+		<?php
+	}
+
+	// =========================
+	// ! Post Editor Interfaces
 	// =========================
 
 	/**
@@ -187,14 +377,14 @@ class Backend extends Functional {
 	 *
 	 * @since 2.0.0
 	 */
-	public static function add_translations_meta_box() {
+	public static function add_post_meta_box() {
 		$post_types = Registry::get( 'post_types' );
 
 		foreach ( $post_types as $post_type ) {
 			add_meta_box(
 				'nlingual_translations', // id
 				__( 'Language & Translations', NLTXTDMN ), // title
-				array( get_called_class(), 'do_translations_meta_box' ), // callback
+				array( get_called_class(), 'do_post_meta_box' ), // callback
 				$post_type, // screen
 				'side', // context
 				'default' // priority
@@ -209,13 +399,13 @@ class Backend extends Functional {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
-	 * @uses Registry::languages() to get the langauges to loop through.
+	 * @uses Registry::languages() to get the languages to loop through.
 	 * @uses Translator::get_object_language() to get the post's language.
 	 * @uses Translator::get_post_translations() to get the post's translations.
 	 *
 	 * @param WP_Post $post The post being edited.
 	 */
-	public static function do_translations_meta_box( $post ) {
+	public static function do_post_meta_box( $post ) {
 		global $wpdb;
 
 		// Get the language list
@@ -238,7 +428,7 @@ class Backend extends Functional {
 
 			// Get all posts of this type for this language (excluding the current one)
 			$post_options[ $language->id ] = $wpdb->get_results( $wpdb->prepare( "
-				SELECT t.object_id, p.post_title
+				SELECT p.ID, p.post_title
 				FROM $wpdb->nl_translations AS t
 				LEFT JOIN $wpdb->posts AS p ON (t.object_id = p.ID)
 				WHERE t.object_type = 'post'
@@ -256,7 +446,7 @@ class Backend extends Functional {
 		<div class="nl-field nl-language-field">
 			<label for="nlingual_language" class="nl-field-label"><?php _e( 'Language', NLTXTDMN ); ?></label>
 			<select name="nlingual_language" id="nlingual_language" class="nl-input">
-				<option value="-1"><?php _ex( '&mdash; None &mdash;', 'no language', NLTXTDMN ); ?></option>
+				<option value="-1">&mdash; <?php _ex( 'None', 'no language', NLTXTDMN ); ?> &mdash;</option>
 				<?php
 				// Print the options
 				foreach ( $lang_options as $value => $label ) {
@@ -270,25 +460,25 @@ class Backend extends Functional {
 		<?php if ( $languages->count() > 1 ) : ?>
 		<h4 class="nl-heading"><?php _e( 'Translations', NLTXTDMN ); ?></h4>
 		<?php foreach ( $languages as $language ) : ?>
-		<div id="nlingual_lang<?php echo $language->id?>" class="nl-field nl-translation-field" data-langid="<?php echo $language->id?>">
-			<label for="nlingual_translation_<?php echo $language->id; ?>">
+		<div id="nlingual_translation_<?php echo $language->id; ?>" class="nl-field nlingual-translation" data-langid="<?php echo $language->id?>">
+			<label for="nlingual_translation_<?php echo $language->id; ?>_input">
 				<?php echo $language->system_name; ?>
 				<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' );?>"><?php _e( 'Edit', NLTXTDMN );?></button>
 			</label>
 
-			<select name="nlingual_translation[<?php echo $language->id; ?>]" id="nlingual_translation_<?php echo $language->id; ?>" class="nl-input nl-translation">
-				<option value="-1"><?php _ex( '&mdash; None &mdash;', 'no translation', NLTXTDMN ); ?></option>
+			<select name="nlingual_translation[<?php echo $language->id; ?>]" id="nlingual_translation_<?php echo $language->id; ?>_input" class="nl-input">
+				<option value="-1">&mdash; <?php _ex( 'None', 'no translation', NLTXTDMN ); ?> &mdash;</option>
 				<option value="new" class="nl-new-translation"><?php _ef( '&mdash; New %s %s &mdash;', NLTXTDMN, $language->system_name, $post_type->labels->singular_name ); ?></option>
 				<?php
 				// Print the options
 				foreach ( $post_options[ $language->id ] as $option ) {
-					$selected = $translations[ $language->id ] == $option->object_id ? 'selected' : '';
+					$selected = $translations[ $language->id ] == $option->ID ? 'selected' : '';
 					$label = $option->post_title;
 					// If this post is already a translation of something, identify it as such.
-					if ( Translator::get_post_translations( $option->object_id ) ) {
+					if ( Translator::get_post_translations( $option->ID ) ) {
 						$label = _ex( '[Taken]', NLTXTDMN ) . ' ' . $label;
 					}
-					printf( '<option value="%s" %s>%s</option>', $option->object_id, $selected, $label );
+					printf( '<option value="%s" %s>%s</option>', $option->ID, $selected, $label );
 				}
 				?>
 			</select>
@@ -312,7 +502,7 @@ class Backend extends Functional {
 	 *
 	 * @param int $post_id The ID of the post being saved.
 	 */
-	public static function save_translations_meta_box( $post_id ) {
+	public static function save_post_meta_box( $post_id ) {
 		global $wpdb;
 
 		// Abort if doing auto save or it's a revision
