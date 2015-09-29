@@ -59,7 +59,8 @@ class API extends Functional {
 		static::register_hooks();
 		if ( defined( 'DOING_AJAX' ) ) {
 			AJAX::register_hooks();
-		} elseif ( is_admin() ) {
+		}
+		if ( is_admin() ) {
 			Backend::register_hooks();
 		} else {
 			Frontend::register_hooks();
