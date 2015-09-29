@@ -363,6 +363,9 @@ class Backend extends Functional {
 			</div>
 		</fieldset>
 		<?php
+
+		// Nonce field for save validation
+		wp_nonce_field( 'nlingual_post_translations', '_nl_nonce', false );
 	}
 
 	// =========================
@@ -487,7 +490,7 @@ class Backend extends Functional {
 		<?php endif;
 
 		// Nonce field for save validation
-		wp_nonce_field( 'nlingual_translations-' . $post->ID, '_nl_nonce', false );
+		wp_nonce_field( 'nlingual_post_translations', '_nl_nonce', false );
 	}
 
 	/**
@@ -519,7 +522,7 @@ class Backend extends Functional {
 		static::remove_action( 'save_post', __FUNCTION__ );
 
 		// Fail if nonce is invalid
-		if ( ! wp_verify_nonce( $_POST['_nl_nonce'], 'nlingual_translations-' . $post_id ) ) {
+		if ( ! wp_verify_nonce( $_POST['_nl_nonce'], 'nlingual_post_translations' ) ) {
 			wp_die( __( 'Cheatin&#8217; uh?' ) );
 		}
 
