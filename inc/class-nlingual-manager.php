@@ -10,10 +10,6 @@ namespace nLingual;
  */
 
 class Manager extends Functional {
-	// =========================
-	// ! Properties
-	// =========================
-
 	/**
 	 * The name of the class.
 	 *
@@ -243,6 +239,3 @@ class Manager extends Functional {
 		<?php
 	}
 }
-
-// Initialize
-Manager::init();

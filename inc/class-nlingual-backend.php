@@ -10,10 +10,6 @@ namespace nLingual;
  */
 
 class Backend extends Functional {
-	// =========================
-	// ! Properties
-	// =========================
-
 	/**
 	 * The name of the class.
 	 *
@@ -781,6 +777,3 @@ class Backend extends Functional {
 		<?php
 	}
 }
-
-// Initialize
-Backend::init();

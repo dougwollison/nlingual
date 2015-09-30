@@ -10,10 +10,6 @@ namespace nLingual;
  */
 
 class Frontend extends Functional {
-	// =========================
-	// ! Properties
-	// =========================
-
 	/**
 	 * The name of the class.
 	 *
@@ -317,6 +313,3 @@ class Frontend extends Functional {
 		return $items;
 	}
 }
-
-// Initialize
-Frontend::init();

@@ -10,10 +10,6 @@ namespace nLingual;
  */
 
 class Loader extends Functional {
-	// =========================
-	// ! Properties
-	// =========================
-
 	/**
 	 * The name of the class.
 	 *
@@ -173,6 +169,3 @@ class Loader extends Functional {
 		$wpdb->query( "DELETE FORM $wpdb->options WHERE option_name like 'nlingual\_%'" );
 	}
 }
-
-// Initialize
-Loader::init();

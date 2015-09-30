@@ -10,10 +10,6 @@ namespace nLingual;
  */
 
 class API extends Functional {
-	// =========================
-	// ! Properties
-	// =========================
-
 	/**
 	 * The name of the class.
 	 *
@@ -62,6 +58,7 @@ class API extends Functional {
 		}
 		if ( is_admin() ) {
 			Backend::register_hooks();
+			Manager::register_hooks();
 		} else {
 			Frontend::register_hooks();
 		}
@@ -199,6 +196,7 @@ class API extends Functional {
 		&& ( $language = Registry::languages()->get( $lang ) ) ) {
 			$clause .= $wpdb->prepare( " AND $wpdb->nl_translations.lang_id = %d", $language->id );
 		}
+
 
 		return $clause;
 	}
