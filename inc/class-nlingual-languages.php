@@ -246,13 +246,16 @@ class Languages implements \Iterator {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @param string $field Optional A specific field to get
+	 *                      instead of the whole language object.
+	 *
 	 * @return array A numeric array of the languages.
 	 */
-	public function export() {
+	public function export( $field = null ) {
 		$data = array();
 
 		foreach ( $this->languages as $language ) {
-			$data[ $language->id ] = $language->export();
+			$data[ $language->id ] = $field ? $language->$field : $language->export();
 		}
 
 		return $data;
