@@ -37,6 +37,35 @@ class Manager extends Functional {
 	}
 
 	// =========================
+	// ! Utilities
+	// =========================
+
+	/**
+	 * Sanitize the sync rules array
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $rules The rules to be sanitized.
+	 */
+	public static function sanitize_rules( $rules ) {
+		// Loop through each rule section
+		foreach ( $rules as $section => &$_rules ) {
+			// Loop through each rule type
+			foreach ( $_rules as $type => &$values ) {
+				// If values is a string...
+				if ( is_string( $values ) ) {
+					// Split it by line
+					$values = preg_split( '/[\n\r]+/', trim( $values ), 0, PREG_SPLIT_NO_EMPTY );
+					// And trim each line
+					$values = array_walk( $values, 'trim' );
+				}
+			}
+		}
+
+		return $rules;
+	}
+
+	// =========================
 	// ! Settings Page Setup
 	// =========================
 
@@ -114,9 +143,9 @@ class Manager extends Functional {
 
 		// Sync Options
 		Settings::register( array(
-			'sync_rules'   => null,
-			'clone_rules' => null,
-		), 'l10s' );
+			'sync_rules'  => array( static::$name, 'sanitize_rules' ),
+			'clone_rules' => array( static::$name, 'sanitize_rules' ),
+		), 'sync' );
 
 		static::setup_sync_fields();
 	}
