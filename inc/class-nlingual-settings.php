@@ -351,14 +351,14 @@ class Settings {
 	protected static function build_sync_settings_field( $name, $value, $post_type ) {
 		// Post Data values
 		$post_fields = array(
-			'post_author'    => 'Author',
-			'post_date'      => 'Date',
-			'post_status'    => 'Status',
-			'post_parent'    => 'Parent',
-			'menu_order'     => 'Menu Order',
-			'post_password'  => 'Password',
-			'comment_status' => 'Comment Status',
-			'ping_status'    => 'Pingback Status',
+			'post_author'    => _x( 'Author',          'post field', NLTXTDMN ),
+			'post_date'      => _x( 'Date',            'post field', NLTXTDMN ),
+			'post_status'    => _x( 'Status',          'post field', NLTXTDMN ),
+			'post_parent'    => _x( 'Parent',          'post field', NLTXTDMN ) . ' <small>' . __( '(will use counterpart translation if found)', NLTXTDMN ) . '</small>',
+			'menu_order'     => _x( 'Menu Order',      'post field', NLTXTDMN ),
+			'post_password'  => _x( 'Password',        'post field', NLTXTDMN ),
+			'comment_status' => _x( 'Comment Status',  'post field', NLTXTDMN ),
+			'ping_status'    => _x( 'Pingback Status', 'post field', NLTXTDMN ),
 		);
 
 		// Taxonomies values
@@ -382,7 +382,7 @@ class Settings {
 				<?php endif; ?>
 
 				<h4><?php _e( 'Meta Data', NLTXTDMN ); ?></h4>
-				<?php echo static::build_input_field( "{$name}[post_meta]", implode( "\n", $value['post_meta'] ), 'textarea', array(
+				<?php echo static::build_input_field( "{$name}[post_meta]", implode( "\n", (array) $value['post_meta'] ), 'textarea', array(
 					'class' => 'widefat',
 					'rows' => 5,
 				) ); ?>
