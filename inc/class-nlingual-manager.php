@@ -37,7 +37,54 @@ class Manager extends Functional {
 	}
 
 	// =========================
-	// ! Settings Reg/Output
+	// ! Settings Page Setup
+	// =========================
+
+	/**
+	 * Register admin pages.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function add_menu_pages() {
+		add_utility_page(
+			__( 'Translation Options', NLTXTDMN ), // page title
+			_x( 'Translation', 'menu title', NLTXTDMN ), // menu title
+			'manage_options', // capability
+			'nlingual-options', // slug
+			array( static::$name, 'settings_page' ), // callback
+			'dashicons-translation' // icon
+		);
+
+		add_submenu_page(
+			'nlingual-options', // parent
+			__( 'Manage Localizable Objects', NLTXTDMN ), // page title
+			__( 'Localizables',  NLTXTDMN ), // menu title
+			'manage_options', // capability
+			'nlingual-l10s', // slug
+			array( static::$name, 'settings_page' ) // callback
+		);
+
+		add_submenu_page(
+			'nlingual-options', // parent
+			__( 'Post Synchronization', NLTXTDMN ), // page title
+			__( 'Sync Options', NLTXTDMN ), // menu title
+			'manage_options', // capability
+			'nlingual-sync', // slug
+			array( static::$name, 'settings_page' ) // callback
+		);
+
+		add_submenu_page(
+			'nlingual-options', // parent
+			__( 'Manage Languages', NLTXTDMN ), // page title
+			_x( 'Languages', 'menu title', NLTXTDMN ), // menu title
+			'manage_options', // capability
+			'nlingual-languages', // slug
+			array( static::$name, 'settings_page_languages' ) // callback
+		);
+	}
+
+	// =========================
+	// ! Settings Registration
 	// =========================
 
 	/**
@@ -46,8 +93,7 @@ class Manager extends Functional {
 	 * @since 2.0.0
 	 */
 	public static function register_settings() {
-		/* === Translation Options === */
-
+		// Translation Options
 		Settings::register( array(
 			'default_language'   => 'intval',
 			'skip_default_l10n'  => 'intval',
@@ -56,6 +102,35 @@ class Manager extends Functional {
 			'postlang_override'  => null,
 		), 'options' );
 
+		static::setup_options_fields();
+
+		// Localizables Options
+		Settings::register( array(
+			'post_types'   => null,
+			'localizables' => null,
+		), 'l10s' );
+
+		static::setup_l10s_fields();
+
+		// Sync Options
+		Settings::register( array(
+			'sync_rules'   => null,
+			'clone_rules' => null,
+		), 'l10s' );
+
+		static::setup_sync_fields();
+	}
+
+	// =========================
+	// ! Settings Fields Setup
+	// =========================
+
+	/**
+	 * Fields for the Translations page.
+	 *
+	 * @since 2.0.0
+	 */
+	protected static function setup_options_fields() {
 		add_settings_section( 'default', null, null, 'nlingual-options' );
 
 		Settings::add_fields( array(
@@ -96,14 +171,14 @@ class Manager extends Functional {
 				'type'  => 'checkbox',
 			),
 		), 'options', 'redirection' );
+	}
 
-		/* === Localizables Options === */
-
-		Settings::register( array(
-			'post_types'   => null,
-			'localizables' => null,
-		), 'l10s' );
-
+	/**
+	 * Fields for the Localizables page.
+	 *
+	 * @since 2.0.0
+	 */
+	protected static function setup_l10s_fields() {
 		add_settings_section( 'default', null, null, 'nlingual-l10s' );
 
 		// Build the post types list
@@ -149,52 +224,35 @@ class Manager extends Functional {
 		), 'l10s' );
 	}
 
-	// =========================
-	// ! Settings Pages
-	// =========================
-
 	/**
-	 * Register admin pages.
+	 * Fields for the Sync Options page.
 	 *
 	 * @since 2.0.0
 	 */
-	public static function add_menu_pages() {
-		add_utility_page(
-			__( 'Translation Options', NLTXTDMN ), // page title
-			_x( 'Translation', 'menu title', NLTXTDMN ), // menu title
-			'manage_options', // capability
-			'nlingual-options', // slug
-			array( static::$name, 'settings_page' ), // callback
-			'dashicons-translation' // icon
-		);
+	protected static function setup_sync_fields() {
+		add_settings_section( 'default', null, null, 'nlingual-sync' );
 
-		add_submenu_page(
-			'nlingual-options', // parent
-			__( 'Manage Languages', NLTXTDMN ), // page title
-			_x( 'Languages', 'menu title', NLTXTDMN ), // menu title
-			'manage_options', // capability
-			'nlingual-languages', // slug
-			array( static::$name, 'settings_page_languages' ) // callback
-		);
+		$post_types = Registry::get( 'post_types' );
+		foreach ( $post_types as $post_type ) {
+			$field = array(
+				'title' => get_post_type_object( $post_type )->labels->name,
+				'type'  => 'sync_settings',
+				'data'  => $post_type,
+			);
+			$sync_fields[ "sync_rules[posts][{$post_type}]" ] = $field;
+			$clone_fields[ "clone_rules[posts][{$post_type}]" ] = $field;
+		}
 
-		add_submenu_page(
-			'nlingual-options', // parent
-			__( 'Manage Localizable Objects', NLTXTDMN ), // page title
-			__( 'Localizables',  NLTXTDMN ), // menu title
-			'manage_options', // capability
-			'nlingual-l10s', // slug
-			array( static::$name, 'settings_page' ) // callback
-		);
+		Settings::add_fields( $sync_fields, 'sync' );
 
-		add_submenu_page(
-			'nlingual-options', // parent
-			__( 'Post Synchronization', NLTXTDMN ), // page title
-			__( 'Sync Options', NLTXTDMN ), // menu title
-			'manage_options', // capability
-			'nlingual-sync', // slug
-			array( static::$name, 'settings_page' ) // callback
-		);
+		add_settings_section( 'cloning', __( 'New Translations', NLTXTDMN ), array( static::$name, 'settings_section_cloning' ), 'nlingual-sync' );
+
+		Settings::add_fields( $clone_fields, 'sync', 'cloning' );
 	}
+
+	// =========================
+	// ! Settings Page Output
+	// =========================
 
 	/**
 	 * Output for generic settings page.
@@ -236,6 +294,17 @@ class Manager extends Functional {
 				<?php submit_button(); ?>
 			</form>
 		</div>
+		<?php
+	}
+
+	/**
+	 * Output for the cloning options section.
+	 *
+	 * @sicne 2.0.0
+	 */
+	public static function settings_section_cloning() {
+		?>
+		<p>When creating a new translation of an existing post (i.e. a clone), what details should be cloned?</p>
 		<?php
 	}
 }
