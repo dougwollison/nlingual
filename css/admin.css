@@ -31,3 +31,10 @@
 
 .nl-translation-field {
   margin: 10px 0 5px; }
+
+.nl-settings-field h4 {
+  color: #666;
+  margin: 5px 0 .5em; }
+
+.nl-section-content h4 {
+  padding-top: 15px; }
