@@ -56,8 +56,9 @@ class Settings {
 		) );
 
 		// Build the callback arguments
+		$class = sanitize_key( $field );
 		$args = array(
-			'class'     => "nlingual_{$field}-field",
+			'class'     => "nl-settings-field nl-settings-{$page}-field nlingual_{$class}-field",
 			'name'      => "nlingual_{$field}",
 			'label'     => $options['label'],
 			'help'      => $options['help'],
@@ -66,7 +67,7 @@ class Settings {
 		);
 
 		// Add label_for arg if appropriate
-		if ( ! in_array( $options['type'], array( 'radiolist', 'checklist', 'checkbox' ) ) ) {
+		if ( ! in_array( $options['type'], array( 'radiolist', 'checklist', 'checkbox', 'sync_settings' ) ) ) {
 			$args['label_for'] = "nlingual_{$field}";
 		}
 
@@ -125,7 +126,7 @@ class Settings {
 		if ( isset( $array[ $key ] ) ) {
 			// See if we need to go deeper
 			if ( $map ) {
-				return extract_value( $array[ $key ], $map );
+				return static::extract_value( $array[ $key ], $map );
 			} else {
 				return $array[ $key ];
 			}
@@ -157,7 +158,7 @@ class Settings {
 
 		// Process the value via the map if necessary
 		if ( $map ) {
-			$value = extract_value( $value, $map );
+			$value = static::extract_value( $value, $map );
 		}
 
 		return $value;
@@ -178,17 +179,21 @@ class Settings {
 	 * 		@option string "help" Optional Help text.
 	 */
 	public static function build_field( $args ) {
+		// Get the value for the field
+		$value = static::get_value( $args['name'] );
+
 		switch ( $args['type'] ) {
 			case 'select':
 			case 'radiolist':
 			case 'checklist':
+			case 'sync_settings':
 				$method = "build_{$args['type']}_field";
-				$cb_args = array( $args['name'], $args['data'] );
+				$cb_args = array( $args['name'], $value, $args['data'] );
 				break;
 
 			default:
 				$method = "build_input_field";
-				$cb_args = array( $args['name'], $args['type'], $args['label'], $args['data'] );
+				$cb_args = array( $args['name'], $value, $args['type'], $args['label'], $args['data'] );
 		}
 
 		$html = call_user_func_array( array( get_called_class(), $method ), $cb_args );
@@ -210,19 +215,19 @@ class Settings {
 	/**
 	 * Build a basic <input> field.
 	 *
+	 * Also handles <textarea> fields.
+	 *
 	 * @since 2.0.0
 	 *
 	 * @param string $name       The name/ID of the field.
+	 * @param mixed  $value      The value of the field.
 	 * @param string $label      Optional The label for the input.
 	 * @param array  $attributes Optional Custom attributes for the field.
 	 *
 	 * @return string The HTML of the field.
 	 */
-	protected static function build_input_field( $name, $type, $attributes = array() ) {
+	protected static function build_input_field( $name, $value, $type, $attributes = array() ) {
 		$html = '';
-
-		// Load the option matching the field name
-		$value = static::get_value( $name );
 
 		// Create an ID out of the name
 		$id = sanitize_key( $name );
@@ -251,7 +256,12 @@ class Settings {
 		}
 
 		// Build the input
-		$html .= sprintf( '<input type="%s" name="%s" id="%s" value="%s"%s />', $type, $name, $id, $value, $atts );
+		if ( $type == 'textarea' ) {
+			// or <textarea> as the case may be.
+			$html .= sprintf( '<textarea name="%s" id="%s"%s>%s</textarea>', $name, $id, $atts, $value );
+		} else {
+			$html .= sprintf( '<input type="%s" name="%s" id="%s" value="%s"%s />', $type, $name, $id, $value, $atts );
+		}
 
 		return $html;
 	}
@@ -262,13 +272,11 @@ class Settings {
 	 * @since 2.0.0
 	 *
 	 * @param string $name    The name/ID of the field.
+	 * @param mixed  $value   The value of the field.
 	 * @param array  $options The options for the field.
 	 */
-	protected static function build_select_field( $name, $options ) {
+	protected static function build_select_field( $name, $value, $options ) {
 		$html = '';
-
-		// Load the option matching the field name
-		$value = static::get_value( $name );
 
 		// Create an ID out of the name
 		$id = sanitize_key( $name );
@@ -290,11 +298,12 @@ class Settings {
 	 *
 	 * @param string $type    The input type.
 	 * @param string $name    The name/ID of the field.
+	 * @param mixed  $value   The value of the field.
 	 * @param array  $options The options for the field.
 	 */
-	protected static function build_inputlist_field( $type, $name, $options ) {
-		// Load the option matching the field name
-		$value = (array) static::get_value( $name ); // ensure it's an array
+	protected static function build_inputlist_field( $type, $name, $value, $options ) {
+		// Ensure $value is an array
+		$value = (array) $value;
 
 		// Checkbox field support array value
 		if ( $type == 'checkbox' ) {
@@ -317,8 +326,8 @@ class Settings {
 	 *
 	 * @see Settings::build_inputlist_field() for what it all does.
 	 */
-	protected static function build_radiolist_field( $name, $options ) {
-		return static::build_inputlist_field( 'radio', $name, $options );
+	protected static function build_radiolist_field( $name, $value, $options ) {
+		return static::build_inputlist_field( 'radio', $name, $value, $options );
 	}
 
 	/**
@@ -326,7 +335,60 @@ class Settings {
 	 *
 	 * @see Settings::build_input_list() for what it all does.
 	 */
-	protected static function build_checklist_field( $name, $options ) {
-		return static::build_inputlist_field( 'checkbox', $name, $options );
+	protected static function build_checklist_field( $name, $value, $options ) {
+		return static::build_inputlist_field( 'checkbox', $name, $value, $options );
+	}
+
+	/**
+	 * Build a sync settings interface
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $name      The name of the field.
+	 * @param mixed  $value     The value of the field.
+	 * @param string $post_type The post type in question.
+	 */
+	protected static function build_sync_settings_field( $name, $value, $post_type ) {
+		// Post Data values
+		$post_fields = array(
+			'post_author'    => 'Author',
+			'post_date'      => 'Date',
+			'post_status'    => 'Status',
+			'post_parent'    => 'Parent',
+			'menu_order'     => 'Menu Order',
+			'post_password'  => 'Password',
+			'comment_status' => 'Comment Status',
+			'ping_status'    => 'Pingback Status',
+		);
+
+		// Taxonomies values
+		$post_taxs = get_object_taxonomies( $post_type, 'objects' );
+		foreach ( $post_taxs as &$tax ) {
+			$tax = $tax->labels->name;
+		}
+
+		?>
+		<div class="nl-field-section">
+			<button type="button" class="button nl-section-toggle hide-if-no-js" data-alt="<?php _e( 'Close Settings', NLTXTDMN ); ?>"><?php _e( 'Open Settings', NLTXTDMN ); ?></button>
+			<div class="nl-section-content">
+				<h4><?php _e( 'Post Data', NLTXTDMN ); ?></h4>
+				<?php echo static::build_checklist_field( "{$name}[post_fields]", $value['post_fields'], $post_fields ); ?>
+				<p class="description"><?php _e( 'What post information should be copied?', NLTXTDMN ); ?></p>
+
+				<?php if ( $post_taxs ) : ?>
+					<h4><?php _e( 'Taxonomies', NLTXTDMN ); ?></h4>
+					<?php echo static::build_checklist_field( "{$name}[post_terms]", $value['post_terms'], $post_taxs ); ?>
+					<p class="description"><?php _e( 'What terms should be copied?', NLTXTDMN ); ?></p>
+				<?php endif; ?>
+
+				<h4><?php _e( 'Meta Data', NLTXTDMN ); ?></h4>
+				<?php echo static::build_input_field( "{$name}[post_meta]", implode( "\n", $value['post_meta'] ), 'textarea', array(
+					'class' => 'widefat',
+					'rows' => 5,
+				) ); ?>
+				<p class="description"><?php _e( 'Which custom fields should be copied? (one per line)', NLTXTDMN ); ?></p>
+			</div>
+		</div>
+		<?php
 	}
 }
