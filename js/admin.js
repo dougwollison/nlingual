@@ -1,6 +1,32 @@
 /* globals console, alert, prompt, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n, NL_LANGUAGES */
 
 jQuery( function( $ ) {
+	// =========================
+	// ! Setings Pages
+	// =========================
+
+	// Hide all sections by default
+	$( '.nl-section-content' ).hide();
+
+	// Add toggle feature for sections
+	$('.nl-section-toggle' ).each( function() {
+		$( this ).data( 'text', $( this ).text() );
+	} ).click( function() {
+		var $toggle = $( this );
+		var $section = $toggle.parent();
+
+		$section.toggleClass( 'open' );
+		var open = $section.hasClass( 'open' );
+
+		$section.find( '.nl-section-content' ).animate( { height: 'toggle' } );
+
+		$toggle.text( $toggle.data( open ? 'alt' : 'text' ) );
+	} );
+
+	// =========================
+	// ! Meta Box and Quick/Bulk Edit
+	// =========================
+
 	// Update visible translation fields based on current language
 	$( '#nl_language' ).change( function() {
 		var lang_id = $( this ).val();
