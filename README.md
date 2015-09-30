@@ -40,7 +40,7 @@ The synchronization rules are managed on a per post type basis, allowing you to 
 
 ### Flexible Language Management
 
-This is admitedly a feature few will need, but it's a godsend for those that do. When configuring what languages nLingual uses, you can define your own or modify existing ones. Each language in the system has 6 important fields:
+This is admittedly a feature few will need, but it's a godsend for those that do. When configuring what languages nLingual uses, you can define your own or modify existing ones. Each language in the system has 6 important fields:
 
 1. System Name: the name use to refer to the language within the admin.
 2. Native Name: the name in the actual language, for use mostly on the front end.
