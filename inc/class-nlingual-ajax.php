@@ -2,7 +2,7 @@
 namespace nLingual;
 
 /**
- * nLingual Backend Functionality
+ * nLingual AJAX Handler
  *
  * @package nLingual
  *
