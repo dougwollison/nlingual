@@ -2,7 +2,7 @@
 namespace nLingual;
 
 /**
- * nLingual Settings Handler
+ * nLingual Settings Helper
  *
  * @package nLingual
  *
@@ -99,6 +99,71 @@ class Settings {
 	}
 
 	/**
+	 * Given an array, extract the disired value defined like so: myvar[mykey][0].
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array        $array The array to extract from.
+	 * @param array|string $map   The map to follow, in myvar[mykey] or [myvar, mykey] form.
+	 *
+	 * @return mixed The extracted value.
+	 */
+	protected static function extract_value( array $array, $map ) {
+		// Abort if not an array
+		if ( ! is_array( $array ) ) return $array;
+
+		// If $map is a string, turn it into an array
+		if ( ! is_array( $map ) ) {
+			$map = trim( $map, ']' ); // Get rid of last ] so we don't have an empty value at the end
+			$map = preg_split( '/[\[\]]+/', $map );
+		}
+
+		// Extract the first key to look for
+		$key = array_shift( $map );
+
+		// See if it exists
+		if ( isset( $array[ $key ] ) ) {
+			// See if we need to go deeper
+			if ( $map ) {
+				return extract_value( $array[ $key ], $map );
+			} else {
+				return $array[ $key ];
+			}
+		} else {
+			// Nothing found.
+			return null;
+		}
+	}
+
+	/**
+	 * Retrieve the settings value.
+	 *
+	 * Handles names like option[suboption][] appropraitely.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $name The name of the setting to retrieve.
+	 */
+	protected static function get_value( $name ) {
+		if ( preg_match( '/([\w-]+)\[([\w-]+)\](.*)/', $name, $matches ) ) {
+			// Field is an array map, get the actual key...
+			$name = $matches[1];
+			// ... and the map to use.
+			$map = $matches[2] . $matches[3];
+		}
+
+		// Get the value
+		$value = get_option( $name );
+
+		// Process the value via the map if necessary
+		if ( $map ) {
+			$value = extract_value( $value, $map );
+		}
+
+		return $value;
+	}
+
+	/**
 	 * Build a field.
 	 *
 	 * Calls appropriate build_%type%_field method,
@@ -157,7 +222,7 @@ class Settings {
 		$html = '';
 
 		// Load the option matching the field name
-		$value = get_option( $name );
+		$value = static::get_value( $name );
 
 		// Create an ID out of the name
 		$id = sanitize_key( $name );
@@ -203,7 +268,7 @@ class Settings {
 		$html = '';
 
 		// Load the option matching the field name
-		$value = get_option( $name );
+		$value = static::get_value( $name );
 
 		// Create an ID out of the name
 		$id = sanitize_key( $name );
@@ -229,7 +294,7 @@ class Settings {
 	 */
 	protected static function build_inputlist_field( $type, $name, $options ) {
 		// Load the option matching the field name
-		$value = (array) get_option( $name ); // ensure it's an array
+		$value = (array) static::get_value( $name ); // ensure it's an array
 
 		// Checkbox field support array value
 		if ( $type == 'checkbox' ) {
