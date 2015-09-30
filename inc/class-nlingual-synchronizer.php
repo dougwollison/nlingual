@@ -83,22 +83,6 @@ class Synchronizer {
 			wp_update_post( $changes );
 		}
 
-		// Meta Data
-		if ( isset( $rules['post_meta'] ) && $rules['post_meta'] ) {
-			// Copy over all meta data found
-			$meta_data = $wpdb->get_results( $wpdb->prepare( "SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id = %d", $post->ID ) );
-
-			// Loop through and add to the translation
-			foreach ( $meta_data as $meta ) {
-				// Skip if not a whilelisted field
-				if ( is_array( $rules['post_meta'] ) && in_array( $meta->meta_key, $rules['post_meta'] ) ) {
-					continue;
-				}
-
-				add_post_meta( $translation->ID, $meta->meta_key, $meta->meta_value );
-			}
-		}
-
 		// Post Terms
 		if ( isset( $rules['post_terms'] ) && $rules['post_terms'] ) {
 			// Assign to all the same terms
@@ -116,6 +100,22 @@ class Synchronizer {
 				}
 
 				wp_set_object_terms( $translation->ID, $term_ids, $taxonomy );
+			}
+		}
+
+		// Meta Data
+		if ( isset( $rules['post_meta'] ) && $rules['post_meta'] ) {
+			// Copy over all meta data found
+			$meta_data = $wpdb->get_results( $wpdb->prepare( "SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id = %d", $post->ID ) );
+
+			// Loop through and add to the translation
+			foreach ( $meta_data as $meta ) {
+				// Skip if not a whilelisted field
+				if ( is_array( $rules['post_meta'] ) && in_array( $meta->meta_key, $rules['post_meta'] ) ) {
+					continue;
+				}
+
+				add_post_meta( $translation->ID, $meta->meta_key, $meta->meta_value );
 			}
 		}
 
