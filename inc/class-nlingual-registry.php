@@ -26,6 +26,39 @@ class Registry {
 	protected static $cache = array();
 
 	/**
+	 * The current language id.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var int
+	 */
+	protected static $current_lang;
+
+	/**
+	 * The default language id.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var int
+	 */
+	protected static $default_lang;
+
+	/**
+	 * The skip default language localizing option.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var bool
+	 */
+	protected static $skip_default_l10n;
+
+	/**
 	 * The language query var.
 	 *
 	 * @since 2.0.0
@@ -57,39 +90,6 @@ class Registry {
 	 * @var bool
 	 */
 	protected static $postlang_override;
-
-	/**
-	 * The skip default language localizing option.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected (static)
-	 *
-	 * @var bool
-	 */
-	protected static $skip_default_l10n;
-
-	/**
-	 * The default language id.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected (static)
-	 *
-	 * @var int
-	 */
-	protected static $default_lang;
-
-	/**
-	 * The current language id.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected (static)
-	 *
-	 * @var int
-	 */
-	protected static $current_lang;
 
 	/**
 	 * The language directory.
@@ -439,26 +439,18 @@ class Registry {
 		}
 
 		// Load simple options
-		static::$query_var = get_option( 'nlingual_query_var', 'nl_language' );
+		static::$default_lang       = get_option( 'nlingual_default_language', 0 );
+		static::$skip_default_l10n  = get_option( 'nlingual_skip_default_l10n', 0 );
+		static::$query_var          = get_option( 'nlingual_query_var', 'nl_language' );
 		static::$redirection_method = get_option( 'nlingual_redirection_method', NL_REDIRECT_USING_GET );
-		static::$default_lang = get_option( 'nlingual_default_language', 0 );
-		static::$postlang_override = get_option( 'nlingual_postlang_override', 0 );
-		static::$skip_default_l10n = get_option( 'nlingual_skip_default_l10n', 0 );
+		static::$postlang_override  = get_option( 'nlingual_postlang_override', 0 );
 
-		// Load languages
-		static::$languages = get_option( 'nlingual_languages', new Languages );
-
-		// Load supported post types list
-		static::$post_types = get_option( 'nlingual_post_types', array() );
-
-		// Load localizables list
+		// Load complex options
+		static::$languages    = get_option( 'nlingual_languages', new Languages );
+		static::$post_types   = get_option( 'nlingual_post_types', array() );
 		static::$localizables = get_option( 'nlingual_localizables', array() );
-
-		// Load synchronization rules
-		static::$sync_rules = get_option( 'nlingual_sync_rules', array() );
-
-		// Load cloning rules
-		static::$clone_rules = get_option( 'nlingual_clone_rules', array() );
+		static::$sync_rules   = get_option( 'nlingual_sync_rules', array() );
+		static::$clone_rules  = get_option( 'nlingual_clone_rules', array() );
 
 		// Flag that we've loaded everything
 		$loaded = true;
