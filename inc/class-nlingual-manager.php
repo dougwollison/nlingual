@@ -48,16 +48,23 @@ class Manager extends Functional {
 	 * @param array $rules The rules to be sanitized.
 	 */
 	public static function sanitize_rules( $rules ) {
-		// Loop through each rule section
-		foreach ( $rules as $section => &$_rules ) {
-			// Loop through each rule type
-			foreach ( $_rules as $type => &$values ) {
-				// If values is a string...
-				if ( is_string( $values ) ) {
-					// Split it by line
-					$values = preg_split( '/[\n\r]+/', trim( $values ), 0, PREG_SPLIT_NO_EMPTY );
-					// And trim each line
-					$values = array_walk( $values, 'trim' );
+		// Loop through each object type
+		foreach ( $rules as $object_type => $type_rules ) {
+			// Loop through each object subtype
+			foreach ( $type_rules as $subtype => $ruleset ) {
+				// Loop through each rule set
+				foreach ( $ruleset as $rule => $values ) {
+					// If values is a string...
+					if ( is_string( $values ) ) {
+						// Split it by line
+						$values = (array) preg_split( '/[\n\r]+/', trim( $values ), 0, PREG_SPLIT_NO_EMPTY );
+						// Convert to TRUE if it contains * wildcard
+						if ( in_array( '*', $values ) ) {
+							$values = true;
+						}
+
+						$rules[ $object_type ][ $subtype ][ $rule ] = $values;
+					}
 				}
 			}
 		}
@@ -268,8 +275,8 @@ class Manager extends Functional {
 				'type'  => 'sync_settings',
 				'data'  => $post_type,
 			);
-			$sync_fields[ "sync_rules[posts][{$post_type}]" ] = $field;
-			$clone_fields[ "clone_rules[posts][{$post_type}]" ] = $field;
+			$sync_fields[ "sync_rules[post_type][{$post_type}]" ] = $field;
+			$clone_fields[ "clone_rules[post_type][{$post_type}]" ] = $field;
 		}
 
 		Settings::add_fields( $sync_fields, 'sync' );
@@ -295,8 +302,8 @@ class Manager extends Functional {
 		?>
 		<div class="wrap">
 			<h1><?php echo get_admin_page_title(); ?></h1>
-
-			<form method="post" action="options.php">
+			<?php settings_errors(); ?>
+			<form method="post" action="options.php" id="<?php echo $plugin_page; ?>-form">
 				<?php settings_fields( $plugin_page ); ?>
 				<?php do_settings_sections( $plugin_page ); ?>
 				<?php submit_button(); ?>
@@ -317,8 +324,8 @@ class Manager extends Functional {
 		?>
 		<div class="wrap">
 			<h1><?php echo get_admin_page_title(); ?></h1>
-
-			<form method="post" action="options.php">
+			<?php settings_errors(); ?>
+			<form method="post" action="options.php" id="<?php echo $plugin_page; ?>-form">
 				<?php settings_fields( $plugin_page ); ?>
 				<?php submit_button(); ?>
 			</form>
