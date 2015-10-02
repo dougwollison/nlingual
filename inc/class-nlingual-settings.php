@@ -316,7 +316,7 @@ class Settings {
 			$inputs[] = sprintf( '<label><input type="%s" name="%s" value="%s"%s /> %s</label>', $type, $name, $val, $checked, $label );
 		}
 
-		$html = '<fieldset>' . implode( '<br /> ', $inputs ) . '</fieldset>';
+		$html = '<fieldset class="nl-inputlist">' . implode( '<br /> ', $inputs ) . '</fieldset>';
 
 		return $html;
 	}
@@ -354,7 +354,7 @@ class Settings {
 			'post_author'    => _x( 'Author',          'post field', NLTXTDMN ),
 			'post_date'      => _x( 'Date',            'post field', NLTXTDMN ),
 			'post_status'    => _x( 'Status',          'post field', NLTXTDMN ),
-			'post_parent'    => _x( 'Parent',          'post field', NLTXTDMN ) . ' <small>' . __( '(will use counterpart translation if found)', NLTXTDMN ) . '</small>',
+			'post_parent'    => _x( 'Parent',          'post field', NLTXTDMN ) . '*',
 			'menu_order'     => _x( 'Menu Order',      'post field', NLTXTDMN ),
 			'post_password'  => _x( 'Password',        'post field', NLTXTDMN ),
 			'comment_status' => _x( 'Comment Status',  'post field', NLTXTDMN ),
@@ -367,26 +367,42 @@ class Settings {
 			$tax = $tax->labels->name;
 		}
 
+		// Convert metadata value
+		if ( $value['post_meta'] === true ) {
+			$value['post_meta'] = '*';
+		}
+
 		?>
 		<div class="nl-field-section">
 			<button type="button" class="button nl-section-toggle hide-if-no-js" data-alt="<?php _e( 'Close Settings', NLTXTDMN ); ?>"><?php _e( 'Open Settings', NLTXTDMN ); ?></button>
 			<div class="nl-section-content">
-				<h4><?php _e( 'Post Data', NLTXTDMN ); ?></h4>
+				<h4><label  title="<?php _e( 'Check All/None', TXTDMN ); ?>">
+					<?php _e( 'Post Data', NLTXTDMN ); ?>
+					<input type="checkbox" class="nl-checkall" data-name="<?php echo "{$name}[post_fields]"; ?>" />
+				</label></h4>
 				<?php echo static::build_checklist_field( "{$name}[post_fields]", $value['post_fields'], $post_fields ); ?>
-				<p class="description"><?php _e( 'What post information should be copied?', NLTXTDMN ); ?></p>
+				<p class="description"><?php _e( 'What post information should be copied?', NLTXTDMN ); ?> <br />
+					<small>* <?php _e( 'will use counterpart translation if found', NLTXTDMN ); ?></small></p>
 
 				<?php if ( $post_taxs ) : ?>
-					<h4><?php _e( 'Taxonomies', NLTXTDMN ); ?></h4>
+					<h4><label title="<?php _e( 'Check All/None', TXTDMN ); ?>">
+						<?php _e( 'Taxonomies', NLTXTDMN ); ?>
+						<input type="checkbox" class="nl-checkall" data-name="<?php echo "{$name}[post_terms]"; ?>" />
+					</label></h4>
 					<?php echo static::build_checklist_field( "{$name}[post_terms]", $value['post_terms'], $post_taxs ); ?>
 					<p class="description"><?php _e( 'What terms should be copied?', NLTXTDMN ); ?></p>
 				<?php endif; ?>
 
-				<h4><?php _e( 'Meta Data', NLTXTDMN ); ?></h4>
+				<h4><label  title="<?php _e( 'Match All/None', TXTDMN ); ?>">
+					<?php _e( 'Meta Data', NLTXTDMN ); ?>
+					<input type="checkbox" class="nl-matchall" data-name="<?php echo "{$name}[post_meta]"; ?>" />
+				</label></h4>
 				<?php echo static::build_input_field( "{$name}[post_meta]", implode( "\n", (array) $value['post_meta'] ), 'textarea', array(
 					'class' => 'widefat',
 					'rows' => 5,
 				) ); ?>
-				<p class="description"><?php _e( 'Which custom fields should be copied? (one per line)', NLTXTDMN ); ?></p>
+				<p class="description"><?php _e( 'Which custom fields should be copied?', NLTXTDMN ); ?> <br />
+					<small><?php _e( 'One per line. Enter an asterisk (*) to match all fields.', NLTXTDMN ); ?></small></p>
 			</div>
 		</div>
 		<?php
