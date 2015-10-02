@@ -55,13 +55,13 @@ class Synchronizer {
 			$rules = Registry::get( 'sync_rules' );
 
 			// Get the rules for this post's type, failing if not found
-			if ( ! isset( $rules['posts'] ) ) {
+			if ( ! isset( $rules['post_type'] ) ) {
 				return false;
-			} elseif ( ! isset( $rules['posts'][ $original->post_type ] ) ) {
+			} elseif ( ! isset( $rules['post_type'][ $original->post_type ] ) ) {
 				return false;
 			}
 
-			$rules = $rules['posts'][ $original->post_type ];
+			$rules = $rules['post_type'][ $original->post_type ];
 		}
 
 		// Post Fields
