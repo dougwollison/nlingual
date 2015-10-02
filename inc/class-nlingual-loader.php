@@ -90,6 +90,25 @@ class Loader extends Functional {
 			return;
 		}
 
+		// Default options
+		add_option( 'nlingual_default_language', 1 );
+		add_option( 'nlingual_skip_default_l10n', 0 );
+		add_option( 'nlingual_query_var', 'nl_language' );
+		add_option( 'nlingual_redirection_method', NL_REDIRECT_USING_GET );
+		add_option( 'nlingual_postlang_override', 0 );
+		add_option( 'nlingual_languages', new Languages );
+		add_option( 'nlingual_post_types', array() );
+		add_option( 'nlingual_sync_rules', array(
+			'post_types' => array()
+		)  );
+		add_option( 'nlingual_clone_rules', array(
+			'post_types' => array()
+		) );
+		add_option( 'nlingual_localizables', array(
+			'nav_menu_locations' => array(),
+			'sidebar_locations' => array(),
+		) );
+
 		// Get database version and upgrade if needed.
 		$db_version = get_option( 'nlingual_database_version' );
 		$charset_collate = $wpdb->get_charset_collate();
