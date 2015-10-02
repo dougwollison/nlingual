@@ -54,5 +54,30 @@
 .nl-section-content {
 	h4 {
 		padding-top: 15px;
+
+		input[type="checkbox"] {
+			margin-left: .5em;
+			opacity: .25;
+			-webkit-transition: opacity .2s;
+			transition: opacity .2s;
+		}
+
+		&:hover input[type="checkbox"] {
+			opacity: 1;
+		}
+	}
+}
+
+#nlingual-sync-form {
+	.nl-inputlist {
+		@include pie-clearfix;
+
+		label {
+			margin-right: 1.5em !important;
+		}
+
+		br {
+			display: none;
+		}
 	}
 }

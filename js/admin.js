@@ -5,6 +5,16 @@ jQuery( function( $ ) {
 	// ! Setings Pages
 	// =========================
 
+	// Check all fields of a matching name
+	$('.nl-checkall').change(function(){
+		var name = $(this).data('name');
+		$('input[name="'+name+'[]"]').attr('checked', this.checked);
+	});
+	$('.nl-matchall').change(function(){
+		var name = $(this).data('name');
+		$('[name="'+name+'"]').val(this.checked ? '*' : '');
+	});
+
 	// Hide all sections by default
 	$( '.nl-section-content' ).hide();
 
