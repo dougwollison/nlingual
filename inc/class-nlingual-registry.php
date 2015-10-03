@@ -92,17 +92,6 @@ class Registry {
 	protected static $postlang_override;
 
 	/**
-	 * The language directory.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected (static)
-	 *
-	 * @var nLingualLanguages
-	 */
-	protected static $languages;
-
-	/**
 	 * The supported post types.
 	 *
 	 * @since 2.0.0
@@ -145,6 +134,17 @@ class Registry {
 	 * @var array
 	 */
 	protected static $clone_rules = array();
+
+	/**
+	 * The language directory.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var nLingualLanguages
+	 */
+	protected static $languages;
 
 	// =========================
 	// ! Propert Accessing
@@ -419,19 +419,24 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @see Registry::$default_lang
+	 * @see Registry::$skip_default_l10n
 	 * @see Registry::$query_var
 	 * @see Registry::$redirection_method
-	 * @see Registry::$default_lang
 	 * @see Registry::$postlang_override
-	 * @see Registry::$skip_default_l10n
-	 * @see Registry::$languages
 	 * @see Registry::$post_types
 	 * @see Registry::$localizables
 	 * @see Registry::$sync_rules
+	 * @see Registry::$clone_rules
+	 * @see Registry::$languages
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @param bool $reload Should we reload the options?
 	 */
 	public static function load( $reload = false ) {
+		global $wpdb;
+
 		static $loaded = false;
 		if ( $loaded && ! $reload ) {
 			// Already did this
@@ -446,11 +451,14 @@ class Registry {
 		static::$postlang_override  = get_option( 'nlingual_postlang_override', 0 );
 
 		// Load complex options
-		static::$languages    = get_option( 'nlingual_languages', new Languages );
 		static::$post_types   = get_option( 'nlingual_post_types', array() );
 		static::$localizables = get_option( 'nlingual_localizables', array() );
 		static::$sync_rules   = get_option( 'nlingual_sync_rules', array() );
 		static::$clone_rules  = get_option( 'nlingual_clone_rules', array() );
+
+		// Load stuff from database
+		$data = $wpdb->get_results( "SELECT * FROM $wpdb->nl_languages ORDER BY list_order ASC", ARRAY_A );
+		static::$languages    = new Languages( $data );
 
 		// Flag that we've loaded everything
 		$loaded = true;

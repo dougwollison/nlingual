@@ -22,13 +22,23 @@ class Migrator {
 	public static function upgrade_database() {
 		global $wpdb;
 
-		static::export_languages();
-
 		// Get the collation if applicable
 		$collate = '';
 		if ( ! empty( $wpdb->collate ) ) {
 			$collate = "COLLATE $wpdb->collate";
 		}
+
+		// We need to alter the languages table to the new format
+
+		// Rename to lowercase
+		$wpdb->query("ALTER TABLE {$wpdb->prefix}nL_languages RENAME TO {$wpdb->prefix}nl_languages2");
+		$wpdb->query("ALTER TABLE {$wpdb->prefix}nl_languages2 RENAME TO $wpdb->nl_languages");
+		// Rename mo to locale_name, placing it after short_name
+		$wpdb->query("ALTER TABLE $wpdb->nL_languages CHANGE `mo` `locale_name` varchar(10) DEFAULT '' NOT NULL AFTER `short_name`");
+		// Rename iso to iso_code, placing it after locale_name
+		$wpdb->query("ALTER TABLE $wpdb->nL_languages CHANGE `iso` `iso_code` varchar(2) DEFAULT '' NOT NULL AFTER `locale_name`");
+		// Relocate slug to after iso_code
+		$wpdb->query("ALTER TABLE $wpdb->nL_languages MODIFY `slug` varchar(10) DEFAULT '' NOT NULL AFTER `iso_code`");
 
 		// We need to alter the translations table to the new format
 
@@ -46,62 +56,5 @@ class Migrator {
 
 		// Just in case, mark them down as being at least up to 2.0.0
 		update_option( 'nlingual_database_version', '2.0.0' );
-	}
-
-	/**
-	 * Export languages from database into options table.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Languages() to create a new language collection.
-	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
-	 */
-	public static function export_languages() {
-		global $wpdb;
-
-		$table = $wpdb->prefix.'nL_languages';
-
-		// Check if old languages table exists
-		if ( ! $wpdb->get_var("SHOW TABLES LIKE '$table'") ) {
-			return;
-		}
-
-		// Export the contents of the old languages table
-		$data = $wpdb->get_results("
-			SELECT
-				lang_id,
-				active,
-				system_name,
-				native_name,
-				short_name,
-				slug,
-				iso,
-				mo
-			FROM $table
-			ORDER BY list_order
-		");
-
-		// Delete the table
-		$wpdb->query("DROP TABLE $table");
-
-		// Convert to new structure
-		$languages = new Languages;
-		foreach ( $data as $i => $entry ) {
-			$languages->add( array(
-				'id'          => $entry->lang_id,
-				'active'      => (bool) $entry->active,
-				'slug'        => $entry->slug,
-				'system_name' => $entry->system_name,
-				'native_name' => $entry->native_name,
-				'short_name'  => $entry->short_name,
-				'iso_code'    => $entry->iso_code,
-				'locale_name' => $entry->mo,
-				'list_order'  => $i,
-			) );
-		}
-
-		// Store in the options table
-		update_option( 'nlingual_languages', $languages );
 	}
 }

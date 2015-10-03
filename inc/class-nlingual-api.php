@@ -42,6 +42,7 @@ class API extends Functional {
 		global $wpdb;
 
 		// Register the database tables (with backwards compatability for nL_ version)
+		$wpdb->nl_languages = $wpdb->nL_languages = $wpdb->prefix . 'nl_languages';
 		$wpdb->nl_translations = $wpdb->nL_translations = $wpdb->prefix . 'nl_translations';
 		$wpdb->nl_strings = $wpdb->prefix . 'nl_strings';
 
