@@ -96,6 +96,7 @@
 	}
 
 	input[type="text"] {
+		font-family: 'Helvetica Neue', sans-serif; // Because Chrome on Mac
 		display: block;
 		width: 100%;
 		height: 27px;
@@ -116,7 +117,7 @@
 	.nl-lang-iso_code,
 	.nl-lang-slug {
 		input {
-			font-family: monospace;
+			font-family: 'Courier New', monospace;
 			text-align: center;
 		}
 	}
