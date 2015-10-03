@@ -25,7 +25,6 @@ define( 'NL_REDIRECT_USING_DOMAIN', 'NL_REDIRECT_USING_DOMAIN' );
 
 // Load includes
 require( NL_DIR . '/inc/utilities.php' );
-require( NL_DIR . '/inc/presets.php' );
 require( NL_DIR . '/inc/autoloader.php' );
 
 // Setup
