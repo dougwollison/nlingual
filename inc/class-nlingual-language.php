@@ -122,7 +122,7 @@ class Language {
 	 *
 	 * @var array
 	 */
-	protected static $properties = array( 'lang_id', 'slug', 'system_name', 'native_name', 'short_name', 'iso_code', 'locale_name', 'list_order' );
+	protected static $properties = array( 'lang_id', 'slug', 'system_name', 'native_name', 'short_name', 'iso_code', 'locale_name', 'list_order', 'active' );
 
 	// =========================
 	// ! Methods
