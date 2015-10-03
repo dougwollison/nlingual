@@ -124,7 +124,6 @@ class Loader extends Functional {
 			// Just install/update the languages table as normal
 			$sql_languages = "CREATE TABLE $wpdb->nl_languages (
 				lang_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-				active tinyint(1) NOT NULL DEFAULT '1',
 				system_name varchar(200) DEFAULT '' NOT NULL,
 				native_name varchar(200) DEFAULT '' NOT NULL,
 				short_name varchar(200) DEFAULT '' NOT NULL,
@@ -132,6 +131,7 @@ class Loader extends Functional {
 				iso_code varchar(2) DEFAULT '' NOT NULL,
 				slug varchar(100) DEFAULT '' NOT NULL,
 				list_order int(11) unsigned NOT NULL,
+				active tinyint(1) NOT NULL DEFAULT '1',
 				PRIMARY KEY  (lang_id),
 				UNIQUE KEY slug (slug)
 			) $charset_collate;";
