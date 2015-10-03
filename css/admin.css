@@ -57,6 +57,11 @@
   #nlingual-sync-form .nl-inputlist br {
     display: none; }
 
+#nl_lang_controls {
+  margin: 2em 0 1em; }
+  #nl_lang_controls select, #nl_lang_controls button {
+    margin: 0; }
+
 #nlingual_languages th {
   white-space: nowrap; }
 #nlingual_languages input[type="text"] {
