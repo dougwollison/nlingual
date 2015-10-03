@@ -138,11 +138,15 @@ class Language {
 	 * @param array $values The property values.
 	 */
 	public function __construct( $values ) {
+		// Set all values provided
 		foreach ( static::$properties as $key ) {
 			if ( isset( $values[ $key ] ) ) {
 				$this->$key = $values[ $key ];
 			}
 		}
+
+		// Ensure $active is boolean
+		$this->active = (bool) intval( $this->active );
 	}
 
 	/**
