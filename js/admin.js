@@ -1,4 +1,4 @@
-/* globals console, alert, prompt, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n, NL_LANGUAGES */
+/* globals console, alert, prompt, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n, NL_LANGUAGES, NL_PRESETS */
 
 jQuery( function( $ ) {
 	// =========================
@@ -41,6 +41,12 @@ jQuery( function( $ ) {
 		var langRowTemplate = $( '#nl_lang_row' ).text();
 		var langRowIndex = -1;
 
+		// Load preset selector
+		var $preset = $( '#nl_lang_preset' );
+		for ( var preset in NL_PRESETS ) {
+			$preset.append( '<option value="' + preset + '">' + NL_PRESETS[ preset ].system_name + '</option>' );
+		}
+
 		// Row builder utility
 		function buildLangRow( data ) {
 			var row = langRowTemplate;
@@ -66,22 +72,68 @@ jQuery( function( $ ) {
 
 		// Add button functionality
 		$( '#nl_lang_add' ).click( function() {
-			buildLangRow( {
-				lang_id: langRowIndex,
-				system_name: '',
-				native_name: '',
-				short_name: '',
-				slug: '',
-				iso_code: '',
-				locale_name: '',
-				active: true,
-			} );
+			var data, preset;
+
+			// Check if preset was selected
+			if ( $preset.val() ) {
+				preset = $preset.val();
+				data = NL_PRESETS[ preset ];
+				data.iso_code = preset;
+
+				// Reset preset selector
+				$preset.val( null );
+			} else {
+				// Blank
+				data = {
+					system_name : '',
+					native_name : '',
+					short_name  : '',
+					iso_code    : '',
+					locale_name : '',
+				};
+			}
+
+			// Default values
+			data.lang_id = langRowIndex;
+			data.slug    = data.iso_code;
+			data.active  = true;
+
+			buildLangRow( data );
+
 			langRowIndex--;
 		} );
 
 		// Delete button functionality
 		$( this ).on( 'click', '.nl-lang-delete', function() {
-			$( this ).parent().parent().remove();
+			$( this ).parents( 'tr' ).first().remove();
+		} );
+
+		// Auto-fill locale_name, iso_code and slug
+		$( this ).on( 'change', '.nl-lang-system_name input', function() {
+			// Get the parent row
+			var $row = $( this ).parents( 'tr' ).first();
+
+			// Get the text
+			var system_name = $( this ).val();
+
+			// Get the other fields
+			var $locale_name = $row.find( '.nl-lang-locale_name input' );
+			var $iso_code    = $row.find( '.nl-lang-iso_code input' );
+			var $slug        = $row.find( '.nl-lang-slug input' );
+
+			// Guess values accordingly if not set
+			if ( ! $iso_code.val() ) {
+				// Assume first 2 characters of system name
+				$iso_code.val( system_name.substr( 0, 2 ).toLowerCase() );
+			}
+			if ( ! $locale_name.val() ) {
+				// Assume same as ISO code
+				$locale_name.val( $iso_code.val() );
+			}
+			if ( ! $slug.val() ) {
+				// Assume same as ISO code
+				$slug.val( $iso_code.val() );
+			}
 		} );
 	} );
 
@@ -126,11 +178,11 @@ jQuery( function( $ ) {
 			$.ajax( {
 				url: ajaxurl,
 				data: {
-					action: 'nl_new_translation',
-					post_id: post_id,
-					lang_id: lang_id,
-					title: translation_title,
-					custom_title: translation_title === placeholder
+					action       : 'nl_new_translation',
+					post_id      : post_id,
+					lang_id      : lang_id,
+					title        : translation_title,
+					custom_title : translation_title === placeholder
 				},
 				type: 'post',
 				dataType: 'json',
