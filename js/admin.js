@@ -49,10 +49,11 @@ jQuery( function( $ ) {
 
 		// Row builder utility
 		function buildLangRow( data ) {
-			var row = langRowTemplate;
+			var row = langRowTemplate, regex;
 			// Loop through properties and replace
 			for ( var prop in data ) {
-				row = row.replace( '%' + prop + '%', data[ prop ] );
+				regex = new RegExp( '%' + prop + '%', 'g' );
+				row = row.replace( regex, data[ prop ] );
 			}
 
 			// Parse the row into a new element
@@ -62,7 +63,7 @@ jQuery( function( $ ) {
 			$row.find( '.nl-lang-active input' ).attr( 'checked', data.active );
 
 			// Add the row to the table
-			$( '#nl_lang_list' ).append( row );
+			$( '#nl_lang_list' ).append( $row );
 		}
 
 		// Load table with current languages
@@ -104,8 +105,12 @@ jQuery( function( $ ) {
 		} );
 
 		// Delete button functionality
-		$( this ).on( 'click', '.nl-lang-delete', function() {
-			$( this ).parents( 'tr' ).first().remove();
+		$( this ).on( 'change', '.nl-lang-delete input', function() {
+			// Get the parent row
+			var $row = $( this ).parents( 'tr' ).first();
+			// Toggle delete class and inputs
+			$row.toggleClass( 'todelete', this.checked );
+			$row.find( 'input' ).not( this ).attr( 'disabled', this.checked );
 		} );
 
 		// Auto-fill locale_name, iso_code and slug

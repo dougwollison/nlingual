@@ -34,6 +34,9 @@ class Manager extends Functional {
 		// Settings & Pages
 		static::add_action( 'admin_init', 'register_settings' );
 		static::add_action( 'admin_menu', 'add_menu_pages' );
+
+		// Language saving
+		static::add_action( 'admin_init', 'save_languages' );
 	}
 
 	// =========================
@@ -72,19 +75,6 @@ class Manager extends Functional {
 		}
 
 		return $rules;
-	}
-
-	/**
-	 * Sanitize the languages and convert to a collection.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param array $languages The languages to be sanitized.
-	 *
-	 * @return Languages The sanitized/converted languages.
-	 */
-	public static function sanitize_languages( $languages ) {
-
 	}
 
 	// =========================
@@ -170,11 +160,101 @@ class Manager extends Functional {
 		), 'sync' );
 
 		static::setup_sync_fields();
+	}
 
-		// Language Options
-		Settings::register( array(
-			'languages'  => array( static::$name, 'sanitize_languages' ),
-		), 'sync' );
+	/**
+	 * Save languages from the manager.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 */
+	public static function save_languages() {
+		global $wpdb;
+
+		// Abort if not saving for the language manager page
+		if ( ! isset( $_POST['option_page'] ) || $_POST['option_page'] != 'nlingual-languages' ) {
+			return;
+		}
+
+		// Fail if nonce does
+		check_admin_referer( 'nlingual-languages-options' );
+		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'nlingual-languages-options' ) ) {
+			wp_die( __( 'Cheatin&#8217; uh?' ), 403 );
+		}
+
+		// Get the languages
+		$languages = $_POST['nlingual_languages'];
+
+		// The fields to check
+		$fields = array(
+			'system_name' => '%s',
+			'native_name' => '%s',
+			'short_name'  => '%s',
+			'locale_name' => '%s',
+			'iso_code'    => '%s',
+			'slug'        => '%s',
+		);
+		$formats = array_values( $fields );
+
+		// Loop through languages and update/insert
+		$i = 0;
+		foreach ( $languages as $id => $lang ) {
+			// If delete option is present, go straight to deleting it
+			if ( isset( $lang['delete'] ) && $lang['delete'] ) {
+				if ( $id > 0 ) {
+					$wpdb->delete( $wpdb->nl_languages, array( 'lang_id' => $id ), array( '%d' ) );
+				}
+				continue;
+			}
+
+			// Ensure all fields are set
+			foreach ( $fields as $field => $format ) {
+				if ( ! isset( $lang[ $field ] ) || empty( $lang[ $field ] ) ) {
+					add_settings_error(
+						'nlingual-languages',
+						'nl_language',
+						__( 'One or more languages were incomplete and were not saved.', NL_TXTDMN ),
+						'error'
+					);
+					break;
+				} else {
+					$entry[ $field ] = $lang[ $field ];
+				}
+			}
+
+			// Default active to 0
+			$formats[] = '%d';
+			if ( isset( $lang['active'] ) ) {
+				$entry['active'] = $lang['active'];
+			} else {
+				$entry['active'] = 0;
+			}
+
+			// Add list_order
+			$formats[] = '%d';
+			$entry['list_order'] = $i;
+			$i++;
+
+			if ( $id > 0 ) {
+				// Assume existing language; update
+				$wpdb->update( $wpdb->nl_languages, $entry, array( 'lang_id' => $id ), $formats, array( '%d' ) );
+			} else {
+				// Assume new language; insert
+				$wpdb->insert( $wpdb->nl_languages, $entry, $formats );
+			}
+		}
+
+		// Check for setting errors; add an "updated" message if none are found
+		if ( ! count( get_settings_errors() ) ) {
+			add_settings_error('general', 'settings_updated', __('Settings saved.'), 'updated');
+		}
+		set_transient('settings_errors', get_settings_errors(), 30);
+
+		// Return to settings page
+		$redirect = add_query_arg( 'settings-updated', 'true',  wp_get_referer() );
+		wp_redirect( $redirect );
+		exit;
 	}
 
 	// =========================
@@ -365,7 +445,7 @@ class Manager extends Functional {
 							<th scope="col" class="nl-lang-iso_code"><?php _e('ISO', TXTDMN);?></th>
 							<th scope="col" class="nl-lang-slug"><?php _e('Slug', TXTDMN);?></th>
 							<th scope="col" class="nl-lang-active"><?php _e('Active?', TXTDMN);?></th>
-							<td class="nl-lang-action"></td>
+							<td class="nl-lang-delete"><?php _e('Delete?', TXTDMN);?></td>
 						</tr>
 					</thead>
 					<tbody id="nl_lang_list">
@@ -394,8 +474,8 @@ class Manager extends Functional {
 						<td class="nl-lang-active">
 							<input type="checkbox" name="nlingual_languages[%lang_id%][active]" value="1" />
 						</td>
-						<td scope="row" class="nl-lang-action">
-							<button type="button" class="button nl-lang-delete"><?php _e('Delete', TXTDMN);?></button>
+						<td scope="row" class="nl-lang-delete">
+							<input type="checkbox" name="nlingual_languages[%lang_id%][delete]" value="1" />
 						</td>
 					</tr>
 				</script>

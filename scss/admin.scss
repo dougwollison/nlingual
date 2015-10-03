@@ -1,4 +1,5 @@
 @import 'compass/utilities/general/clearfix';
+@import 'compass/css3/transition';
 
 .fixed .column-nlingual {
 	width: 15%;
@@ -91,6 +92,15 @@
 }
 
 #nlingual_languages {
+	tr {
+		opacity: 1;
+		@include transition(opacity .2s);
+
+		&.todelete {
+			opacity: 0.5;
+		}
+	}
+
 	th {
 		white-space: nowrap;
 	}
@@ -109,7 +119,7 @@
 	.nl-lang-locale_name,
 	.nl-lang-iso_code,
 	.nl-lang-active,
-	.nl-lang-actions {
+	.nl-lang-delete {
 		text-align: center;
 	}
 
@@ -132,10 +142,8 @@
 	.nl-lang-locale_name {
 		width: 60px;
 	}
-	.nl-lang-active {
-		width: 60px;
-	}
-	.nl-lang-action {
+	.nl-lang-active,
+	.nl-lang-delete {
 		width: 60px;
 	}
 }
