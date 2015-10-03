@@ -34,6 +34,53 @@ jQuery( function( $ ) {
 	} );
 
 	// =========================
+	// ! Language Manager
+	// =========================
+
+	$( '#nlingual_languages' ).each( function() {
+		var langRowTemplate = $( '#nl_lang_row' ).text();
+		var langRowIndex = -1;
+
+		// Row builder utility
+		function buildLangRow( data ) {
+			var row = langRowTemplate;
+			// Loop through properties and replace
+			for ( var prop in data ) {
+				row = row.replace( '%' + prop + '%', data[ prop ] );
+			}
+
+			// Parse the row into a new element
+			var $row = $( row );
+
+			// Check active checkbox if true
+			$row.find( '.nl-lang-active input' ).attr( 'checked', data.active );
+
+			// Add the row to the table
+			$( '#nl_lang_list' ).append( row );
+		}
+
+		// Load table with current languages
+		for ( var lang in NL_LANGUAGES ) {
+			buildLangRow( NL_LANGUAGES[ lang ] );
+		}
+
+		// Add button functionality
+		$( '#nl_lang_add' ).click( function() {
+			buildLangRow( {
+				lang_id: langRowIndex,
+				system_name: '',
+				native_name: '',
+				short_name: '',
+				slug: '',
+				iso_code: '',
+				locale_name: '',
+				active: true,
+			} );
+			langRowIndex--;
+		} );
+	} );
+
+	// =========================
 	// ! Meta Box and Quick/Bulk Edit
 	// =========================
 

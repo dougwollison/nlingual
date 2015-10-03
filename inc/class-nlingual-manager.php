@@ -41,11 +41,13 @@ class Manager extends Functional {
 	// =========================
 
 	/**
-	 * Sanitize the sync rules array
+	 * Sanitize the sync rules.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @param array $rules The rules to be sanitized.
+	 *
+	 * @return array The sanitized rules.
 	 */
 	public static function sanitize_rules( $rules ) {
 		// Loop through each object type
@@ -70,6 +72,19 @@ class Manager extends Functional {
 		}
 
 		return $rules;
+	}
+
+	/**
+	 * Sanitize the languages and convert to a collection.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $languages The languages to be sanitized.
+	 *
+	 * @return Languages The sanitized/converted languages.
+	 */
+	public static function sanitize_languages( $languages ) {
+
 	}
 
 	// =========================
@@ -155,6 +170,11 @@ class Manager extends Functional {
 		), 'sync' );
 
 		static::setup_sync_fields();
+
+		// Language Options
+		Settings::register( array(
+			'languages'  => array( static::$name, 'sanitize_languages' ),
+		), 'sync' );
 	}
 
 	// =========================
@@ -299,7 +319,7 @@ class Manager extends Functional {
 	 */
 	public static function settings_page() {
 		global $plugin_page;
-		?>
+?>
 		<div class="wrap">
 			<h1><?php echo get_admin_page_title(); ?></h1>
 			<?php settings_errors(); ?>
@@ -321,12 +341,58 @@ class Manager extends Functional {
 	 */
 	public static function settings_page_languages() {
 		global $plugin_page;
+
 		?>
 		<div class="wrap">
 			<h1><?php echo get_admin_page_title(); ?></h1>
 			<?php settings_errors(); ?>
 			<form method="post" action="options.php" id="<?php echo $plugin_page; ?>-form">
 				<?php settings_fields( $plugin_page ); ?>
+				<p><button type="button" id="nl_lang_add" class="button"><?php _e( 'Add Language', NL_TXTDMN ); ?></button></p>
+				<table id="nlingual_languages" class="wp-list-table widefat fixed striped">
+					<thead>
+						<tr>
+							<th scope="col" class="nl-lang-slug">Slug</th>
+							<th scope="col" class="nl-lang-system_name">System Name</th>
+							<th scope="col" class="nl-lang-native_name">Native Name</th>
+							<th scope="col" class="nl-lang-short_name">Short Name</th>
+							<th scope="col" class="nl-lang-locale_name">Locale</th>
+							<th scope="col" class="nl-lang-iso_code">ISO</th>
+							<th scope="col" class="nl-lang-active">Active?</th>
+							<td class="nl-lang-action"></td>
+						</tr>
+					</thead>
+					<tbody id="nl_lang_list">
+					</tbody>
+				</table>
+				<script type="text/template" id="nl_lang_row">
+					<tr>
+						<td class="nl-lang-slug">
+							<input type="text" name="nlingual_languages[%lang_id%][slug]" value="%slug%" />
+						</td>
+						<td class="nl-lang-system_name">
+							<input type="text" name="nlingual_languages[%lang_id%][system_name]" value="%system_name%" />
+						</td>
+						<td class="nl-lang-native_name">
+							<input type="text" name="nlingual_languages[%lang_id%][native_name]" value="%native_name%" />
+						</td>
+						<td class="nl-lang-short_name">
+							<input type="text" name="nlingual_languages[%lang_id%][short_name]" value="%short_name%" />
+						</td>
+						<td class="nl-lang-locale_name">
+							<input type="text" name="nlingual_languages[%lang_id%][locale_name]" value="%locale_name%" />
+						</td>
+						<td class="nl-lang-iso_code">
+							<input type="text" name="nlingual_languages[%lang_id%][iso_code]" value="%iso_code%" />
+						</td>
+						<td class="nl-lang-active">
+							<input type="checkbox" name="nlingual_languages[%lang_id%][active]" value="1" />
+						</td>
+						<td scope="row" class="nl-lang-action">
+							<button type="button" class="button nl-lang-delete">Delete</button>
+						</td>
+					</tr>
+				</script>
 				<?php submit_button(); ?>
 			</form>
 		</div>
