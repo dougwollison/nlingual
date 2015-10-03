@@ -87,7 +87,7 @@ class API extends Functional {
 			return;
 		}
 
-		Registry::set( 'current_lang', $lang->id );
+		Registry::set( 'current_lang', $lang->lang_id );
 
 		if ( $lock ) {
 			// Lock the language from being changed again
@@ -195,7 +195,7 @@ class API extends Functional {
 		if ( Registry::is_post_type_supported( $query->get('post_type') )
 		&& ( $lang = $query->get( Registry::get( 'query_var' ) ) )
 		&& ( $language = Registry::languages()->get( $lang ) ) ) {
-			$clause .= $wpdb->prepare( " AND $wpdb->nl_translations.lang_id = %d", $language->id );
+			$clause .= $wpdb->prepare( " AND $wpdb->nl_translations.lang_id = %d", $language->lang_id );
 		}
 
 

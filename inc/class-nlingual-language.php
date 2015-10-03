@@ -23,7 +23,7 @@ class Language {
 	 *
 	 * @var int
 	 */
-	protected $id = 0;
+	protected $lang_id = 0;
 
 	/**
 	 * The active status of the language
@@ -122,7 +122,7 @@ class Language {
 	 *
 	 * @var array
 	 */
-	protected static $properties = array( 'id', 'slug', 'system_name', 'native_name', 'short_name', 'iso_code', 'locale_name', 'list_order' );
+	protected static $properties = array( 'lang_id', 'slug', 'system_name', 'native_name', 'short_name', 'iso_code', 'locale_name', 'list_order' );
 
 	// =========================
 	// ! Methods

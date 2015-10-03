@@ -255,7 +255,7 @@ class Languages implements \Iterator {
 		$data = array();
 
 		foreach ( $this->languages as $language ) {
-			$data[ $language->id ] = $field ? $language->$field : $language->export();
+			$data[ $language->lang_id ] = $field ? $language->$field : $language->export();
 		}
 
 		return $data;

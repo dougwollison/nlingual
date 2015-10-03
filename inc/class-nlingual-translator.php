@@ -140,7 +140,7 @@ class Translator {
 			'group_id'    => static::_translation_group_id(),
 			'object_type' => $type,
 			'object_id'   => $id,
-			'lang_id'     => $lang->id,
+			'lang_id'     => $lang->lang_id,
 		), array( '%d', '%s', '%d', '%d' ) );
 
 		// Add it to the cache
@@ -256,8 +256,8 @@ class Translator {
 		$translations = static::get_object_translations( $type, $id );
 
 		// Check if translation exists
-		if ( isset( $translations[ $lang->id ] ) ) {
-			return $translations[ $lang->id ];
+		if ( isset( $translations[ $lang->lang_id ] ) ) {
+			return $translations[ $lang->lang_id ];
 		}
 
 		// Otherwise, return the original id or false, depending on $return_self
@@ -309,7 +309,7 @@ class Translator {
 			}
 
 			// Skip if we're trying assign a translation for the object's language
-			if ( $language->id == $lang->id ) {
+			if ( $language->lang_id == $lang->lang_id ) {
 				continue;
 			}
 
@@ -318,7 +318,7 @@ class Translator {
 				static::unlink_object_translation( $type, $id, $lang );
 			} else {
 				// Build the row data for the query
-				$values[] = $wpdb->prepare( "(%d, %s, %d, %d)", $group_id, $type, $object_id, $lang->id );
+				$values[] = $wpdb->prepare( "(%d, %s, %d, %d)", $group_id, $type, $object_id, $lang->lang_id );
 			}
 		}
 
@@ -354,7 +354,7 @@ class Translator {
 		}
 
 		// Alias to set_object_translations method
-		return static::set_object_translations( $type, $id, array( $lang->id => $object ) );
+		return static::set_object_translations( $type, $id, array( $lang->lang_id => $object ) );
 	}
 
 	/**
@@ -397,7 +397,7 @@ class Translator {
 			),
 			array(
 				'group_id' => $group_id,
-				'lang_id' => $lang->id
+				'lang_id' => $lang->lang_id
 			),
 			array( '%d' ),
 			array( '%d', '%d' )
