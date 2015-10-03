@@ -78,6 +78,11 @@ jQuery( function( $ ) {
 			} );
 			langRowIndex--;
 		} );
+
+		// Delete button functionality
+		$( this ).on( 'click', '.nl-lang-delete', function() {
+			$( this ).parent().parent().remove();
+		} );
 	} );
 
 	// =========================
