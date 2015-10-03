@@ -62,6 +62,14 @@
   #nl_lang_controls select, #nl_lang_controls button {
     margin: 0; }
 
+#nlingual_languages tr {
+  opacity: 1;
+  -moz-transition: opacity 0.2s;
+  -o-transition: opacity 0.2s;
+  -webkit-transition: opacity 0.2s;
+  transition: opacity 0.2s; }
+  #nlingual_languages tr.todelete {
+    opacity: 0.5; }
 #nlingual_languages th {
   white-space: nowrap; }
 #nlingual_languages input[type="text"] {
@@ -75,7 +83,7 @@
 #nlingual_languages .nl-lang-locale_name,
 #nlingual_languages .nl-lang-iso_code,
 #nlingual_languages .nl-lang-active,
-#nlingual_languages .nl-lang-actions {
+#nlingual_languages .nl-lang-delete {
   text-align: center; }
 #nlingual_languages .nl-lang-locale_name input,
 #nlingual_languages .nl-lang-iso_code input,
@@ -89,7 +97,6 @@
   width: 100px; }
 #nlingual_languages .nl-lang-locale_name {
   width: 60px; }
-#nlingual_languages .nl-lang-active {
-  width: 60px; }
-#nlingual_languages .nl-lang-action {
+#nlingual_languages .nl-lang-active,
+#nlingual_languages .nl-lang-delete {
   width: 60px; }
