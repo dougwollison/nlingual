@@ -132,7 +132,8 @@ class Loader extends Functional {
 				iso_code varchar(2) DEFAULT '' NOT NULL,
 				slug varchar(100) DEFAULT '' NOT NULL,
 				list_order int(11) unsigned NOT NULL,
-				PRIMARY KEY  (lang_id)
+				PRIMARY KEY  (lang_id),
+				UNIQUE KEY slug (slug)
 			) $charset_collate;";
 			dbDelta( $sql_languages );
 
