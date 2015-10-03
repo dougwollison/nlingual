@@ -337,11 +337,12 @@ class Manager extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses inc/presets.php For loading the preset languages.
+	 *
 	 * @global $plugin_page The slug of the current admin page.
 	 */
 	public static function settings_page_languages() {
 		global $plugin_page;
-
 		?>
 		<div class="wrap">
 			<h1><?php echo get_admin_page_title(); ?></h1>
@@ -357,13 +358,13 @@ class Manager extends Functional {
 				<table id="nlingual_languages" class="wp-list-table widefat fixed striped">
 					<thead>
 						<tr>
-							<th scope="col" class="nl-lang-system_name">System Name</th>
-							<th scope="col" class="nl-lang-native_name">Native Name</th>
-							<th scope="col" class="nl-lang-short_name">Short Name</th>
-							<th scope="col" class="nl-lang-locale_name">Locale</th>
-							<th scope="col" class="nl-lang-iso_code">ISO</th>
-							<th scope="col" class="nl-lang-slug">Slug</th>
-							<th scope="col" class="nl-lang-active">Active?</th>
+							<th scope="col" class="nl-lang-system_name"><?php _e('System Name', TXTDMN);?></th>
+							<th scope="col" class="nl-lang-native_name"><?php _e('Native Name', TXTDMN);?></th>
+							<th scope="col" class="nl-lang-short_name"><?php _e('Short Name', TXTDMN);?></th>
+							<th scope="col" class="nl-lang-locale_name"><?php _e('Locale', TXTDMN);?></th>
+							<th scope="col" class="nl-lang-iso_code"><?php _e('ISO', TXTDMN);?></th>
+							<th scope="col" class="nl-lang-slug"><?php _e('Slug', TXTDMN);?></th>
+							<th scope="col" class="nl-lang-active"><?php _e('Active?', TXTDMN);?></th>
 							<td class="nl-lang-action"></td>
 						</tr>
 					</thead>
@@ -394,7 +395,7 @@ class Manager extends Functional {
 							<input type="checkbox" name="nlingual_languages[%lang_id%][active]" value="1" />
 						</td>
 						<td scope="row" class="nl-lang-action">
-							<button type="button" class="button nl-lang-delete">Delete</button>
+							<button type="button" class="button nl-lang-delete"><?php _e('Delete', TXTDMN);?></button>
 						</td>
 					</tr>
 				</script>
