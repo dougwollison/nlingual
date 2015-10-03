@@ -83,8 +83,8 @@ class Manager extends Functional {
 	 */
 	public static function add_menu_pages() {
 		add_utility_page(
-			__( 'Translation Options', NLTXTDMN ), // page title
-			_x( 'Translation', 'menu title', NLTXTDMN ), // menu title
+			__( 'Translation Options', NL_TXTDMN ), // page title
+			_x( 'Translation', 'menu title', NL_TXTDMN ), // menu title
 			'manage_options', // capability
 			'nlingual-options', // slug
 			array( static::$name, 'settings_page' ), // callback
@@ -93,8 +93,8 @@ class Manager extends Functional {
 
 		add_submenu_page(
 			'nlingual-options', // parent
-			__( 'Manage Localizable Objects', NLTXTDMN ), // page title
-			__( 'Localizables',  NLTXTDMN ), // menu title
+			__( 'Manage Localizable Objects', NL_TXTDMN ), // page title
+			__( 'Localizables',  NL_TXTDMN ), // menu title
 			'manage_options', // capability
 			'nlingual-l10s', // slug
 			array( static::$name, 'settings_page' ) // callback
@@ -102,8 +102,8 @@ class Manager extends Functional {
 
 		add_submenu_page(
 			'nlingual-options', // parent
-			__( 'Post Synchronization', NLTXTDMN ), // page title
-			__( 'Sync Options', NLTXTDMN ), // menu title
+			__( 'Post Synchronization', NL_TXTDMN ), // page title
+			__( 'Sync Options', NL_TXTDMN ), // menu title
 			'manage_options', // capability
 			'nlingual-sync', // slug
 			array( static::$name, 'settings_page' ) // callback
@@ -111,8 +111,8 @@ class Manager extends Functional {
 
 		add_submenu_page(
 			'nlingual-options', // parent
-			__( 'Manage Languages', NLTXTDMN ), // page title
-			_x( 'Languages', 'menu title', NLTXTDMN ), // menu title
+			__( 'Manage Languages', NL_TXTDMN ), // page title
+			_x( 'Languages', 'menu title', NL_TXTDMN ), // menu title
 			'manage_options', // capability
 			'nlingual-languages', // slug
 			array( static::$name, 'settings_page_languages' ) // callback
@@ -171,39 +171,39 @@ class Manager extends Functional {
 
 		Settings::add_fields( array(
 			'default_language' => array(
-				'title' => __( 'Default Language', NLTXTDMN ),
+				'title' => __( 'Default Language', NL_TXTDMN ),
 				'help'  => null,
 				'type'  => 'select',
 				'data'  => Registry::languages()->export( 'system_name' ),
 			),
 			'skip_default_l10n' => array(
-				'title' => __( 'Skip Localization for Default Language?', NLTXTDMN ),
-				'help'  => __( 'URLs for the default language will be unmodified (e.g. /english-page/ vs /en/english-page/).', NLTXTDMN ),
+				'title' => __( 'Skip Localization for Default Language?', NL_TXTDMN ),
+				'help'  => __( 'URLs for the default language will be unmodified (e.g. /english-page/ vs /en/english-page/).', NL_TXTDMN ),
 				'type'  => 'checkbox',
 			),
 		), 'options' );
 
-		add_settings_section( 'redirection', __( 'Request Handling', NLTXTDMN ), null, 'nlingual-options' );
+		add_settings_section( 'redirection', __( 'Request Handling', NL_TXTDMN ), null, 'nlingual-options' );
 
 		Settings::add_fields( array(
 			'query_var' => array(
-				'title' => __( 'Query Variable', NLTXTDMN ),
-				'help'  => __( 'The variable name to check for when handling language requests (recommended: "language")', NLTXTDMN ),
+				'title' => __( 'Query Variable', NL_TXTDMN ),
+				'help'  => __( 'The variable name to check for when handling language requests (recommended: "language")', NL_TXTDMN ),
 				'type'  => 'input',
 			),
 			'redirection_method' => array(
-				'title' => __( 'Redirection Method', NLTXTDMN ),
-				'help'  => __( 'What style should be used for the translated URLs?', NLTXTDMN ),
+				'title' => __( 'Redirection Method', NL_TXTDMN ),
+				'help'  => __( 'What style should be used for the translated URLs?', NL_TXTDMN ),
 				'type'  => 'radiolist',
 				'data'  => array(
-					NL_REDIRECT_USING_GET    => __( 'HTTP query (e.g. <code>%s/?%s=%s</code>)', NLTXTDMN ),
-					NL_REDIRECT_USING_PATH   => __( 'Path prefix (e.g. <code>%s/%s/</code>)', NLTXTDMN ),
-					NL_REDIRECT_USING_DOMAIN => __( 'Subdomain (e.g. <code>%s.%s</code>)', NLTXTDMN ),
+					NL_REDIRECT_USING_GET    => __( 'HTTP query (e.g. <code>%s/?%s=%s</code>)', NL_TXTDMN ),
+					NL_REDIRECT_USING_PATH   => __( 'Path prefix (e.g. <code>%s/%s/</code>)', NL_TXTDMN ),
+					NL_REDIRECT_USING_DOMAIN => __( 'Subdomain (e.g. <code>%s.%s</code>)', NL_TXTDMN ),
 				),
 			),
 			'postlang_override' => array(
-				'title' => __( 'Post Language Override', NLTXTDMN ),
-				'help'  => __( 'Should the requested post/page/object’s language override the one requested?', NLTXTDMN ),
+				'title' => __( 'Post Language Override', NL_TXTDMN ),
+				'help'  => __( 'Should the requested post/page/object’s language override the one requested?', NL_TXTDMN ),
 				'type'  => 'checkbox',
 			),
 		), 'options', 'redirection' );
@@ -240,20 +240,20 @@ class Manager extends Functional {
 
 		Settings::add_fields( array(
 			'post_types' => array(
-				'title' => __( 'Post Types', NLTXTDMN ),
-				'help'  => __( 'What post types should support language and translations?', NLTXTDMN ),
+				'title' => __( 'Post Types', NL_TXTDMN ),
+				'help'  => __( 'What post types should support language and translations?', NL_TXTDMN ),
 				'type'  => 'checklist',
 				'data'  => $post_types,
 			),
 			'localizables[nav_menu_locations]' => array(
-				'title' => __( 'Menu Locations', NLTXTDMN ),
-				'help'  => __( 'Should any navigation menus have versions for each language?', NLTXTDMN ),
+				'title' => __( 'Menu Locations', NL_TXTDMN ),
+				'help'  => __( 'Should any navigation menus have versions for each language?', NL_TXTDMN ),
 				'type'  => 'checklist',
 				'data'  => $nav_locations,
 			),
 			'localizables[sidebar_locations]' => array(
-				'title' => __( 'Sidebar Locations', NLTXTDMN ),
-				'help'  => __( 'Should any widget areas have versions for each language?', NLTXTDMN ),
+				'title' => __( 'Sidebar Locations', NL_TXTDMN ),
+				'help'  => __( 'Should any widget areas have versions for each language?', NL_TXTDMN ),
 				'type'  => 'checklist',
 				'data'  => $sidebars,
 			),
@@ -281,7 +281,7 @@ class Manager extends Functional {
 
 		Settings::add_fields( $sync_fields, 'sync' );
 
-		add_settings_section( 'cloning', __( 'New Translations', NLTXTDMN ), array( static::$name, 'settings_section_cloning' ), 'nlingual-sync' );
+		add_settings_section( 'cloning', __( 'New Translations', NL_TXTDMN ), array( static::$name, 'settings_section_cloning' ), 'nlingual-sync' );
 
 		Settings::add_fields( $clone_fields, 'sync', 'cloning' );
 	}
