@@ -1,140 +1,143 @@
 <?php
 /**
- * Preset Languages available for quicker registration
+ * Presets for Language Manager.
  *
- * @since 1.0.0
+ * @since 2.0.0
+ *
+ * @return array The preset list.
  */
 
-$nLingual_preset_languages = array();
-
-// ===== Arabic ===== //
-$nLingual_preset_languages['ar']['system_name'] = 'Arabic';
-$nLingual_preset_languages['ar']['native_name'] = 'العربية';
-$nLingual_preset_languages['ar']['short_name']  = 'العربية';
-$nLingual_preset_languages['ar']['mo']                   = 'ar';
-
-// ===== Chinese ===== //
-$nLingual_preset_languages['zh']['system_name'] = 'Chinese';
-$nLingual_preset_languages['zh']['native_name'] = '中文';
-$nLingual_preset_languages['zh']['short_name']  = '中文';
-$nLingual_preset_languages['zh']['mo']          = 'zh_CN';
-
-// ===== Czech ===== //
-$nLingual_preset_languages['cs']['system_name'] = 'Czech';
-$nLingual_preset_languages['cs']['native_name'] = 'čeština';
-$nLingual_preset_languages['cs']['short_name']  = 'Če';
-$nLingual_preset_languages['cs']['mo']          = 'cs_CZ';
-
-// ===== Dutch ===== //
-$nLingual_preset_languages['nl']['system_name'] = 'Dutch';
-$nLingual_preset_languages['nl']['native_name'] = 'Nederlands';
-$nLingual_preset_languages['nl']['short_name']  = 'Nl';
-$nLingual_preset_languages['nl']['mo']          = 'nl_NL';
-
-// ===== English ===== //
-$nLingual_preset_languages['en']['system_name'] = 'English';
-$nLingual_preset_languages['en']['native_name'] = 'English';
-$nLingual_preset_languages['en']['short_name']  = 'En';
-$nLingual_preset_languages['en']['mo']          = 'en_US';
-
-// ===== Finnish ===== //
-$nLingual_preset_languages['fi']['system_name'] = 'Finnish';
-$nLingual_preset_languages['fi']['native_name'] = 'Sumoi';
-$nLingual_preset_languages['fi']['short_name']  = 'Fi';
-$nLingual_preset_languages['fi']['mo']          = 'fi';
-
-// ===== French ===== //
-$nLingual_preset_languages['fr']['system_name'] = 'French';
-$nLingual_preset_languages['fr']['native_name'] = 'Français';
-$nLingual_preset_languages['fr']['short_name']  = 'Fr';
-$nLingual_preset_languages['fr']['mo']          = 'fr_FR';
-
-// ===== German ===== //
-$nLingual_preset_languages['de']['system_name'] = 'German';
-$nLingual_preset_languages['de']['native_name'] = 'Deutsch';
-$nLingual_preset_languages['de']['short_name']  = 'De';
-$nLingual_preset_languages['de']['mo']          = 'de_DE';
-
-// ===== Greek ===== //
-$nLingual_preset_languages['el']['system_name'] = 'Greek';
-$nLingual_preset_languages['el']['native_name'] = 'ελληνικά';
-$nLingual_preset_languages['el']['short_name']  = 'ελ';
-$nLingual_preset_languages['el']['mo']          = 'el_GR';
-
-// ===== Hindi ===== //
-$nLingual_preset_languages['hi']['system_name'] = 'Hindi';
-$nLingual_preset_languages['hi']['native_name'] = 'हिन्दी';
-$nLingual_preset_languages['hi']['short_name']  = 'हिंदी';
-$nLingual_preset_languages['hi']['mo']          = 'hi_IN';
-
-// ===== Hungarian ===== //
-$nLingual_preset_languages['hu']['system_name'] = 'Hungarian';
-$nLingual_preset_languages['hu']['native_name'] = 'Magyar';
-$nLingual_preset_languages['hu']['short_name']  = 'Ma';
-$nLingual_preset_languages['hu']['mo']          = 'hu_HU';
-
-// ===== Italian ===== //
-$nLingual_preset_languages['it']['system_name'] = 'Italian';
-$nLingual_preset_languages['it']['native_name'] = 'Italiano';
-$nLingual_preset_languages['it']['short_name']  = 'It';
-$nLingual_preset_languages['it']['mo']          = 'it_IT';
-
-// ===== Japanese ===== //
-$nLingual_preset_languages['ja']['system_name'] = 'Japanese';
-$nLingual_preset_languages['ja']['native_name'] = '日本語';
-$nLingual_preset_languages['ja']['short_name']  = '日本語';
-$nLingual_preset_languages['ja']['mo']          = 'ja';
-
-// ===== Korean ===== //
-$nLingual_preset_languages['ko']['system_name'] = 'Korean';
-$nLingual_preset_languages['ko']['native_name'] = '한국말';
-$nLingual_preset_languages['ko']['short_name']  = '국어';
-$nLingual_preset_languages['ko']['mo']          = 'ko_KR';
-
-// ===== Persian ===== //
-$nLingual_preset_languages['fa']['system_name'] = 'Persian';
-$nLingual_preset_languages['fa']['native_name'] = 'فارسی';
-$nLingual_preset_languages['fa']['short_name']  = 'فارسی';
-$nLingual_preset_languages['fa']['mo']          = 'fa';
-
-// ===== Polish ===== //
-$nLingual_preset_languages['pl']['system_name'] = 'Polish';
-$nLingual_preset_languages['pl']['native_name'] = 'Polski';
-$nLingual_preset_languages['pl']['short_name']  = 'Pl';
-$nLingual_preset_languages['pl']['mo']          = 'pl_PL';
-
-// ===== Portugese ===== //
-$nLingual_preset_languages['pt']['system_name'] = 'Portugese';
-$nLingual_preset_languages['pt']['native_name'] = 'Português';
-$nLingual_preset_languages['pt']['short_name']  = 'Pt';
-$nLingual_preset_languages['pt']['mo']          = 'pt_BR';
-
-// ===== Romanian ===== //
-$nLingual_preset_languages['ro']['system_name'] = 'Romanian';
-$nLingual_preset_languages['ro']['native_name'] = 'Română';
-$nLingual_preset_languages['ro']['short_name']  = 'Ro';
-$nLingual_preset_languages['ro']['mo']          = 'ro_RO';
-
-// ===== Russian ===== //
-$nLingual_preset_languages['ru']['system_name'] = 'Russian';
-$nLingual_preset_languages['ru']['native_name'] = 'Русский язык';
-$nLingual_preset_languages['ru']['short_name']  = 'Ру';
-$nLingual_preset_languages['ru']['mo']          = 'ru_RU';
-
-// ===== Spanish ===== //
-$nLingual_preset_languages['es']['system_name'] = 'Spanish';
-$nLingual_preset_languages['es']['native_name'] = 'Español';
-$nLingual_preset_languages['es']['short_name']  = 'Es';
-$nLingual_preset_languages['es']['mo']          = 'es_ES';
-
-// ===== Swedish ===== //
-$nLingual_preset_languages['sv']['system_name'] = 'Swedish';
-$nLingual_preset_languages['sv']['native_name'] = 'Svenska';
-$nLingual_preset_languages['sv']['short_name']  = 'Sv';
-$nLingual_preset_languages['sv']['mo']          = 'sv_SE';
-
-// ===== Vietnamese ===== //
-$nLingual_preset_languages['vi']['system_name'] = 'Vietnamese';
-$nLingual_preset_languages['vi']['native_name'] = 'Tiếng Việt';
-$nLingual_preset_languages['vi']['short_name']  = 'Vi';
-$nLingual_preset_languages['vi']['mo']          = 'vi';
+return array(
+	'ar' => array(
+		'system_name' => __( 'Arabic', NL_TXTDMN ),
+		'native_name' => 'العربية',
+		'short_name'  => 'العربية',
+		'locale_name' => 'ar',
+	),
+	'zh' => array(
+		'system_name' => __( 'Chinese', NL_TXTDMN ),
+		'native_name' => '中文',
+		'short_name'  => '中文',
+		'locale_name' => 'zh_CN',
+	),
+	'cs' => array(
+		'system_name' => __( 'Czech', NL_TXTDMN ),
+		'native_name' => 'čeština',
+		'short_name'  => 'Če',
+		'locale_name' => 'cs_CZ',
+	),
+	'nl' => array(
+		'system_name' => __( 'Dutch', NL_TXTDMN ),
+		'native_name' => 'Nederlands',
+		'short_name'  => 'Nl',
+		'locale_name' => 'nl_NL',
+	),
+	'en' => array(
+		'system_name' => __( 'English', NL_TXTDMN ),
+		'native_name' => 'English',
+		'short_name'  => 'En',
+		'locale_name' => 'en_US',
+	),
+	'fi' => array(
+		'system_name' => __( 'Finnish', NL_TXTDMN ),
+		'native_name' => 'Sumoi',
+		'short_name'  => 'Fi',
+		'locale_name' => 'fi',
+	),
+	'fr' => array(
+		'system_name' => __( 'French', NL_TXTDMN ),
+		'native_name' => 'Français',
+		'short_name'  => 'Fr',
+		'locale_name' => 'fr_FR',
+	),
+	'de' => array(
+		'system_name' => __( 'German', NL_TXTDMN ),
+		'native_name' => 'Deutsch',
+		'short_name'  => 'De',
+		'locale_name' => 'de_DE',
+	),
+	'el' => array(
+		'system_name' => __( 'Greek', NL_TXTDMN ),
+		'native_name' => 'ελληνικά',
+		'short_name'  => 'ελ',
+		'locale_name' => 'el_GR',
+	),
+	'hi' => array(
+		'system_name' => __( 'Hindi', NL_TXTDMN ),
+		'native_name' => 'हिन्दी',
+		'short_name'  => 'हिंदी',
+		'locale_name' => 'hi_IN',
+	),
+	'hu' => array(
+		'system_name' => __( 'Hungarian', NL_TXTDMN ),
+		'native_name' => 'Magyar',
+		'short_name'  => 'Ma',
+		'locale_name' => 'hu_HU',
+	),
+	'it' => array(
+		'system_name' => __( 'Italian', NL_TXTDMN ),
+		'native_name' => 'Italiano',
+		'short_name'  => 'It',
+		'locale_name' => 'it_IT',
+	),
+	'ja' => array(
+		'system_name' => __( 'Japanese', NL_TXTDMN ),
+		'native_name' => '日本語',
+		'short_name'  => '日本語',
+		'locale_name' => 'ja',
+	),
+	'ko' => array(
+		'system_name' => __( 'Korean', NL_TXTDMN ),
+		'native_name' => '한국말',
+		'short_name'  => '국어',
+		'locale_name' => 'ko_KR',
+	),
+	'fa' => array(
+		'system_name' => __( 'Persian', NL_TXTDMN ),
+		'native_name' => 'فارسی',
+		'short_name'  => 'فارسی',
+		'locale_name' => 'fa',
+	),
+	'pl' => array(
+		'system_name' => __( 'Polish', NL_TXTDMN ),
+		'native_name' => 'Polski',
+		'short_name'  => 'Pl',
+		'locale_name' => 'pl_PL',
+	),
+	'pt' => array(
+		'system_name' => __( 'Portugese', NL_TXTDMN ),
+		'native_name' => 'Português',
+		'short_name'  => 'Pt',
+		'locale_name' => 'pt_BR',
+	),
+	'ro' => array(
+		'system_name' => __( 'Romanian', NL_TXTDMN ),
+		'native_name' => 'Română',
+		'short_name'  => 'Ro',
+		'locale_name' => 'ro_RO',
+	),
+	'ru' => array(
+		'system_name' => __( 'Russian', NL_TXTDMN ),
+		'native_name' => 'Русский язык',
+		'short_name'  => 'Ру',
+		'locale_name' => 'ru_RU',
+	),
+	'es' => array(
+		'system_name' => __( 'Spanish', NL_TXTDMN ),
+		'native_name' => 'Español',
+		'short_name'  => 'Es',
+		'locale_name' => 'es_ES',
+	),
+	'sv' => array(
+		'system_name' => __( 'Swedish', NL_TXTDMN ),
+		'native_name' => 'Svenska',
+		'short_name'  => 'Sv',
+		'locale_name' => 'sv_SE',
+	),
+	'vi' => array(
+		'system_name' => __( 'Vietnamese', NL_TXTDMN ),
+		'native_name' => 'Tiếng Việt',
+		'short_name'  => 'Vi',
+		'locale_name' => 'vi',
+	),
+);
