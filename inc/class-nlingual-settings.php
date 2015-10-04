@@ -386,11 +386,12 @@ class Settings {
 
 				<?php if ( $post_taxs ) : ?>
 					<h4><label title="<?php _e( 'Check All/None', TXTDMN ); ?>">
-						<?php _e( 'Taxonomies', NL_TXTDMN ); ?>
+						<?php _e( 'Taxonomies', NL_TXTDMN ); ?>*
 						<input type="checkbox" class="nl-checkall" data-name="<?php echo "{$name}[post_terms]"; ?>" />
 					</label></h4>
 					<?php echo static::build_checklist_field( "{$name}[post_terms]", $value['post_terms'], $post_taxs ); ?>
-					<p class="description"><?php _e( 'What terms should be copied?', NL_TXTDMN ); ?></p>
+					<p class="description"><?php _e( 'What terms should be copied?', NL_TXTDMN ); ?> <br />
+						<small>* <?php _e( 'will use counterpart translation(s) if found', NL_TXTDMN ); ?></small></p>
 				<?php endif; ?>
 
 				<h4><label  title="<?php _e( 'Match All/None', TXTDMN ); ?>">
