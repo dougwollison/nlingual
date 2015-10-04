@@ -151,7 +151,7 @@ class Loader extends Functional {
 			// The string localization table
 			$sql_strings = "CREATE TABLE $wpdb->nl_strings (
 				lang_id bigint(20) unsigned NOT NULL,
-				string_key varchar(64) DEFAULT '' NOT NULL,
+				string_key varchar(128) DEFAULT '' NOT NULL,
 				string_value longtext NOT NULL,
 				UNIQUE KEY lang_string (lang_id, string_key)
 			) $charset_collate;";
