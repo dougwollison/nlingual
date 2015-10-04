@@ -132,12 +132,22 @@ class Translator {
 			return false; // Does not exist
 		}
 
-		// Delete the original translation entry
-		static::delete_object_language( $type, $id );
+		// Get a group ID for the object
+		$group_id = static::_translation_group_id( $type, $id );
+
+		// Check if a counterpart for the language in this group exists
+		$lang_exists = $wpdb->get_var( $wpdb->prepare( "
+			SELECT object_id FROM $wpdb->nl_translations
+			WHERE group_id = %d AND lang_id = %
+		", $group_id, $lang->lang_id ) );
+		if ( $lang_exists ) {
+			// Get a new group ID if so
+			$group_id = static::_translation_group_id();
+		}
 
 		// Insert a new one
 		$wpdb->replace( $wpdb->nl_translations, array(
-			'group_id'    => static::_translation_group_id( $type, $id ),
+			'group_id'    => $group_id,
 			'object_type' => $type,
 			'object_id'   => $id,
 			'lang_id'     => $lang->lang_id,
