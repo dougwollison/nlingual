@@ -43,7 +43,7 @@ abstract class Functional {
 	 * @since 2.0.0
 	 */
 	final protected static function remove_filter( $tag, $method, $priority = 10 ) {
-		add_filter( $tag, array( static::$name, $method ), $priority );
+		remove_filter( $tag, array( static::$name, $method ), $priority );
 	}
 
 	/**
