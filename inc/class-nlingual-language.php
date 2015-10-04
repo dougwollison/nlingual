@@ -145,6 +145,9 @@ class Language {
 			}
 		}
 
+		// Ensure $lang_id is integer
+		$this->lang_id = intval( $this->lang_id );
+
 		// Ensure $active is boolean
 		$this->active = (bool) intval( $this->active );
 	}
