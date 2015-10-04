@@ -148,13 +148,11 @@ class Loader extends Functional {
 			) $charset_collate;";
 			dbDelta( $sql_translations );
 
-			// The string translations table
+			// The string localization table
 			$sql_strings = "CREATE TABLE $wpdb->nl_strings (
-				string_id bigint(20) unsigned NOT NULL,
 				lang_id bigint(20) unsigned NOT NULL,
 				string_key varchar(64) DEFAULT '' NOT NULL,
-				string_text longtext NOT NULL,
-				PRIMARY KEY  (string_id),
+				string_value longtext NOT NULL,
 				UNIQUE KEY lang_string (lang_id, string_key)
 			) $charset_collate;";
 			dbDelta( $sql_strings );
