@@ -95,7 +95,7 @@ class Backend extends Functional {
 		wp_enqueue_style( 'nlingual-admin', plugins_url( 'css/admin.css', NL_SELF ), '2.0.0', 'screen' );
 
 		// Admin javascript
-		wp_enqueue_script( 'nlingual-admin-js', plugins_url( 'js/admin.js', NL_SELF ), array( 'jquery-ui-sortable' ), '2.0.0' );
+		wp_enqueue_script( 'nlingual-admin-js', plugins_url( 'js/admin.js', NL_SELF ), array( 'underscore', 'jquery-ui-sortable' ), '2.0.0' );
 
 		// Localize the javascript
 		wp_localize_script( 'nlingual-admin-js', 'nlingualL10n', array(
