@@ -1,12 +1,19 @@
 /* globals console, alert, prompt, _, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n, NL_LANGUAGES, NL_DEFAULT_LANG, NL_PRESETS */
 var NL_LOCALIZABLE_FIELDS = {};
 
-// Register fields to be localized
+// Register a field to be localized
 window.nlingualLocalizeField = function( field, values, nonce ) {
 	NL_LOCALIZABLE_FIELDS[ field ] = {
 		values : values,
 		nonce  : nonce
 	};
+};
+
+// Register multiple fields to be localized
+window.nlingualLocalizeFields = function( fields ) {
+	for ( var i in fields ) {
+		window.nlingualLocalizeField.apply( this, fields[i] );
+	}
 };
 
 jQuery( function( $ ) {
@@ -15,14 +22,14 @@ jQuery( function( $ ) {
 	// =========================
 
 	// Check all fields of a matching name
-	$('.nl-checkall').change(function(){
-		var name = $(this).data('name');
-		$('input[name="'+name+'[]"]').attr('checked', this.checked);
-	});
-	$('.nl-matchall').change(function(){
-		var name = $(this).data('name');
-		$('[name="'+name+'"]').val(this.checked ? '*' : '');
-	});
+	$( '.nl-checkall' ).change( function() {
+		var name = $( this ).data( 'name' );
+		$( 'input[name="' + name + '[]"]' ).attr( 'checked', this.checked );
+	} );
+	$( '.nl-matchall' ).change( function() {
+		var name = $( this ).data( 'name' );
+		$( '[name="' + name + '"]' ).val( this.checked ? '*' : '' );
+	} );
 
 	// Hide all sections by default
 	$( '.nl-section-content' ).hide();
