@@ -1,4 +1,13 @@
-/* globals console, alert, prompt, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n, NL_LANGUAGES, NL_PRESETS */
+/* globals console, alert, prompt, _, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n, NL_LANGUAGES, NL_DEFAULT_LANG, NL_PRESETS */
+var NL_LOCALIZABLE_FIELDS = {};
+
+// Register fields to be localized
+window.nlingualLocalizeField = function( field, values, nonce ) {
+	NL_LOCALIZABLE_FIELDS[ field ] = {
+		values : values,
+		nonce  : nonce
+	};
+};
 
 jQuery( function( $ ) {
 	// =========================
@@ -67,9 +76,7 @@ jQuery( function( $ ) {
 		}
 
 		// Load table with current languages
-		for ( var lang in NL_LANGUAGES ) {
-			buildLangRow( NL_LANGUAGES[ lang ] );
-		}
+		_.each( NL_LANGUAGES, buildLangRow );
 
 		// Add button functionality
 		$( '#nl_lang_add' ).click( function() {
@@ -140,6 +147,88 @@ jQuery( function( $ ) {
 				$slug.val( $iso_code.val() );
 			}
 		} );
+	} );
+
+	// =========================
+	// ! Localizeable Strings
+	// =========================
+
+	// Setup the base localizer
+	var $localizer = $('<select class="nl-localizer"></select>').html(function(){
+		var options = '<option value="">' + nlingualL10n.LocalizeThis + '</option>', lang;
+		_.each( NL_LANGUAGES, function( lang ) {
+			options += '<option value="' + lang.lang_id + '">' + lang.system_name + '</option>';
+		} );
+		return options;
+	});
+
+	_.each( NL_LOCALIZABLE_FIELDS, function( data, field ) {
+		var values = data.values,
+			nonce  = data.nonce;
+
+		// Get the field if it exists
+		var $field = $( '#' + field );
+		if ( $field.length === 0 ) {
+			return;
+		}
+		$field.addClass( 'nl-localizable-input' );
+
+		// Wrap the field in a container
+		$field.wrap( '<span class="nl-localizable"></span>' );
+		var $wrap = $field.parent();
+
+		// Create the control
+		var $control = $localizer.clone();
+
+		// Store the field and wrapper references in the control
+		$control.data( '$nl_localized_' + NL_DEFAULT_LANG, $field );
+		$control.data( '$wrap', $wrap );
+
+		// Add copies of the field for each language
+		_.each( NL_LANGUAGES, function( lang ) {
+			// Skip the default language
+			if ( NL_DEFAULT_LANG === lang.lang_id ) {
+				return;
+			}
+
+			// Get the localized version of the value
+			var localized = values[ lang.lang_id ] || null;
+
+			// Copy, update the id/name, and set the value
+			var $localized = $field.clone();
+			$localized.attr( {
+				id   : 'nl_localized-' + $field.attr( 'id' ) + '-lang_' + lang.lang_id,
+				name : 'nlingual_localized[' + $field.attr( 'name' ) + '][' + lang.lang_id + ']'
+			} );
+			$localized.val( localized );
+
+			// Store it for later use
+			$control.data( '$nl_localized_' + lang.lang_id, $localized );
+
+			// Add to the container and hide
+			$localized.appendTo( $wrap ).hide();
+		} );
+
+		// Add the nonce field
+		$wrap.append( '<input type="hidden" name="_nl_l10n_nonce[' + field + ']" value="' + nonce + '" />' );
+
+		// Add the control at the end
+		$control.appendTo( $wrap );
+	} );
+
+	$( 'body' ).on( 'change', '.nl-localizer', function () {
+		// Get the selected language
+		var $control = $( this );
+		var lang = $control.val();
+
+		// Default lang if nothing selected
+		if ( ! lang ) {
+			lang = NL_DEFAULT_LANG;
+		}
+
+		// Show the target version of the field
+		$control.data( '$wrap' ).find( '.nl-localizable-input' ).hide();
+		$control.data( '$nl_localized_' + lang ).show();
 	} );
 
 	// =========================
