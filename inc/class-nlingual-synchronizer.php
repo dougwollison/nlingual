@@ -96,7 +96,7 @@ class Synchronizer {
 				$terms = wp_get_object_terms( $post->ID, $taxonomy, array( 'fields' => 'ids' ) );
 				$term_ids = array();
 				foreach ( $terms as $term ) {
-					$term_ids[] = $term->term_id;
+					$term_ids[] = Translator::get_term_translation( $term->term_id, $language, true );
 				}
 
 				wp_set_object_terms( $translation->ID, $term_ids, $taxonomy );
