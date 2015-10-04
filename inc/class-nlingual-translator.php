@@ -137,7 +137,7 @@ class Translator {
 
 		// Insert a new one
 		$wpdb->replace( $wpdb->nl_translations, array(
-			'group_id'    => static::_translation_group_id(),
+			'group_id'    => static::_translation_group_id( $type, $id ),
 			'object_type' => $type,
 			'object_id'   => $id,
 			'lang_id'     => $lang->lang_id,
