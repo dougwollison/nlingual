@@ -52,16 +52,21 @@ class API extends Functional {
 		// Setup the registry
 		Registry::load();
 
-		// Register the action/filter hooks
+		// Register global hooks
 		static::register_hooks();
-		if ( defined( 'DOING_AJAX' ) ) {
-			AJAX::register_hooks();
-		}
+
+		// Register admin or public hooks
 		if ( is_admin() ) {
 			Backend::register_hooks();
 			Manager::register_hooks();
+			Localizer::register_hooks();
 		} else {
 			Frontend::register_hooks();
+		}
+
+		// Register ajax hooks
+		if ( defined( 'DOING_AJAX' ) ) {
+			AJAX::register_hooks();
 		}
 
 		// Add general actions
@@ -117,7 +122,12 @@ class API extends Functional {
 	 * @since 2.0.0
 	 */
 	public static function ready() {
+		// Load the textdomain
 		load_plugin_textdomain( NL_TXTDMN, false, NL_DIR . '/lang' );
+
+		// Register the blogname and blogdescription for localization
+		Localizer::register_option( 'blogname', 'options-general' );
+		Localizer::register_option( 'blogdescription', 'options-general' );
 	}
 
 	// =========================
