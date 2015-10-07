@@ -306,7 +306,7 @@ class Manager extends Functional {
 		Settings::add_fields( array(
 			'query_var' => array(
 				'title' => __( 'Query Variable', NL_TXTDMN ),
-				'help'  => __( 'The variable name to check for when handling language requests (recommended: "language")', NL_TXTDMN ),
+				'help'  => __( 'The variable name to use for when requesting/filtering by language (recommended: "language")', NL_TXTDMN ),
 				'type'  => 'input',
 			),
 			'redirection_method' => array(
