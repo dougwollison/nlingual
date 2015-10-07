@@ -185,7 +185,7 @@ class Synchronizer {
 
 		// Default title if not passed
 		if ( is_null( $title ) ) {
-			$title = _f( 'Translate to %s: %s', NL_TXTDMN, $language->system_name, $post->post_title );
+			$title = _f( 'Translate to %s: %s', $language->system_name, $post->post_title );
 			$_title_is_default = true;
 		}
 

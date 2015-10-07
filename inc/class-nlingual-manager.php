@@ -88,8 +88,8 @@ class Manager extends Functional {
 	 */
 	public static function add_menu_pages() {
 		add_utility_page(
-			__( 'Translation Options', NL_TXTDMN ), // page title
-			_x( 'Translation', 'menu title', NL_TXTDMN ), // menu title
+			__( 'Translation Options' ), // page title
+			_x( 'Translation', 'menu title' ), // menu title
 			'manage_options', // capability
 			'nlingual-options', // slug
 			array( static::$name, 'settings_page' ), // callback
@@ -98,7 +98,7 @@ class Manager extends Functional {
 
 		add_submenu_page(
 			'nlingual-options', // parent
-			__( 'Manage Localizable Objects', NL_TXTDMN ), // page title
+			__( 'Manage Localizable Objects' ), // page title
 			__( 'Localizables',  NL_TXTDMN ), // menu title
 			'manage_options', // capability
 			'nlingual-l10s', // slug
@@ -107,8 +107,8 @@ class Manager extends Functional {
 
 		add_submenu_page(
 			'nlingual-options', // parent
-			__( 'Post Synchronization', NL_TXTDMN ), // page title
-			__( 'Sync Options', NL_TXTDMN ), // menu title
+			__( 'Post Synchronization' ), // page title
+			__( 'Sync Options' ), // menu title
 			'manage_options', // capability
 			'nlingual-sync', // slug
 			array( static::$name, 'settings_page' ) // callback
@@ -116,8 +116,8 @@ class Manager extends Functional {
 
 		add_submenu_page(
 			'nlingual-options', // parent
-			__( 'Manage Languages', NL_TXTDMN ), // page title
-			_x( 'Languages', 'menu title', NL_TXTDMN ), // menu title
+			__( 'Manage Languages' ), // page title
+			_x( 'Languages', 'menu title' ), // menu title
 			'manage_options', // capability
 			'nlingual-languages', // slug
 			array( static::$name, 'settings_page_languages' ) // callback
@@ -214,7 +214,7 @@ class Manager extends Functional {
 					add_settings_error(
 						'nlingual-languages',
 						'nl_language',
-						__( 'One or more languages were incomplete and were not saved.', NL_TXTDMN ),
+						__( 'One or more languages were incomplete and were not saved.' ),
 						'error'
 					);
 					break;
@@ -288,41 +288,41 @@ class Manager extends Functional {
 		add_settings_section( 'default', null, null, 'nlingual-options' );
 		Settings::add_fields( array(
 			'default_language' => array(
-				'title' => __( 'Default Language', NL_TXTDMN ),
+				'title' => __( 'Default Language' ),
 				'help'  => null,
 				'type'  => 'select',
 				'data'  => Registry::languages()->export( 'system_name' ),
 			),
 			'skip_default_l10n' => array(
-				'title' => __( 'Skip Localization for Default Language?', NL_TXTDMN ),
-				'help'  => __( 'URLs for the default language will be unmodified.', NL_TXTDMN ) .
-					' <span class="nl-previews">' . _f( 'Example: %s', NL_TXTDMN, $url_previews ) . '</span>',
+				'title' => __( 'Skip Localization for Default Language?' ),
+				'help'  => __( 'URLs for the default language will be unmodified.' ) .
+					' <span class="nl-previews">' . _f( 'Example: %s', $url_previews ) . '</span>',
 				'type'  => 'checkbox',
 			),
 		), 'options' );
 
 		// The request/redirection setting fields
-		add_settings_section( 'redirection', __( 'Request Handling', NL_TXTDMN ), null, 'nlingual-options' );
+		add_settings_section( 'redirection', __( 'Request Handling' ), null, 'nlingual-options' );
 		Settings::add_fields( array(
 			'query_var' => array(
-				'title' => __( 'Query Variable', NL_TXTDMN ),
-				'help'  => __( 'The variable name to use for when requesting/filtering by language (recommended: "language")', NL_TXTDMN ),
+				'title' => __( 'Query Variable' ),
+				'help'  => __( 'The variable name to use for when requesting/filtering by language (recommended: "language")' ),
 				'type'  => 'input',
 			),
 			'redirection_method' => array(
-				'title' => __( 'Redirection Method', NL_TXTDMN ),
-				'help'  => __( 'What style should be used for the translated URLs?', NL_TXTDMN ) .
-					' <span class="nl-previews">' . _f( 'Preview: %s', NL_TXTDMN, $redirect_previews ) . '</span>',
+				'title' => __( 'Redirection Method' ),
+				'help'  => __( 'What style should be used for the translated URLs?' ) .
+					' <span class="nl-previews">' . _f( 'Preview: %s', $redirect_previews ) . '</span>',
 				'type'  => 'radiolist',
 				'data'  => array(
-					NL_REDIRECT_USING_GET    => __( 'HTTP query', NL_TXTDMN ),
-					NL_REDIRECT_USING_PATH   => __( 'Path prefix', NL_TXTDMN ),
-					NL_REDIRECT_USING_DOMAIN => __( 'Subdomain', NL_TXTDMN ),
+					NL_REDIRECT_USING_GET    => __( 'HTTP query' ),
+					NL_REDIRECT_USING_PATH   => __( 'Path prefix' ),
+					NL_REDIRECT_USING_DOMAIN => __( 'Subdomain' ),
 				),
 			),
 			'postlang_override' => array(
-				'title' => __( 'Post Language Override', NL_TXTDMN ),
-				'help'  => __( 'Should the requested post/page/object’s language override the one requested?', NL_TXTDMN ),
+				'title' => __( 'Post Language Override' ),
+				'help'  => __( 'Should the requested post/page/object’s language override the one requested?' ),
 				'type'  => 'checkbox',
 			),
 		), 'options', 'redirection' );
@@ -360,20 +360,20 @@ class Manager extends Functional {
 		// Add the fields
 		Settings::add_fields( array(
 			'post_types' => array(
-				'title' => __( 'Post Types', NL_TXTDMN ),
-				'help'  => __( 'What post types should support language and translations?', NL_TXTDMN ),
+				'title' => __( 'Post Types' ),
+				'help'  => __( 'What post types should support language and translations?' ),
 				'type'  => 'checklist',
 				'data'  => $post_types,
 			),
 			'localizables[nav_menu_locations]' => array(
-				'title' => __( 'Menu Locations', NL_TXTDMN ),
-				'help'  => __( 'Should any navigation menus have versions for each language?', NL_TXTDMN ),
+				'title' => __( 'Menu Locations' ),
+				'help'  => __( 'Should any navigation menus have versions for each language?' ),
 				'type'  => 'checklist',
 				'data'  => $nav_locations,
 			),
 			'localizables[sidebar_locations]' => array(
-				'title' => __( 'Sidebar Locations', NL_TXTDMN ),
-				'help'  => __( 'Should any widget areas have versions for each language?', NL_TXTDMN ),
+				'title' => __( 'Sidebar Locations' ),
+				'help'  => __( 'Should any widget areas have versions for each language?' ),
 				'type'  => 'checklist',
 				'data'  => $sidebars,
 			),
@@ -403,7 +403,7 @@ class Manager extends Functional {
 		Settings::add_fields( $sync_fields, 'sync' );
 
 		// The post cloning setting fields
-		add_settings_section( 'cloning', __( 'New Translations', NL_TXTDMN ), array( static::$name, 'settings_section_cloning' ), 'nlingual-sync' );
+		add_settings_section( 'cloning', __( 'New Translations' ), array( static::$name, 'settings_section_cloning' ), 'nlingual-sync' );
 		Settings::add_fields( $clone_fields, 'sync', 'cloning' );
 	}
 
@@ -452,21 +452,21 @@ class Manager extends Functional {
 				<?php settings_fields( $plugin_page ); ?>
 				<div id="nl_lang_controls">
 					<select id="nl_lang_preset">
-						<option value=""><?php _e( 'Custom Language', NL_TXTDMN ); ?></option>
+						<option value=""><?php _e( 'Custom Language' ); ?></option>
 					</select>
-					<button type="button" id="nl_lang_add" class="button"><?php _e( 'Add Language', NL_TXTDMN ); ?></button>
+					<button type="button" id="nl_lang_add" class="button"><?php _e( 'Add Language' ); ?></button>
 				</div>
 				<table id="nlingual_languages" class="wp-list-table widefat fixed striped">
 					<thead>
 						<tr>
-							<th scope="col" class="nl-lang-system_name"><?php _e( 'System Name', NL_TXTDMN ); ?></th>
-							<th scope="col" class="nl-lang-native_name"><?php _e( 'Native Name', NL_TXTDMN ); ?></th>
-							<th scope="col" class="nl-lang-short_name"><?php _e( 'Short Name', NL_TXTDMN ); ?></th>
-							<th scope="col" class="nl-lang-locale_name"><?php _e( 'Locale', NL_TXTDMN ); ?></th>
-							<th scope="col" class="nl-lang-iso_code"><?php _e( 'ISO', NL_TXTDMN ); ?></th>
-							<th scope="col" class="nl-lang-slug"><?php _e( 'Slug', NL_TXTDMN ); ?></th>
-							<th scope="col" class="nl-lang-active"><?php _e( 'Active?', NL_TXTDMN ); ?></th>
-							<td class="nl-lang-delete"><?php _e( 'Delete?', NL_TXTDMN ); ?></td>
+							<th scope="col" class="nl-lang-system_name"><?php _e( 'System Name' ); ?></th>
+							<th scope="col" class="nl-lang-native_name"><?php _e( 'Native Name' ); ?></th>
+							<th scope="col" class="nl-lang-short_name"><?php _e( 'Short Name' ); ?></th>
+							<th scope="col" class="nl-lang-locale_name"><?php _e( 'Locale' ); ?></th>
+							<th scope="col" class="nl-lang-iso_code"><?php _e( 'ISO' ); ?></th>
+							<th scope="col" class="nl-lang-slug"><?php _e( 'Slug' ); ?></th>
+							<th scope="col" class="nl-lang-active"><?php _e( 'Active?' ); ?></th>
+							<td class="nl-lang-delete"><?php _e( 'Delete?' ); ?></td>
 						</tr>
 					</thead>
 					<tbody id="nl_lang_list">

@@ -351,14 +351,14 @@ class Settings {
 	protected static function build_sync_settings_field( $name, $value, $post_type ) {
 		// Post Data values
 		$post_fields = array(
-			'post_author'    => _x( 'Author',          'post field', NL_TXTDMN ),
-			'post_date'      => _x( 'Date',            'post field', NL_TXTDMN ),
-			'post_status'    => _x( 'Status',          'post field', NL_TXTDMN ),
-			'post_parent'    => _x( 'Parent',          'post field', NL_TXTDMN ) . '*',
-			'menu_order'     => _x( 'Menu Order',      'post field', NL_TXTDMN ),
-			'post_password'  => _x( 'Password',        'post field', NL_TXTDMN ),
-			'comment_status' => _x( 'Comment Status',  'post field', NL_TXTDMN ),
-			'ping_status'    => _x( 'Pingback Status', 'post field', NL_TXTDMN ),
+			'post_author'    => _x( 'Author',          'post field' ),
+			'post_date'      => _x( 'Date',            'post field' ),
+			'post_status'    => _x( 'Status',          'post field' ),
+			'post_parent'    => _x( 'Parent',          'post field' ) . '*',
+			'menu_order'     => _x( 'Menu Order',      'post field' ),
+			'post_password'  => _x( 'Password',        'post field' ),
+			'comment_status' => _x( 'Comment Status',  'post field' ),
+			'ping_status'    => _x( 'Pingback Status', 'post field' ),
 		);
 
 		// Taxonomies values
@@ -374,36 +374,36 @@ class Settings {
 
 		?>
 		<div class="nl-field-section">
-			<button type="button" class="button nl-section-toggle hide-if-no-js" data-alt="<?php _e( 'Close Settings', NL_TXTDMN ); ?>"><?php _e( 'Open Settings', NL_TXTDMN ); ?></button>
+			<button type="button" class="button nl-section-toggle hide-if-no-js" data-alt="<?php _e( 'Close Settings' ); ?>"><?php _e( 'Open Settings' ); ?></button>
 			<div class="nl-section-content">
 				<h4><label  title="<?php _e( 'Check All/None', TXTDMN ); ?>">
-					<?php _e( 'Post Data', NL_TXTDMN ); ?>
+					<?php _e( 'Post Data' ); ?>
 					<input type="checkbox" class="nl-checkall" data-name="<?php echo "{$name}[post_fields]"; ?>" />
 				</label></h4>
 				<?php echo static::build_checklist_field( "{$name}[post_fields]", $value['post_fields'], $post_fields ); ?>
-				<p class="description"><?php _e( 'What post information should be copied?', NL_TXTDMN ); ?> <br />
-					<small>* <?php _e( 'will use counterpart translation if found', NL_TXTDMN ); ?></small></p>
+				<p class="description"><?php _e( 'What post information should be copied?' ); ?> <br />
+					<small>* <?php _e( 'will use counterpart translation if found' ); ?></small></p>
 
 				<?php if ( $post_taxs ) : ?>
 					<h4><label title="<?php _e( 'Check All/None', TXTDMN ); ?>">
-						<?php _e( 'Taxonomies', NL_TXTDMN ); ?>*
+						<?php _e( 'Taxonomies' ); ?>*
 						<input type="checkbox" class="nl-checkall" data-name="<?php echo "{$name}[post_terms]"; ?>" />
 					</label></h4>
 					<?php echo static::build_checklist_field( "{$name}[post_terms]", $value['post_terms'], $post_taxs ); ?>
-					<p class="description"><?php _e( 'What terms should be copied?', NL_TXTDMN ); ?> <br />
-						<small>* <?php _e( 'will use counterpart translation(s) if found', NL_TXTDMN ); ?></small></p>
+					<p class="description"><?php _e( 'What terms should be copied?' ); ?> <br />
+						<small>* <?php _e( 'will use counterpart translation(s) if found' ); ?></small></p>
 				<?php endif; ?>
 
 				<h4><label  title="<?php _e( 'Match All/None', TXTDMN ); ?>">
-					<?php _e( 'Meta Data', NL_TXTDMN ); ?>
+					<?php _e( 'Meta Data' ); ?>
 					<input type="checkbox" class="nl-matchall" data-name="<?php echo "{$name}[post_meta]"; ?>" />
 				</label></h4>
 				<?php echo static::build_input_field( "{$name}[post_meta]", implode( "\n", (array) $value['post_meta'] ), 'textarea', array(
 					'class' => 'widefat',
 					'rows' => 5,
 				) ); ?>
-				<p class="description"><?php _e( 'Which custom fields should be copied?', NL_TXTDMN ); ?> <br />
-					<small><?php _e( 'One per line. Enter an asterisk (*) to match all fields.', NL_TXTDMN ); ?></small></p>
+				<p class="description"><?php _e( 'Which custom fields should be copied?' ); ?> <br />
+					<small><?php _e( 'One per line. Enter an asterisk (*) to match all fields.' ); ?></small></p>
 			</div>
 		</div>
 		<?php

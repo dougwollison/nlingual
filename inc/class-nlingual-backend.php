@@ -99,13 +99,13 @@ class Backend extends Functional {
 
 		// Localize the javascript
 		wp_localize_script( 'nlingual-admin-js', 'nlingualL10n', array(
-			'TranslationTitle'            => __( 'Enter the title for this translation.', NL_TXTDMN ),
-			'TranslationTitlePlaceholder' => __( 'Translate to %s: %s', NL_TXTDMN ),
-			'NewTranslationError'         => __( 'Error creating translation, please try again later or create one manually.', NL_TXTDMN ),
-			'NoPostSelected'              => __( 'No post selected to edit.', NL_TXTDMN ),
-			'NewTranslation'              => __( '[New]', NL_TXTDMN ),
-			'LocalizeThis'                => __( 'Localize This', NL_TXTDMN ),
-			'LocalizeFor'                 => __( 'Localize for %s', NL_TXTDMN ),
+			'TranslationTitle'            => __( 'Enter the title for this translation.' ),
+			'TranslationTitlePlaceholder' => __( 'Translate to %s: %s' ),
+			'NewTranslationError'         => __( 'Error creating translation, please try again later or create one manually.' ),
+			'NoPostSelected'              => __( 'No post selected to edit.' ),
+			'NewTranslation'              => __( '[New]' ),
+			'LocalizeThis'                => __( 'Localize This' ),
+			'LocalizeFor'                 => __( 'Localize for %s' ),
 		) );
 	}
 
@@ -216,7 +216,7 @@ class Backend extends Functional {
 		$current = $wp_query->get( $query_var );
 		?>
 		<select name="<?php echo $query_var; ?>" class="postform">
-			<option value="-1"><?php _e( 'All Languages', NL_TXTDMN ); ?></option>
+			<option value="-1"><?php _e( 'All Languages' ); ?></option>
 			<?php
 			foreach ( Registry::languages() as $language ) {
 				$selected = $current == $language->lang_id;
@@ -238,7 +238,7 @@ class Backend extends Functional {
 	 * @return array The modified list of columns.
 	 */
 	public static function add_language_column( $columns ) {
-		$columns['nlingual'] = _x( 'Language', NL_TXTDMN );
+		$columns['nlingual'] = _x( 'Language' );
 		return $columns;
 	}
 
@@ -270,7 +270,7 @@ class Backend extends Functional {
 		$language = Translator::get_post_language( $post_id );
 		if ( ! $language ) {
 			echo '<input type="hidden" class="nl-language" value="0" />';
-			_e( 'None', 'no language', NL_TXTDMN );
+			_e( 'None', 'no language' );
 			return;
 		} else {
 			printf( '<input type="hidden" class="nl-language" value="%d" />', $language->lang_id );
@@ -286,7 +286,7 @@ class Backend extends Functional {
 					echo '<li>';
 					printf( '<input type="hidden" class="nl-translation-%d" value="%d" />', $lang->lang_id, $post );
 					$link = sprintf( '<a href="%s" target="_blank">%s</a>', get_edit_post_link( $post ), get_the_title( $post ) );
-					_efx( '%s: %s', 'language: title', NL_TXTDMN, $lang->system_name, $link );
+					_efx( '%s: %s', 'language: title', $lang->system_name, $link );
 					echo '<li>';
 				}
 			}
@@ -325,9 +325,9 @@ class Backend extends Functional {
 		<fieldset class="inline-edit-col-left">
 			<div class="inline-edit-col">
 				<label>
-					<span class="title"><?php _e( 'Language', NL_TXTDMN );?></span>
+					<span class="title"><?php _e( 'Language' );?></span>
 					<select name="nlingual_language" id="nl_language">
-						<option value="-1">&mdash; <?php _ex( 'None', 'no language', NL_TXTDMN ); ?> &mdash;</option>
+						<option value="-1">&mdash; <?php _ex( 'None', 'no language' ); ?> &mdash;</option>
 						<?php
 						// Print the options
 						foreach ( Registry::languages() as $language ) {
@@ -346,7 +346,7 @@ class Backend extends Functional {
 				<label id="nl_translation_<?php echo $language->lang_id; ?>" class="nl-translation"  data-langid="<?php echo $language->lang_id; ?>">
 					<span class="title"><?php echo $language->system_name;?></span>
 					<select name="nlingual_translation[<?php echo $language->lang_id; ?>]">
-						<option value="-1">&mdash; <?php _ex( 'None', 'no translation', NL_TXTDMN ); ?> &mdash;</option>
+						<option value="-1">&mdash; <?php _ex( 'None', 'no translation' ); ?> &mdash;</option>
 						<?php
 						// Get all posts in this language
 						$posts = $wpdb->get_results( $wpdb->prepare( "
@@ -399,9 +399,9 @@ class Backend extends Functional {
 		<fieldset class="inline-edit-col-right">
 			<div class="inline-edit-col">
 				<label>
-					<span class="title"><?php _e( 'Language', NL_TXTDMN );?></span>
+					<span class="title"><?php _e( 'Language' );?></span>
 					<select name="nlingual_language" id="nl_language">
-						<option value="-1">&mdash; <?php _e( 'No Change', NL_TXTDMN ); ?> &mdash;</option>
+						<option value="-1">&mdash; <?php _e( 'No Change' ); ?> &mdash;</option>
 						<?php
 						// Print the options
 						foreach ( Registry::languages() as $language ) {
@@ -438,7 +438,7 @@ class Backend extends Functional {
 		foreach ( $post_types as $post_type ) {
 			add_meta_box(
 				'nlingual_translations', // id
-				__( 'Language & Translations', NL_TXTDMN ), // title
+				__( 'Language & Translations' ), // title
 				array( get_called_class(), 'post_meta_box' ), // callback
 				$post_type, // screen
 				'side', // context
@@ -499,9 +499,9 @@ class Backend extends Functional {
 		}
 		?>
 		<div class="nl-field nl-language-field">
-			<label for="nl_language" class="nl-field-label"><?php _e( 'Language', NL_TXTDMN ); ?></label>
+			<label for="nl_language" class="nl-field-label"><?php _e( 'Language' ); ?></label>
 			<select name="nlingual_language" id="nl_language" class="nl-input">
-				<option value="-1">&mdash; <?php _ex( 'None', 'no language', NL_TXTDMN ); ?> &mdash;</option>
+				<option value="-1">&mdash; <?php _ex( 'None', 'no language' ); ?> &mdash;</option>
 				<?php
 				// Print the options
 				foreach ( $lang_options as $value => $label ) {
@@ -513,17 +513,17 @@ class Backend extends Functional {
 		</div>
 
 		<?php if ( $languages->count() > 1 ) : ?>
-		<h4 class="nl-heading"><?php _e( 'Translations', NL_TXTDMN ); ?></h4>
+		<h4 class="nl-heading"><?php _e( 'Translations' ); ?></h4>
 		<?php foreach ( $languages as $language ) : ?>
 		<div id="nl_translation_<?php echo $language->lang_id; ?>" class="nl-field nl-translation" data-langid="<?php echo $language->lang_id?>">
 			<label for="nl_translation_<?php echo $language->lang_id; ?>_input">
 				<?php echo $language->system_name; ?>
-				<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' );?>"><?php _e( 'Edit', NL_TXTDMN );?></button>
+				<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' );?>"><?php _e( 'Edit' );?></button>
 			</label>
 
 			<select name="nlingual_translation[<?php echo $language->lang_id; ?>]" id="nl_translation_<?php echo $language->lang_id; ?>_input" class="nl-input">
-				<option value="-1">&mdash; <?php _ex( 'None', 'no translation', NL_TXTDMN ); ?> &mdash;</option>
-				<option value="new" class="nl-new-translation"><?php _ef( '&mdash; New %s %s &mdash;', NL_TXTDMN, $language->system_name, $post_type->labels->singular_name ); ?></option>
+				<option value="-1">&mdash; <?php _ex( 'None', 'no translation' ); ?> &mdash;</option>
+				<option value="new" class="nl-new-translation"><?php _ef( '&mdash; New %s %s &mdash;', $language->system_name, $post_type->labels->singular_name ); ?></option>
 				<?php
 				// Print the options
 				foreach ( $post_options[ $language->lang_id ] as $option ) {
@@ -531,7 +531,7 @@ class Backend extends Functional {
 					$label = $option->post_title;
 					// If this post is already a translation of something, identify it as such.
 					if ( Translator::get_post_translations( $option->ID ) ) {
-						$label = _ex( '[Taken]', NL_TXTDMN ) . ' ' . $label;
+						$label = _ex( '[Taken]' ) . ' ' . $label;
 					}
 					printf( '<option value="%s" %s>%s</option>', $option->ID, $selected, $label );
 				}
@@ -583,7 +583,7 @@ class Backend extends Functional {
 
 		// Assign the post to the language, fail if there's an error.
 		if ( ! Translator::set_post_language( $post_id, $_REQUEST['nlingual_language'] ) ) {
-			wp_die( __( 'That language does not exist.', NL_TXTDMN ) );
+			wp_die( __( 'That language does not exist.' ) );
 		}
 	}
 
@@ -621,7 +621,7 @@ class Backend extends Functional {
 
 		// Assign the translations, fail if there's an error
 		if ( ! Translator::set_post_translations( $post_id, $_REQUEST['nlingual_translation'] ) ) {
-			wp_die( __( 'Error saving translations; one or more languages do not exist.', NL_TXTDMN ) );
+			wp_die( __( 'Error saving translations; one or more languages do not exist.' ) );
 		}
 
 		// Unhook this and the save language filter to prevent
@@ -649,7 +649,7 @@ class Backend extends Functional {
 	public static function add_nav_menu_meta_box() {
 		add_meta_box(
 			'add-nl_langlink', // metabox id
-			__( 'Language Links', NL_TXTDMN ), // title
+			__( 'Language Links' ), // title
 			array( get_called_class(), 'do_nav_menu_meta_box' ), // callback
 			'nav-menus', // screen
 			'side' // context
@@ -667,7 +667,7 @@ class Backend extends Functional {
 		global $nav_menu_selected_id;
 		?>
 		<div class="posttypediv" id="nl_langlink">
-			<p><?php _e( 'These links will go to the respective language versions of the current URL.', NL_TXTDMN );?></p>
+			<p><?php _e( 'These links will go to the respective language versions of the current URL.' );?></p>
 			<div id="tabs-panel-nl_langlink-all" class="tabs-panel tabs-panel-active">
 				<ul id="pagechecklist-most-recent" class="categorychecklist form-no-clear">
 				<?php $i = -1; foreach ( Registry::languages() as $lang ):?>

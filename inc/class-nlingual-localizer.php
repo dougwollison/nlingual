@@ -205,7 +205,7 @@ class Localizer extends Functional {
 			foreach ( $localized[ $field ] as $lang_id => $value ) {
 				// Fail if the language is not found
 				if ( ! $languages->get( $lang_id ) ) {
-					wp_die( __( 'That language does not exist.', NL_TXTDMN ) );
+					wp_die( __( 'That language does not exist.' ) );
 				}
 
 				// Add the row value set
