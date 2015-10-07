@@ -46,6 +46,66 @@
   .nl-section-content h4:hover input[type="checkbox"] {
     opacity: 1; }
 
+.nl-localizer {
+  margin: 1px;
+  display: inline-block;
+  vertical-align: top;
+  background: #eee;
+  color: #555;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  overflow: hidden;
+  *zoom: 1;
+  -moz-box-shadow: inset 0 1px 0 #fff, 0 1px 0 rgba(0, 0, 0, 0.08);
+  -webkit-box-shadow: inset 0 1px 0 #fff, 0 1px 0 rgba(0, 0, 0, 0.08);
+  box-shadow: inset 0 1px 0 #fff, 0 1px 0 rgba(0, 0, 0, 0.08); }
+  .nl-localizer:after {
+    content: "";
+    display: table;
+    clear: both; }
+  .nl-localizer:hover {
+    border-color: #999; }
+
+.nl-localizer-toggle,
+.nl-localizer-option {
+  cursor: pointer;
+  float: left;
+  height: 21px;
+  line-height: 21px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  padding: 2px 0;
+  -moz-transition: color 0.3s, background 0.3s, max-width 0.3s ease-out;
+  -o-transition: color 0.3s, background 0.3s, max-width 0.3s ease-out;
+  -webkit-transition: color 0.3s, background 0.3s, max-width 0.3s ease-out;
+  transition: color 0.3s, background 0.3s, max-width 0.3s ease-out; }
+
+.nl-localizer-toggle {
+  width: 28px;
+  color: #555; }
+  .nl-localizer-toggle:before {
+    -webkit-font-smoothing: antialiased;
+    content: '\f326';
+    font-family: 'dashicons';
+    font-size: 20px;
+    line-height: 20px; }
+
+.nl-localizer-option {
+  font-size: 14px;
+  max-width: 0; }
+  .nl-localizer-option .nl-option-text {
+    font-style: normal;
+    padding: 0 5px; }
+  .nl-localizer-option:hover, .nl-localizer-option.nl-current {
+    color: #32373c; }
+  .nl-localizer-option:hover {
+    background: #f7f7f7; }
+  .nl-localizer:hover .nl-localizer-option.nl-current {
+    color: #00a0d2; }
+  .nl-localizer:hover .nl-localizer-option, .nl-localizer-option.nl-current {
+    max-width: 150px; }
+
 #nlingual-sync-form .nl-inputlist {
   *zoom: 1; }
   #nlingual-sync-form .nl-inputlist:after {
