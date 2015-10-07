@@ -459,14 +459,14 @@ class Manager extends Functional {
 				<table id="nlingual_languages" class="wp-list-table widefat fixed striped">
 					<thead>
 						<tr>
-							<th scope="col" class="nl-lang-system_name"><?php _e('System Name', TXTDMN);?></th>
-							<th scope="col" class="nl-lang-native_name"><?php _e('Native Name', TXTDMN);?></th>
-							<th scope="col" class="nl-lang-short_name"><?php _e('Short Name', TXTDMN);?></th>
-							<th scope="col" class="nl-lang-locale_name"><?php _e('Locale', TXTDMN);?></th>
-							<th scope="col" class="nl-lang-iso_code"><?php _e('ISO', TXTDMN);?></th>
-							<th scope="col" class="nl-lang-slug"><?php _e('Slug', TXTDMN);?></th>
-							<th scope="col" class="nl-lang-active"><?php _e('Active?', TXTDMN);?></th>
-							<td class="nl-lang-delete"><?php _e('Delete?', TXTDMN);?></td>
+							<th scope="col" class="nl-lang-system_name"><?php _e( 'System Name', NL_TXTDMN ); ?></th>
+							<th scope="col" class="nl-lang-native_name"><?php _e( 'Native Name', NL_TXTDMN ); ?></th>
+							<th scope="col" class="nl-lang-short_name"><?php _e( 'Short Name', NL_TXTDMN ); ?></th>
+							<th scope="col" class="nl-lang-locale_name"><?php _e( 'Locale', NL_TXTDMN ); ?></th>
+							<th scope="col" class="nl-lang-iso_code"><?php _e( 'ISO', NL_TXTDMN ); ?></th>
+							<th scope="col" class="nl-lang-slug"><?php _e( 'Slug', NL_TXTDMN ); ?></th>
+							<th scope="col" class="nl-lang-active"><?php _e( 'Active?', NL_TXTDMN ); ?></th>
+							<td class="nl-lang-delete"><?php _e( 'Delete?', NL_TXTDMN ); ?></td>
 						</tr>
 					</thead>
 					<tbody id="nl_lang_list">
@@ -501,7 +501,7 @@ class Manager extends Functional {
 					</tr>
 				</script>
 				<script>
-					<?php $presets = require( NL_DIR . '/inc/presets.php' ); ?>
+					<?php $presets = require( NL_DIR . '/inc/nlingual-presets.php' ); ?>
 					var NL_PRESETS = <?php echo json_encode( $presets );?>
 				</script>
 				<?php submit_button(); ?>
