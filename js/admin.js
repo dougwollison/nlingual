@@ -161,17 +161,19 @@ jQuery( function( $ ) {
 	// =========================
 
 	// Setup the base localizer
-	var $localizer = $('<select class="nl-localizer"></select>').html(function(){
-		var options = '<option value="">' + nlingualL10n.LocalizeThis + '</option>', lang;
+	var $localizer = $('<span class="nl-localizer"></span>').html(function(){
+		var html = '<span class="nl-localizer-toggle" title="' + nlingualL10n.LocalizeThis + '"></span>', lang;
 		_.each( NL_LANGUAGES, function( lang ) {
-			options += '<option value="' + lang.lang_id + '">' + lang.system_name + '</option>';
+			html += '<span class="nl-localizer-option" title="' + nlingualL10n.LocalizeFor.replace( '%s', lang.system_name ) + '" data-lang="' + lang.lang_id + '"><i class="nl-option-text">' + lang.system_name + '</i></span>';
 		} );
-		return options;
+		return html;
 	});
 
 	_.each( NL_LOCALIZABLE_FIELDS, function( data, field ) {
 		var values = data.values,
 			nonce  = data.nonce;
+
+		var hasLocalized = false;
 
 		// Get the field if it exists
 		var $field = $( '#' + field );
@@ -214,7 +216,16 @@ jQuery( function( $ ) {
 
 			// Add to the container and hide
 			$localized.appendTo( $wrap ).hide();
+
+			if ( localized !== '' && localized !== null ) {
+				hasLocalized = true;
+			}
 		} );
+
+		// Add the current class to the default language if localized versions are set
+		if ( hasLocalized ) {
+			$control.find( '[data-lang="' + NL_DEFAULT_LANG + '"]' ).addClass( 'nl-current' );
+		}
 
 		// Add the nonce field
 		$wrap.append( '<input type="hidden" name="_nl_l10n_nonce[' + field + ']" value="' + nonce + '" />' );
@@ -223,10 +234,14 @@ jQuery( function( $ ) {
 		$control.appendTo( $wrap );
 	} );
 
-	$( 'body' ).on( 'change', '.nl-localizer', function () {
-		// Get the selected language
-		var $control = $( this );
-		var lang = $control.val();
+	$( 'body' ).on( 'click', '.nl-localizer-option', function () {
+		// Get the localizer and the language
+		var $option = $( this );
+		var $control = $option.parent();
+		var lang = $option.data( 'lang' );
+
+		// Mark this as the new current one
+		$( this ).addClass( 'nl-current' ).siblings().removeClass( 'nl-current' );
 
 		// Default lang if nothing selected
 		if ( ! lang ) {
