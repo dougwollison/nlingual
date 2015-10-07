@@ -1,8 +1,12 @@
 <?php
-/*
- * ============================
- * Extra Localization utilities
- * ============================
+/**
+ * nLingual External Utilities
+ *
+ * Additions to the existing L10n functions.
+ *
+ * @package nLingual
+ * @subpackage External
+ * @since 2.0.0
  */
 
 /*
