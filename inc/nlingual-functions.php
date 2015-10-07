@@ -2,16 +2,28 @@
 /**
  * nLingual Internal Functions
  *
- * Aliases to the external L10n functions,
- * but with the NL_TXTDMN as the domain, since
- * every internal use of the functions passes it.
- *
  * @package nLingual
  * @subpackage Functions
  * @since 2.0.0
  */
 
 namespace nLingual;
+
+/**
+ * Triggers the standard "Cheatin’ uh?" wp_die message.
+ *
+ * @since 2.0.0
+ */
+function cheatin() {
+	wp_die( \__( 'Cheatin&#8217; uh?' ), 403 );
+}
+
+/**
+ * The following functions are aliases to the public
+ * localization functions (custom ones included), but
+ * with the nLingual text domain included automatically,
+ * since it's used in 99% of calls within the classes.
+ */
 
 /**
  * @see __()

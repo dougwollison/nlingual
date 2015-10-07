@@ -198,7 +198,7 @@ class Localizer extends Functional {
 
 			// Fail if nonce does
 			if ( ! isset( $nonces[ $field ] ) || ! wp_verify_nonce( $nonces[ $field ], "nlingual_localize_{$key}" ) ) {
-				wp_die( __( 'Cheatin&#8217; uh?' ) );
+				cheatin();
 			}
 
 			// Loop through each localized version

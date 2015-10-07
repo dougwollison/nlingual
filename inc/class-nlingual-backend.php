@@ -578,7 +578,7 @@ class Backend extends Functional {
 
 		// Fail if nonce is invalid
 		if ( ! wp_verify_nonce( $_REQUEST['_nl_nonce'], 'nlingual_post' ) ) {
-			wp_die( __( 'Cheatin&#8217; uh?' ) );
+			cheatin();
 		}
 
 		// Assign the post to the language, fail if there's an error.
@@ -616,7 +616,7 @@ class Backend extends Functional {
 
 		// Fail if nonce is invalid
 		if ( ! wp_verify_nonce( $_REQUEST['_nl_nonce'], 'nlingual_post' ) ) {
-			wp_die( __( 'Cheatin&#8217; uh?' ) );
+			cheatin();
 		}
 
 		// Assign the translations, fail if there's an error

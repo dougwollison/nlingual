@@ -180,7 +180,7 @@ class Manager extends Functional {
 		// Fail if nonce does
 		check_admin_referer( 'nlingual-languages-options' );
 		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'nlingual-languages-options' ) ) {
-			wp_die( __( 'Cheatin&#8217; uh?' ), 403 );
+			cheatin();
 		}
 
 		// Get the languages
