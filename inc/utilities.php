@@ -12,15 +12,22 @@
 /*
  * Localize format string.
  *
+ * @since 2.0.0 Reworked to accept separate args or and array of them.
+ * @since 1.0.0
+ *
  * @uses __()
  *
- * @param string $text The format string.
+ * @param string $text   The format string.
  * @param string $domain The domain to use.
- * @params mixed $arg1.. The arguments for vsprintf().
+ * @param mixed  $args   The arguments for vsprintf().
+ *                       This can be an array of arguments or separate ones.
  */
-function _f( $text, $domain ) {
-	$args = func_get_args();
-	$args = array_slice( $args, 2 );
+function _f( $text, $domain, $args ) {
+	// If $args isn't an array, get all addition arguments and use that
+	if ( ! is_array( $args ) ) {
+		$args = func_get_args();
+		$args = array_slice( $args, 2 );
+	}
 
 	return vsprintf( __( $text, $domain ), $args );
 }
@@ -28,16 +35,23 @@ function _f( $text, $domain ) {
 /*
  * Localize format string, with context.
  *
- * @uses __()
+ * @since 2.0.0 Reworked to accept separate args or and array of them.
+ * @since 1.0.0
+ *
+ * @uses _x()
  *
  * @param string $text The format string.
  * @param string $context The context to use.
  * @param string $domain The domain to use.
- * @params mixed $arg1.. The arguments for vsprintf()
+ * @param mixed  $args   The arguments for vsprintf().
+ *                       This can be an array of arguments or separate ones.
  */
-function _fx( $text, $context, $domain ) {
-	$args = func_get_args();
-	$args = array_slice( $args, 3 );
+function _fx( $text, $context, $domain, $args ) {
+	// If $args isn't an array, get all addition arguments and use that
+	if ( ! is_array( $args ) ) {
+		$args = func_get_args();
+		$args = array_slice( $args, 2 );
+	}
 
 	return vsprintf( _x( $text, $context, $domain ), $args );
 }
@@ -45,7 +59,9 @@ function _fx( $text, $context, $domain ) {
 /*
  * Echo result of _f().
  *
- * @uses _f()
+ * @since 1.0.0
+ *
+ * @see _f()
  *
  * @param string $text The format string.
  * @param string $domain The domain to use.
@@ -58,7 +74,9 @@ function _ef( $text, $domain ) {
 /*
  * Echo result of _xf().
  *
- * @uses _xf()
+ * @since 1.0.0
+ *
+ * @see _fx()
  *
  * @param string $text The format string.
  * @param string $context The context to use.
@@ -71,6 +89,8 @@ function _efx( $text, $context, $domain ) {
 
 /*
  * Localize an array of strings.
+ *
+ * @since 1.0.0
  *
  * @uses __()
  *
@@ -88,6 +108,8 @@ function _a( $array, $domain = 'default' ) {
 
 /*
  * Localize an array of strings.
+ *
+ * @since 1.0.0
  *
  * @uses _x()
  *
