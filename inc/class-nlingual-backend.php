@@ -105,6 +105,7 @@ class Backend extends Functional {
 			'NoPostSelected'              => __( 'No post selected to edit.', NL_TXTDMN ),
 			'NewTranslation'              => __( '[New]', NL_TXTDMN ),
 			'LocalizeThis'                => __( 'Localize This', NL_TXTDMN ),
+			'LocalizeFor'                 => __( 'Localize for %s', NL_TXTDMN ),
 		) );
 	}
 
