@@ -49,6 +49,57 @@ jQuery( function( $ ) {
 		$toggle.text( $toggle.data( open ? 'alt' : 'text' ) );
 	} );
 
+	// Handle rendering of the previews
+	$( '.nl-preview' ).on( 'nl:render', function() {
+		var lang, slug, qvar, skip, format;
+
+		// Get the default language slug, defaulting to "en"
+		lang = $( '#nlingual_default_language' ).val();
+		if ( lang && typeof NL_LANGUAGES[ lang ] === 'object' ) {
+			slug = NL_LANGUAGES[ lang ].slug || 'en';
+		}
+
+		// Get the query var, defaulting to "nl_language"
+		qvar = $( '#nlingual_query_var' ).val() || 'nl_language';
+
+		// Get the skip option, will dictate what format to use
+		skip = $( '#nlingual_skip_default_l10n' ).attr( 'checked' );
+
+		// Get the format; url-previews will depend on skip
+		if ( $( this ).hasClass( 'nl-url-preview' ) ) {
+			format = $( this ).data( skip ? 'excluded' : 'included' );
+		} else {
+			format = $( this ).data( 'format' );
+		}
+
+		// Update the preview
+		$( this ).text( format.replace( '%l', slug ).replace( '%v', qvar ) );
+	} ).trigger( 'nl:render' );
+
+	// Changing any of these will trigger re-rendering of the previews
+	$( '#nlingual_default_language' ).change( function() {
+		$( '.nl-preview' ).trigger( 'nl:render' );
+	} );
+	$( '#nlingual_skip_default_l10n' ).change( function() {
+		$( '.nl-preview' ).trigger( 'nl:render' );
+	} );
+	$( '#nlingual_query_var' ).on( 'keyup change', function() {
+		$( '.nl-preview' ).trigger( 'nl:render' );
+	} );
+
+	// Changing the method will change which previews are shown
+	$( 'input[name="nlingual_redirection_method"]' ).change( function() {
+		var method = $( this ).val();
+
+		// Ignore if it's not checked or somehow has no value
+		if ( ! this.checked || ! method ) {
+			return;
+		}
+
+		// Show the associated preview while hiding the others
+		$( '.nl-preview' ).hide().filter( '.' + method ).show();
+	} ).change();
+
 	// =========================
 	// ! Language Manager
 	// =========================

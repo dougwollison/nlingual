@@ -267,8 +267,25 @@ class Manager extends Functional {
 	 * @since 2.0.0
 	 */
 	protected static function setup_options_fields() {
-		add_settings_section( 'default', null, null, 'nlingual-options' );
+		// Build the previews for the URLs
+		$domain = parse_url( home_url(), PHP_URL_HOST );
 
+		// The default language URL samples
+		$url_format = '<span class="nl-preview nl-url-preview %s" data-included="%s" data-excluded="%s"></span>';
+		$url_previews =
+			sprintf( $url_format, NL_REDIRECT_USING_GET, "$domain/sample-page/?%v=%l", "$domain/sample-page/" ).
+			sprintf( $url_format, NL_REDIRECT_USING_PATH, "$domain/%l/sample-page/", "$domain/sample-page/" ).
+			sprintf( $url_format, NL_REDIRECT_USING_DOMAIN, "%l.$domain/sample-page/", "$domain/sample-page/" );
+
+		// The redirection method previews
+		$redirect_format = '<span class="nl-preview nl-redirect-preview %s" data-format="%s"></span>';
+		$redirect_previews =
+			sprintf( $redirect_format, NL_REDIRECT_USING_GET, "$domain/?%v=%l" ).
+			sprintf( $redirect_format, NL_REDIRECT_USING_PATH, "$domain/%l/" ).
+			sprintf( $redirect_format, NL_REDIRECT_USING_DOMAIN, "%l.$domain" );
+
+		// The general setting fields
+		add_settings_section( 'default', null, null, 'nlingual-options' );
 		Settings::add_fields( array(
 			'default_language' => array(
 				'title' => __( 'Default Language', NL_TXTDMN ),
@@ -278,13 +295,14 @@ class Manager extends Functional {
 			),
 			'skip_default_l10n' => array(
 				'title' => __( 'Skip Localization for Default Language?', NL_TXTDMN ),
-				'help'  => __( 'URLs for the default language will be unmodified (e.g. /english-page/ vs /en/english-page/).', NL_TXTDMN ),
+				'help'  => __( 'URLs for the default language will be unmodified.', NL_TXTDMN ) .
+					' <span class="nl-previews">' . _f( 'Example: %s', NL_TXTDMN, $url_previews ) . '</span>',
 				'type'  => 'checkbox',
 			),
 		), 'options' );
 
+		// The request/redirection setting fields
 		add_settings_section( 'redirection', __( 'Request Handling', NL_TXTDMN ), null, 'nlingual-options' );
-
 		Settings::add_fields( array(
 			'query_var' => array(
 				'title' => __( 'Query Variable', NL_TXTDMN ),
@@ -293,12 +311,13 @@ class Manager extends Functional {
 			),
 			'redirection_method' => array(
 				'title' => __( 'Redirection Method', NL_TXTDMN ),
-				'help'  => __( 'What style should be used for the translated URLs?', NL_TXTDMN ),
+				'help'  => __( 'What style should be used for the translated URLs?', NL_TXTDMN ) .
+					' <span class="nl-previews">' . _f( 'Preview: %s', NL_TXTDMN, $redirect_previews ) . '</span>',
 				'type'  => 'radiolist',
 				'data'  => array(
-					NL_REDIRECT_USING_GET    => __( 'HTTP query (e.g. <code>%s/?%s=%s</code>)', NL_TXTDMN ),
-					NL_REDIRECT_USING_PATH   => __( 'Path prefix (e.g. <code>%s/%s/</code>)', NL_TXTDMN ),
-					NL_REDIRECT_USING_DOMAIN => __( 'Subdomain (e.g. <code>%s.%s</code>)', NL_TXTDMN ),
+					NL_REDIRECT_USING_GET    => __( 'HTTP query', NL_TXTDMN ),
+					NL_REDIRECT_USING_PATH   => __( 'Path prefix', NL_TXTDMN ),
+					NL_REDIRECT_USING_DOMAIN => __( 'Subdomain', NL_TXTDMN ),
 				),
 			),
 			'postlang_override' => array(
@@ -338,6 +357,7 @@ class Manager extends Functional {
 			$sidebar = $sidebar['name'];
 		}
 
+		// Add the fields
 		Settings::add_fields( array(
 			'post_types' => array(
 				'title' => __( 'Post Types', NL_TXTDMN ),
@@ -366,8 +386,7 @@ class Manager extends Functional {
 	 * @since 2.0.0
 	 */
 	protected static function setup_sync_fields() {
-		add_settings_section( 'default', null, null, 'nlingual-sync' );
-
+		// Build the fields list based on the supported post types
 		$post_types = Registry::get( 'post_types' );
 		foreach ( $post_types as $post_type ) {
 			$field = array(
@@ -379,10 +398,12 @@ class Manager extends Functional {
 			$clone_fields[ "clone_rules[post_type][{$post_type}]" ] = $field;
 		}
 
+		// The post synchronizing setting fields
+		add_settings_section( 'default', null, null, 'nlingual-sync' );
 		Settings::add_fields( $sync_fields, 'sync' );
 
+		// The post cloning setting fields
 		add_settings_section( 'cloning', __( 'New Translations', NL_TXTDMN ), array( static::$name, 'settings_section_cloning' ), 'nlingual-sync' );
-
 		Settings::add_fields( $clone_fields, 'sync', 'cloning' );
 	}
 
