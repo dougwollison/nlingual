@@ -1,6 +1,23 @@
 <?php
-// Class autoloader
-spl_autoload_register( function( $class ) {
+/**
+ * nLingual Class Autoloader
+ *
+ * @package nLingual
+ * @subpackage Autoloader
+ * @since 2.0.0
+ */
+
+/**
+ * Handle autoloading of nLingual classes.
+ *
+ * Will automatically initailize any Functional classes.
+ *
+ * @since 2.0.0
+ *
+ * @param string $name The name of the class being requested.
+ */
+function nlingual_autoloader( $class ) {
+	// Remove any backslashes on the ends, just in case
 	$name = trim( $class, '\\' );
 
 	// Reformat to wordpress standards
@@ -15,4 +32,5 @@ spl_autoload_register( function( $class ) {
 			call_user_func( array( $class, 'init' ) );
 		}
 	}
-});
+}
+spl_autoload_register( 'nlingual_autoloader' );
