@@ -243,7 +243,7 @@ class Localizer extends Functional {
 		// Get the localized values for every string found
 		$keys = implode( '\',\'', $wpdb->_escape( $strings ) );
 		$results = $wpdb->get_results( "
-			SELECT lang_id, string_value
+			SELECT lang_id, string_key, string_value
 			FROM $wpdb->nl_strings
 			WHERE string_key IN ( '$keys' )
 		" );
@@ -261,7 +261,7 @@ class Localizer extends Functional {
 			$field = static::$fields[ $key ];
 
 			// Get the localized values for this string if available
-			$values = isset( $localized[ $string ] ) ? $localized[ $string ] : array();
+			$values = isset( $localized[ $key ] ) ? $localized[ $key ] : array();
 
 			// Create the nonce
 			$nonce = wp_create_nonce( "nlingual_localize_{$key}" );
