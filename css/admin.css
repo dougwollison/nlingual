@@ -46,6 +46,17 @@
   .nl-section-content h4:hover input[type="checkbox"] {
     opacity: 1; }
 
+.nl-previews {
+  display: inline-block;
+  padding: 2px 5px;
+  margin: 0 0 0 .5em;
+  border: 1px solid #ddd;
+  background: #f7f7f7;
+  font-style: normal; }
+
+.nl-preview {
+  color: #0073aa; }
+
 .nl-localizer {
   margin: 1px;
   display: inline-block;
