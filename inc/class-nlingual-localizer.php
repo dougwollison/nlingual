@@ -101,7 +101,7 @@ class Localizer extends Functional {
 	}
 
 	// =========================
-	// ! Retriever Tools
+	// ! Get/Set Tools
 	// =========================
 
 	/**
@@ -125,6 +125,27 @@ class Localizer extends Functional {
 		", $key, $lang_id ) );
 
 		return $value;
+	}
+
+	/**
+	 * Save the localized version of the string.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @param string $key     The string key to search for.
+	 * @param int    $lang_id The language ID to match.
+	 * @param string $value   The localized value fo the string.
+	 */
+	public static function save_string( $key, $lang_id, $value ) {
+		global $wpdb;
+
+		$wpdb->replace( $wpdb->nl_strings, array(
+			'lang_id'      => $lang_id,
+			'string_key'   => $key,
+			'string_value' => $value,
+		), array( '%d', '%s', '%s' ) );
 	}
 
 	// =========================
@@ -186,8 +207,8 @@ class Localizer extends Functional {
 		// Get the languages
 		$languages = Registry::languages();
 
-		// Setup for SQL inserts
-		$inserts = array();
+		// Storage of strings to save
+		$to_save = array();
 
 		// Loop through registered strings
 		foreach ( static::$fields as $key => $field ) {
@@ -208,13 +229,15 @@ class Localizer extends Functional {
 					wp_die( __( 'That language does not exist.' ) );
 				}
 
-				// Add the row value set
-				$inserts[] = $wpdb->prepare( "(%d, %s, %s)", $lang_id, $key, $value );
+				// Add the entry to save
+				$to_save[] = array( $key, $lang_id, $value );
 			}
 		}
 
-		// Run the inserts
-		$wpdb->query( "REPLACE INTO $wpdb->nl_strings (lang_id, string_key, string_value) VALUES " . implode( ',', $inserts ) );
+		// Perform the saves
+		foreach ( $to_save as $save ) {
+			call_user_func_array( array( static::$name, 'save_string' ), $save );
+		}
 	}
 
 	/**
