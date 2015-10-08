@@ -27,6 +27,7 @@ class Localizer extends Functional {
 	 * @since 2.0.0
 	 *
 	 * @access protected
+	 *
 	 * @var array
 	 */
 	protected static $registered_strings = array();
@@ -37,6 +38,7 @@ class Localizer extends Functional {
 	 * @since 2.0.0
 	 *
 	 * @access protected
+	 *
 	 * @var array
 	 */
 	protected static $registered_taxonomies = array();
@@ -47,6 +49,7 @@ class Localizer extends Functional {
 	 * @since 2.0.0
 	 *
 	 * @access protected
+	 *
 	 * @var array
 	 */
 	protected static $registered_metadata = array();
@@ -57,6 +60,7 @@ class Localizer extends Functional {
 	 * @since 2.0.0
 	 *
 	 * @access protected
+	 *
 	 * @var array
 	 */
 	protected static $strings_by_type = array( 'option' => array() );
@@ -67,6 +71,7 @@ class Localizer extends Functional {
 	 * @since 2.0.0
 	 *
 	 * @access protected
+	 *
 	 * @var array
 	 */
 	protected static $strings_by_page = array( '__any__' => array() );
