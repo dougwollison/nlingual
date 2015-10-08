@@ -275,7 +275,39 @@ class Manager extends Functional {
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 */
 	public static function save_strings() {
+		// Abort if not saving for the language manager page
+		if ( ! isset( $_POST['option_page'] ) || $_POST['option_page'] != 'nlingual-strings' ) {
+			return;
+		}
 
+		// Fail if nonce does
+		check_admin_referer( 'nlingual-strings-options' );
+		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'nlingual-strings-options' ) ) {
+			cheatin();
+		}
+
+		// Get the strings to save
+		$strings = $_POST['nlingual_strings'];
+
+		// Loop through each string and save for each language and object ID
+		foreach ( $strings as $string => $localized ) {
+			foreach ( $localized as $lang_id => $objects ) {
+				foreach ( $objects as $object_id => $value ) {
+					Localizer::save_string_value( $string, $lang_id, $object_id, $value );
+				}
+			}
+		}
+
+		// Check for setting errors; add an "updated" message if none are found
+		if ( ! count( get_settings_errors() ) ) {
+			add_settings_error( 'general', 'settings_updated', __('Settings saved.'), 'updated' );
+		}
+		set_transient( 'settings_errors', get_settings_errors(), 30 );
+
+		// Return to settings page
+		$redirect = add_query_arg( 'settings-updated', 'true',  wp_get_referer() );
+		wp_redirect( $redirect );
+		exit;
 	}
 
 	// =========================
@@ -545,27 +577,119 @@ class Manager extends Functional {
 		global $plugin_page;
 		?>
 		<div class="wrap">
-			<h2><?php echo get_admin_page_title(); ?></h2>
+			<h2><?php _e( 'Manage Localized Taxonomies' ); ?></h2>
 			<?php settings_errors(); ?>
 			<form method="post" action="options.php" id="<?php echo $plugin_page; ?>-form">
+				<?php settings_fields( $plugin_page ); ?>
 
 				<?php if ( $strings = Localizer::get_strings_by_type( 'option' ) ) : ?>
 				<h3><?php _e( 'Options & Settings' ); ?></h3>
-				<table class="form-table">
+				<table class="form-table nl-option-strings">
 					<tbody>
 					<?php foreach ( $strings as $string ) : ?>
 						<tr>
 							<th scope="row"><?php echo $string->title; ?></th>
-							<td><p class="description"><?php echo $string->description; ?></p></td>
+							<td>
+								<?php static::print_strings_table( $string );?>
+								<p class="description"><?php echo $string->description; ?></p>
+							</td>
 						</tr>
 					<?php endforeach; ?>
 					</tbody>
 				</table>
 				<?php endif; ?>
 
+				<?php if ( $taxonomies = Localizer::get_registered_taxonomies() ) : ?>
+				<h2><?php _e( 'Manage Localized Taxonomies' ); ?></h2>
+				<?php foreach ( $taxonomies as $taxonomy ) : $taxonomy_obj = get_taxonomy( $taxonomy ); ?>
+					<h3><?php echo $taxonomy_obj->labels->name; ?></h3>
+					<?php
+					// Get the terms
+					$terms = get_terms( $taxonomy, array(
+						'orderby' => 'id',
+						'hide_empty' => false,
+					) );
+
+					// Get the strings
+					$name_string = Localizer::get_string( "term_{$taxonomy}_name" );
+					$desc_string = Localizer::get_string( "term_{$taxonomy}_description" );
+
+					foreach ( $terms as $term ) : ?>
+					<hr />
+					<h4><?php echo $term->name; ?></h4>
+					<table class="form-table nl-taxonomy-strings">
+						<tbody>
+							<tr>
+								<th scope="row"><?php _e( 'Name' ); ?></th>
+								<td>
+									<?php static::print_strings_table( $name_string, $term->term_id, true );?>
+								</td>
+							</tr>
+							<tr>
+								<th scope="row"><?php _e( 'Description' ); ?></th>
+								<td>
+									<?php static::print_strings_table( $desc_string, $term->term_id, true );?>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<?php endforeach; ?>
+				<?php endforeach; ?>
+				<?php endif; ?>
+
 				<?php submit_button(); ?>
 			</form>
 		</div>
+		<?php
+	}
+
+	/**
+	 * Print a strings editor table.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param object $string       The string settings object.
+	 * @param int    $object_id    Optional The object id to get values for (default 0).
+	 * @param bool   $skip_default Optional Don't include the default language?
+	 */
+	protected static function print_strings_table( $string, $object_id = 0, $skip_default = false ) {
+		$languages = Registry::languages();
+		$default_lang = Registry::get( 'default_lang' );
+		$localized = Localizer::get_string_values( $string->key, $object_id );
+		?>
+		<table class="nl-strings-table">
+			<thead class="screen-reader-text">
+				<th><?php _e( 'Language' ); ?></th>
+				<th><?php _e( 'Localized Value' ); ?></th>
+			</thead>
+			<tbody>
+				<?php foreach ( $languages as $language ) :
+				if ( ! $skip_default || $language->lang_id != $default_lang ) : ?>
+				<tr>
+					<?php
+					$id = sprintf( '%s-%d-%d', $string->key, $language->lang_id, $object_id );
+					$name = sprintf( 'nlingual_strings[%s][%d][%d]', $string->key, $language->lang_id, $object_id );
+
+					if ( $language->lang_id == $default_lang ) {
+						$value = get_option( $string->field );
+					} else {
+						$value = $localized[ $language->lang_id ];
+					}
+					?>
+					<th scope="row">
+						<label for="<?php echo $id; ?>"><?php echo $language->system_name; ?></label>
+					</th>
+					<td>
+						<?php if ( $string->input == 'textarea' ) : ?>
+						<textarea name="<?php echo $name; ?>" id="<?php echo $id; ?>"><?php echo $value;?></textarea>
+						<?php else: ?>
+						<input type="<?php echo $string->input ?: 'text'; ?>" name="<?php echo $name; ?>" id="<?php echo $id; ?>" value="<?php echo $value;?>" />
+						<?php endif;?>
+					</td>
+				</tr>
+				<?php endif; endforeach; ?>
+			</tbody>
+		</table>
 		<?php
 	}
 
