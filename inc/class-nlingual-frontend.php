@@ -226,8 +226,8 @@ class Frontend extends Functional {
 		}
 
 		// Get the default and current languages
-		$default_lang = Registry::default_lang( 'id' );
-		$current_lang = Registry::current_lang( 'id' ) ?: $default_lang;
+		$default_lang = Registry::default_lang()->lang_id;
+		$current_lang = Registry::current_lang()->lang_id ?: $default_lang;
 
 		// Ensure the unlocalized locations are set to the appropriate version.
 		foreach ( $registered as $slug => $name ) {
