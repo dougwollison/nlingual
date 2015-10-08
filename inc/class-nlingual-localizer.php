@@ -29,7 +29,7 @@ class Localizer extends Functional {
 	 * @access protected
 	 * @var array
 	 */
-	protected static $registered_fields = array();
+	protected static $registered_strings = array();
 
 	/**
 	 * A list of all metadata keys registered for localizing.
@@ -42,43 +42,70 @@ class Localizer extends Functional {
 	protected static $registered_metadata = array();
 
 	/**
-	 * An index of object types for the strings.
+	 * An index of strings by type.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @access protected
 	 * @var array
 	 */
-	protected static $string_types = array( 'option' => array() );
+	protected static $strings_by_type = array( 'option' => array() );
 
 	/**
-	 * An index of fields by page they are to appear on.
+	 * An index of strings by page they are to appear on.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @access protected
 	 * @var array
 	 */
-	protected static $string_pages = array( '__any__' => array() );
+	protected static $strings_by_page = array( '__any__' => array() );
 
 	// =========================
 	// ! Property Access
 	// =========================
 
 	/**
-	 * Get the list of strings registered as a particular type.
+	 * Get a list of strings from an index.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $type The type to get strings for.
+	 * @param string $index The index to search in ("type" or "page")
+	 * @param string $value The index value to get entries for.
 	 *
-	 * @return array A list of strings for the specific type.
+	 * @return array A list of strings for the specified index value.
+	 */
+	public static function get_strings_by( $index, $value ) {
+		$property = "strings_by_{$index}";
+		$list = static::$$property;
+
+		if ( isset( $list[ $value ] ) ) {
+			return $list[ $value ];
+		} else {
+			return array();
+		}
+	}
+
+	/**
+	 * Get the list of strings registered for a specific type.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @see Localizer::get_strings_by() for details.
 	 */
 	public static function get_strings_by_type( $type ) {
-		if ( isset( $string_types[ $type ] ) ) {
-			return $string_types[ $type ];
-		}
-		return array();
+		return static::get_strings_by( 'type', $type );
+	}
+
+	/**
+	 * Get the list of strings registered for a specific page.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @see Localizer::get_strings_by() for details.
+	 */
+	public static function get_strings_by_page( $page ) {
+		return static::get_strings_by( 'page', $page );
 	}
 
 	// =========================
@@ -107,26 +134,56 @@ class Localizer extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $string The key the string is stored under.
-	 * @param string $field  The ID of the field as it appears on the page.
-	 * @param string $page   Optional The page to expect the field on.
-	 * @param string $type   Optional The type of string (usually an object type).
+	 * @param array $args The arguments for the string.
+	 * 		@option string "key"         The key the string will be stored under.
+	 * 		@option string "field"       The ID/name of the field that handles this string.
+	 *		@option string "type"        The type string this is (e.g. 'option' or an object type).
+	 *		@option string "page"        The id/base of the screen this field should appear on.
+	 *		@option string "title"       An descriptive name of this string.
+	 *		@option string "description" The details of this string's purpose.
 	 */
-	public static function register_field( $string, $field, $page = '__any__', $type = 'option' ) {
-		// Log the field for this string
-		static::$registered_fields[ $string ] = $field;
+	public static function register_field( $args ) {
+		// Parse the args with the defaults
+		$args = wp_parse_args( $args, array(
+			'key' => null,
+			'field' => null,
+			'object' => 'option',
+			'page' => '__any__',
+			'title' => null,
+			'description' => null,
+		) );
 
-		// Add the string to the type list, setup if it doesn't exist
-		if ( ! isset( static::$string_types[ $type ] ) ) {
-			static::$string_types[ $type ] = array();
+		// Abort if no key is passed
+		if ( is_null( $args['key'] ) ) {
+			return;
 		}
-		static::$string_types[ $type ][] = $string;
 
-		// Add the string to the page list, setup if it doesn't exist
-		if ( ! isset( static::$string_pages[ $page ] ) ) {
-			static::$string_pages[ $page ] = array();
+		$key = $args['key'];
+
+		// Assume field is the same as key if not set
+		if ( is_null( $args['field'] ) ) {
+			$args['field'] = $key;
 		}
-		static::$string_pages[ $page ][] = $string;
+
+		// Cast as object
+		$string = (object) $args;
+
+		// Add to the registry
+		static::$registered_strings[ $key ] = $string;
+
+		// Add to the type index
+		$type = $args['type'];
+		if ( ! isset( static::$strings_by_type[ $type ] ) ) {
+			static::$strings_by_type[ $type ] = array();
+		}
+		static::$strings_by_type[ $type ][] = $string;
+
+		// Add to the page index
+		$type = $args['page'];
+		if ( ! isset( static::$strings_by_page[ $type ] ) ) {
+			static::$strings_by_page[ $type ] = array();
+		}
+		static::$strings_by_page[ $type ][] = $string;
 	}
 
 	/**
@@ -134,13 +191,19 @@ class Localizer extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $option The field name/ID of the option.
-	 * @param string $page   Optional The page to expect the field on.
+	 * @param string $option      The field name/ID of the option.
+	 * @param string $page        Optional The page to expect the field on.
+	 * @param string $title       Optional An descriptive name of this string.
+	 * @param string $description Optional The details of this string's purpose.
 	 */
-	public static function register_option( $option, $page = null ) {
+	public static function register_option( $option, $page = '__any__', $title = null, $description = null ) {
 		if ( is_admin() ) {
 			// Register the field as normal
-			static::register_field( "option_{$option}", $option, $page );
+			static::register_field( array(
+				'key'   => "option_{$option}",
+				'field' => $option,
+				'page'  => $page
+			) );
 		} else {
 			// Add the filter to handle it
 			static::add_filter( "pre_option_{$option}", 'handle_localized_option' );
@@ -161,8 +224,20 @@ class Localizer extends Functional {
 		if ( is_admin() ) {
 			// Register the name and description fields as normal
 			$page = "edit-{$taxonomy}";
-			static::register_field( "term_{$taxonomy}_name", 'name', $page, 'term' );
-			static::register_field( "term_{$taxonomy}_description", 'description', $page, 'term' );
+			static::register_field( array(
+				'key'   => "term_{$taxonomy}_name",
+				'field' => 'name',
+				'page'  => $page,
+				'type'  => 'taxonomy',
+				'title' => 'Name',
+			) );
+			static::register_field( array(
+				'key'   => "term_{$taxonomy}_description",
+				'field' => 'description',
+				'page'  => $page,
+				'type'  => 'taxonomy',
+				'title' => 'Description',
+			) );
 		} else {
 			// Add the filter to handle it
 			static::add_filter( "get_{$taxonomy}", 'handle_localized_term', 10, 2 );
@@ -180,12 +255,13 @@ class Localizer extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $meta_type  The type of object the meta data is for.
-	 * @param string $meta_key   The metadata key (and the field name/ID).
-	 * @param string $page       Optional The page to expect the field on.
-	 * @param string $object_key Optional The field to find the object's ID in.
+	 * @param string $meta_type   The type of object the meta data is for.
+	 * @param string $meta_key    The metadata key (and the field name/ID).
+	 * @param string $page        Optional The page to expect the field on.
+	 * @param string $title       Optional An descriptive name of this string.
+	 * @param string $description Optional The details of this string's purpose.
 	 */
-	public static function register_metadata( $meta_type, $meta_key, $page = null, $object_key = null ) {
+	public static function register_metadata( $meta_type, $meta_key, $page = null, $title = null, $description = null ) {
 		if ( is_admin() ) {
 			// Guess the page if not set
 			if ( is_null( $page ) ) {
@@ -199,7 +275,14 @@ class Localizer extends Functional {
 			}
 
 			// Register the field as normal
-			static::register_field( "meta_{$meta_type}_{$meta_key}", $meta_key, $page, $meta_type );
+			static::register_field( array(
+				'key'         => "meta_{$meta_type}_{$meta_key}",
+				'field'       => $meta_key,
+				'page'        => $page,
+				'type'        => $meta_type,
+				'title'       => $title,
+				'description' => $description,
+			) );
 		} else {
 			// Register it for filtering
 			if ( ! isset( static::$registered_metadata[ $type ] ) ) {
@@ -240,6 +323,36 @@ class Localizer extends Functional {
 		", $key, $lang_id, $object_id ) );
 
 		return $value;
+	}
+
+	/**
+	 * Get all localized versions of a string.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @param string $key       The string key to search for.
+	 * @param int    $object_id The object ID if relevent (otherwise 0).
+	 *
+	 * @return array The localized versions of the specified string.
+	 */
+	public static function get_string_values( $key, $object_id = 0 ) {
+		global $wpdb;
+
+		$results = $wpdb->get_results( $wpdb->prepare( "
+			SELECT lang_id, string_value
+			FROM $wpdb->nl_strings
+			WHERE string_key = %s
+			AND object_id = %d
+		", $key, $object_id ) );
+
+		$strings = array();
+		foreach ( $results as $result ) {
+			$strings[ $result->lang_id ] = $result->string_value;
+		}
+
+		return $strings;
 	}
 
 	/**
@@ -418,19 +531,19 @@ class Localizer extends Functional {
 		$to_save = array();
 
 		// Loop through registered strings
-		foreach ( static::$registered_fields as $key => $field ) {
+		foreach ( static::$registered_strings as $key => $string ) {
 			// Check if set, skip otherwise
-			if ( ! isset( $localized[ $field ] ) ) {
+			if ( ! isset( $localized[ $string->field ] ) ) {
 				continue;
 			}
 
 			// Fail if nonce does
-			if ( ! isset( $nonces[ $field ] ) || ! wp_verify_nonce( $nonces[ $field ], "nlingual_localize_{$key}" ) ) {
+			if ( ! isset( $nonces[ $string->field ] ) || ! wp_verify_nonce( $nonces[ $string->field ], "nlingual_localize_{$key}" ) ) {
 				cheatin();
 			}
 
 			// Loop through each localized version
-			foreach ( $localized[ $field ] as $lang_id => $value ) {
+			foreach ( $localized[ $string->field ] as $lang_id => $value ) {
 				// Fail if the language is not found
 				if ( ! $languages->get( $lang_id ) ) {
 					wp_die( __( 'That language does not exist.' ) );
@@ -479,45 +592,23 @@ class Localizer extends Functional {
 		// Get the languages
 		$languages = Registry::languages();
 
-		// Get all strings registered for unspecified pages
-		$strings = static::$string_pages[ '__any__' ];
-
-		// Get all strings registered for this specific page (based on id, failing to base).
-		if ( isset( static::$string_pages[ $screen->id ] ) ) {
-			$strings = array_merge( $strings, static::$string_pages[ $screen->id ] );
-		} elseif ( isset( static::$string_pages[ $screen->base ] ) ) {
-			$strings = array_merge( $strings, static::$string_pages[ $screen->base ] );
-		}
-
-		// Get the localized values for every string found
-		$keys = implode( '\',\'', $wpdb->_escape( $strings ) );
-		$results = $wpdb->get_results( $wpdb->prepare( "
-			SELECT lang_id, string_key, string_value
-			FROM $wpdb->nl_strings
-			WHERE string_key IN ( '$keys' )
-			AND object_id = %d
-		", $object_id ) );
-		$localized = array();
-		foreach ( $results as $result ) {
-			if ( ! isset( $localized[ $result->string_key ] ) ) {
-				$localized[ $result->string_key ] = array();
-			}
-			$localized[ $result->string_key ][ $result->lang_id ] = $result->string_value;
-		}
+		// Build a list of strings registered to this page and "any" page
+		$strings = array_merge(
+			static::get_strings_by_page( '__any__' ),
+			// Match page ID or at least base
+			static::get_strings_by_page( $screen->id ) ?: static::get_strings_by_page( $screen->base )
+		);
 
 		// Create the entries for each strings
-		foreach ( $strings as $key ) {
-			// Get the field for the string
-			$field = static::$registered_fields[ $key ];
-
+		foreach ( $strings as $string ) {
 			// Get the localized values for this string if available
-			$values = isset( $localized[ $key ] ) ? $localized[ $key ] : array();
+			$values = static::get_string_values( $string->key, $object_id );
 
 			// Create the nonce
-			$nonce = wp_create_nonce( "nlingual_localize_{$key}" );
+			$nonce = wp_create_nonce( "nlingual_localize_{$string->key}" );
 
 			// Create the row
-			$data[] = array( $field, $values, $nonce, $object_key );
+			$data[] = array( $string->field, $values, $nonce );
 		}
 
 		?>
