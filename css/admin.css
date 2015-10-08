@@ -57,6 +57,22 @@
 .nl-preview {
   color: #0073aa; }
 
+.form-field .nl-localizable {
+  display: block; }
+  .form-field .nl-localizable input[type="text"],
+  .form-field .nl-localizable input[type="password"],
+  .form-field .nl-localizable input[type="email"],
+  .form-field .nl-localizable input[type="number"],
+  .form-field .nl-localizable input[type="tel"],
+  .form-field .nl-localizable input[type="url"],
+  .form-field .nl-localizable input[type="search"],
+  .form-field .nl-localizable textarea {
+    display: block; }
+  .form-field .nl-localizable .nl-localizer {
+    float: left; }
+  .form-field .nl-localizable + p {
+    clear: left; }
+
 .nl-localizer {
   margin: 1px;
   display: inline-block;
