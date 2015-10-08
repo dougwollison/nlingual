@@ -89,7 +89,7 @@ class Manager extends Functional {
 	 */
 	public static function add_menu_pages() {
 		// Main Options page
-		add_utility_page(
+		$options_page_hook = add_utility_page(
 			__( 'Translation Options' ), // page title
 			_x( 'Translation', 'menu title' ), // menu title
 			'manage_options', // capability
@@ -99,7 +99,7 @@ class Manager extends Functional {
 		);
 
 		// Localizable Objects manager
-		add_submenu_page(
+		$localizables_page_hook = add_submenu_page(
 			'nlingual-options', // parent
 			__( 'Manage Localizable Objects' ), // page title
 			__( 'Localizables',  NL_TXTDMN ), // menu title
@@ -109,7 +109,7 @@ class Manager extends Functional {
 		);
 
 		// Sync/Clone Rules manager
-		add_submenu_page(
+		$sync_page_hook = add_submenu_page(
 			'nlingual-options', // parent
 			__( 'Post Synchronization' ), // page title
 			__( 'Sync Options' ), // menu title
@@ -119,7 +119,7 @@ class Manager extends Functional {
 		);
 
 		// Languages manager
-		add_submenu_page(
+		$languages_page_hook = add_submenu_page(
 			'nlingual-options', // parent
 			__( 'Manage Languages' ), // page title
 			_x( 'Languages', 'menu title' ), // menu title
@@ -129,7 +129,7 @@ class Manager extends Functional {
 		);
 
 		// Strings manager
-		add_submenu_page(
+		$strings_page_hook = add_submenu_page(
 			'nlingual-options', // parent
 			__( 'Manage Localized Strings' ), // page title
 			_x( 'Strings', 'menu title' ), // menu title
@@ -137,6 +137,15 @@ class Manager extends Functional {
 			'nlingual-strings', // slug
 			array( static::$name, 'settings_page_strings' ) // callback
 		);
+
+		// Setup the help tabs for each page
+		Documenter::add_help_tabs( array(
+			'options'      => $options_page_hook,
+			'localizables' => $localizables_page_hook,
+			'sync'         => $sync_page_hook,
+			'languages'    => $languages_page_hook,
+			'strings'      => $strings_page_hook,
+		) );
 	}
 
 	// =========================
