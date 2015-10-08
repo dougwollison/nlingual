@@ -88,6 +88,7 @@ class Manager extends Functional {
 	 * @since 2.0.0
 	 */
 	public static function add_menu_pages() {
+		// Main Options page
 		add_utility_page(
 			__( 'Translation Options' ), // page title
 			_x( 'Translation', 'menu title' ), // menu title
@@ -97,15 +98,17 @@ class Manager extends Functional {
 			'dashicons-translation' // icon
 		);
 
+		// Localizable Objects manager
 		add_submenu_page(
 			'nlingual-options', // parent
 			__( 'Manage Localizable Objects' ), // page title
 			__( 'Localizables',  NL_TXTDMN ), // menu title
 			'manage_options', // capability
-			'nlingual-l10s', // slug
+			'nlingual-localizables', // slug
 			array( static::$name, 'settings_page' ) // callback
 		);
 
+		// Sync/Clone Rules manager
 		add_submenu_page(
 			'nlingual-options', // parent
 			__( 'Post Synchronization' ), // page title
@@ -115,6 +118,7 @@ class Manager extends Functional {
 			array( static::$name, 'settings_page' ) // callback
 		);
 
+		// Languages manager
 		add_submenu_page(
 			'nlingual-options', // parent
 			__( 'Manage Languages' ), // page title
@@ -124,6 +128,7 @@ class Manager extends Functional {
 			array( static::$name, 'settings_page_languages' ) // callback
 		);
 
+		// Strings manager
 		add_submenu_page(
 			'nlingual-options', // parent
 			__( 'Manage Localized Strings' ), // page title
@@ -159,9 +164,9 @@ class Manager extends Functional {
 		Settings::register( array(
 			'post_types'   => null,
 			'localizables' => null,
-		), 'l10s' );
+		), 'localizables' );
 
-		static::setup_l10s_fields();
+		static::setup_localizables_fields();
 
 		// Sync Options
 		Settings::register( array(
@@ -257,9 +262,9 @@ class Manager extends Functional {
 
 		// Check for setting errors; add an "updated" message if none are found
 		if ( ! count( get_settings_errors() ) ) {
-			add_settings_error('general', 'settings_updated', __('Settings saved.'), 'updated');
+			add_settings_error( 'nlingual-languages', 'settings_updated', __( 'Languages saved.' ), 'updated' );
 		}
-		set_transient('settings_errors', get_settings_errors(), 30);
+		set_transient( 'settings_errors', get_settings_errors(), 30);
 
 		// Return to settings page
 		$redirect = add_query_arg( 'settings-updated', 'true',  wp_get_referer() );
@@ -300,7 +305,7 @@ class Manager extends Functional {
 
 		// Check for setting errors; add an "updated" message if none are found
 		if ( ! count( get_settings_errors() ) ) {
-			add_settings_error( 'general', 'settings_updated', __('Settings saved.'), 'updated' );
+			add_settings_error( 'nlingual-strings', 'settings_updated', __( 'Strings saved.' ), 'updated' );
 		}
 		set_transient( 'settings_errors', get_settings_errors(), 30 );
 
@@ -386,8 +391,8 @@ class Manager extends Functional {
 	 *
 	 * @since 2.0.0
 	 */
-	protected static function setup_l10s_fields() {
-		add_settings_section( 'default', null, null, 'nlingual-l10s' );
+	protected static function setup_localizables_fields() {
+		add_settings_section( 'default', null, null, 'nlingual-localizables' );
 
 		// Build the post types list
 		$post_types = array();
@@ -430,7 +435,7 @@ class Manager extends Functional {
 				'type'  => 'checklist',
 				'data'  => $sidebars,
 			),
-		), 'l10s' );
+		), 'localizables' );
 	}
 
 	/**
@@ -500,7 +505,7 @@ class Manager extends Functional {
 		?>
 		<div class="wrap">
 			<h2><?php echo get_admin_page_title(); ?></h2>
-			<?php settings_errors(); ?>
+			<?php settings_errors( $plugin_page ); ?>
 			<form method="post" action="options.php" id="<?php echo $plugin_page; ?>-form">
 				<?php settings_fields( $plugin_page ); ?>
 				<div id="nl_lang_controls">
@@ -578,7 +583,7 @@ class Manager extends Functional {
 		?>
 		<div class="wrap">
 			<h2><?php _e( 'Manage Localized Taxonomies' ); ?></h2>
-			<?php settings_errors(); ?>
+			<?php settings_errors( $plugin_page ); ?>
 			<form method="post" action="options.php" id="<?php echo $plugin_page; ?>-form">
 				<?php settings_fields( $plugin_page ); ?>
 
