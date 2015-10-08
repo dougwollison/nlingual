@@ -226,9 +226,9 @@ jQuery( function( $ ) {
 
 		var hasLocalized = false;
 
-		// Get the field if it exists
+		// Get the field if it exists and is an input/textarea
 		var $field = $( '#' + field );
-		if ( $field.length === 0 ) {
+		if ( $field.length === 0 || ! $field.is('input, textarea') ) {
 			return;
 		}
 		$field.addClass( 'nl-localizable-input' );
