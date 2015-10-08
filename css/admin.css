@@ -133,6 +133,36 @@
   .nl-localizer:hover .nl-localizer-option, .nl-localizer-option.nl-current {
     max-width: 150px; }
 
+.nl-taxonomy-strings th {
+  padding: 5px 10px 20px 0;
+  font-weight: normal; }
+.nl-taxonomy-strings td {
+  padding: 0 10px 20px; }
+
+.nl-strings-table {
+  width: 100%; }
+  .form-table .nl-strings-table {
+    margin-top: -10px; }
+  .nl-strings-table th {
+    width: 150px;
+    padding: 5px 10px 5px 0;
+    font-weight: normal; }
+  .nl-strings-table td {
+    padding: 5px 0; }
+  .nl-strings-table label {
+    display: block;
+    padding: 4px 0;
+    font-style: italic;
+    text-align: right; }
+  .nl-strings-table input, .nl-strings-table textarea {
+    display: block;
+    width: 100%;
+    margin: 0; }
+
+#nlingual-strings-form h4 {
+  color: #000;
+  font-size: 14px; }
+
 #nlingual-sync-form .nl-inputlist {
   *zoom: 1; }
   #nlingual-sync-form .nl-inputlist:after {
