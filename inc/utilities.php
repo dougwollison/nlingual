@@ -50,7 +50,7 @@ function _fx( $text, $context, $domain, $args ) {
 	// If $args isn't an array, get all addition arguments and use that
 	if ( ! is_array( $args ) ) {
 		$args = func_get_args();
-		$args = array_slice( $args, 2 );
+		$args = array_slice( $args, 3 );
 	}
 
 	return vsprintf( _x( $text, $context, $domain ), $args );
