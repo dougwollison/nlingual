@@ -139,6 +139,7 @@ class Localizer extends Functional {
 		} else {
 			// Add the filter to handle it
 			static::add_filter( "get_{$taxonomy}", 'handle_localized_term', 10, 2 );
+			static::add_filter( 'get_terms', 'handle_localized_terms', 10, 2 );
 		}
 	}
 
@@ -208,7 +209,7 @@ class Localizer extends Functional {
 			FROM $wpdb->nl_strings
 			WHERE string_key = %s
 			AND lang_id = %d
-			AND object_id = %s
+			AND object_id = %d
 		", $key, $lang_id, $object_id ) );
 
 		return $value;
@@ -295,6 +296,20 @@ class Localizer extends Functional {
 		}
 
 		return $term;
+	}
+
+	/**
+	 * Alias for handle_lcoalize_term() but for a collection of terms.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @see Localizer::handle_localized_term() for details.
+	 */
+	public static function handle_localized_terms( $terms, $taxonomy ) {
+		foreach ( $terms as &$term ) {
+			$term = static::handle_localized_term( $term, $taxonomy[0] );
+		}
+		return $terms;
 	}
 
 	/**
