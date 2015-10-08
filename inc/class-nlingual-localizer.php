@@ -305,6 +305,9 @@ class Localizer extends Functional {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
+	 * @uses Registry::cache_get() to check if the localized value has already been fetched.
+	 * @uses Registry::cache_set() to store the result for future reuse.
+	 *
 	 * @param string $key       The string key to search for.
 	 * @param int    $lang_id   The language ID to match.
 	 * @param int    $object_id The object ID if relevent (otherwise 0).
@@ -314,6 +317,11 @@ class Localizer extends Functional {
 	public static function get_string( $key, $lang_id, $object_id = 0 ) {
 		global $wpdb;
 
+		// Check if it's cached, return if so
+		if ( $cached = Registry::cache_get( 'localized', "$key-$lang_id-$object_id" ) ) {
+			return $cached;
+		}
+
 		$value = $wpdb->get_var( $wpdb->prepare( "
 			SELECT string_value
 			FROM $wpdb->nl_strings
@@ -321,6 +329,9 @@ class Localizer extends Functional {
 			AND lang_id = %d
 			AND object_id = %d
 		", $key, $lang_id, $object_id ) );
+
+		// Add it to the cache
+		Registry::cache_set( 'localized', "$key-$lang_id-$object_id", $value );
 
 		return $value;
 	}
