@@ -178,6 +178,54 @@
 		}
 	}
 
+.nl-taxonomy-strings {
+	th {
+		padding: 5px 10px 20px 0;
+		font-weight: normal;
+	}
+	td {
+		padding: 0 10px 20px;
+	}
+}
+
+.nl-strings-table {
+	width: 100%;
+
+	.form-table & {
+		margin-top: -10px;
+	}
+
+	th {
+		width: 150px;
+		padding: 5px 10px 5px 0;
+		font-weight: normal;
+	}
+
+	td {
+		padding: 5px 0;
+	}
+
+	label {
+		display: block;
+		padding: 4px 0;
+		font-style: italic;
+		text-align: right;
+	}
+
+	input, textarea {
+		display: block;
+		width: 100%;
+		margin: 0;
+	}
+}
+
+#nlingual-strings-form {
+	h4 {
+		color: #000;
+		font-size: 14px;
+	}
+}
+
 #nlingual-sync-form {
 	.nl-inputlist {
 		@include pie-clearfix;
