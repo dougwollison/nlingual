@@ -147,7 +147,7 @@ class Localizer extends Functional {
 		$args = wp_parse_args( $args, array(
 			'key' => null,
 			'field' => null,
-			'object' => 'option',
+			'type' => 'option',
 			'page' => '__any__',
 			'title' => null,
 			'description' => null,
@@ -200,9 +200,12 @@ class Localizer extends Functional {
 		if ( is_admin() ) {
 			// Register the field as normal
 			static::register_field( array(
-				'key'   => "option_{$option}",
-				'field' => $option,
-				'page'  => $page
+				'key'         => "option_{$option}",
+				'field'       => $option,
+				'page'        => $page,
+				'type'        => 'option',
+				'title'       => $title,
+				'description' => $description,
 			) );
 		} else {
 			// Add the filter to handle it
