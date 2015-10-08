@@ -35,8 +35,9 @@ class Manager extends Functional {
 		static::add_action( 'admin_init', 'register_settings' );
 		static::add_action( 'admin_menu', 'add_menu_pages' );
 
-		// Language saving
+		// Custom settings saving
 		static::add_action( 'admin_init', 'save_languages' );
+		static::add_action( 'admin_init', 'save_strings' );
 	}
 
 	// =========================
@@ -121,6 +122,15 @@ class Manager extends Functional {
 			'manage_options', // capability
 			'nlingual-languages', // slug
 			array( static::$name, 'settings_page_languages' ) // callback
+		);
+
+		add_submenu_page(
+			'nlingual-options', // parent
+			__( 'Manage Localized Strings' ), // page title
+			_x( 'Strings', 'menu title' ), // menu title
+			'manage_options', // capability
+			'nlingual-strings', // slug
+			array( static::$name, 'settings_page_strings' ) // callback
 		);
 	}
 
@@ -255,6 +265,17 @@ class Manager extends Functional {
 		$redirect = add_query_arg( 'settings-updated', 'true',  wp_get_referer() );
 		wp_redirect( $redirect );
 		exit;
+	}
+
+	/**
+	 * Save strings from the manager.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 */
+	public static function save_strings() {
+
 	}
 
 	// =========================
@@ -422,7 +443,7 @@ class Manager extends Functional {
 		global $plugin_page;
 ?>
 		<div class="wrap">
-			<h1><?php echo get_admin_page_title(); ?></h1>
+			<h2><?php echo get_admin_page_title(); ?></h2>
 			<?php settings_errors(); ?>
 			<form method="post" action="options.php" id="<?php echo $plugin_page; ?>-form">
 				<?php settings_fields( $plugin_page ); ?>
@@ -446,7 +467,7 @@ class Manager extends Functional {
 		global $plugin_page;
 		?>
 		<div class="wrap">
-			<h1><?php echo get_admin_page_title(); ?></h1>
+			<h2><?php echo get_admin_page_title(); ?></h2>
 			<?php settings_errors(); ?>
 			<form method="post" action="options.php" id="<?php echo $plugin_page; ?>-form">
 				<?php settings_fields( $plugin_page ); ?>
@@ -504,6 +525,44 @@ class Manager extends Functional {
 					<?php $presets = require( NL_DIR . '/inc/nlingual-presets.php' ); ?>
 					var NL_PRESETS = <?php echo json_encode( $presets );?>
 				</script>
+				<?php submit_button(); ?>
+			</form>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Output for the strings management page.
+	 *
+	 * Offers a central place to manage localized versions
+	 * of option and term name/description strings.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global $plugin_page The slug of the current admin page.
+	 */
+	public static function settings_page_strings() {
+		global $plugin_page;
+		?>
+		<div class="wrap">
+			<h2><?php echo get_admin_page_title(); ?></h2>
+			<?php settings_errors(); ?>
+			<form method="post" action="options.php" id="<?php echo $plugin_page; ?>-form">
+
+				<?php if ( $strings = Localizer::get_strings_by_type( 'option' ) ) : ?>
+				<h3><?php _e( 'Options & Settings' ); ?></h3>
+				<table class="form-table">
+					<tbody>
+					<?php foreach ( $strings as $string ) : ?>
+						<tr>
+							<th scope="row"><?php echo $string->title; ?></th>
+							<td><p class="description"><?php echo $string->description; ?></p></td>
+						</tr>
+					<?php endforeach; ?>
+					</tbody>
+				</table>
+				<?php endif; ?>
+
 				<?php submit_button(); ?>
 			</form>
 		</div>
