@@ -42,24 +42,44 @@ class Localizer extends Functional {
 	protected static $registered_metadata = array();
 
 	/**
-	 * An index of object_keys for fields
+	 * An index of object types for the strings.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @access protected
 	 * @var array
 	 */
-	protected static $field_object_keys = array();
+	protected static $string_types = array( 'option' => array() );
 
 	/**
-	 * A list of all pages registered for localizing.
+	 * An index of fields by page they are to appear on.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @access protected
 	 * @var array
 	 */
-	protected static $pages = array( '__any__' => array() );
+	protected static $string_pages = array( '__any__' => array() );
+
+	// =========================
+	// ! Property Access
+	// =========================
+
+	/**
+	 * Get the list of strings registered as a particular type.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $type The type to get strings for.
+	 *
+	 * @return array A list of strings for the specific type.
+	 */
+	public static function get_strings_by_type( $type ) {
+		if ( isset( $string_types[ $type ] ) ) {
+			return $string_types[ $type ];
+		}
+		return array();
+	}
 
 	// =========================
 	// ! Hook Registration
@@ -90,16 +110,23 @@ class Localizer extends Functional {
 	 * @param string $string The key the string is stored under.
 	 * @param string $field  The ID of the field as it appears on the page.
 	 * @param string $page   Optional The page to expect the field on.
+	 * @param string $type   Optional The type of string (usually an object type).
 	 */
-	public static function register_field( $string, $field, $page = '__any__' ) {
+	public static function register_field( $string, $field, $page = '__any__', $type = 'option' ) {
 		// Log the field for this string
 		static::$registered_fields[ $string ] = $field;
 
-		// Add the string to the page list, setup if it doesn't exist
-		if ( ! isset( static::$pages[ $page ] ) ) {
-			static::$pages[ $page ] = array();
+		// Add the string to the type list, setup if it doesn't exist
+		if ( ! isset( static::$string_types[ $type ] ) ) {
+			static::$string_types[ $type ] = array();
 		}
-		static::$pages[ $page ][] = $string;
+		static::$string_types[ $type ][] = $string;
+
+		// Add the string to the page list, setup if it doesn't exist
+		if ( ! isset( static::$string_pages[ $page ] ) ) {
+			static::$string_pages[ $page ] = array();
+		}
+		static::$string_pages[ $page ][] = $string;
 	}
 
 	/**
@@ -134,8 +161,8 @@ class Localizer extends Functional {
 		if ( is_admin() ) {
 			// Register the name and description fields as normal
 			$page = "edit-{$taxonomy}";
-			static::register_field( "term_{$taxonomy}_name", 'name', $page, true );
-			static::register_field( "term_{$taxonomy}_description", 'description', $page, true );
+			static::register_field( "term_{$taxonomy}_name", 'name', $page, 'term' );
+			static::register_field( "term_{$taxonomy}_description", 'description', $page, 'term' );
 		} else {
 			// Add the filter to handle it
 			static::add_filter( "get_{$taxonomy}", 'handle_localized_term', 10, 2 );
@@ -172,7 +199,7 @@ class Localizer extends Functional {
 			}
 
 			// Register the field as normal
-			static::register_field( "meta_{$meta_type}_{$meta_key}", $meta_key, $page, true );
+			static::register_field( "meta_{$meta_type}_{$meta_key}", $meta_key, $page, $meta_type );
 		} else {
 			// Register it for filtering
 			if ( ! isset( static::$registered_metadata[ $type ] ) ) {
@@ -453,13 +480,13 @@ class Localizer extends Functional {
 		$languages = Registry::languages();
 
 		// Get all strings registered for unspecified pages
-		$strings = static::$pages[ '__any__' ];
+		$strings = static::$string_pages[ '__any__' ];
 
-		// Get all strings registered for this specific page (based on id, failing to base.
-		if ( isset( static::$pages[ $screen->id ] ) ) {
-			$strings = array_merge( $strings, static::$pages[ $screen->id ] );
-		} elseif ( isset( static::$pages[ $screen->base ] ) ) {
-			$strings = array_merge( $strings, static::$pages[ $screen->base ] );
+		// Get all strings registered for this specific page (based on id, failing to base).
+		if ( isset( static::$string_pages[ $screen->id ] ) ) {
+			$strings = array_merge( $strings, static::$string_pages[ $screen->id ] );
+		} elseif ( isset( static::$string_pages[ $screen->base ] ) ) {
+			$strings = array_merge( $strings, static::$string_pages[ $screen->base ] );
 		}
 
 		// Get the localized values for every string found
