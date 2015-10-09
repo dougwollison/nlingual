@@ -360,6 +360,11 @@ class Manager extends Functional {
 				'type'  => 'select',
 				'data'  => Registry::languages()->export( 'system_name' ),
 			),
+			'show_all_languages' => array(
+				'title' => __( 'Show All Languages?' ),
+				'help'  => __( 'Should objects of all languages be listed by default in the admin?' ),
+				'type'  => 'checkbox',
+			),
 			'skip_default_l10n' => array(
 				'title' => __( 'Skip Localization for Default Language?' ),
 				'help'  => __( 'URLs for the default language will be unmodified.' ) .

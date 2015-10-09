@@ -48,6 +48,17 @@ class Registry {
 	protected static $default_lang;
 
 	/**
+	 * The show all languages for objects option.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var bool
+	 */
+	protected static $show_all_languages;
+
+	/**
 	 * The skip default language localizing option.
 	 *
 	 * @since 2.0.0
@@ -445,6 +456,7 @@ class Registry {
 
 		// Load simple options
 		static::$default_lang       = get_option( 'nlingual_default_language', 0 );
+		static::$show_all_languages = get_option( 'nlingual_show_all_languages', 1 );
 		static::$skip_default_l10n  = get_option( 'nlingual_skip_default_l10n', 0 );
 		static::$query_var          = get_option( 'nlingual_query_var', 'nl_language' );
 		static::$redirection_method = get_option( 'nlingual_redirection_method', NL_REDIRECT_USING_GET );
