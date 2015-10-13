@@ -34,6 +34,7 @@ class Documenter extends Functional {
 		'options' => array(
 			'tabs' => array(
 				'overview' => 'Overview',
+				'requests' => 'Request Handling',
 			),
 			'sidebar' => true,
 		),
@@ -41,13 +42,14 @@ class Documenter extends Functional {
 			'tabs' => array(
 				'overview' => 'Overview',
 			),
-			'sidebar' => false,
+			'sidebar' => true,
 		),
 		'sync' => array(
 			'tabs' => array(
 				'overview' => 'Overview',
+				'cloning' => 'Cloning Rules',
 			),
-			'sidebar' => false,
+			'sidebar' => true,
 		),
 		'languages' => array(
 			'tabs' => array(
