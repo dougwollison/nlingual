@@ -218,9 +218,10 @@ class Backend extends Functional {
 		<select name="<?php echo $query_var; ?>" class="postform">
 			<option value="-1"><?php _e( 'All Languages' ); ?></option>
 			<?php
+			printf( '<option value="%d" %s>%s</option>', 0, $current == '0' ? 'selected' : '', _x( 'No Language' ) );
 			foreach ( Registry::languages() as $language ) {
 				$selected = $current == $language->lang_id;
-				printf( '<option value="%s" %s>%s</option>', $language->lang_id, $selected ? 'selected' : '', $language->system_name );
+				printf( '<option value="%d" %s>%s</option>', $language->lang_id, $selected ? 'selected' : '', $language->system_name );
 			}
 			?>
 		</select>

@@ -170,12 +170,18 @@ class API extends Functional {
 	public static function add_post_translations_join_clause( $clause, \WP_Query $query ) {
 		global $wpdb;
 
-		// Check if the post type in question supports translation
-		// and that the language is specified in the query
-		if ( Registry::is_post_type_supported( $query->get('post_type') )
-		&& $query->get( Registry::get( 'query_var' ) ) ) {
-			$clause .= " INNER JOIN $wpdb->nl_translations ON ($wpdb->posts.ID = $wpdb->nl_translations.object_id AND $wpdb->nl_translations.object_type = 'post')";
+		// Abort if post type is not supported
+		if ( ! Registry::is_post_type_supported( $query->get('post_type') ) ) {
+			return $clause;
 		}
+
+		// Abort if language isn't specified
+		if ( $query->get( Registry::get( 'query_var' ) ) === '' ) {
+			return $clause;
+		}
+
+		// Add the join for the translations table
+		$clause .= " LEFT JOIN $wpdb->nl_translations ON ($wpdb->posts.ID = $wpdb->nl_translations.object_id AND $wpdb->nl_translations.object_type = 'post')";
 
 		return $clause;
 	}
@@ -199,15 +205,27 @@ class API extends Functional {
 	public static function add_post_translations_where_clause( $clause, \WP_Query $query ) {
 		global $wpdb;
 
-		// Check if the post type in question supports translation,
-		// that the language is specified in the query,
-		// and that a registered language can be found.
-		if ( Registry::is_post_type_supported( $query->get('post_type') )
-		&& ( $lang = $query->get( Registry::get( 'query_var' ) ) )
-		&& ( $language = Registry::languages()->get( $lang ) ) ) {
-			$clause .= $wpdb->prepare( " AND $wpdb->nl_translations.lang_id = %d", $language->lang_id );
+		// Abort if post type is not supported
+		if ( ! Registry::is_post_type_supported( $query->get('post_type') ) ) {
+			return $clause;
 		}
 
+		// Get the language
+		$lang = $query->get( Registry::get( 'query_var' ) );
+
+		// Abort if language isn't specified
+		if ( $lang === '' ) {
+			return $clause;
+		}
+
+		// Check if the language specified is "None"
+		if ( $lang === '0' ) {
+			$clause .= " AND $wpdb->nl_translations.lang_id IS NULL";
+		} else
+		// Otherwise check if the language exists
+		if ( $language = Registry::languages()->get( $lang ) ) {
+			$clause .= $wpdb->prepare( " AND $wpdb->nl_translations.lang_id = %d", $language->lang_id );
+		}
 
 		return $clause;
 	}
