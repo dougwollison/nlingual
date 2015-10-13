@@ -124,7 +124,7 @@ class Translator {
 
 		// Redirect to delete_object_language() if $lang is false-ish
 		if ( ! $lang ) {
-			return delete_object_language( $type, $id );
+			return static::delete_object_language( $type, $id );
 		}
 
 		// Ensure $lang is a Language
