@@ -327,7 +327,7 @@ class Backend extends Functional {
 				<label>
 					<span class="title"><?php _e( 'Language' );?></span>
 					<select name="nlingual_language" id="nl_language">
-						<option value="-1">&mdash; <?php _ex( 'None', 'no language' ); ?> &mdash;</option>
+						<option value="0">&mdash; <?php _ex( 'None', 'no language' ); ?> &mdash;</option>
 						<?php
 						// Print the options
 						foreach ( Registry::languages() as $language ) {
@@ -346,7 +346,7 @@ class Backend extends Functional {
 				<label id="nl_translation_<?php echo $language->lang_id; ?>" class="nl-translation"  data-langid="<?php echo $language->lang_id; ?>">
 					<span class="title"><?php echo $language->system_name;?></span>
 					<select name="nlingual_translation[<?php echo $language->lang_id; ?>]">
-						<option value="-1">&mdash; <?php _ex( 'None', 'no translation' ); ?> &mdash;</option>
+						<option value="0">&mdash; <?php _ex( 'None', 'no translation' ); ?> &mdash;</option>
 						<?php
 						// Get all posts in this language
 						$posts = $wpdb->get_results( $wpdb->prepare( "
@@ -401,7 +401,7 @@ class Backend extends Functional {
 				<label>
 					<span class="title"><?php _e( 'Language' );?></span>
 					<select name="nlingual_language" id="nl_language">
-						<option value="-1">&mdash; <?php _e( 'No Change' ); ?> &mdash;</option>
+						<option value="0">&mdash; <?php _e( 'No Change' ); ?> &mdash;</option>
 						<?php
 						// Print the options
 						foreach ( Registry::languages() as $language ) {
@@ -501,7 +501,7 @@ class Backend extends Functional {
 		<div class="nl-field nl-language-field">
 			<label for="nl_language" class="nl-field-label"><?php _e( 'Language' ); ?></label>
 			<select name="nlingual_language" id="nl_language" class="nl-input">
-				<option value="-1">&mdash; <?php _ex( 'None', 'no language' ); ?> &mdash;</option>
+				<option value="0">&mdash; <?php _ex( 'None', 'no language' ); ?> &mdash;</option>
 				<?php
 				// Print the options
 				foreach ( $lang_options as $value => $label ) {
@@ -522,7 +522,7 @@ class Backend extends Functional {
 			</label>
 
 			<select name="nlingual_translation[<?php echo $language->lang_id; ?>]" id="nl_translation_<?php echo $language->lang_id; ?>_input" class="nl-input">
-				<option value="-1">&mdash; <?php _ex( 'None', 'no translation' ); ?> &mdash;</option>
+				<option value="0">&mdash; <?php _ex( 'None', 'no translation' ); ?> &mdash;</option>
 				<option value="new" class="nl-new-translation"><?php _ef( '&mdash; New %s %s &mdash;', $language->system_name, $post_type->labels->singular_name ); ?></option>
 				<?php
 				// Print the options
