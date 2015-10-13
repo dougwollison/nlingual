@@ -516,7 +516,7 @@ class Backend extends Functional {
 		<?php if ( $languages->count() > 1 ) : ?>
 		<h4 class="nl-heading"><?php _e( 'Translations' ); ?></h4>
 		<?php foreach ( $languages as $language ) : ?>
-		<div id="nl_translation_<?php echo $language->lang_id; ?>" class="nl-field nl-translation" data-langid="<?php echo $language->lang_id?>">
+		<div id="nl_translation_<?php echo $language->lang_id; ?>" class="nl-field nl-translation-field" data-langid="<?php echo $language->lang_id?>">
 			<label for="nl_translation_<?php echo $language->lang_id; ?>_input">
 				<?php echo $language->system_name; ?>
 				<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' );?>"><?php _e( 'Edit' );?></button>
