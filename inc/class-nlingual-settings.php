@@ -232,6 +232,9 @@ class Settings {
 		// Create an ID out of the name
 		$id = sanitize_key( $name );
 
+		// Ensure $attributes is an array
+		$attributes = (array) $attributes;
+
 		// If a checkbox, include a default=0 dummy field
 		if ( $type == 'checkbox' ) {
 			$html .= sprintf( '<input type="hidden" name="%s" value="0" />', $name );
