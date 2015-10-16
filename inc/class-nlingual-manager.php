@@ -609,7 +609,7 @@ class Manager extends Functional {
 						<tr>
 							<th scope="row"><?php echo $string->title; ?></th>
 							<td>
-								<?php static::print_strings_table( $string );?>
+								<?php static::print_strings_table( $string, get_option( $string->field ) );?>
 								<p class="description"><?php echo $string->description; ?></p>
 							</td>
 						</tr>
@@ -641,13 +641,13 @@ class Manager extends Functional {
 							<tr>
 								<th scope="row"><?php _e( 'Name' ); ?></th>
 								<td>
-									<?php static::print_strings_table( $name_string, $term->term_id, true );?>
+									<?php static::print_strings_table( $name_string, $term->name, $term->term_id );?>
 								</td>
 							</tr>
 							<tr>
 								<th scope="row"><?php _e( 'Description' ); ?></th>
 								<td>
-									<?php static::print_strings_table( $desc_string, $term->term_id, true );?>
+									<?php static::print_strings_table( $desc_string, $term->description, $term->term_id );?>
 								</td>
 							</tr>
 						</tbody>
@@ -668,10 +668,10 @@ class Manager extends Functional {
 	 * @since 2.0.0
 	 *
 	 * @param object $string       The string settings object.
+	 * @param string $unlocalized  Optional The unlocalized value of the string.
 	 * @param int    $object_id    Optional The object id to get values for (default 0).
-	 * @param bool   $skip_default Optional Don't include the default language?
 	 */
-	protected static function print_strings_table( $string, $object_id = 0, $skip_default = false ) {
+	protected static function print_strings_table( $string, $unlocalized, $object_id = 0 ) {
 		$languages = Registry::languages();
 		$default_lang = Registry::get( 'default_lang' );
 		$localized = Localizer::get_string_values( $string->key, $object_id );
@@ -682,31 +682,38 @@ class Manager extends Functional {
 				<th><?php _e( 'Localized Value' ); ?></th>
 			</thead>
 			<tbody>
-				<?php foreach ( $languages as $language ) :
-				if ( ! $skip_default || $language->lang_id != $default_lang ) : ?>
+				<?php foreach ( $languages as $language ) : ?>
 				<tr>
 					<?php
+					$is_default_lang = $language->lang_id == $default_lang;
+
 					$id = sprintf( '%s-%d-%d', $string->key, $language->lang_id, $object_id );
 					$name = sprintf( 'nlingual_strings[%s][%d][%d]', $string->key, $language->lang_id, $object_id );
 
-					if ( $language->lang_id == $default_lang ) {
-						$value = get_option( $string->field );
+					if ( $is_default_lang ) {
+						$value = $unlocalized;
 					} else {
 						$value = $localized[ $language->lang_id ];
 					}
+
+					// Build the field parameters
+					$field = array(
+						'name' => $is_default_lang ? '' : $name,
+						'type' => $string->input ?: 'text',
+						'data' => array(
+							'id' => $id,
+							'readonly' => $is_default_lang,
+						),
+					);
 					?>
 					<th scope="row">
 						<label for="<?php echo $id; ?>"><?php echo $language->system_name; ?></label>
 					</th>
 					<td>
-						<?php if ( $string->input == 'textarea' ) : ?>
-						<textarea name="<?php echo $name; ?>" id="<?php echo $id; ?>"><?php echo $value;?></textarea>
-						<?php else: ?>
-						<input type="<?php echo $string->input ?: 'text'; ?>" name="<?php echo $name; ?>" id="<?php echo $id; ?>" value="<?php echo $value;?>" />
-						<?php endif;?>
+						<?php echo Settings::build_field( $field, $value ); ?>
 					</td>
 				</tr>
-				<?php endif; endforeach; ?>
+				<?php endforeach; ?>
 			</tbody>
 		</table>
 		<?php
