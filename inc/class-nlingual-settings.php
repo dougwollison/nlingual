@@ -177,10 +177,14 @@ class Settings {
 	 *		@option string "type" The field type.
 	 *		@option mixed  "data" Optional data for the field.
 	 * 		@option string "help" Optional Help text.
+	 * @param mixed $value Optional A specifi value to use
+	 *                     instead of dynamically retrieving it.
 	 */
-	public static function build_field( $args ) {
-		// Get the value for the field
-		$value = static::get_value( $args['name'] );
+	public static function build_field( $args, $value = null ) {
+		// Get the value for the field if not provided
+		if ( is_null( $value ) ) {
+			$value = static::get_value( $args['name'] );
+		}
 
 		switch ( $args['type'] ) {
 			case 'select':
@@ -193,7 +197,7 @@ class Settings {
 
 			default:
 				$method = "build_input_field";
-				$cb_args = array( $args['name'], $value, $args['type'], $args['label'], $args['data'] );
+				$cb_args = array( $args['name'], $value, $args['type'], $args['data'] );
 		}
 
 		$html = call_user_func_array( array( get_called_class(), $method ), $cb_args );
@@ -252,10 +256,10 @@ class Settings {
 		$atts = '';
 		foreach ( $attributes as $key => $val ) {
 			if ( is_bool( $val ) ) {
-				$val = $val ? $key : '';
+				$atts .= $val ? " {$key}" : '';
+			} else {
+				$atts .= " {$key}=\"{$val}\"";
 			}
-
-			$atts .= " {$key}=\"{$val}\"";
 		}
 
 		// Build the input
