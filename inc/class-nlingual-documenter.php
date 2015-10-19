@@ -64,6 +64,18 @@ class Documenter extends Functional {
 			),
 			'sidebar' => false,
 		),
+		'post-translation' => array(
+			'tabs' => array(
+				'translation' => 'Translation',
+			),
+			'sidebar' => true,
+		),
+		'term-localization' => array(
+			'tabs' => array(
+				'localization' => 'Localization',
+			),
+			'sidebar' => true,
+		),
 	);
 
 	/**
@@ -158,7 +170,7 @@ class Documenter extends Functional {
 		}
 
 		// The expected location of the tab's file
-		$tab_file = $tabset_dir . '/' . $tab . '.html';
+		$tab_file = $tabset_dir . '/' . $tab . '.php';
 
 		// Fail if the tab's file does not exist
 		if ( ! file_exists( $tab_file ) ) {
@@ -166,7 +178,9 @@ class Documenter extends Functional {
 		}
 
 		// Get the contents of the file
-		$content = file_get_contents( $tab_file );
+		ob_start();
+		include( $tab_file );
+		$content = ob_get_clean();
 
 		// Run it through wpautop and return it
 		return wpautop( $content );

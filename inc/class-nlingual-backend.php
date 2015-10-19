@@ -33,6 +33,9 @@ class Backend extends Functional {
 	 * @uses Registry::get() to retrieve enabled post types.
 	 */
 	public static function register_hooks() {
+		// Post-setup stuff
+		static::add_action( 'plugins_loaded', 'ready' );
+
 		// Post Changes
 		static::add_filter( 'deleted_post', 'deleted_post' );
 
@@ -70,9 +73,40 @@ class Backend extends Functional {
 	}
 
 	// =========================
+	// ! Post-Setup Stuff
+	// =========================
+
+	/**
+	 * Setup documentation for relevant post/term edit screens.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function ready() {
+		$post_types = Registry::get( 'post_types' );
+		foreach ( $post_types as $post_type ) {
+			Documenter::register_help_tab( $post_type, 'post-translation' );
+			Documenter::register_help_tab( "edit-$post_type", 'post-translation' );
+		}
+
+		$taxonomies = Registry::get( 'taxonomies' );
+		foreach ( $taxonomies as $taxonomy ) {
+			Documenter::register_help_tab( "edit-$taxonomy", 'term-localization' );
+		}
+	}
+
+	// =========================
 	// ! Post Changes
 	// =========================
 
+	/**
+	 * Delete the language for a post being deleted.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Translator::delete_post_language() to handle the deletion.
+	 *
+	 * @param int $post_id The ID of the post that was deleted.
+	 */
 	public static function deleted_post( $post_id ) {
 		// Delete the language
 		Translator::delete_post_language( $post_id );

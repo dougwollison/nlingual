@@ -69,9 +69,6 @@ class API extends Functional {
 		if ( defined( 'DOING_AJAX' ) ) {
 			AJAX::register_hooks();
 		}
-
-		// Add general actions
-		static::add_action( 'plugins_loaded', 'ready' );
 	}
 
 	// =========================
@@ -111,6 +108,9 @@ class API extends Functional {
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
+		// Post-setup stuff
+		static::add_action( 'plugins_loaded', 'ready' );
+
 		// Query Filters
 		static::add_filter( 'query_vars', 'add_language_var' );
 		static::add_filter( 'posts_join_request', 'add_post_translations_join_clause', 10, 2 );
@@ -118,7 +118,7 @@ class API extends Functional {
 	}
 
 	/**
-	 * Load text domain for localizations
+	 * Load text domain for localization, and register options for localization.
 	 *
 	 * @since 2.0.0
 	 */
