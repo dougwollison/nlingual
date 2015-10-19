@@ -420,6 +420,18 @@ class Manager extends Functional {
 			$post_types[ $post_type->name ] = $post_type->labels->name;
 		}
 
+		// Build the taxonomies list
+		$taxonomies = array();
+		foreach ( get_taxonomies( array(
+			'show_ui' => true,
+		), 'objects' ) as $taxonomy ) {
+			// Automatically skip attachments
+			if ( $taxonomy->name == 'attachment' ) {
+				continue;
+			}
+			$taxonomies[ $taxonomy->name ] = $taxonomy->labels->name;
+		}
+
 		// Get the original nav menus list
 		$nav_locations = Registry::cache_get( 'vars', '_wp_registered_nav_menus' );
 
@@ -436,6 +448,12 @@ class Manager extends Functional {
 				'help'  => __( 'What post types should support language and translations?' ),
 				'type'  => 'checklist',
 				'data'  => $post_types,
+			),
+			'taxonomies' => array(
+				'title' => __( 'Taxonomies' ),
+				'help'  => __( 'What taxonomies should support name and description localization?' ),
+				'type'  => 'checklist',
+				'data'  => $taxonomies,
 			),
 			'localizables[nav_menu_locations]' => array(
 				'title' => __( 'Menu Locations' ),
