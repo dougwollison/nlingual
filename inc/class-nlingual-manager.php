@@ -139,12 +139,12 @@ class Manager extends Functional {
 		);
 
 		// Setup the help tabs for each page
-		Documenter::add_help_tabs( array(
-			'options'      => $options_page_hook,
-			'localizables' => $localizables_page_hook,
-			'sync'         => $sync_page_hook,
-			'languages'    => $languages_page_hook,
-			'strings'      => $strings_page_hook,
+		Documenter::register_help_tabs( array(
+			$options_page_hook	    => 'options',
+			$localizables_page_hook => 'localizables',
+			$sync_page_hook		    => 'sync',
+			$languages_page_hook    => 'languages',
+			$strings_page_hook	    => 'strings',
 		) );
 	}
 

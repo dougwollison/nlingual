@@ -60,6 +60,7 @@ class API extends Functional {
 			Backend::register_hooks();
 			Manager::register_hooks();
 			Localizer::register_hooks();
+			Documenter::register_hooks();
 		} else {
 			Frontend::register_hooks();
 		}
