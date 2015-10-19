@@ -159,7 +159,8 @@ class Localizer extends Functional {
 	 *
 	 * @param array $args The arguments for the string.
 	 * 		@option string "key"         The key the string will be stored under.
-	 * 		@option string "field"       The ID/name of the field that handles this string.
+	 * 		@option string "field"       The name of the HTML field that handles this string.
+	 * 		@option string "field_id"    The id of the HTML field to target. (Defaults to field value)
 	 *		@option string "type"        The type string this is (e.g. 'option' or an object type).
 	 *		@option string "page"        The id/base of the screen this field should appear on.
 	 *		@option string "title"       An descriptive name of this string.
@@ -171,6 +172,7 @@ class Localizer extends Functional {
 		$args = wp_parse_args( $args, array(
 			'key'         => null,
 			'field'       => null,
+			'field_id'    => null,
 			'type'        => 'option',
 			'page'        => '__any__',
 			'title'       => null,
@@ -188,6 +190,11 @@ class Localizer extends Functional {
 		// Assume field is the same as key if not set
 		if ( is_null( $args['field'] ) ) {
 			$args['field'] = $key;
+		}
+
+		// Assume field_id is the same as field if not set
+		if ( is_null( $args['field_id'] ) ) {
+			$args['field_id'] = $args['field'];
 		}
 
 		// Cast as object
@@ -216,22 +223,25 @@ class Localizer extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $option      The field name/ID of the option.
-	 * @param string $page        Optional The page to expect the field on.
-	 * @param string $title       Optional An descriptive name of this string.
-	 * @param string $description Optional The details of this string's purpose.
+	 *
+	 * @param string $option The name of the option (as identified by get_option()).
+	 * @param array  $args   The custom arguments for the string.
+	 * 		@option string "field"       The name of the field that handles this string.
+	 * 		@option string "field_id"    The id of the HTML field to target. (Defaults to field value)
+	 *		@option string "page"        The id/base of the screen this field should appear on.
+	 *		@option string "title"       An descriptive name of this string.
+	 *		@option string "description" The details of this string's purpose.
+	 * 		@option string "input"       The field input to use ("textarea" or an <input> type).
 	 */
-	public static function register_option( $option, $page = '__any__', $title = null, $description = null ) {
+	public static function register_option( $option, $args = array() ) {
 		if ( is_admin() ) {
-			// Register the field as normal
-			static::register_field( array(
-				'key'         => "option_{$option}",
-				'field'       => $option,
-				'page'        => $page,
-				'type'        => 'option',
-				'title'       => $title,
-				'description' => $description,
+			// Build the args for the string and register it
+			$args = wp_parse_args( $args, array(
+				'key'   => "option_{$option}",
+				'field' => $option,
+				'type'  => 'option',
 			) );
+			static::register_field( $args );
 		} else {
 			// Add the filter to handle it
 			static::add_filter( "pre_option_{$option}", 'handle_localized_option' );
@@ -292,12 +302,15 @@ class Localizer extends Functional {
 	 *
 	 * @param string $meta_type   The type of object the meta data is for.
 	 * @param string $meta_key    The metadata key (and the field name/ID).
-	 * @param string $page        Optional The page to expect the field on.
-	 * @param string $title       Optional An descriptive name of this string.
-	 * @param string $description Optional The details of this string's purpose.
-	 * @param string $input       Optional The field input to use ("textarea" or an <input> type).
+	 * @param array  $args   The custom arguments for the string.
+	 * 		@option string "field"       The name of the field that handles this string.
+	 * 		@option string "field_id"    The id of the HTML field to target. (Defaults to field value)
+	 *		@option string "page"        The id/base of the screen this field should appear on.
+	 *		@option string "title"       An descriptive name of this string.
+	 *		@option string "description" The details of this string's purpose.
+	 * 		@option string "input"       The field input to use ("textarea" or an <input> type).
 	 */
-	public static function register_metadata( $meta_type, $meta_key, $page = null, $title = null, $description = null, $input = null ) {
+	public static function register_metadata( $meta_type, $meta_key, $args = array() ) {
 		if ( is_admin() ) {
 			// Guess the page if not set
 			if ( is_null( $page ) ) {
@@ -310,15 +323,16 @@ class Localizer extends Functional {
 				}
 			}
 
-			// Register the field as normal
-			static::register_field( array(
-				'key'         => "meta_{$meta_type}_{$meta_key}",
-				'field'       => $meta_key,
-				'page'        => $page,
-				'type'        => $meta_type,
-				'title'       => $title,
-				'description' => $description,
+			// Build the args for the string and register it
+			$args = wp_parse_args( $args, array(
+				'key'   => "meta_{$meta_type}_{$meta_key}",
+				'field' => $meta_key,
+				'type'  => $meta_type,
+				'page'  => $page,
 			) );
+
+			// Register the field as normal
+			static::register_field( $args );
 		} else {
 			// Register it for filtering
 			if ( ! isset( static::$registered_metadata[ $type ] ) ) {
@@ -665,7 +679,7 @@ class Localizer extends Functional {
 			$nonce = wp_create_nonce( "nlingual_localize_{$string->key}" );
 
 			// Create the row
-			$data[] = array( $string->field, $values, $nonce );
+			$data[] = array( $string->field, $string->field_id, $values, $nonce );
 		}
 
 		?>

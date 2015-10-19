@@ -2,8 +2,9 @@
 var NL_LOCALIZABLE_FIELDS = {};
 
 // Register a field to be localized
-window.nlingualLocalizeField = function( field, values, nonce ) {
+window.nlingualLocalizeField = function( field, id, values, nonce ) {
 	NL_LOCALIZABLE_FIELDS[ field ] = {
+		id     : id,
 		values : values,
 		nonce  : nonce
 	};
@@ -221,13 +222,14 @@ jQuery( function( $ ) {
 	});
 
 	_.each( NL_LOCALIZABLE_FIELDS, function( data, field ) {
-		var values = data.values,
+		var id     = data.id,
+			values = data.values,
 			nonce  = data.nonce;
 
 		var hasLocalized = false;
 
 		// Get the field if it exists and is an input/textarea
-		var $field = $( '[name="' + field + '"]' );
+		var $field = $( '#' + id );
 		if ( $field.length === 0 || ! $field.is('input, textarea') ) {
 			return;
 		}
