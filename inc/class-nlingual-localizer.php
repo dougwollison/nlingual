@@ -651,8 +651,9 @@ class Localizer extends Functional {
 		// Build a list of strings registered to this page and "any" page
 		$strings = array_merge(
 			static::get_strings_by_page( '__any__' ),
-			// Match page ID or at least base
-			static::get_strings_by_page( $screen->id ) ?: static::get_strings_by_page( $screen->base )
+			// Match page ID and/or at least base
+			static::get_strings_by_page( $screen->id ),
+			static::get_strings_by_page( $screen->base )
 		);
 
 		// Create the entries for each strings
