@@ -227,7 +227,7 @@ jQuery( function( $ ) {
 		var hasLocalized = false;
 
 		// Get the field if it exists and is an input/textarea
-		var $field = $( '#' + field );
+		var $field = $( '[name="' + field + '"]' );
 		if ( $field.length === 0 || ! $field.is('input, textarea') ) {
 			return;
 		}
