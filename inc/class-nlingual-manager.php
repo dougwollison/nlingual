@@ -172,6 +172,7 @@ class Manager extends Functional {
 		// Localizables Options
 		Settings::register( array(
 			'post_types'   => null,
+			'taxonomies'   => null,
 			'localizables' => null,
 		), 'localizables' );
 

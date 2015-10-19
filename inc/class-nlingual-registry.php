@@ -408,7 +408,7 @@ class Registry {
 	 *
 	 * @uses Registry::get() to get the post_types option.
 	 *
-	 * @param string|array $post_type The post type(s) to check.
+	 * @param string|array $post_types The post type(s) to check.
 	 *
 	 * @return bool Wether or not the post type(s) are supported.
 	 */
@@ -419,6 +419,28 @@ class Registry {
 		$supported = static::get( 'post_types' );
 
 		return (bool) array_intersect( $supported, $post_types );
+	}
+
+	/**
+	 * Test if the provided taxonomy(ies) are registered for translation.
+	 *
+	 * Will return true if at least 1 is supported.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::get() to get the taxonomies option.
+	 *
+	 * @param string|array $taxonomies The taxonomy(ies) to check.
+	 *
+	 * @return bool Wether or not the taxonomy(ies) are supported.
+	 */
+	public static function is_taxonomy_supported( $taxonomies ) {
+		$taxonomies = (array) $taxonomies; // Covnert to array
+
+		// Get the supported post types list
+		$supported = static::get( 'taxonomies' );
+
+		return (bool) array_intersect( $supported, $taxonomies );
 	}
 
 	// =========================
