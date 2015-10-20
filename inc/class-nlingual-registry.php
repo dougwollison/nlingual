@@ -114,6 +114,17 @@ class Registry {
 	protected static $post_types = array();
 
 	/**
+	 * The supported taxonomies.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var array
+	 */
+	protected static $taxonomies = array();
+
+	/**
 	 * The list of localizable features.
 	 *
 	 * @since 2.0.0
@@ -259,6 +270,39 @@ class Registry {
 	public static function current_lang( $field = null ) {
 		$lang_id = static::get( 'current_lang' ) ?: static::get( 'default_lang' );
 		return static::get_lang( $lang_id, $field );
+	}
+
+	/**
+	 * Get the sync or cloning rules for a specific object.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $rule_type      The type of rules to retrieve ('sync' or 'clone').
+	 * @param string $object_type    The type of object to get sync rules for.
+	 * @param string $object_subtype The subtype of the object.
+	 *
+	 * @return array The array of rules, empty if not found.
+	 */
+	public static function get_rules( $rule_type, $object_type, $object_subtype ) {
+		$rules = Registry::get( $rule_type . '_rules' );
+
+		// Fail if no rules found
+		if ( ! $rules ) {
+			return array();
+		}
+
+		// Fail if the object type has no rules
+		if ( ! isset( $rules[ $object_type ] ) ) {
+			return array();
+		}
+
+		// Fail if the object subtype has no rules
+		if ( ! isset( $rules[ $object_type ][ $object_subtype ] ) ) {
+			return array();
+		}
+
+		// Return the rules found
+		return $rules[ $object_type ][ $object_subtype ];
 	}
 
 	// =========================
@@ -486,6 +530,7 @@ class Registry {
 
 		// Load complex options
 		static::$post_types   = get_option( 'nlingual_post_types', array() );
+		static::$taxonomies   = get_option( 'nlingual_taxonomies', array() );
 		static::$localizables = get_option( 'nlingual_localizables', array() );
 		static::$sync_rules   = get_option( 'nlingual_sync_rules', array() );
 		static::$clone_rules  = get_option( 'nlingual_clone_rules', array() );
