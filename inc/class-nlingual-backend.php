@@ -77,7 +77,7 @@ class Backend extends Functional {
 	// =========================
 
 	/**
-	 * Setup documentation for relevant post/term edit screens.
+	 * Setup documentation for relevant screens.
 	 *
 	 * @since 2.0.0
 	 */
@@ -86,11 +86,6 @@ class Backend extends Functional {
 		foreach ( $post_types as $post_type ) {
 			Documenter::register_help_tab( $post_type, 'post-translation' );
 			Documenter::register_help_tab( "edit-$post_type", 'posts-translation' );
-		}
-
-		$taxonomies = Registry::get( 'taxonomies' );
-		foreach ( $taxonomies as $taxonomy ) {
-			Documenter::register_help_tab( "edit-$taxonomy", 'term-localization' );
 		}
 	}
 

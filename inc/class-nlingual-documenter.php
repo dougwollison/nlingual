@@ -74,11 +74,6 @@ class Documenter extends Functional {
 				'translation' => 'Languages & Translations',
 			),
 		),
-		'term-localization' => array(
-			'tabs' => array(
-				'localization' => 'Localization',
-			),
-		),
 	);
 
 	/**
