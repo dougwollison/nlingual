@@ -118,7 +118,7 @@ class API extends Functional {
 	}
 
 	/**
-	 * Load text domain for localization, and register options for localization.
+	 * Load text domain for localization, and register options/taxonomies for localization.
 	 *
 	 * @since 2.0.0
 	 */
@@ -135,6 +135,12 @@ class API extends Functional {
 			'page'   => 'options-general',
 			'title'  => 'Tagline'
 		) );
+
+		// Register supported taxonomies for localization
+		$taxonomies = Registry::get( 'taxonomies' );
+		foreach ( $taxonomies as $taxonomy ) {
+			Localizer::register_taxonomy( $taxonomy );
+		}
 	}
 
 	// =========================
