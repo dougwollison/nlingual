@@ -127,12 +127,10 @@ class API extends Functional {
 		load_plugin_textdomain( NL_TXTDMN, false, NL_DIR . '/lang' );
 
 		// Register the blogname and blogdescription for localization
-		Localizer::register_option( 'blogname', array(
-			'page'   => 'options-general',
+		Localizer::register_option( 'blogname', 'options-general', array(
 			'title'  => 'Site Title'
 		) );
-		Localizer::register_option( 'blogdescription', array(
-			'page'   => 'options-general',
+		Localizer::register_option( 'blogdescription', 'options-general', array(
 			'title'  => 'Tagline'
 		) );
 

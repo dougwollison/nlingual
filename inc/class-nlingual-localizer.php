@@ -74,7 +74,18 @@ class Localizer extends Functional {
 	 *
 	 * @var array
 	 */
-	protected static $strings_by_page = array( '__any__' => array() );
+	protected static $strings_by_page = array();
+
+	/**
+	 * Storage for the strings found for the current screen.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected
+	 *
+	 * @var array
+	 */
+	protected static $current_strings = array();
 
 	// =========================
 	// ! Property Access
@@ -144,8 +155,11 @@ class Localizer extends Functional {
 		// Saving localized strings
 		static::add_action( 'admin_init', 'save_localized_strings' );
 
-		// Calling the nlingualLocalizeFields utility
-		static::add_action( 'admin_footer', 'setup_localized_strings' );
+		// Setup the strings for the screen and add the Help tab
+		static::add_action( 'admin_head', 'setup_localized_strings' );
+
+		// Do the call to the nlingualLocalizeFields utility
+		static::add_action( 'admin_footer', 'do_localized_strings' );
 	}
 
 	// =========================
@@ -174,7 +188,7 @@ class Localizer extends Functional {
 			'field'       => null,
 			'field_id'    => null,
 			'type'        => 'option',
-			'page'        => '__any__',
+			'page'        => null,
 			'title'       => null,
 			'description' => null,
 			'input'       => 'text',
@@ -182,6 +196,11 @@ class Localizer extends Functional {
 
 		// Abort if no key is passed
 		if ( is_null( $args['key'] ) ) {
+			return;
+		}
+
+		// Abort if no page is passed
+		if ( is_null( $args['page'] ) ) {
 			return;
 		}
 
@@ -225,6 +244,7 @@ class Localizer extends Functional {
 	 *
 	 *
 	 * @param string $option The name of the option (as identified by get_option()).
+	 * @param string $page   The id or base of the screen the field should be found on.
 	 * @param array  $args   The custom arguments for the string.
 	 * 		@option string "field"       The name of the field that handles this string.
 	 * 		@option string "field_id"    The id of the HTML field to target. (Defaults to field value)
@@ -233,11 +253,12 @@ class Localizer extends Functional {
 	 *		@option string "description" The details of this string's purpose.
 	 * 		@option string "input"       The field input to use ("textarea" or an <input> type).
 	 */
-	public static function register_option( $option, $args = array() ) {
+	public static function register_option( $option, $page, $args = array() ) {
 		if ( is_admin() ) {
 			// Build the args for the string and register it
 			$args = wp_parse_args( $args, array(
 				'key'   => "option_{$option}",
+				'page'  => $page,
 				'field' => $option,
 				'type'  => 'option',
 			) );
@@ -554,7 +575,7 @@ class Localizer extends Functional {
 	}
 
 	// =========================
-	// ! Saving/Setup Callbacks
+	// ! Callbacks
 	// =========================
 
 	/**
@@ -575,19 +596,25 @@ class Localizer extends Functional {
 			return;
 		}
 
-		// Determine the object ID if applicable
-		switch ( $pagenow ) {
-			case 'edit.php':
-				$object_id = $_REQUEST['post_ID'];
-				break;
-			case 'edit-tags.php':
-				$object_id = $_REQUEST['tag_ID'];
-				break;
-			case 'profile.php':
-				$object_id = $_REQUEST['user_id'];
-				break;
-			default:
-				$object_id = 0;
+		// Determin object ID to use
+		$object_id_keys = array(
+			'edit.php'      => 'post_ID',
+			'edit-tags.php' => 'tag_ID',
+			'profile.php'   => 'user_id',
+		);
+		// If this screen is for an object, get the ID
+		if ( isset( $object_id_keys[ $pagenow ] ) ) {
+			$object_id_key = $object_id_keys[ $pagenow ];
+
+			// Abort if no object ID is found.
+			if ( ! isset( $_REQUEST[ $object_id_key ] ) ) {
+				return;
+			}
+
+			$object_id = $_REQUEST[ $object_id_key ];
+		} else {
+			// Default to 0 since it's not for an object
+			$object_id = 0;
 		}
 
 		// Get the strings and nonces
@@ -631,46 +658,69 @@ class Localizer extends Functional {
 	}
 
 	/**
-	 * Print the script for adding the localizer utility to fields.
+	 * Get the strings relevant to the current screen and add the help tab.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @uses Localizer::$current_strings to store the strings found.
+	 * @uses Localizer::get_strings_by_page() to get the strings for the screen.
 	 */
 	public static function setup_localized_strings() {
-		global $wpdb;
-		$data = array();
-
 		// Get the current screen
 		$screen = get_current_screen();
 
-		// Determine the object ID if applicable
-		switch ( $screen->base ) {
-			case 'post':
-				$object_id = $_REQUEST['post'];
-				break;
-			case 'edit-tags':
-				$object_id = $_REQUEST['tag_ID'];
-				break;
-			case 'user-edit':
-				$object_id = $_REQUEST['user_id'];
-				break;
-			default:
-				$object_id = 0;
+		// Determin object ID to use
+		$object_id_keys = array(
+			'post'      => 'post',
+			'edit-tags' => 'tag_ID',
+			'user-edit' => 'user_id',
+		);
+		// If this screen is for an object, get the ID
+		if ( isset( $object_id_keys[ $screen->id ] ) ) {
+			$object_id_key = $object_id_keys[ $screen->id ];
+
+			// Abort if no object ID is found.
+			if ( ! isset( $_REQUEST[ $object_id_key ] ) ) {
+				return;
+			}
+
+			$object_id = $_REQUEST[ $object_id_key ];
+		} else {
+			// Default to 0 since it's not for an object
+			$object_id = 0;
 		}
 
-		// Get the languages
-		$languages = Registry::languages();
-
-		// Build a list of strings registered to this page and "any" page
+		// Now get the strings registered to this screen (by id or base)
 		$strings = array_merge(
-			static::get_strings_by_page( '__any__' ),
-			// Match page ID and/or at least base
 			static::get_strings_by_page( $screen->id ),
 			static::get_strings_by_page( $screen->base )
 		);
 
+		// If no strings are found, abort
+		if ( ! $strings ) {
+			return;
+		}
+
+		// Store the strings
+		static::$current_strings = $strings;
+	}
+
+	/**
+	 * Print the script for adding the localizer utility to fields.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Localizer::$current_strings to get the stored strings.
+	 * @uses Localizer::get_string_values() to get the localized values of each string.
+	 */
+	public static function do_localized_strings() {
+		// Abort if no strings are found
+		if ( ! $strings = static::$current_strings ) {
+			return;
+		}
+
 		// Create the entries for each strings
+		$data = array();
 		foreach ( $strings as $string ) {
 			// Get the localized values for this string if available
 			$values = static::get_string_values( $string->key, $object_id );
