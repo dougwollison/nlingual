@@ -52,16 +52,7 @@ class Synchronizer {
 
 		// Load general sync rules by default
 		if ( is_null( $rules ) ) {
-			$rules = Registry::get( 'sync_rules' );
-
-			// Get the rules for this post's type, failing if not found
-			if ( ! isset( $rules['post_type'] ) ) {
-				return false;
-			} elseif ( ! isset( $rules['post_type'][ $original->post_type ] ) ) {
-				return false;
-			}
-
-			$rules = $rules['post_type'][ $original->post_type ];
+			$rules = Registry::get_rules( 'sync', 'post_type', $original->post_type );
 		}
 
 		// Post Fields
