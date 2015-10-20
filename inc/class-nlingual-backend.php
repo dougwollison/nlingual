@@ -85,12 +85,12 @@ class Backend extends Functional {
 		$post_types = Registry::get( 'post_types' );
 		foreach ( $post_types as $post_type ) {
 			Documenter::register_help_tab( $post_type, 'post-translation' );
-			Documenter::register_help_tab( "edit-$post_type/edit", 'posts-translation' );
+			Documenter::register_help_tab( "edit-$post_type", 'posts-translation' );
 		}
 
 		$taxonomies = Registry::get( 'taxonomies' );
 		foreach ( $taxonomies as $taxonomy ) {
-			Documenter::register_help_tab( "edit-$taxonomy/edit", 'term-localization' );
+			Documenter::register_help_tab( "edit-$taxonomy", 'term-localization' );
 		}
 	}
 
