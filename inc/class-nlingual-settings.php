@@ -357,16 +357,8 @@ class Settings {
 	 */
 	protected static function build_sync_settings_field( $name, $value, $post_type ) {
 		// Post Data values
-		$post_fields = array(
-			'post_author'    => _x( 'Author',          'post field' ),
-			'post_date'      => _x( 'Date',            'post field' ),
-			'post_status'    => _x( 'Status',          'post field' ),
-			'post_parent'    => _x( 'Parent',          'post field' ) . '*',
-			'menu_order'     => _x( 'Menu Order',      'post field' ),
-			'post_password'  => _x( 'Password',        'post field' ),
-			'comment_status' => _x( 'Comment Status',  'post field' ),
-			'ping_status'    => _x( 'Pingback Status', 'post field' ),
-		);
+		$post_fields = _ax( Documenter::$post_field_names, 'post field' );
+		$post_fields['post_parent'] .= '*'; // flag parent field for note about counterpart translation
 
 		// Taxonomies values
 		$post_taxs = get_object_taxonomies( $post_type, 'objects' );

@@ -66,15 +66,18 @@ class Documenter extends Functional {
 		),
 		'post-translation' => array(
 			'tabs' => array(
-				'translation' => 'Translation',
+				'translation' => 'Languages & Translations',
 			),
-			'sidebar' => true,
+		),
+		'posts-translation' => array(
+			'tabs' => array(
+				'translation' => 'Languages & Translations',
+			),
 		),
 		'term-localization' => array(
 			'tabs' => array(
 				'localization' => 'Localization',
 			),
-			'sidebar' => true,
 		),
 	);
 
@@ -87,6 +90,24 @@ class Documenter extends Functional {
 	 */
 	protected static $registered_screens = array();
 
+	/**
+	 * A reference list for names of post fields.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var array
+	 */
+	public static $post_field_names = array(
+		'post_author'    => 'Author',
+		'post_date'      => 'Date',
+		'post_status'    => 'Status',
+		'post_parent'    => 'Parent',
+		'menu_order'     => 'Menu Order',
+		'post_password'  => 'Password',
+		'comment_status' => 'Comment Status',
+		'ping_status'    => 'Pingback Status',
+	);
+
 	// =========================
 	// ! Hook Registration
 	// =========================
@@ -97,7 +118,7 @@ class Documenter extends Functional {
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
-		static::add_action( 'current_screen', 'setup_help_tab' );
+		static::add_action( 'admin_head', 'setup_help_tab' );
 	}
 
 	// =========================
@@ -221,7 +242,7 @@ class Documenter extends Functional {
 		// Add each tab defined
 		foreach ( $help['tabs'] as $tab => $title ) {
 			$screen->add_help_tab( array(
-				'id' => $plugin_page . '-' . $tab,
+				'id' => $screen->id . '-' . $tab,
 				'title' => __( $title ),
 				'content' => static::get_tab_content( $help_id, $tab ),
 			) );
