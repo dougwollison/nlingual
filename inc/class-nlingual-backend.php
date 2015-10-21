@@ -240,6 +240,10 @@ class Backend extends Functional {
 			return;
 		}
 
+		// Get the post type and post status for the query
+		$post_type = $wp_query->get( 'post_type' ) ?: null;
+		$post_status = $wp_query->get( 'post_status' ) ?: null;
+
 		// Get the query var and it's current value
 		$query_var = Registry::get( 'query_var' );
 		$current = $wp_query->get( $query_var );
@@ -247,10 +251,12 @@ class Backend extends Functional {
 		<select name="<?php echo $query_var; ?>" class="postform">
 			<option value="-1"><?php _e( 'All Languages' ); ?></option>
 			<?php
-			printf( '<option value="%d" %s>%s</option>', 0, $current == '0' ? 'selected' : '', _x( 'No Language' ) );
+			$count = Translator::language_posts_count( 0, $post_type, $post_status );
+			printf( '<option value="%d" %s>%s (%s)</option>', 0, $current == '0' ? 'selected' : '', _x( 'No Language' ), $count );
 			foreach ( Registry::languages() as $language ) {
 				$selected = $current == $language->lang_id;
-				printf( '<option value="%d" %s>%s</option>', $language->lang_id, $selected ? 'selected' : '', $language->system_name );
+				$count = Translator::language_posts_count( $language->lang_id, $post_type, $post_status );
+				printf( '<option value="%d" %s>%s (%d)</option>', $language->lang_id, $selected ? 'selected' : '', $language->system_name, $count );
 			}
 			?>
 		</select>

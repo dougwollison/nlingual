@@ -477,6 +477,58 @@ class Translator {
 	}
 
 	// =========================
+	// ! Statistics
+	// =========================
+
+	/**
+	 * Get the number of posts in a specific language.
+	 *
+	 * Filter by post type and status.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @param mixed  $lang_id     The id of the language to get the count for.
+	 * @param string $post_type   The post type to filter by.
+	 * @param string $post_status The post status to filter by.
+	 *
+	 * @return int The number of posts found.
+	 */
+	public static function language_posts_count( $lang_id, $post_type = null, $post_status = null ) {
+		global $wpdb;
+
+		$query = "
+		SELECT COUNT(p.ID)
+		FROM $wpdb->posts AS p
+			LEFT JOIN $wpdb->nl_translations AS t
+				ON p.ID = t.object_id AND t.object_type = 'post'
+		";
+
+		// Add language filter appropriately
+		if ( $lang_id ) {
+			$query .= $wpdb->prepare( "WHERE t.lang_id = %d", $lang_id );
+		} else {
+			$query .= "WHERE t.lang_id IS NULL";
+		}
+
+		// Add post_type filter if applicable
+		if ( ! is_null( $post_type ) ) {
+			$query .= $wpdb->prepare( " AND p.post_type = %s", $post_type );
+		}
+
+		// Add post_status filter if applicable
+		if ( ! is_null( $post_status ) ) {
+			$query .= $wpdb->prepare( " AND p.post_status = %s", $post_status );
+		}
+
+		// Run the query and return the results
+		$count = $wpdb->get_var( $query );
+
+		return intval( $count );
+	}
+
+	// =========================
 	// ! Overloading
 	// =========================
 
