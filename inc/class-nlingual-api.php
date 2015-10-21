@@ -111,8 +111,9 @@ class API extends Functional {
 		// Post-setup stuff
 		static::add_action( 'plugins_loaded', 'ready' );
 
-		// Query Filters
+		// Query Manipulation
 		static::add_filter( 'query_vars', 'add_language_var' );
+		static::add_action( 'parse_query', 'maybe_set_queried_language' );
 		static::add_filter( 'posts_join_request', 'add_post_translations_join_clause', 10, 2 );
 		static::add_filter( 'posts_where_request', 'add_post_translations_where_clause', 10, 2 );
 	}
@@ -164,6 +165,52 @@ class API extends Functional {
 	}
 
 	/**
+	 * Set the queried language to the current one if applicable
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::get() to get the query_var, show_all_languages options.
+	 * @uses Registry::current_lang() to get the current language.
+	 *
+	 * @param WP_Query $wp_query The WP_Query instance.
+	 */
+	function maybe_set_queried_language( \WP_Query $query ) {
+		// Get the query var name and current language slug
+		$query_var = Registry::get( 'query_var' );
+
+		// Abort if no query var name is set or if it's already declared
+		if ( ! $query_var || $query->get( $query_var ) ) {
+			return;
+		}
+
+		// If not the admin or some kind of posts feed, abort
+		if ( ! ( is_admin() || is_home() || is_archive() || is_search() ) ) {
+			return;
+		}
+
+		// If not a supported post type, abort
+		if ( ! Registry::is_post_type_supported( $query->get( 'post_type' ) ) ) {
+			return;
+		}
+
+		// If in the admin and the show_all_languages option is enabled, abort
+		if ( is_admin() && Registry::get( 'show_all_languages' ) ) {
+			return;
+		}
+
+		// Build the language list (1 value; the current language)
+		$value = array( Registry::current_lang()->slug );
+
+		// If in the admin, also add 0 to retreive language-less posts too
+		if ( is_admin() ) {
+			$value[] = '0';
+		}
+
+		// Now set the language to the current one
+		$query->set( $query_var, $value );
+	}
+
+	/**
 	 * Adds JOIN clause for the translations table if needed.
 	 *
 	 * @since 2.0.0
@@ -204,7 +251,8 @@ class API extends Functional {
 	 *
 	 * @uses Registry::is_post_type_supported()
 	 * @uses Registry::get() to get the query var option.
-	 * @uses Registry::languages() to validate and retrieve the language.
+	 * @uses Registry::languages() to get the available languages.
+	 * @uses Languages::get() to get a specific language by slug/ID.
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
@@ -221,22 +269,40 @@ class API extends Functional {
 			return $clause;
 		}
 
-		// Get the language
-		$lang = $query->get( Registry::get( 'query_var' ) );
+		// Get the language, in array form
+		$langs = $query->get( Registry::get( 'query_var' ) );
 
-		// Abort if language isn't specified
-		if ( $lang === '' ) {
+		// Abort if not set
+		if ( $langs === '' ) {
 			return $clause;
 		}
 
-		// Check if the language specified is "None"
-		if ( $lang === '0' ) {
-			$clause .= " AND $wpdb->nl_translations.lang_id IS NULL";
-		} else
-		// Otherwise check if the language exists
-		if ( $language = Registry::languages()->get( $lang ) ) {
-			$clause .= $wpdb->prepare( " AND $wpdb->nl_translations.lang_id = %d", $language->lang_id );
+		// Ensure it's an array
+		$langs = (array) $langs;
+
+		// Get the available languages for valiation purposes
+		$languages = Registry::languages();
+
+		// Loop through each language specified and build the subclause
+		$subclause = array();
+		foreach ( $langs as $lang ) {
+			// Skip if blank
+			if ( $lang === '' ) {
+				continue;
+			}
+
+			// Check if the language specified is "None"
+			if ( $lang === '0' ) {
+				$subclause[] = "$wpdb->nl_translations.lang_id IS NULL";
+			} else
+			// Otherwise check if the language exists
+			if ( $language = $languages->get( $lang ) ) {
+				$subclause[] = $wpdb->prepare( "$wpdb->nl_translations.lang_id = %d", $language->lang_id );
+			}
 		}
+
+		// Add the new clause
+		$clause .= " AND (" . implode( ' OR ', $subclause ) . ")";
 
 		return $clause;
 	}
