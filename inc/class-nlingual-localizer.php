@@ -676,8 +676,8 @@ class Localizer extends Functional {
 			'user-edit' => 'user_id',
 		);
 		// If this screen is for an object, get the ID
-		if ( isset( $object_id_keys[ $screen->id ] ) ) {
-			$object_id_key = $object_id_keys[ $screen->id ];
+		if ( isset( $object_id_keys[ $screen->base ] ) ) {
+			$object_id_key = $object_id_keys[ $screen->base ];
 
 			// Abort if no object ID is found.
 			if ( ! isset( $_REQUEST[ $object_id_key ] ) ) {
@@ -705,12 +705,14 @@ class Localizer extends Functional {
 		// Store the strings
 		static::$current_strings = $strings;
 
-		// Add the help tab to this screen
-		$screen->add_help_tab( array(
-			'id'      => 'nlingual-localize-this',
-			'title'   => __( 'Localize This' ),
-			'content' => Documenter::get_tab_content( 'localize-this' ),
-		) );
+		// Add the help tab to this screen if we can
+		if ( $content = Documenter::get_tab_content( 'localize-this' ) ) {
+			$screen->add_help_tab( array(
+				'id'      => 'nlingual-localize-this',
+				'title'   => __( 'Localize This' ),
+				'content' => $content,
+			) );
+		}
 	}
 
 	/**

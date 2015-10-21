@@ -171,14 +171,8 @@ class Documenter extends Functional {
 		// Get the current locale
 		$locale = get_locale();
 
-		// Start at the directory to find the files in
-		$path = NL_DIR . '/doc/';
-
-		// Check if a localized version exists
-		$locale_dir = $path . '/' . $locale;
-		if ( file_exists( $locale_dir ) ) {
-			$path = $locale_dir;
-		}
+		// Build the path to the doc file
+		$path = NL_DIR . '/doc/' . $locale . '/';
 
 		// If a section is specified, add to the path
 		if ( ! is_null( $section ) ) {
@@ -236,16 +230,26 @@ class Documenter extends Functional {
 
 		// Add each tab defined
 		foreach ( $help['tabs'] as $tab => $title ) {
-			$screen->add_help_tab( array(
-				'id' => "nlingual-{$help_id}-{$tab}",
-				'title' => __( $title ),
-				'content' => static::get_tab_content( $tab, $help_id ),
-			) );
+			$content = static::get_tab_content( $tab, $help_id );
+
+			// Only add if there's content
+			if ( $content ) {
+				$screen->add_help_tab( array(
+					'id' => "nlingual-{$help_id}-{$tab}",
+					'title' => __( $title ),
+					'content' => $content,
+				) );
+			}
 		}
 
 		// Add sidebar if enabled
 		if ( $help['sidebar'] ) {
-			$screen->set_help_sidebar( static::get_tab_content( $help_id, 'sidebar' ) );
+			$content = static::get_tab_content( 'sidebar', $help_id );
+
+			// Only add if there's content
+			if ( $content ) {
+				$screen->set_help_sidebar( $content );
+			}
 		}
 	}
 }
