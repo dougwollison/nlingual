@@ -161,6 +161,7 @@ class Manager extends Functional {
 		// Translation Options
 		Settings::register( array(
 			'default_language'   => 'intval',
+			'show_all_languages' => 'intval',
 			'skip_default_l10n'  => 'intval',
 			'query_var'          => null,
 			'redirection_method' => null,
