@@ -179,7 +179,7 @@ class API extends Functional {
 		$query_var = Registry::get( 'query_var' );
 
 		// Abort if no query var name is set or if it's already declared
-		if ( ! $query_var || $query->get( $query_var ) ) {
+		if ( ! $query_var || $query->get( $query_var ) !== '' ) {
 			return;
 		}
 
