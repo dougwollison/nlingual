@@ -158,44 +158,44 @@ class Documenter extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $tabset The set the tab belongs to.
-	 * @param string $tab    The ID of the tab to get.
+	 * @param string $tab     The ID of the tab to get.
+	 * @param string $section Optional The section the tab belongs to.
 	 *
 	 * @return string The HTML of the help tab.
 	 */
-	protected static function get_tab_content( $tabset, $tab ) {
+	public static function get_tab_content( $tab, $section = null ) {
 		// Sanitize JUST in case...
-		$tabset = sanitize_file_name( $tabset );
 		$tab = sanitize_file_name( $tab );
+		$section = sanitize_file_name( $section );
 
 		// Get the current locale
 		$locale = get_locale();
 
-		// The directory to find the files in
-		$tabset_dir = NL_DIR . '/doc/' . $tabset;
-
-		// Fail if the screen's folder does not exist
-		if ( ! file_exists( $tabset_dir ) ) {
-			return null;
-		}
+		// Start at the directory to find the files in
+		$path = NL_DIR . '/doc/';
 
 		// Check if a localized version exists
-		$locale_dir = $tabset_dir . '/' . $locale;
-		if ( file_exists( $locale_dir) ) {
-			$tabset_dir = $locale_dir;
+		$locale_dir = $path . '/' . $locale;
+		if ( file_exists( $locale_dir ) ) {
+			$path = $locale_dir;
 		}
 
-		// The expected location of the tab's file
-		$tab_file = $tabset_dir . '/' . $tab . '.php';
+		// If a section is specified, add to the path
+		if ( ! is_null( $section ) ) {
+			$path .= '/' . $section;
+		}
 
-		// Fail if the tab's file does not exist
-		if ( ! file_exists( $tab_file ) ) {
+		// Add the actual tab filename
+		$path .= '/' . $tab . '.php';
+
+		// Fail if the file does not exist
+		if ( ! file_exists( $path ) ) {
 			return null;
 		}
 
 		// Get the contents of the file
 		ob_start();
-		include( $tab_file );
+		include( $path );
 		$content = ob_get_clean();
 
 		// Run it through wpautop and return it
@@ -237,9 +237,9 @@ class Documenter extends Functional {
 		// Add each tab defined
 		foreach ( $help['tabs'] as $tab => $title ) {
 			$screen->add_help_tab( array(
-				'id' => $screen->id . '-' . $tab,
+				'id' => "nlingual-{$help_id}-{$tab}",
 				'title' => __( $title ),
-				'content' => static::get_tab_content( $help_id, $tab ),
+				'content' => static::get_tab_content( $tab, $help_id ),
 			) );
 		}
 

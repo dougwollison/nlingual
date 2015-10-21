@@ -696,6 +696,7 @@ class Localizer extends Functional {
 			static::get_strings_by_page( $screen->base )
 		);
 
+
 		// If no strings are found, abort
 		if ( ! $strings ) {
 			return;
@@ -703,6 +704,13 @@ class Localizer extends Functional {
 
 		// Store the strings
 		static::$current_strings = $strings;
+
+		// Add the help tab to this screen
+		$screen->add_help_tab( array(
+			'id'      => 'nlingual-localize-this',
+			'title'   => __( 'Localize This' ),
+			'content' => Documenter::get_tab_content( 'localize-this' ),
+		) );
 	}
 
 	/**
