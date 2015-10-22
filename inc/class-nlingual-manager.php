@@ -86,6 +86,10 @@ class Manager extends Functional {
 	 * Register admin pages.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Manager::settings_page() for general options page output.
+	 * @uses Manager::settings_page_languages() for language manager output.
+	 * @uses Manager::settings_page_strings() for strings editor output.
 	 */
 	public static function add_menu_pages() {
 		// Main Options page
@@ -156,6 +160,11 @@ class Manager extends Functional {
 	 * Register the settings/fields for the admin pages.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Settings::register() to register the settings.
+	 * @uses Manager::setup_options_fields() to add fields to the main options page.
+	 * @uses Manager::setup_localizables_fields() to add fields to the localizlables page.
+	 * @uses Manager::setup_sync_fields() to add fields to the sync options page.
 	 */
 	public static function register_settings() {
 		// Translation Options
@@ -289,6 +298,8 @@ class Manager extends Functional {
 	 * @since 2.0.0
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @uses Localizer::save_string_value() to save each updated string value.
 	 */
 	public static function save_strings() {
 		// Abort if not saving for the language manager page
@@ -334,6 +345,8 @@ class Manager extends Functional {
 	 * Fields for the Translations page.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Settings::add_fields() to define the controls on the page.
 	 */
 	protected static function setup_options_fields() {
 		// Build the previews for the URLs
@@ -406,6 +419,9 @@ class Manager extends Functional {
 	 * Fields for the Localizables page.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Registry::cache_get() to retrieve original nav menus and sidebars.
+	 * @uses Settings::add_fields() to define the controls on the page.
 	 */
 	protected static function setup_localizables_fields() {
 		add_settings_section( 'default', null, null, 'nlingual-localizables' );
@@ -476,6 +492,9 @@ class Manager extends Functional {
 	 * Fields for the Sync Options page.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Registry::get() to retrieve the enabled post types.
+	 * @uses Registry::add_fields() to add the sycn/clone controls for the page.
 	 */
 	protected static function setup_sync_fields() {
 		// Build the fields list based on the supported post types
@@ -530,9 +549,9 @@ class Manager extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses inc/presets.php For loading the preset languages.
-	 *
 	 * @global $plugin_page The slug of the current admin page.
+	 *
+	 * @uses inc/presets.php For loading the preset languages.
 	 */
 	public static function settings_page_languages() {
 		global $plugin_page;
@@ -611,6 +630,9 @@ class Manager extends Functional {
 	 * @since 2.0.0
 	 *
 	 * @global $plugin_page The slug of the current admin page.
+	 *
+	 * @uses Manager::print_strings_table() to print the editors for each string.
+	 * @uses Localizer::get_string() to get string objects.
 	 */
 	public static function settings_page_strings() {
 		global $plugin_page;
@@ -687,12 +709,16 @@ class Manager extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Registry::languages() to loop through each language.
+	 * @uses Registry::get() to retrieve the default language ID.
+	 * @uses Localizer::get_string_values() to get the available values for the current string.
+	 * @uses Settings::build_field() to build the input/textarea for editing the string.
+	 *
 	 * @param object $string       The string settings object.
 	 * @param string $unlocalized  Optional The unlocalized value of the string.
 	 * @param int    $object_id    Optional The object id to get values for (default 0).
 	 */
 	protected static function print_strings_table( $string, $unlocalized, $object_id = 0 ) {
-		$languages = Registry::languages();
 		$default_lang = Registry::get( 'default_lang' );
 		$localized = Localizer::get_string_values( $string->key, $object_id );
 		?>
@@ -702,7 +728,7 @@ class Manager extends Functional {
 				<th><?php _e( 'Localized Value' ); ?></th>
 			</thead>
 			<tbody>
-				<?php foreach ( $languages as $language ) : ?>
+				<?php foreach ( Registry::languages() as $language ) : ?>
 				<tr>
 					<?php
 					$is_default_lang = $language->lang_id == $default_lang;
@@ -746,7 +772,7 @@ class Manager extends Functional {
 	 */
 	public static function settings_section_cloning() {
 		?>
-		<p>When creating a new translation of an existing post (i.e. a clone), what details should be cloned?</p>
+		<p><?php _e( 'When creating a new translation of an existing post (i.e. a clone), what details should be cloned?' ); ?></p>
 		<?php
 	}
 }

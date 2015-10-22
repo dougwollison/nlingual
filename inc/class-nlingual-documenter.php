@@ -207,6 +207,7 @@ class Documenter extends Functional {
 	 *
 	 * @uses Documenter::$registered_screens to get the tab set ID.
 	 * @uses Documenter::$directory to retrieve the help tab settings.
+	 * @uses Documenter::get_tab_content() to get the HTML for the tab.
 	 */
 	public static function setup_help_tab() {
 		// Get the screen object

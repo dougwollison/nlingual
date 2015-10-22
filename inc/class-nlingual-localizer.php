@@ -758,6 +758,10 @@ class Localizer extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Localizer::get_registered() if the method name starts with "get_registered_".
+	 * @uses Localizer::get_strings_by() if the method name starts with "get_strings_by_".
+	 * @uses Localizer::register_metadata() if method name is "register_[post_type]_meta".
+	 *
 	 * @param string $name The name of the method being called.
 	 * @param array  $args The arguments for the method.
 	 *

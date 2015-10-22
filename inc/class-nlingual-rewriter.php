@@ -369,6 +369,7 @@ class Rewriter {
 	 * @uses Registry::current_lang() to get the current Language object.
 	 * @uses Translator::get_permalink() to get the page/post translation's permalink.
 	 * @uses Rewriter::process_url() to localize the original URL of the page.
+	 * @uses Rewriter::localize_url() to localize the current URI as-is.
 	 * @uses Rewriter::build_url() to build the localized URL from it's components.
 	 *
 	 * @param Language $language The language to localize the current page for.

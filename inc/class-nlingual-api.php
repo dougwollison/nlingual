@@ -30,6 +30,8 @@ class API extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
 	 * @uses Loader::register_hooks() to setup plugin management.
 	 * @uses Registry::load() to load the options.
 	 * @uses API::register_hooks() to setup global functionality.
@@ -39,8 +41,6 @@ class API extends Functional {
 	 * @uses Documenter::register_hooks() to setup admin documentation.
 	 * @uses Frontend::register_hooks() to setup frontend functionality.
 	 * @uses is_backend() to check if the query is for wp-admin.
-	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
 	 */
 	public static function setup() {
 		global $wpdb;
@@ -126,6 +126,10 @@ class API extends Functional {
 	 * Load text domain for localization, and register options/taxonomies for localization.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Registry::get() to retrieve a list of enabled taxonomies.
+	 * @uses Localizer::register_option() to register the site title and tagline for localization.
+	 * @uses Localizer::register_taxonomy() to register the enabled taxonomies for localization.
 	 */
 	public static function ready() {
 		// Load the textdomain
@@ -220,7 +224,7 @@ class API extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::is_post_type_supported()
+	 * @uses Registry::is_post_type_supported() to check if clause editing is needed.
 	 * @uses Registry::get() to get the query var option.
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
@@ -254,7 +258,7 @@ class API extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::is_post_type_supported()
+	 * @uses Registry::is_post_type_supported() to check if clause editing is needed.
 	 * @uses Registry::get() to get the query var option.
 	 * @uses Registry::languages() to get the available languages.
 	 * @uses Languages::get() to get a specific language by slug/ID.

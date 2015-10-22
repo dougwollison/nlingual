@@ -35,6 +35,8 @@ class Settings {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Settings::build_field() as the callback for the field.
+	 *
 	 * @param string $field   The name of the field.
 	 * @param array  $options The options for the field.
 	 * 		@option string "title" The title of the field.
@@ -143,6 +145,8 @@ class Settings {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Settings::extract_value() to get the value out of the array based on the map.
+	 *
 	 * @param string $name The name of the setting to retrieve.
 	 */
 	protected static function get_value( $name ) {
@@ -171,6 +175,8 @@ class Settings {
 	 * along with printing out help text.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Settings::get_value() to retrieve a value for the field.
 	 *
 	 * @param array $args The arguments for the field.
 	 *		@option string "name" The field name/ID.
@@ -350,6 +356,8 @@ class Settings {
 	 * Build a sync settings interface
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Settings::build_checklist_field() to build checklists of fields and terms to enable.
 	 *
 	 * @param string $name      The name of the field.
 	 * @param mixed  $value     The value of the field.

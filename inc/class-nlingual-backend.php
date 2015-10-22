@@ -80,6 +80,9 @@ class Backend extends Functional {
 	 * Setup documentation for relevant screens.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Registry::get() to retrieve a list of supported post types.
+	 * @uses Documenter::register_help_tab() to register help tabs for each post type.
 	 */
 	public static function ready() {
 		$post_types = Registry::get( 'post_types' );
@@ -231,6 +234,7 @@ class Backend extends Functional {
 	 * @uses Registry::is_post_type_supported() to check for support.
 	 * @uses Registry::get() to retrieve the query var.
 	 * @uses Registry::languages() to loop through all registered languages.
+	 * @uses Translator::language_posts_count() to get the post count for each language.
 	 */
 	public static function add_language_filter() {
 		global $typenow, $wp_query;
@@ -355,6 +359,9 @@ class Backend extends Functional {
 		if ( ! Registry::is_post_type_supported( $post_type ) ) {
 			return;
 		}
+
+		// Get the languages list
+		$languages = Registry::languages();
 		?>
 		<br class="clear" />
 
@@ -366,7 +373,7 @@ class Backend extends Functional {
 						<option value="0">&mdash; <?php _ex( 'None', 'no language' ); ?> &mdash;</option>
 						<?php
 						// Print the options
-						foreach ( Registry::languages() as $language ) {
+						foreach ( $languages as $language ) {
 							printf( '<option value="%s">%s</option>', $language->lang_id, $language->system_name );
 						}
 						?>
@@ -378,7 +385,7 @@ class Backend extends Functional {
 		<fieldset class="inline-edit-col-right" style="margin: 0;">
 			<div class="inline-edit-col">
 				<h4>Translations</h4>
-				<?php foreach ( Registry::languages() as $language ) : ?>
+				<?php foreach ( $languages as $language ) : ?>
 				<label id="nl_translation_<?php echo $language->lang_id; ?>" class="nl-translation"  data-langid="<?php echo $language->lang_id; ?>">
 					<span class="title"><?php echo $language->system_name;?></span>
 					<select name="nlingual_translation[<?php echo $language->lang_id; ?>]">
@@ -431,6 +438,9 @@ class Backend extends Functional {
 		if ( ! Registry::is_post_type_supported( $post_type ) ) {
 			return;
 		}
+
+		// Get the languages list
+		$languages = Registry::languages();
 		?>
 		<fieldset class="inline-edit-col-right">
 			<div class="inline-edit-col">
@@ -440,7 +450,7 @@ class Backend extends Functional {
 						<option value="0">&mdash; <?php _e( 'No Change' ); ?> &mdash;</option>
 						<?php
 						// Print the options
-						foreach ( Registry::languages() as $language ) {
+						foreach ( $languages as $language ) {
 							printf( '<option value="%s">%s</option>', $language->lang_id, $language->system_name );
 						}
 						?>
@@ -467,6 +477,7 @@ class Backend extends Functional {
 	 * @since 2.0.0
 	 *
 	 * @uses Registry:get() to retrieve the supported post types.
+	 * @uses Backend::post_meta_box() as the callback to build the metabox.
 	 */
 	public static function add_post_meta_box() {
 		$post_types = Registry::get( 'post_types' );
@@ -475,7 +486,7 @@ class Backend extends Functional {
 			add_meta_box(
 				'nlingual_translations', // id
 				__( 'Language & Translations' ), // title
-				array( get_called_class(), 'post_meta_box' ), // callback
+				array( static::$name, 'post_meta_box' ), // callback
 				$post_type, // screen
 				'side', // context
 				'default' // priority
@@ -742,6 +753,9 @@ class Backend extends Functional {
 	 * Print relevent variables for JavaScript.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Registry::get() to retrieve the default language.
+	 * @uses Registry::languages() to get and export the list of languages.
 	 */
 	public static function print_javascript_vars() {
 		?>

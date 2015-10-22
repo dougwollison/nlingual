@@ -106,8 +106,8 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Translator::_lang() to ensure $lang is a Language object.
 	 * @uses Translator::delete_object_language() to allow for replacement.
+	 * @uses Translator::_lang() to ensure $lang is a Language object.
 	 * @uses Translator::_translation_group_id() to generate a new group ID.
 	 * @uses Registry::cache_set() to update the object's cached language result.
 	 *
