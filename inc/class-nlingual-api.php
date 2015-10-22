@@ -32,9 +32,13 @@ class API extends Functional {
 	 *
 	 * @uses Loader::register_hooks() to setup plugin management.
 	 * @uses Registry::load() to load the options.
-	 * @uses API::register_hooks() globally.
-	 * @uses Backend::register_hooks() if in the admin (and not AJAX).
-	 * @uses Frontend::register_hooks() if otherwise.
+	 * @uses API::register_hooks() to setup global functionality.
+	 * @uses Backend::register_hooks() to setup backend functionality.
+	 * @uses Manager::register_hooks() to setup admin screens.
+	 * @uses Localizer::register_hooks() to setup Localize This widget.
+	 * @uses Documenter::register_hooks() to setup admin documentation.
+	 * @uses Frontend::register_hooks() to setup frontend functionality.
+	 * @uses is_backend() to check if the query is for wp-admin.
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 */
@@ -56,7 +60,7 @@ class API extends Functional {
 		static::register_hooks();
 
 		// Register admin or public hooks
-		if ( is_admin() ) {
+		if ( is_backend() ) {
 			Backend::register_hooks();
 			Manager::register_hooks();
 			Localizer::register_hooks();
@@ -65,7 +69,7 @@ class API extends Functional {
 			Frontend::register_hooks();
 		}
 
-		// Register ajax hooks
+		// Register ajax-only hooks
 		if ( defined( 'DOING_AJAX' ) ) {
 			AJAX::register_hooks();
 		}
@@ -171,6 +175,7 @@ class API extends Functional {
 	 *
 	 * @uses Registry::get() to get the query_var, show_all_languages options.
 	 * @uses Registry::current_lang() to get the current language.
+	 * @uses is_backend() to check if the query is for wp-admin.
 	 *
 	 * @param WP_Query $wp_query The WP_Query instance.
 	 */
@@ -193,16 +198,16 @@ class API extends Functional {
 			return;
 		}
 
-		// If in the admin and the show_all_languages option is enabled, abort
-		if ( is_admin() && Registry::get( 'show_all_languages' ) ) {
+		// If in the backend and the show_all_languages option is enabled, abort
+		if ( is_backend() && Registry::get( 'show_all_languages' ) ) {
 			return;
 		}
 
 		// Build the language list (1 value; the current language)
 		$value = array( Registry::current_lang()->slug );
 
-		// If in the admin, also add 0 to retreive language-less posts too
-		if ( is_admin() ) {
+		// If in the backend, also add 0 to retreive language-less posts too
+		if ( is_backend() ) {
 			$value[] = '0';
 		}
 
