@@ -9,4 +9,4 @@ If you don't have a translated version for a particular language yet, you can se
 
 When you save your changes, certain fields and settings will be copied to it’s sister translations, synchronizing them. The exact fields/settings that will be synchronized is controlled <a href="<?php echo admin_url('admin.php?page=nlingual-sync'); ?>" target="_blank">here</a>, along with what will be copied when creating a new translation (usually everything).
 
-<?php require( NL_DIR . '/doc/shared/post-sync-summary.php' ); ?>
+<?php require( dirname( __DIR__ ) . '/shared/post-sync-summary.php' ); ?>

@@ -9,4 +9,4 @@ The <strong>Quick Edit</strong> option will allow you to quickly change the lang
 
 If you make changes to a <?php echo $singular; ?> from here, certain fields and settings will be copied to it’s sister translations, synchronizing them. The exact fields/settings that will be synchronized is controlled <a href="<?php echo admin_url('admin.php?page=nlingual-sync'); ?>" target="_blank">here</a>.
 
-<?php require( NL_DIR . '/doc/shared/post-sync-summary.php' ); ?>
+<?php require( dirname( __DIR__ ) . '/shared/post-sync-summary.php' ); ?>
