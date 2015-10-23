@@ -10,6 +10,39 @@ namespace nLingual;
  */
 
 class Rewriter {
+	/**
+	 * Internal flag for wether or not to localize a URL.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access procted
+	 *
+	 * @var array
+	 */
+	protected static $do_localization = true;
+
+	// =========================
+	// ! Property Access/Editing
+	// =========================
+
+	/**
+	 * Set $do_localization to true.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function enable_localization() {
+		static::$do_localization = true;
+	}
+
+	/**
+	 * Set $do_localization to false.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function disable_localization() {
+		static::$do_localization = false;
+	}
+
 	// =========================
 	// ! URL Building
 	// =========================
@@ -244,6 +277,11 @@ class Rewriter {
 	 * @return string The new localized URL.
 	 */
 	public static function localize_url( $url, Language $language = null, $relocalize = false ) {
+		// If localization is disabled, abort
+		if ( ! static::$do_localization ) {
+			return $url;
+		}
+
 		// If no $url is passed, use current URL
 		if ( is_null( $url ) ) {
 			$url = NL_ORIGINAL_URL;
@@ -382,6 +420,9 @@ class Rewriter {
 			$language = Registry::current_lang();
 		}
 
+		// Switch over to the desired langauge
+		Registry::switch_lang( $language ); // redundant for the current language, I know.
+
 		// Try various conditional tags
 
 		// Front page? just use home_url()
@@ -391,12 +432,12 @@ class Rewriter {
 		// Home page? Get the translation permalink
 		if ( is_home() ) {
 			$page = get_option( 'page_for_posts' );
-			$url = Translator::get_permalink( $page, $language );
+			$url = get_permalink( $page->ID );
 		} else
 		// Singular? Get the translation permalink
 		if ( is_singular() ) {
 			$post = get_queried_object_id();
-			$url = Translator::get_permalink( $post, $language );
+			$url = get_permalink( $post->ID );
 		} else
 		// Term page? Get the term link
 		if ( is_tax() || is_tag() || is_category() ) {
@@ -426,9 +467,12 @@ class Rewriter {
 		if ( is_search() ) {
 			$url = home_url( '/?s=' . get_query_var( 's' ) );
 		} else {
-			// Give up and localize the orignally requested URL.
-			$url = static::localize_url( NL_ORIGINAL_URL, $language, true );
+			// Give up and just relocalize the orginally requested URL.
+			$url = static::localize_url( NL_ORIGINAL_URL, null, true );
 		}
+
+		// Restore language
+		Registry::restore_lang();
 
 		// Now parse the URL
 		$url_data = parse_url( $url );
@@ -438,17 +482,19 @@ class Rewriter {
 			$url_data['paged'] .= get_query_var( 'paged' );
 		}
 
+		// Build the URL
+		$url = static::build_url( $url_data );
+
 		/**
-		 * Filter the URL data array.
+		 * Filter the URL.
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param array $url_data The parsed URL data.
+		 * @param string   $url      The new URL.
+		 * @param array    $url_data The parsed URL data.
+		 * @param Langauge $language The desired language to localize for.
 		 */
-		$url_data = apply_filters( 'nLingual_localize_here_array', $url_data, $language );
-
-		// Build the URL
-		$url = static::build_url( $url_data );
+		$url_data = apply_filters( 'nLingual_localize_here', $url, $url_data, $language );
 
 		return $url;
 	}
