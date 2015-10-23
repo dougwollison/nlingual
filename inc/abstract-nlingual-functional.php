@@ -24,7 +24,7 @@ abstract class Functional {
 	 *
 	 * @since 2.0.0
 	 */
-	final protected static function add_filter( $tag, $method, $priority = 10, $accepted_args = 1 ) {
+	final public static function add_filter( $tag, $method, $priority = 10, $accepted_args = 1 ) {
 		add_filter( $tag, array( static::$name, $method ), $priority, $accepted_args );
 	}
 
@@ -33,7 +33,7 @@ abstract class Functional {
 	 *
 	 * @since 2.0.0
 	 */
-	final protected static function add_action() {
+	final public static function add_action() {
 		call_user_func_array( 'self::add_filter', func_get_args() );
 	}
 
@@ -42,7 +42,7 @@ abstract class Functional {
 	 *
 	 * @since 2.0.0
 	 */
-	final protected static function remove_filter( $tag, $method, $priority = 10 ) {
+	final public static function remove_filter( $tag, $method, $priority = 10 ) {
 		remove_filter( $tag, array( static::$name, $method ), $priority );
 	}
 
@@ -51,7 +51,7 @@ abstract class Functional {
 	 *
 	 * @since 2.0.0
 	 */
-	final protected static function remove_action() {
+	final public static function remove_action() {
 		call_user_func_array( 'self::remove_filter', func_get_args() );
 	}
 
