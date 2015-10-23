@@ -45,6 +45,7 @@ class Frontend extends Functional {
 		// The Mod rewriting
 		static::add_filter( 'theme_mod_nav_menu_locations', 'localize_nav_menu_locations', 10, 1 );
 		static::add_filter( 'sidebars_widgets', 'localize_sidebar_locations', 10, 1 );
+		static::add_filter( 'wp_nav_menu_objects', 'handle_language_links', 10, 1 );
 	}
 
 	// =========================
@@ -297,7 +298,7 @@ class Frontend extends Functional {
 	 *
 	 * @return array The modified items.
 	 */
-	public static function wp_nav_menu_objects( $items ) {
+	public static function handle_language_links( $items ) {
 		foreach ( $items as $i => $item ) {
 			if ( $item->type == 'langlink' ) {
 				// Language link, set URL to the localized version of the current location
