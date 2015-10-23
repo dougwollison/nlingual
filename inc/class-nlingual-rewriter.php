@@ -420,9 +420,6 @@ class Rewriter {
 			$language = Registry::current_lang();
 		}
 
-		// Switch over to the desired langauge
-		Registry::switch_lang( $language ); // redundant for the current language, I know.
-
 		// Try various conditional tags
 
 		// Front page? just use home_url()
@@ -432,12 +429,12 @@ class Rewriter {
 		// Home page? Get the translation permalink
 		if ( is_home() ) {
 			$page = get_option( 'page_for_posts' );
-			$url = get_permalink( $page->ID );
+			$url = Translator::get_permalink( $page, $language );
 		} else
 		// Singular? Get the translation permalink
 		if ( is_singular() ) {
 			$post = get_queried_object_id();
-			$url = get_permalink( $post->ID );
+			$url = Translator::get_permalink( $post, $language );
 		} else
 		// Term page? Get the term link
 		if ( is_tax() || is_tag() || is_category() ) {
@@ -467,12 +464,12 @@ class Rewriter {
 		if ( is_search() ) {
 			$url = home_url( '/?s=' . get_query_var( 's' ) );
 		} else {
-			// Give up and just relocalize the orginally requested URL.
-			$url = static::localize_url( NL_ORIGINAL_URL, null, true );
+			// Give up and just get the orginally requested URL.
+			$url = NL_ORIGINAL_URL;
 		}
 
-		// Restore language
-		Registry::restore_lang();
+		// Relocalize the URL
+		$url = static::localize_url( $url, $language, true );
 
 		// Now parse the URL
 		$url_data = parse_url( $url );
