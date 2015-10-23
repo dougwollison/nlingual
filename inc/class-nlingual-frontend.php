@@ -46,6 +46,12 @@ class Frontend extends Functional {
 		static::add_filter( 'theme_mod_nav_menu_locations', 'localize_nav_menu_locations', 10, 1 );
 		static::add_filter( 'sidebars_widgets', 'localize_sidebar_locations', 10, 1 );
 		static::add_filter( 'wp_nav_menu_objects', 'handle_language_links', 10, 1 );
+
+		// General fitlering
+		static::add_filter( 'locale', 'rewrite_locale', 10, 1 );
+		static::add_filter( 'body_class', 'add_body_classes', 10, 1 );
+		static::add_filter( 'option_page_on_front', 'current_language_version', 10, 1 );
+		static::add_filter( 'option_page_for_posts', 'current_language_version', 10, 1 );
 	}
 
 	// =========================
@@ -312,5 +318,71 @@ class Frontend extends Functional {
 		}
 
 		return $items;
+	}
+
+	// =========================
+	// ! General Filtering
+	// =========================
+
+	/**
+	 * Replace the locale with that of the current language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::current_lang() to get the current language.
+	 *
+	 * @param string $locale The locale to replace.
+	 *
+	 * @return string The replaced locale.
+	 */
+	public static function rewrite_locale( $locale ) {
+		// Abort if in the backend
+		if ( is_backend() ) {
+			return $locale;
+		}
+
+		// Return the current language's locale_name
+		return Registry::current_lang( 'locale_name' );
+	}
+
+	/**
+	 * Add the text direction class and language classes.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::current_lang() to get the current language.
+	 *
+	 * @param array $classes The current list of body classes.
+	 *
+	 * @return array The modified list of classes.
+	 */
+	public static function add_body_classes( $classes ) {
+		// Add text direction
+		$classes[] = is_rtl() ? 'rtl' : 'ltr';
+
+		// Add language slug
+		$classes[] = 'language-' . Registry::current_lang( 'slug' );
+
+		return $classes;
+	}
+
+	/**
+	 * Replace a post ID with it's translation for the current language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::current_lang() to get the current language.
+	 * @uses Translator::get_object_translation() to get the translated post ID.
+	 *
+	 * @param int|string $post_id The post ID to be replaced.
+	 *
+	 * @return int The ID of the translation.
+	 */
+	public static function current_language_version( $post_id ) {
+		$current_lang = Registry::current_lang();
+
+		$post_id = Translator::get_post_translation( $post_id, $current_lang, true );
+
+		return $post_id;
 	}
 }
