@@ -379,17 +379,17 @@ class Localizer extends Functional {
 	 * @uses Registry::cache_get() to check if the localized value has already been fetched.
 	 * @uses Registry::cache_set() to store the result for future reuse.
 	 *
-	 * @param string $key       The string key to search for.
-	 * @param int    $lang_id   The language ID to match.
-	 * @param int    $object_id The object ID if relevent (otherwise 0).
+	 * @param string $key         The string key to search for.
+	 * @param int    $language_id The language ID to match.
+	 * @param int    $object_id   The object ID if relevent (otherwise 0).
 	 *
 	 * @return string|bool The localized version, false if nothing found.
 	 */
-	public static function get_string_value( $key, $lang_id, $object_id = 0 ) {
+	public static function get_string_value( $key, $language_id, $object_id = 0 ) {
 		global $wpdb;
 
 		// Check if it's cached, return if so
-		if ( $cached = Registry::cache_get( 'localized', "$key-$lang_id-$object_id" ) ) {
+		if ( $cached = Registry::cache_get( 'localized', "$key-$language_id-$object_id" ) ) {
 			return $cached;
 		}
 
@@ -397,12 +397,12 @@ class Localizer extends Functional {
 			SELECT string_value
 			FROM $wpdb->nl_strings
 			WHERE string_key = %s
-			AND lang_id = %d
+			AND language_id = %d
 			AND object_id = %d
-		", $key, $lang_id, $object_id ) );
+		", $key, $language_id, $object_id ) );
 
 		// Add it to the cache
-		Registry::cache_set( 'localized', "$key-$lang_id-$object_id", $value );
+		Registry::cache_set( 'localized', "$key-$language_id-$object_id", $value );
 
 		return $value;
 	}
@@ -425,7 +425,7 @@ class Localizer extends Functional {
 		global $wpdb;
 
 		$results = $wpdb->get_results( $wpdb->prepare( "
-			SELECT lang_id, string_value
+			SELECT language_id, string_value
 			FROM $wpdb->nl_strings
 			WHERE string_key = %s
 			AND object_id = %d
@@ -433,13 +433,13 @@ class Localizer extends Functional {
 
 		$strings = array();
 		foreach ( $results as $result ) {
-			$strings[ $result->lang_id ] = $result->string_value;
+			$strings[ $result->language_id ] = $result->string_value;
 		}
 
 		// Fill with empty values for all languages
 		foreach ( Registry::languages() as $language ) {
-			if ( ! isset( $strings[ $language->lang_id ] ) ) {
-				$strings[ $language->lang_id ] = '';
+			if ( ! isset( $strings[ $language->language_id ] ) ) {
+				$strings[ $language->language_id ] = '';
 			}
 		}
 
@@ -453,16 +453,16 @@ class Localizer extends Functional {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
-	 * @param string $key       The string key to search for.
-	 * @param int    $lang_id   The language ID to save for.
-	 * @param int    $object_id The object ID if relevent (otherwise 0).
-	 * @param string $value     The localized value of the string.
+	 * @param string $key         The string key to search for.
+	 * @param int    $language_id The language ID to save for.
+	 * @param int    $object_id   The object ID if relevent (otherwise 0).
+	 * @param string $value       The localized value of the string.
 	 */
-	public static function save_string_value( $key, $lang_id, $object_id, $value ) {
+	public static function save_string_value( $key, $language_id, $object_id, $value ) {
 		global $wpdb;
 
 		return $wpdb->replace( $wpdb->nl_strings, array(
-			'lang_id'      => $lang_id,
+			'language_id'      => $language_id,
 			'object_id'    => $object_id,
 			'string_key'   => $key,
 			'string_value' => $value,
@@ -478,7 +478,7 @@ class Localizer extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::current_lang() to get the current language.
+	 * @uses Registry::current_language() to get the current language.
 	 * @uses Localizer::get_string_value() to retrieve the localized value.
 	 *
 	 * @param mixed $pre_option Value to return instead of the option value.
@@ -491,10 +491,10 @@ class Localizer extends Functional {
 		$option = preg_replace( '/^pre_option_/', '', $filter );
 
 		// Get the current language
-		$language = Registry::current_lang();
+		$language = Registry::current_language();
 
 		// Get the localized version of the string if it exists
-		if ( $value = static::get_string_value( "option_{$option}", $language->lang_id ) ) {
+		if ( $value = static::get_string_value( "option_{$option}", $language->language_id ) ) {
 			return $value;
 		}
 
@@ -506,23 +506,23 @@ class Localizer extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::current_lang() to get the current language.
+	 * @uses Registry::current_language() to get the current language.
 	 * @uses Localizer::get_string_value() to retrieve the localized value.
 	 *
-	 * @param object $term The term to be localized.
+	 * @param object $term     The term to be localized.
 	 * @param string $taxonomy The term's taxonomy.
 	 *
 	 * @return object The term with localized name and description.
 	 */
 	public static function handle_localized_term( $term, $taxonomy ) {
 		// Get the current language
-		$language = Registry::current_lang();
+		$language = Registry::current_language();
 
 		// Get the localized version of the string if it exists
-		if ( $name = static::get_string_value( "term_{$taxonomy}_name", $language->lang_id, $term->term_id ) ) {
+		if ( $name = static::get_string_value( "term_{$taxonomy}_name", $language->language_id, $term->term_id ) ) {
 			$term->name = $name;
 		}
-		if ( $description = static::get_string_value( "term_{$taxonomy}_description", $language->lang_id, $term->term_id ) ) {
+		if ( $description = static::get_string_value( "term_{$taxonomy}_description", $language->language_id, $term->term_id ) ) {
 			$term->description = $description;
 		}
 
@@ -548,7 +548,7 @@ class Localizer extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::current_lang() to get the current language.
+	 * @uses Registry::current_language() to get the current language.
 	 * @uses Localizer::get_string_value() to retrieve the localized value.
 	 *
 	 * @param null|array|string $pre_value The value that should be returned (single or array)
@@ -564,10 +564,10 @@ class Localizer extends Functional {
 		$meta_type = preg_replace( '/^get_(.+?)_metadata$/', '$1', $filter );
 
 		// Get the current language
-		$language = Registry::current_lang();
+		$language = Registry::current_language();
 
 		// Get the localized version of the string if it exists
-		if ( $value = static::get_string_value( "meta_{$meta_type}_{$meta_key}", $language->lang_id, $object_id ) ) {
+		if ( $value = static::get_string_value( "meta_{$meta_type}_{$meta_key}", $language->language_id, $object_id ) ) {
 			return $value;
 		}
 
@@ -640,14 +640,14 @@ class Localizer extends Functional {
 			}
 
 			// Loop through each localized version
-			foreach ( $localized[ $string->field ] as $lang_id => $value ) {
+			foreach ( $localized[ $string->field ] as $language_id => $value ) {
 				// Fail if the language is not found
-				if ( ! $languages->get( $lang_id ) ) {
+				if ( ! $languages->get( $language_id ) ) {
 					wp_die( __( 'That language does not exist.' ) );
 				}
 
 				// Add the entry to save
-				$to_save[] = array( $key, $lang_id, $object_id, $value );
+				$to_save[] = array( $key, $language_id, $object_id, $value );
 			}
 		}
 

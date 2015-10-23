@@ -52,8 +52,8 @@ class AJAX extends Functional {
 	 * @uses Synchronizer::clone_post() to create the cloned post.
 	 */
 	public static function new_translation() {
-		// Fail if no post/lang id or title is passed
-		if ( ! isset( $_REQUEST['post_id'] ) || ! isset( $_REQUEST['lang_id'] ) || ! isset( $_REQUEST['title'] ) ) {
+		// Fail if no post/language id or title is passed
+		if ( ! isset( $_REQUEST['post_id'] ) || ! isset( $_REQUEST['language_id'] ) || ! isset( $_REQUEST['title'] ) ) {
 			return;
 		}
 
@@ -64,7 +64,7 @@ class AJAX extends Functional {
 		}
 
 		// Fail if language does not exist
-		$language = Registry::languages()->get( $_REQUEST['lang_id'] );
+		$language = Registry::languages()->get( $_REQUEST['language_id'] );
 		if ( ! $language ) {
 			return;
 		}
@@ -85,5 +85,3 @@ class AJAX extends Functional {
 		wp_die();
 	}
 }
-
-AJAX::init();

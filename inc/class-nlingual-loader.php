@@ -95,7 +95,7 @@ class Loader extends Functional {
 		add_option( 'nlingual_skip_default_l10n', 0 );
 		add_option( 'nlingual_query_var', 'nl_language' );
 		add_option( 'nlingual_redirection_method', NL_REDIRECT_USING_GET );
-		add_option( 'nlingual_postlang_override', 0 );
+		add_option( 'nlingual_post_language_override', 0 );
 		add_option( 'nlingual_post_types', array() );
 		add_option( 'nlingual_sync_rules', array(
 			'post_types' => array()
@@ -124,7 +124,7 @@ class Loader extends Functional {
 
 			// Just install/update the languages table as normal
 			$sql_languages = "CREATE TABLE $wpdb->nl_languages (
-				lang_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+				language_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				system_name varchar(200) DEFAULT '' NOT NULL,
 				native_name varchar(200) DEFAULT '' NOT NULL,
 				short_name varchar(200) DEFAULT '' NOT NULL,
@@ -133,7 +133,7 @@ class Loader extends Functional {
 				slug varchar(100) DEFAULT '' NOT NULL,
 				list_order int(11) unsigned NOT NULL,
 				active tinyint(1) NOT NULL DEFAULT '1',
-				PRIMARY KEY  (lang_id),
+				PRIMARY KEY  (language_id),
 				UNIQUE KEY slug (slug)
 			) $charset_collate;";
 			dbDelta( $sql_languages );
@@ -141,21 +141,21 @@ class Loader extends Functional {
 			// Just install/update the translations table as normal
 			$sql_translations = "CREATE TABLE $wpdb->nl_translations (
 				group_id bigint(20) unsigned NOT NULL,
-				lang_id bigint(20) unsigned NOT NULL,
+				language_id bigint(20) unsigned NOT NULL,
 				object_type varchar(20) DEFAULT 'post' NOT NULL,
 				object_id bigint(20) unsigned NOT NULL,
 				UNIQUE KEY object_type_id (object_id,object_type),
-				UNIQUE KEY group_lang (group_id,lang_id)
+				UNIQUE KEY group_language (group_id,language_id)
 			) $charset_collate;";
 			dbDelta( $sql_translations );
 
 			// The string localization table
 			$sql_strings = "CREATE TABLE $wpdb->nl_strings (
-				lang_id bigint(20) unsigned NOT NULL,
+				language_id bigint(20) unsigned NOT NULL,
 				object_id bigint(20) unsigned NOT NULL,
 				string_key varchar(128) DEFAULT '' NOT NULL,
 				string_value longtext NOT NULL,
-				UNIQUE KEY lang_object_string (lang_id,object_id,string_key)
+				UNIQUE KEY language_object_string (language_id,object_id,string_key)
 			) $charset_collate;";
 			dbDelta( $sql_strings );
 
@@ -196,8 +196,9 @@ class Loader extends Functional {
 		}
 
 		// Delete the object and string translation tables
-		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->nl_translations" );
-		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->nl_strings" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_languages" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_translations" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_strings" );
 
 		// And delete the options
 		$wpdb->query( "DELETE FORM $wpdb->options WHERE option_name like 'nlingual\_%'" );
@@ -230,6 +231,8 @@ class Loader extends Functional {
 		// Rename to lowercase
 		$wpdb->query("ALTER TABLE {$wpdb->prefix}nL_languages RENAME TO {$wpdb->prefix}nl_languages2");
 		$wpdb->query("ALTER TABLE {$wpdb->prefix}nl_languages2 RENAME TO $wpdb->nl_languages");
+		// Rename lang_id to language_id, keeping it at the beginning
+		$wpdb->query("ALTER TABLE $wpdb->nL_languages CHANGE `lang_id` `language_id` bigint(20) unsigned NOT NULL FIRST");
 		// Rename mo to locale_name, placing it after short_name
 		$wpdb->query("ALTER TABLE $wpdb->nL_languages CHANGE `mo` `locale_name` varchar(10) DEFAULT '' NOT NULL AFTER `short_name`");
 		// Rename iso to iso_code, placing it after locale_name
@@ -244,6 +247,8 @@ class Loader extends Functional {
 		$wpdb->query("ALTER TABLE {$wpdb->prefix}nl_translations2 RENAME TO $wpdb->nl_translations");
 		// Start by removing the old unique key
 		$wpdb->query("ALTER TABLE $wpdb->nl_translations DROP KEY `post_id`");
+		// Rename lang_id to language_id, keeping it after group_id
+		$wpdb->query("ALTER TABLE $wpdb->nL_languages CHANGE `lang_id` `language_id` bigint(20) unsigned NOT NULL AFTER `group_id`");
 		// Now add the new object_type column
 		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD `object_type` varchar(20) $collate NOT NULL DEFAULT 'post'");
 		// Rename post_id to object_id, placing it after object_type

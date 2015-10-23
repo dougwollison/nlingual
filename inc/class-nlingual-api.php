@@ -86,15 +86,15 @@ class API extends Functional {
 	 *
 	 * @uses Registry::set() to store the new current language.
 	 *
-	 * @param Language $lang The desired language id.
-	 * @param bool     $lock Wether or not to lock the selection.
+	 * @param Language $language The desired language id.
+	 * @param bool     $lock     Wether or not to lock the selection.
 	 */
-	public static function set_language( Language $lang, $lock = false ) {
+	public static function set_language( Language $language, $lock = false ) {
 		if ( defined( 'NL_LANGUAGE_LOCKED' ) ) {
 			return;
 		}
 
-		Registry::set( 'current_lang', $lang->lang_id );
+		Registry::set( 'current_language', $language->language_id );
 
 		if ( $lock ) {
 			// Lock the language from being changed again
@@ -133,7 +133,7 @@ class API extends Functional {
 	 */
 	public static function ready() {
 		// Load the textdomain
-		load_plugin_textdomain( NL_TXTDMN, false, NL_DIR . '/lang' );
+		load_plugin_textdomain( NL_TXTDMN, false, NL_DIR . '/language' );
 
 		// Register the blogname and blogdescription for localization
 		Localizer::register_option( 'blogname', 'options-general', array(
@@ -178,7 +178,7 @@ class API extends Functional {
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to get the query_var, show_all_languages options.
-	 * @uses Registry::current_lang() to get the current language.
+	 * @uses Registry::current_language() to get the current language.
 	 * @uses is_backend() to check if the query is for wp-admin.
 	 *
 	 * @param WP_Query $wp_query The WP_Query instance.
@@ -208,7 +208,7 @@ class API extends Functional {
 		}
 
 		// Build the language list (1 value; the current language)
-		$value = array( Registry::current_lang()->slug );
+		$value = array( Registry::current_language()->slug );
 
 		// If in the backend, also add 0 to retreive language-less posts too
 		if ( is_backend() ) {
@@ -279,34 +279,34 @@ class API extends Functional {
 		}
 
 		// Get the language, in array form
-		$langs = $query->get( Registry::get( 'query_var' ) );
+		$languages = $query->get( Registry::get( 'query_var' ) );
 
 		// Abort if not set
-		if ( $langs === '' ) {
+		if ( $languages === '' ) {
 			return $clause;
 		}
 
 		// Ensure it's an array
-		$langs = (array) $langs;
+		$languages = (array) $languages;
 
 		// Get the available languages for valiation purposes
 		$languages = Registry::languages();
 
 		// Loop through each language specified and build the subclause
 		$subclause = array();
-		foreach ( $langs as $lang ) {
+		foreach ( $languages as $language ) {
 			// Skip if blank
-			if ( $lang === '' ) {
+			if ( $language === '' ) {
 				continue;
 			}
 
 			// Check if the language specified is "None"
-			if ( $lang === '0' ) {
-				$subclause[] = "$wpdb->nl_translations.lang_id IS NULL";
+			if ( $language === '0' ) {
+				$subclause[] = "$wpdb->nl_translations.language_id IS NULL";
 			} else
 			// Otherwise check if the language exists
-			if ( $language = $languages->get( $lang ) ) {
-				$subclause[] = $wpdb->prepare( "$wpdb->nl_translations.lang_id = %d", $language->lang_id );
+			if ( $language = $languages->get( $language ) ) {
+				$subclause[] = $wpdb->prepare( "$wpdb->nl_translations.language_id = %d", $language->language_id );
 			}
 		}
 
@@ -316,6 +316,3 @@ class API extends Functional {
 		return $clause;
 	}
 }
-
-// Initialize
-API::init();

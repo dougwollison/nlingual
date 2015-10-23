@@ -174,7 +174,7 @@ class Manager extends Functional {
 			'skip_default_l10n'  => 'intval',
 			'query_var'          => null,
 			'redirection_method' => null,
-			'postlang_override'  => null,
+			'postlanguage_override'  => null,
 		), 'options' );
 
 		static::setup_options_fields();
@@ -234,18 +234,18 @@ class Manager extends Functional {
 
 		// Loop through languages and update/insert
 		$i = 0;
-		foreach ( $languages as $id => $lang ) {
+		foreach ( $languages as $id => $language ) {
 			// If delete option is present, go straight to deleting it
-			if ( isset( $lang['delete'] ) && $lang['delete'] ) {
+			if ( isset( $language['delete'] ) && $language['delete'] ) {
 				if ( $id > 0 ) {
-					$wpdb->delete( $wpdb->nl_languages, array( 'lang_id' => $id ), array( '%d' ) );
+					$wpdb->delete( $wpdb->nl_languages, array( 'language_id' => $id ), array( '%d' ) );
 				}
 				continue;
 			}
 
 			// Ensure all fields are set
 			foreach ( $fields as $field => $format ) {
-				if ( ! isset( $lang[ $field ] ) || empty( $lang[ $field ] ) ) {
+				if ( ! isset( $language[ $field ] ) || empty( $language[ $field ] ) ) {
 					add_settings_error(
 						'nlingual-languages',
 						'nl_language',
@@ -254,14 +254,14 @@ class Manager extends Functional {
 					);
 					break;
 				} else {
-					$entry[ $field ] = $lang[ $field ];
+					$entry[ $field ] = $language[ $field ];
 				}
 			}
 
 			// Default active to 0
 			$formats[] = '%d';
-			if ( isset( $lang['active'] ) ) {
-				$entry['active'] = $lang['active'];
+			if ( isset( $language['active'] ) ) {
+				$entry['active'] = $language['active'];
 			} else {
 				$entry['active'] = 0;
 			}
@@ -273,7 +273,7 @@ class Manager extends Functional {
 
 			if ( $id > 0 ) {
 				// Assume existing language; update
-				$wpdb->update( $wpdb->nl_languages, $entry, array( 'lang_id' => $id ), $formats, array( '%d' ) );
+				$wpdb->update( $wpdb->nl_languages, $entry, array( 'language_id' => $id ), $formats, array( '%d' ) );
 			} else {
 				// Assume new language; insert
 				$wpdb->insert( $wpdb->nl_languages, $entry, $formats );
@@ -318,9 +318,9 @@ class Manager extends Functional {
 
 		// Loop through each string and save for each language and object ID
 		foreach ( $strings as $string => $localized ) {
-			foreach ( $localized as $lang_id => $objects ) {
+			foreach ( $localized as $language_id => $objects ) {
 				foreach ( $objects as $object_id => $value ) {
-					Localizer::save_string_value( $string, $lang_id, $object_id, $value );
+					Localizer::save_string_value( $string, $language_id, $object_id, $value );
 				}
 			}
 		}
@@ -407,7 +407,7 @@ class Manager extends Functional {
 					NL_REDIRECT_USING_DOMAIN => __( 'Subdomain' ),
 				),
 			),
-			'postlang_override' => array(
+			'postlanguage_override' => array(
 				'title' => __( 'Post Language Override' ),
 				'help'  => __( 'Should the requested post/page/object’s language override the one requested?' ),
 				'type'  => 'checkbox',
@@ -561,53 +561,53 @@ class Manager extends Functional {
 			<?php settings_errors( $plugin_page ); ?>
 			<form method="post" action="options.php" id="<?php echo $plugin_page; ?>-form">
 				<?php settings_fields( $plugin_page ); ?>
-				<div id="nl_lang_controls">
-					<select id="nl_lang_preset">
+				<div id="nl_language_controls">
+					<select id="nl_language_preset">
 						<option value=""><?php _e( 'Custom Language' ); ?></option>
 					</select>
-					<button type="button" id="nl_lang_add" class="button"><?php _e( 'Add Language' ); ?></button>
+					<button type="button" id="nl_language_add" class="button"><?php _e( 'Add Language' ); ?></button>
 				</div>
 				<table id="nlingual_languages" class="wp-list-table widefat fixed striped">
 					<thead>
 						<tr>
-							<th scope="col" class="nl-lang-system_name"><?php _e( 'System Name' ); ?></th>
-							<th scope="col" class="nl-lang-native_name"><?php _e( 'Native Name' ); ?></th>
-							<th scope="col" class="nl-lang-short_name"><?php _e( 'Short Name' ); ?></th>
-							<th scope="col" class="nl-lang-locale_name"><?php _e( 'Locale' ); ?></th>
-							<th scope="col" class="nl-lang-iso_code"><?php _e( 'ISO' ); ?></th>
-							<th scope="col" class="nl-lang-slug"><?php _e( 'Slug' ); ?></th>
-							<th scope="col" class="nl-lang-active"><?php _e( 'Active?' ); ?></th>
-							<td class="nl-lang-delete"><?php _e( 'Delete?' ); ?></td>
+							<th scope="col" class="nl-language-system_name"><?php _e( 'System Name' ); ?></th>
+							<th scope="col" class="nl-language-native_name"><?php _e( 'Native Name' ); ?></th>
+							<th scope="col" class="nl-language-short_name"><?php _e( 'Short Name' ); ?></th>
+							<th scope="col" class="nl-language-locale_name"><?php _e( 'Locale' ); ?></th>
+							<th scope="col" class="nl-language-iso_code"><?php _e( 'ISO' ); ?></th>
+							<th scope="col" class="nl-language-slug"><?php _e( 'Slug' ); ?></th>
+							<th scope="col" class="nl-language-active"><?php _e( 'Active?' ); ?></th>
+							<td class="nl-language-delete"><?php _e( 'Delete?' ); ?></td>
 						</tr>
 					</thead>
-					<tbody id="nl_lang_list">
+					<tbody id="nl_language_list">
 					</tbody>
 				</table>
-				<script type="text/template" id="nl_lang_row">
+				<script type="text/template" id="nl_language_row">
 					<tr>
-						<td class="nl-lang-system_name">
-							<input type="text" name="nlingual_languages[%lang_id%][system_name]" value="%system_name%" />
+						<td class="nl-language-system_name">
+							<input type="text" name="nlingual_languages[%language_id%][system_name]" value="%system_name%" />
 						</td>
-						<td class="nl-lang-native_name">
-							<input type="text" name="nlingual_languages[%lang_id%][native_name]" value="%native_name%" />
+						<td class="nl-language-native_name">
+							<input type="text" name="nlingual_languages[%language_id%][native_name]" value="%native_name%" />
 						</td>
-						<td class="nl-lang-short_name">
-							<input type="text" name="nlingual_languages[%lang_id%][short_name]" value="%short_name%" />
+						<td class="nl-language-short_name">
+							<input type="text" name="nlingual_languages[%language_id%][short_name]" value="%short_name%" />
 						</td>
-						<td class="nl-lang-locale_name">
-							<input type="text" name="nlingual_languages[%lang_id%][locale_name]" value="%locale_name%" />
+						<td class="nl-language-locale_name">
+							<input type="text" name="nlingual_languages[%language_id%][locale_name]" value="%locale_name%" />
 						</td>
-						<td class="nl-lang-iso_code">
-							<input type="text" name="nlingual_languages[%lang_id%][iso_code]" value="%iso_code%" />
+						<td class="nl-language-iso_code">
+							<input type="text" name="nlingual_languages[%language_id%][iso_code]" value="%iso_code%" />
 						</td>
-						<td class="nl-lang-slug">
-							<input type="text" name="nlingual_languages[%lang_id%][slug]" value="%slug%" />
+						<td class="nl-language-slug">
+							<input type="text" name="nlingual_languages[%language_id%][slug]" value="%slug%" />
 						</td>
-						<td class="nl-lang-active">
-							<input type="checkbox" name="nlingual_languages[%lang_id%][active]" value="1" />
+						<td class="nl-language-active">
+							<input type="checkbox" name="nlingual_languages[%language_id%][active]" value="1" />
 						</td>
-						<td scope="row" class="nl-lang-delete">
-							<input type="checkbox" name="nlingual_languages[%lang_id%][delete]" value="1" />
+						<td scope="row" class="nl-language-delete">
+							<input type="checkbox" name="nlingual_languages[%language_id%][delete]" value="1" />
 						</td>
 					</tr>
 				</script>
@@ -714,12 +714,12 @@ class Manager extends Functional {
 	 * @uses Localizer::get_string_values() to get the available values for the current string.
 	 * @uses Settings::build_field() to build the input/textarea for editing the string.
 	 *
-	 * @param object $string       The string settings object.
-	 * @param string $unlocalized  Optional The unlocalized value of the string.
-	 * @param int    $object_id    Optional The object id to get values for (default 0).
+	 * @param object $string      The string settings object.
+	 * @param string $unlocalized Optional The unlocalized value of the string.
+	 * @param int    $object_id   Optional The object id to get values for (default 0).
 	 */
 	protected static function print_strings_table( $string, $unlocalized, $object_id = 0 ) {
-		$default_lang = Registry::get( 'default_lang' );
+		$default_language = Registry::get( 'default_language' );
 		$localized = Localizer::get_string_values( $string->key, $object_id );
 		?>
 		<table class="nl-strings-table">
@@ -731,24 +731,24 @@ class Manager extends Functional {
 				<?php foreach ( Registry::languages() as $language ) : ?>
 				<tr>
 					<?php
-					$is_default_lang = $language->lang_id == $default_lang;
+					$is_default_language = $language->language_id == $default_language;
 
-					$id = sprintf( '%s-%d-%d', $string->key, $language->lang_id, $object_id );
-					$name = sprintf( 'nlingual_strings[%s][%d][%d]', $string->key, $language->lang_id, $object_id );
+					$id = sprintf( '%s-%d-%d', $string->key, $language->language_id, $object_id );
+					$name = sprintf( 'nlingual_strings[%s][%d][%d]', $string->key, $language->language_id, $object_id );
 
-					if ( $is_default_lang ) {
+					if ( $is_default_language ) {
 						$value = $unlocalized;
 					} else {
-						$value = $localized[ $language->lang_id ];
+						$value = $localized[ $language->language_id ];
 					}
 
 					// Build the field parameters
 					$field = array(
-						'name' => $is_default_lang ? '' : $name,
+						'name' => $is_default_language ? '' : $name,
 						'type' => $string->input ?: 'text',
 						'data' => array(
 							'id' => $id,
-							'readonly' => $is_default_lang,
+							'readonly' => $is_default_language,
 						),
 					);
 					?>

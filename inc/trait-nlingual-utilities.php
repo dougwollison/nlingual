@@ -21,7 +21,7 @@ trait Utilities {
 	 *
 	 * @return bool If the language was successfully converted.
 	 */
-	protected static function _lang( &$language ) {
+	protected static function _language( &$language ) {
 		if ( is_a( $language, __NAMESPACE__ . '\Language' ) ) {
 			return true;
 		} else {

@@ -77,15 +77,15 @@ class Frontend extends Functional {
 
 		// Override with result of url_process() if it works
 		$processed_url = Rewriter::process_url();
-		if ( $processed_url['lang'] ) {
-			$language = $processed_url['lang'];
+		if ( $processed_url['language'] ) {
+			$language = $processed_url['language'];
 		}
 
 		// Override with $query_var if present
 		$query_var = Registry::get( 'query_var' );
 		if ( $query_var && isset( $_REQUEST[ $query_var ] )
-		&& ( $lang = Registry::languages()->get( $_REQUEST[ $query_var ] ) ) ) {
-			$language = $lang;
+		&& ( $language = Registry::languages()->get( $_REQUEST[ $query_var ] ) ) ) {
+			$language = $language;
 		}
 
 		// Set the language if it worked, but don't lock it in
@@ -99,7 +99,7 @@ class Frontend extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::get() to get the postlang_override option.
+	 * @uses Registry::get() to get the postlanguage_override option.
 	 * @uses Translator::get_object_language() to get the queried posts language.
 	 * @uses API::set_language() to permanently apply the detected language.
 	 *
@@ -109,7 +109,7 @@ class Frontend extends Functional {
 		global $wp_query;
 
 		// Don't proceed if this feature is disabled
-		if ( ! Registry::get( 'postlang_override', 0 ) ) {
+		if ( ! Registry::get( 'postlanguage_override', 0 ) ) {
 			return;
 		}
 
@@ -216,8 +216,8 @@ class Frontend extends Functional {
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::is_feature_localizable() to check for support.
-	 * @uses Registry::default_lang() to get the default language ID.
-	 * @uses Registry::current_lang() to get the current language ID.
+	 * @uses Registry::default_language() to get the default language ID.
+	 * @uses Registry::current_language() to get the current language ID.
 	 * @uses Registry::is_location_localizable() to check for support.
 	 *
 	 * @param string $type       The type of location.
@@ -233,20 +233,20 @@ class Frontend extends Functional {
 		}
 
 		// Get the default and current languages
-		$default_lang = Registry::get( 'default_lang' );
-		$current_lang = Registry::get( 'current_lang' ) ?: $default_lang;
+		$default_language = Registry::get( 'default_language' );
+		$current_language = Registry::get( 'current_language' ) ?: $default_language;
 
 		// Ensure the unlocalized locations are set to the appropriate version.
 		foreach ( $registered as $slug => $name ) {
 			// Check if this location specifically supports localizing
 			if ( Registry::is_location_localizable( $type, $slug ) ) {
 				// Check if a location is set for the current language
-				if ( isset( $locations[ "{$slug}-lang{$current_lang}"] ) ) {
-					$locations[ $slug ] = $locations[ "{$slug}-lang{$current_lang}"];
+				if ( isset( $locations[ "{$slug}-language{$current_language}"] ) ) {
+					$locations[ $slug ] = $locations[ "{$slug}-language{$current_language}"];
 				} else
 				// Alternatively check if a location is set for the default one
-				if ( isset( $locations[ "{$slug}-lang{$default_lang}"] ) ) {
-					$locations[ $slug ] = $locations[ "{$slug}-lang{$default_lang}"];
+				if ( isset( $locations[ "{$slug}-language{$default_language}"] ) ) {
+					$locations[ $slug ] = $locations[ "{$slug}-language{$default_language}"];
 				}
 			}
 		}
@@ -293,7 +293,7 @@ class Frontend extends Functional {
 	// =========================
 
 	/**
-	 * Process any langlink type menu items into proper links.
+	 * Process any languagelink type menu items into proper links.
 	 *
 	 * @since 2.0.0
 	 *
@@ -306,7 +306,7 @@ class Frontend extends Functional {
 	 */
 	public static function handle_language_links( $items ) {
 		foreach ( $items as $i => $item ) {
-			if ( $item->type == 'langlink' ) {
+			if ( $item->type == 'languagelink' ) {
 				// Language link, set URL to the localized version of the current location
 				// Delete the item if it's for a language that doesn't exist or is inactive
 				if ( $language = Registry::languages()->get( $item->object ) ) {
@@ -329,7 +329,7 @@ class Frontend extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::current_lang() to get the current language.
+	 * @uses Registry::current_language() to get the current language.
 	 *
 	 * @param string $locale The locale to replace.
 	 *
@@ -342,7 +342,7 @@ class Frontend extends Functional {
 		}
 
 		// Return the current language's locale_name
-		return Registry::current_lang( 'locale_name' );
+		return Registry::current_language( 'locale_name' );
 	}
 
 	/**
@@ -350,7 +350,7 @@ class Frontend extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::current_lang() to get the current language.
+	 * @uses Registry::current_language() to get the current language.
 	 *
 	 * @param array $classes The current list of body classes.
 	 *
@@ -361,7 +361,7 @@ class Frontend extends Functional {
 		$classes[] = is_rtl() ? 'rtl' : 'ltr';
 
 		// Add language slug
-		$classes[] = 'language-' . Registry::current_lang( 'slug' );
+		$classes[] = 'language-' . Registry::current_language( 'slug' );
 
 		return $classes;
 	}
@@ -371,7 +371,7 @@ class Frontend extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::current_lang() to get the current language.
+	 * @uses Registry::current_language() to get the current language.
 	 * @uses Translator::get_object_translation() to get the translated post ID.
 	 *
 	 * @param int|string $post_id The post ID to be replaced.
@@ -379,9 +379,9 @@ class Frontend extends Functional {
 	 * @return int The ID of the translation.
 	 */
 	public static function current_language_version( $post_id ) {
-		$current_lang = Registry::current_lang();
+		$current_language = Registry::current_language();
 
-		$post_id = Translator::get_post_translation( $post_id, $current_lang, true );
+		$post_id = Translator::get_post_translation( $post_id, $current_language, true );
 
 		return $post_id;
 	}

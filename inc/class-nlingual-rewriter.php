@@ -154,7 +154,7 @@ class Rewriter {
 	 * @return array An array of the resulting language and true hostname/path.
 	 */
 	public static function process_url( $url_data = null ) {
-		$lang = null;
+		$language = null;
 
 		// Get the home URL (unlocalized)
 		$home = get_home_url( null, '', NL_UNLOCALIZED );
@@ -177,16 +177,16 @@ class Rewriter {
 			'host'  => '',
 			'path'  => '/',
 			'query' => '',
-			'lang'  => null
+			'language'  => null
 		) );
 
 		// Parse the query string into new args entry
 		parse_str( $url_data['query'], $url_data['args'] );
 
-		// Check if the lang was already part of the arguments
+		// Check if the language was already part of the arguments
 		$query_var = Registry::get( 'query_var' );
 		if ( isset( $url_data['args'][ $query_var ] ) ) {
-			$url_data['lang'] = $url_data['args'][ $query_var ];
+			$url_data['language'] = $url_data['args'][ $query_var ];
 			unset( $url_data['args'][ $query_var ] );
 
 			// Return the results now
@@ -196,15 +196,15 @@ class Rewriter {
 		// Shortcuts to the necessary parts
 		$host =& $url_data['host'];
 		$path =& $url_data['path'];
-		$lang =& $url_data['lang'];
+		$language =& $url_data['language'];
 
 		// Try using the desired method
 		switch( Registry::get( 'redirection_method' ) ) {
 			case NL_REDIRECT_USING_DOMAIN:
 				// Check if a language slug is present, and if it's an existing language
 				if ( preg_match( '#^([a-z]{2})\.#i', $host, $matches ) ) {
-					// Update lang with the matched
-					$lang = Registry::languages()->get( $matches[1] );
+					// Update language with the matched
+					$language = Registry::languages()->get( $matches[1] );
 
 					// Remove the language slug from $host
 					$host = substr( $host, 3 );
@@ -226,8 +226,8 @@ class Rewriter {
 
 				// Check if a language slug is present, and if it's an existing language
 				if ( preg_match( '#^([a-z]{2})(/|$)#i', $path, $matches ) ) {
-					// Update lang with the matched
-					$lang = Registry::languages()->get( $matches[1] );
+					// Update language with the matched
+					$language = Registry::languages()->get( $matches[1] );
 
 					// Remove the language slug from $path
 					$path = substr( $path, 2 );
@@ -261,11 +261,11 @@ class Rewriter {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::current_lang() to get the current Language object if not passed.
+	 * @uses Registry::current_language() to get the current Language object if not passed.
 	 * @uses Registry::cache_get() to check if this URL has already been localized.
 	 * @uses Rewriter::delocalize_url() to clean the URL for relocalizing if desired.
 	 * @uses Rewriter::process_url() to process the URL into it's components.
-	 * @uses Registry::default_lang() to get the default Language object for comparison.
+	 * @uses Registry::default_language() to get the default Language object for comparison.
 	 * @uses Registry::get() to get the skip_default_l10n, redirection_method and query_var options.
 	 * @uses Rewriter::build_url() to assemble the new URL from the modified components.
 	 * @uses Registry::cache_set() to store the result for future reuse.
@@ -301,11 +301,11 @@ class Rewriter {
 
 		// Default to the current language
 		if ( ! $language ) {
-			$language = Registry::current_lang();
+			$language = Registry::current_language();
 		}
 
 		// Create an identifier for the url for caching
-		$id = "[{$language->lang_id}]$url";
+		$id = "[{$language->language_id}]$url";
 
 		// Check if this URL has been taken care of before,
 		// return cached result
@@ -327,9 +327,9 @@ class Rewriter {
 			// and provided it's not a wordpress internal URL,
 			// AND if we're not in the default language (provided skip_defalt_l10n is on)
 			// Go ahead and localize the URL
-			if ( is_null( $url_data['lang'] )
+			if ( is_null( $url_data['language'] )
 			&& ! preg_match( '#^wp-([\w-]+.php|(admin|content|includes)/)#', $url_data['path'] )
-			&& ( $language !== Registry::default_lang() || ! Registry::get( 'skip_default_l10n' ) ) ) {
+			&& ( $language !== Registry::default_language() || ! Registry::get( 'skip_default_l10n' ) ) ) {
 				switch ( Registry::get( 'redirection_method' ) ) {
 					case NL_REDIRECT_USING_DOMAIN:
 						// Prepend hostname with language slug
@@ -364,7 +364,7 @@ class Rewriter {
 		 *
 		 * @param string  $url        The new localized URL.
 		 * @param string  $old_url    The original URL passed to this function.
-		 * @param string  $lang       The slug of the language requested.
+		 * @param string  $language       The slug of the language requested.
 		 * @param bool    $relocalize Whether or not to forcibly relocalize the URL.
 		 */
 		$url = apply_filters( 'nlingual_localize_url', $url, $old_url, $language, $relocalize );
@@ -392,7 +392,7 @@ class Rewriter {
 		$url_data = static::process_url( $url );
 
 		// If a language was extracted, rebuild the $url
-		if ( $url_data['lang'] ) {
+		if ( $url_data['language'] ) {
 			$url = static::build_url( $url_data );
 		}
 
@@ -404,7 +404,7 @@ class Rewriter {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::current_lang() to get the current Language object.
+	 * @uses Registry::current_language() to get the current Language object.
 	 * @uses Translator::get_permalink() to get the page/post translation's permalink.
 	 * @uses Rewriter::process_url() to localize the original URL of the page.
 	 * @uses Rewriter::localize_url() to localize the current URI as-is.
@@ -417,7 +417,7 @@ class Rewriter {
 	public static function localize_here( Language $language = null ) {
 		// Default to the current language
 		if ( ! $language ) {
-			$language = Registry::current_lang();
+			$language = Registry::current_language();
 		}
 
 		// Try various conditional tags

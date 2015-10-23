@@ -36,7 +36,7 @@ class Registry {
 	 *
 	 * @var array
 	 */
-	protected static $previous_langs = array();
+	protected static $previous_languages = array();
 
 	/**
 	 * The current language id.
@@ -47,7 +47,7 @@ class Registry {
 	 *
 	 * @var int
 	 */
-	protected static $current_lang;
+	protected static $current_language;
 
 	/**
 	 * The default language id.
@@ -58,7 +58,7 @@ class Registry {
 	 *
 	 * @var int
 	 */
-	protected static $default_lang;
+	protected static $default_language;
 
 	/**
 	 * The show all languages for objects option.
@@ -113,7 +113,7 @@ class Registry {
 	 *
 	 * @var bool
 	 */
-	protected static $postlang_override;
+	protected static $post_language_override;
 
 	/**
 	 * The supported post types.
@@ -239,13 +239,13 @@ class Registry {
 	 *
 	 * @uses Languages::get() to validate/retrieve the language ID.
 	 *
-	 * @param int    $lang_id The ID of the language to get info for.
-	 * @param string $field   Optional The field to get from language.
+	 * @param int    $language_id The ID of the language to get info for.
+	 * @param string $field       Optional The field to get from language.
 	 *
 	 * @return mixed The language or the value of the language's field.
 	 */
-	public static function get_lang( $lang_id, $field = null ) {
-		$language = static::$languages->get( $lang_id );
+	public static function get_language( $language_id, $field = null ) {
+		$language = static::$languages->get( $language_id );
 		if ( is_null( $field ) ) {
 			return $language;
 		} else {
@@ -258,23 +258,23 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Utilities::_lang() to ensure $lang is a Language object.
-	 * @uses Registry::$current_lang to get/update the current language.
-	 * @uses Registry::$previous_langs to log the current language.
+	 * @uses Utilities::_language() to ensure $language is a Language object.
+	 * @uses Registry::$current_language to get/update the current language.
+	 * @uses Registry::$previous_languages to log the current language.
 	 *
-	 * @param mixed $lang The language object, slug or id.
+	 * @param mixed $language The language object, slug or id.
 	 */
-	public static function switch_lang( $lang ) {
-		// Ensure $lang is a Language
-		if ( ! static::_lang( $lang ) ) {
+	public static function switch_language( $language ) {
+		// Ensure $language is a Language
+		if ( ! static::_language( $language ) ) {
 			return false; // Does not exist
 		}
 
 		// Log the current language
-		static::$previous_langs[] = static::$current_lang;
+		static::$previous_languages[] = static::$current_language;
 
-		// Replace $current_lang with desired language
-		static::$current_lang = $lang->lang_id;
+		// Replace $current_language with desired language
+		static::$current_language = $language->language_id;
 	}
 
 	/**
@@ -282,18 +282,18 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::$previous_langs to get the previous language.
-	 * @uses Registry::$current_lang to update the current language.
+	 * @uses Registry::$previous_languages to get the previous language.
+	 * @uses Registry::$current_language to update the current language.
 	 */
-	public static function restore_lang() {
-		$last_lang = array_pop( static::$previous_langs );
-		if ( ! $last_lang ) {
+	public static function restore_language() {
+		$last_language = array_pop( static::$previous_languages );
+		if ( ! $last_language ) {
 			// No previous language, go with default
-			$last_lang = static::$default_lang;
+			$last_language = static::$default_language;
 		}
 
-		// Replace $current_lang with last language
-		static::$current_lang = $last_lang;
+		// Replace $current_language with last language
+		static::$current_language = $last_language;
 	}
 
 	/**
@@ -301,15 +301,15 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @see Registry::get_lang() for details.
+	 * @see Registry::get_language() for details.
 	 *
-	 * @uses Registry::$default_lang
+	 * @uses Registry::$default_language
 	 *
 	 * @param string $field Optional The field to get from the language.
 	 */
-	public static function default_lang( $field = null ) {
-		$lang_id = static::$default_lang;
-		return static::get_lang( $lang_id, $field );
+	public static function default_language( $field = null ) {
+		$language_id = static::$default_language;
+		return static::get_language( $language_id, $field );
 	}
 
 	/**
@@ -317,15 +317,15 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @see Registry::get_lang() for details.
+	 * @see Registry::get_language() for details.
 	 *
-	 * @uses Registry::$current_lang
+	 * @uses Registry::$current_language
 	 *
 	 * @param string $field Optional The field to get from the language.
 	 */
-	public static function current_lang( $field = null ) {
-		$lang_id = static::$current_lang ?: static::$default_lang;
-		return static::get_lang( $lang_id, $field );
+	public static function current_language( $field = null ) {
+		$language_id = static::$current_language ?: static::$default_language;
+		return static::get_language( $language_id, $field );
 	}
 
 	/**
@@ -554,11 +554,11 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @see Registry::$default_lang
+	 * @see Registry::$default_language
 	 * @see Registry::$skip_default_l10n
 	 * @see Registry::$query_var
 	 * @see Registry::$redirection_method
-	 * @see Registry::$postlang_override
+	 * @see Registry::$postlanguage_override
 	 * @see Registry::$post_types
 	 * @see Registry::$localizables
 	 * @see Registry::$sync_rules
@@ -579,12 +579,12 @@ class Registry {
 		}
 
 		// Load simple options
-		static::$default_lang       = get_option( 'nlingual_default_language', 0 );
-		static::$show_all_languages = get_option( 'nlingual_show_all_languages', 1 );
-		static::$skip_default_l10n  = get_option( 'nlingual_skip_default_l10n', 0 );
-		static::$query_var          = get_option( 'nlingual_query_var', 'nl_language' );
-		static::$redirection_method = get_option( 'nlingual_redirection_method', NL_REDIRECT_USING_GET );
-		static::$postlang_override  = get_option( 'nlingual_postlang_override', 0 );
+		static::$default_language       = get_option( 'nlingual_default_language', 0 );
+		static::$show_all_languages     = get_option( 'nlingual_show_all_languages', 1 );
+		static::$skip_default_l10n      = get_option( 'nlingual_skip_default_l10n', 0 );
+		static::$query_var              = get_option( 'nlingual_query_var', 'nl_language' );
+		static::$redirection_method     = get_option( 'nlingual_redirection_method', NL_REDIRECT_USING_GET );
+		static::$post_language_override = get_option( 'nlingual_post_language_override', 0 );
 
 		// Load complex options
 		static::$post_types   = get_option( 'nlingual_post_types', array() );
@@ -595,7 +595,7 @@ class Registry {
 
 		// Load stuff from database
 		$data = $wpdb->get_results( "SELECT * FROM $wpdb->nl_languages ORDER BY list_order ASC", ARRAY_A );
-		static::$languages    = new Languages( $data );
+		static::$languages = new Languages( $data );
 
 		// Flag that we've loaded everything
 		$loaded = true;
