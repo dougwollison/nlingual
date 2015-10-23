@@ -10,30 +10,11 @@ namespace nLingual;
  */
 
 class Translator {
+	use Utilities;
+
 	// =========================
 	// ! Utilities
 	// =========================
-
-	/**
-	 * Utility; convert $language passed into proper object format.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Registry::languages() to validate and retrieve the passed language.
-	 *
-	 * @param mixed &$language The language to be converted.
-	 *
-	 * @return bool If the language was successfully converted.
-	 */
-	protected static function _lang( &$language ) {
-		if ( is_a( $language, __NAMESPACE__ . '\Language' ) ) {
-			return true;
-		} else {
-			$language = Registry::languages()->get( $language );
-		}
-
-		return (bool) $language;
-	}
 
 	/**
 	 * Utility; get a translation group ID for an object.
@@ -107,7 +88,7 @@ class Translator {
 	 * @since 2.0.0
 	 *
 	 * @uses Translator::delete_object_language() to allow for replacement.
-	 * @uses Translator::_lang() to ensure $lang is a Language object.
+	 * @uses Utilities::_lang() to ensure $lang is a Language object.
 	 * @uses Translator::_translation_group_id() to generate a new group ID.
 	 * @uses Registry::cache_set() to update the object's cached language result.
 	 *
@@ -244,7 +225,7 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Translator::_lang() to ensure $lang is a Language object.
+	 * @uses Utilities::_lang() to ensure $lang is a Language object.
 	 *
 	 * @see Translator::get_object_translations() For how the list is retrieved.
 	 *
@@ -282,7 +263,7 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Translator::_lang() to ensure $lang is a Language object.
+	 * @uses Utilities::_lang() to ensure $lang is a Language object.
 	 * @uses Translator::unlink_object_translation() if a translation is to be unset.
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
@@ -346,7 +327,7 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Translator::_lang() to ensure $lang is a Language object.
+	 * @uses Utilities::_lang() to ensure $lang is a Language object.
 	 *
 	 * @see Translator::set_object_translations() for how it's done.
 	 *
@@ -375,7 +356,7 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Translator::_lang() to ensure $lang is a Language object.
+	 * @uses Utilities::_lang() to ensure $lang is a Language object.
 	 * @uses Translator::_translation_group_id() to get the group ID for the object
 	 *                                     as well a new one for it's sister.
 	 *
@@ -423,7 +404,7 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Translator::_lang() to ensure $lang is a Language object.
+	 * @uses Utilities::_lang() to ensure $lang is a Language object.
 	 * @uses Translator::get_object_translation() to get the post's translation.
 	 *
 	 * @param int   $post_id The ID of the post.
