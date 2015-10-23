@@ -10,6 +10,8 @@ namespace nLingual;
  */
 
 class Registry {
+	use Utilities;
+
 	// =========================
 	// ! Properties
 	// =========================
@@ -20,10 +22,21 @@ class Registry {
 	 * @since 2.0.0
 	 *
 	 * @access protected (static)
-	 * (static)
+	 *
 	 * @var array
 	 */
 	protected static $cache = array();
+
+	/**
+	 * Language switching log.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var array
+	 */
+	protected static $previous_langs = array();
 
 	/**
 	 * The current language id.
@@ -169,7 +182,7 @@ class Registry {
 	protected static $languages;
 
 	// =========================
-	// ! Propert Accessing
+	// ! Property Accessing
 	// =========================
 
 	/**
@@ -241,18 +254,61 @@ class Registry {
 	}
 
 	/**
+	 * Switch to a different language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Utilities::_lang() to ensure $lang is a Language object.
+	 * @uses Registry::$current_lang to get/update the current language.
+	 * @uses Registry::$previous_langs to log the current language.
+	 *
+	 * @param mixed $lang The language object, slug or id.
+	 */
+	public static function switch_lang( $lang ) {
+		// Ensure $lang is a Language
+		if ( ! static::_lang( $lang ) ) {
+			return false; // Does not exist
+		}
+
+		// Log the current language
+		static::$previous_langs[] = static::$current_lang;
+
+		// Replace $current_lang with desired language
+		static::$current_lang = $lang->lang_id;
+	}
+
+	/**
+	 * Switch back to the previous language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::$previous_langs to get the previous language.
+	 * @uses Registry::$current_lang to update the current language.
+	 */
+	public static function restore_lang() {
+		$last_lang = array_pop( static::$previous_langs );
+		if ( ! $last_lang ) {
+			// No previous language, go with default
+			$last_lang = static::$default_lang;
+		}
+
+		// Replace $current_lang with last language
+		static::$current_lang = $last_lang;
+	}
+
+	/**
 	 * Shortcut; get the default language or a field for it.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::get() to get the default language ID.
-	 *
 	 * @see Registry::get_lang() for details.
+	 *
+	 * @uses Registry::$default_lang
 	 *
 	 * @param string $field Optional The field to get from the language.
 	 */
 	public static function default_lang( $field = null ) {
-		$lang_id = static::get( 'default_lang' );
+		$lang_id = static::$default_lang;
 		return static::get_lang( $lang_id, $field );
 	}
 
@@ -261,14 +317,14 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::get() to get the current or default language ID.
-	 *
 	 * @see Registry::get_lang() for details.
+	 *
+	 * @uses Registry::$current_lang
 	 *
 	 * @param string $field Optional The field to get from the language.
 	 */
 	public static function current_lang( $field = null ) {
-		$lang_id = static::get( 'current_lang' ) ?: static::get( 'default_lang' );
+		$lang_id = static::$current_lang ?: static::$default_lang;
 		return static::get_lang( $lang_id, $field );
 	}
 
@@ -276,6 +332,8 @@ class Registry {
 	 * Get the sync or cloning rules for a specific object.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Registry::get() to retrive the appropriate rules array.
 	 *
 	 * @param string $rule_type      The type of rules to retrieve ('sync' or 'clone').
 	 * @param string $object_type    The type of object to get sync rules for.
@@ -386,7 +444,7 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::get() to get the localizables option.
+	 * @uses Registry::$localizables to get the localizables settings.
 	 * @uses Registry::languages() to get the registered languages.
 	 *
 	 * @param string $item The name of the localizable to check support for.
@@ -394,7 +452,7 @@ class Registry {
 	 */
 	public static function is_feature_localizable( $item, $list ) {
 		// Check if this feature is enabled
-		$localizables = static::get( 'localizables' );
+		$localizables = static::$localizables;
 		if ( ! isset( $localizables[ $item ] ) || ! $localizables[ $item ] ) {
 			return false;
 		}
@@ -413,7 +471,7 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::get() to get the localizables option.
+	 * @uses Registry::$localizables to get the localizables settings.
 	 *
 	 * @param string $type     The type of location to check for.
 	 * @param string $location The ID of the location to check.
@@ -425,7 +483,7 @@ class Registry {
 		$type .= '_locations';
 
 		// Check if type is present in localizables list
-		$localizables = static::get( 'localizables' );
+		$localizables = static::$localizables;
 		if ( ! isset( $localizables[ $type ] ) ) {
 			return false;
 		}
@@ -450,7 +508,7 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::get() to get the post_types option.
+	 * @uses Registry::$post_types to get the post_types list.
 	 *
 	 * @param string|array $post_types The post type(s) to check.
 	 *
@@ -460,7 +518,7 @@ class Registry {
 		$post_types = (array) $post_types; // Covnert to array
 
 		// Get the supported post types list
-		$supported = static::get( 'post_types' );
+		$supported = static::$post_types;
 
 		return (bool) array_intersect( $supported, $post_types );
 	}
@@ -472,7 +530,7 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::get() to get the taxonomies option.
+	 * @uses Registry::$taxonomies to get the taxonomies list.
 	 *
 	 * @param string|array $taxonomies The taxonomy(ies) to check.
 	 *
@@ -482,7 +540,7 @@ class Registry {
 		$taxonomies = (array) $taxonomies; // Covnert to array
 
 		// Get the supported post types list
-		$supported = static::get( 'taxonomies' );
+		$supported = static::$taxonomies;
 
 		return (bool) array_intersect( $supported, $taxonomies );
 	}
