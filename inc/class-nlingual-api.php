@@ -73,6 +73,9 @@ class API extends Functional {
 		if ( defined( 'DOING_AJAX' ) ) {
 			AJAX::register_hooks();
 		}
+
+		// Finally, setup the Liaison for supporting other plugins
+		Liaison::register_hooks();
 	}
 
 	// =========================
