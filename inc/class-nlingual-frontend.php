@@ -52,6 +52,12 @@ class Frontend extends Functional {
 		static::add_filter( 'body_class', 'add_body_classes', 10, 1 );
 		static::add_filter( 'option_page_on_front', 'current_language_version', 10, 1 );
 		static::add_filter( 'option_page_for_posts', 'current_language_version', 10, 1 );
+
+		// Front-end only query rewrites
+		static::add_filter( 'get_previous_post_join', 'add_adjacent_translation_join_clause', 10, 1 );
+		static::add_filter( 'get_next_post_join', 'add_adjacent_translation_join_clause', 10, 1 );
+		static::add_filter( 'get_previous_post_where', 'add_adjacent_translation_where_clause', 10, 1 );
+		static::add_filter( 'get_next_post_where', 'add_adjacent_translation_where_clause', 10, 1 );
 	}
 
 	// =========================
@@ -384,5 +390,70 @@ class Frontend extends Functional {
 		$post_id = Translator::get_post_translation( $post_id, $current_language, true );
 
 		return $post_id;
+	}
+
+	// =========================
+	// ! Query Filters
+	// =========================
+
+	/**
+	 * Add the translations table to the join clause for adjacent posts.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @param string $clause The join clause to add to.
+	 *
+	 * @return string The modified join clause.
+	 */
+	public static function add_adjacent_translation_join_clause( $clause ) {
+		global $wpdb;
+
+		// Get the current post
+		$post = get_post();
+
+		// Abort if post type is not supported
+		if ( ! Registry::is_post_type_supported( $post->post_type ) ) {
+			return $clause;
+		}
+
+		// Add the join for the translations table
+		$clause .= " LEFT JOIN $wpdb->nl_translations ON ($wpdb->posts.ID = $wpdb->nl_translations.object_id AND $wpdb->nl_translations.object_type = 'post')";
+
+		return $clause;
+	}
+
+	/**
+	 * Add the language condition to the where clause for adjacent posts.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @param string $clause The where clause to add to.
+	 *
+	 * @return string The modified where clause.
+	 */
+	public static function add_adjacent_translation_where_clause( $clause ) {
+		global $wpdb;
+
+		// Get the current post
+		$post = get_post();
+
+		// Abort if post type is not supported
+		if ( ! Registry::is_post_type_supported( $post->post_type ) ) {
+			return $clause;
+		}
+
+		// Get the posts language, fail if somehow not found
+		if ( ! ( $language = Translator::get_post_language( $post->ID ) ) ) {
+			return $clause;
+		}
+
+		// Add the language condition
+		$clause .= $wpdb->prepare( " AND $wpdb->nl_translations.language_id = %d", $language->language_id );
+
+		return $clause;
 	}
 }
