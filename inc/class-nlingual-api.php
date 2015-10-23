@@ -290,7 +290,7 @@ class API extends Functional {
 		$languages = (array) $languages;
 
 		// Get the available languages for valiation purposes
-		$languages = Registry::languages();
+		$all_languages = Registry::languages();
 
 		// Loop through each language specified and build the subclause
 		$subclause = array();
@@ -305,7 +305,7 @@ class API extends Functional {
 				$subclause[] = "$wpdb->nl_translations.language_id IS NULL";
 			} else
 			// Otherwise check if the language exists
-			if ( $language = $languages->get( $language ) ) {
+			if ( $language = $all_languages->get( $language ) ) {
 				$subclause[] = $wpdb->prepare( "$wpdb->nl_translations.language_id = %d", $language->language_id );
 			}
 		}
