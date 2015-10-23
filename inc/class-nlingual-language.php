@@ -23,7 +23,7 @@ class Language {
 	 *
 	 * @var int
 	 */
-	protected $language_id = 0;
+	protected $id = 0;
 
 	/**
 	 * The active status of the language
@@ -122,7 +122,7 @@ class Language {
 	 *
 	 * @var array
 	 */
-	protected static $properties = array( 'language_id', 'slug', 'system_name', 'native_name', 'short_name', 'iso_code', 'locale_name', 'list_order', 'active' );
+	protected static $properties = array( 'id', 'slug', 'system_name', 'native_name', 'short_name', 'iso_code', 'locale_name', 'list_order', 'active' );
 
 	// =========================
 	// ! Methods
@@ -145,8 +145,13 @@ class Language {
 			}
 		}
 
-		// Ensure $language_id is integer
-		$this->language_id = intval( $this->language_id );
+		// If language_id was passed, use that for id
+		if ( isset( $values['language_id'] ) ) {
+			$this->id = $values['language_id'];
+		}
+
+		// Ensure $id is integer
+		$this->id = intval( $this->id );
 
 		// Ensure $active is boolean
 		$this->active = (bool) intval( $this->active );

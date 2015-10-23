@@ -97,7 +97,7 @@ class API extends Functional {
 			return;
 		}
 
-		Registry::set( 'current_language', $language->language_id );
+		Registry::set( 'current_language', $language->id );
 
 		if ( $lock ) {
 			// Lock the language from being changed again
@@ -309,7 +309,7 @@ class API extends Functional {
 			} else
 			// Otherwise check if the language exists
 			if ( $language = $all_languages->get( $language ) ) {
-				$subclause[] = $wpdb->prepare( "$wpdb->nl_translations.language_id = %d", $language->language_id );
+				$subclause[] = $wpdb->prepare( "$wpdb->nl_translations.language_id = %d", $language->id );
 			}
 		}
 

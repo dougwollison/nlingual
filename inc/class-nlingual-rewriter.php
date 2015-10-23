@@ -305,7 +305,7 @@ class Rewriter {
 		}
 
 		// Create an identifier for the url for caching
-		$id = "[{$language->language_id}]$url";
+		$id = "[{$language->id}]$url";
 
 		// Check if this URL has been taken care of before,
 		// return cached result

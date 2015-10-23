@@ -274,7 +274,7 @@ class Registry {
 		static::$previous_languages[] = static::$current_language;
 
 		// Replace $current_language with desired language
-		static::$current_language = $language->language_id;
+		static::$current_language = $language->id;
 	}
 
 	/**

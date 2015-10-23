@@ -170,7 +170,7 @@ class Languages implements \Iterator {
 	 * @since 2.0.0
 	 *
 	 * @param int|string $value A value to retrieve the language by.
-	 * @param string     $field Optional The field to search in (defaults to language_id or slug).
+	 * @param string     $field Optional The field to search in (defaults to id or slug).
 	 *
 	 * @return bool|nLingual_Language The language if found (false if not).
 	 */
@@ -179,7 +179,7 @@ class Languages implements \Iterator {
 		if ( is_null( $field ) ) {
 			if ( is_numeric( $value ) ) {
 				// Language ID
-				$field = 'language_id';
+				$field = 'id';
 			} else {
 				// Slug
 				$field = 'slug';
@@ -255,7 +255,7 @@ class Languages implements \Iterator {
 		$data = array();
 
 		foreach ( $this->languages as $language ) {
-			$data[ $language->language_id ] = $field ? $language->$field : $language->export();
+			$data[ $language->id ] = $field ? $language->$field : $language->export();
 		}
 
 		return $data;

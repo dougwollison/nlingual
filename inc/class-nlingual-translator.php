@@ -120,7 +120,7 @@ class Translator {
 		$language_exists = $wpdb->get_var( $wpdb->prepare( "
 			SELECT object_id FROM $wpdb->nl_translations
 			WHERE group_id = %d AND language_id = %
-		", $group_id, $language->language_id ) );
+		", $group_id, $language->id ) );
 		if ( $language_exists ) {
 			// Get a new group ID if so
 			$group_id = static::_translation_group_id();
@@ -131,7 +131,7 @@ class Translator {
 			'group_id'    => $group_id,
 			'object_type' => $type,
 			'object_id'   => $id,
-			'language_id' => $language->language_id,
+			'language_id' => $language->id,
 		), array( '%d', '%s', '%d', '%d' ) );
 
 		// Add it to the cache
@@ -214,7 +214,7 @@ class Translator {
 		// Loop through the results and build the language_id => object_id list
 		$objects = array();
 		foreach ( $results as $row ) {
-			$objects[ $row->language_id ] = $row->object_id;
+			$objects[ $row->id ] = $row->object_id;
 		}
 
 		return $objects;
@@ -247,8 +247,8 @@ class Translator {
 		$translations = static::get_object_translations( $type, $id );
 
 		// Check if translation exists
-		if ( isset( $translations[ $language->language_id ] ) ) {
-			return $translations[ $language->language_id ];
+		if ( isset( $translations[ $language->id ] ) ) {
+			return $translations[ $language->id ];
 		}
 
 		// Otherwise, return the original id or false, depending on $return_self
@@ -300,7 +300,7 @@ class Translator {
 			}
 
 			// Skip if we're trying assign a translation for the object's language
-			if ( $language->language_id == $language->language_id ) {
+			if ( $language->id == $language->id ) {
 				continue;
 			}
 
@@ -309,7 +309,7 @@ class Translator {
 				static::unlink_object_translation( $type, $id, $language );
 			} else {
 				// Build the row data for the query
-				$values[] = $wpdb->prepare( "(%d, %s, %d, %d)", $group_id, $type, $object_id, $language->language_id );
+				$values[] = $wpdb->prepare( "(%d, %s, %d, %d)", $group_id, $type, $object_id, $language->id );
 			}
 		}
 
@@ -345,7 +345,7 @@ class Translator {
 		}
 
 		// Alias to set_object_translations method
-		return static::set_object_translations( $type, $id, array( $language->language_id => $object ) );
+		return static::set_object_translations( $type, $id, array( $language->id => $object ) );
 	}
 
 	/**
@@ -388,7 +388,7 @@ class Translator {
 			),
 			array(
 				'group_id'    => $group_id,
-				'language_id' => $language->language_id
+				'language_id' => $language->id
 			),
 			array( '%d' ),
 			array( '%d', '%d' )

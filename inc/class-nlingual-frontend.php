@@ -452,7 +452,7 @@ class Frontend extends Functional {
 		}
 
 		// Add the language condition
-		$clause .= $wpdb->prepare( " AND $wpdb->nl_translations.language_id = %d", $language->language_id );
+		$clause .= $wpdb->prepare( " AND $wpdb->nl_translations.language_id = %d", $language->id );
 
 		return $clause;
 	}

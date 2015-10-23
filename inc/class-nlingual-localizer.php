@@ -433,13 +433,13 @@ class Localizer extends Functional {
 
 		$strings = array();
 		foreach ( $results as $result ) {
-			$strings[ $result->language_id ] = $result->string_value;
+			$strings[ $result->id ] = $result->string_value;
 		}
 
 		// Fill with empty values for all languages
 		foreach ( Registry::languages() as $language ) {
-			if ( ! isset( $strings[ $language->language_id ] ) ) {
-				$strings[ $language->language_id ] = '';
+			if ( ! isset( $strings[ $language->id ] ) ) {
+				$strings[ $language->id ] = '';
 			}
 		}
 
@@ -494,7 +494,7 @@ class Localizer extends Functional {
 		$language = Registry::current_language();
 
 		// Get the localized version of the string if it exists
-		if ( $value = static::get_string_value( "option_{$option}", $language->language_id ) ) {
+		if ( $value = static::get_string_value( "option_{$option}", $language->id ) ) {
 			return $value;
 		}
 
@@ -519,10 +519,10 @@ class Localizer extends Functional {
 		$language = Registry::current_language();
 
 		// Get the localized version of the string if it exists
-		if ( $name = static::get_string_value( "term_{$taxonomy}_name", $language->language_id, $term->term_id ) ) {
+		if ( $name = static::get_string_value( "term_{$taxonomy}_name", $language->id, $term->term_id ) ) {
 			$term->name = $name;
 		}
-		if ( $description = static::get_string_value( "term_{$taxonomy}_description", $language->language_id, $term->term_id ) ) {
+		if ( $description = static::get_string_value( "term_{$taxonomy}_description", $language->id, $term->term_id ) ) {
 			$term->description = $description;
 		}
 
@@ -567,7 +567,7 @@ class Localizer extends Functional {
 		$language = Registry::current_language();
 
 		// Get the localized version of the string if it exists
-		if ( $value = static::get_string_value( "meta_{$meta_type}_{$meta_key}", $language->language_id, $object_id ) ) {
+		if ( $value = static::get_string_value( "meta_{$meta_type}_{$meta_key}", $language->id, $object_id ) ) {
 			return $value;
 		}
 

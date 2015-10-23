@@ -731,15 +731,15 @@ class Manager extends Functional {
 				<?php foreach ( Registry::languages() as $language ) : ?>
 				<tr>
 					<?php
-					$is_default_language = $language->language_id == $default_language;
+					$is_default_language = $language->id == $default_language;
 
-					$id = sprintf( '%s-%d-%d', $string->key, $language->language_id, $object_id );
-					$name = sprintf( 'nlingual_strings[%s][%d][%d]', $string->key, $language->language_id, $object_id );
+					$id = sprintf( '%s-%d-%d', $string->key, $language->id, $object_id );
+					$name = sprintf( 'nlingual_strings[%s][%d][%d]', $string->key, $language->id, $object_id );
 
 					if ( $is_default_language ) {
 						$value = $unlocalized;
 					} else {
-						$value = $localized[ $language->language_id ];
+						$value = $localized[ $language->id ];
 					}
 
 					// Build the field parameters
