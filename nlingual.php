@@ -27,6 +27,7 @@ define( 'NL_REDIRECT_USING_DOMAIN', 'NL_REDIRECT_USING_DOMAIN' );
 require( NL_DIR . '/inc/utilities.php' );
 require( NL_DIR . '/inc/autoloader.php' );
 require( NL_DIR . '/inc/nlingual-functions.php' );
+require( NL_DIR . '/inc/alias-functions.php' );
 
 // Setup
 nLingual\API::setup();
