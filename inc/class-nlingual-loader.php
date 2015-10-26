@@ -97,11 +97,12 @@ class Loader extends Functional {
 		add_option( 'nlingual_redirection_method', NL_REDIRECT_USING_GET );
 		add_option( 'nlingual_post_language_override', 0 );
 		add_option( 'nlingual_post_types', array() );
+		add_option( 'nlingual_taxonomies', array() );
 		add_option( 'nlingual_sync_rules', array(
-			'post_types' => array()
+			'post_types' => array(),
 		)  );
 		add_option( 'nlingual_clone_rules', array(
-			'post_types' => array()
+			'post_types' => array(),
 		) );
 		add_option( 'nlingual_localizables', array(
 			'nav_menu_locations' => array(),
@@ -119,6 +120,7 @@ class Loader extends Functional {
 		if ( version_compare( $db_version, NL_DB_VERSION, '<' ) ) {
 			// Check if upgrading from before 2.0.0
 			if ( version_compare( $db_version, '2.0.0', '<' ) ) {
+				static::convert_options();
 				static::upgrade_database();
 			}
 
@@ -209,6 +211,51 @@ class Loader extends Functional {
 	// =========================
 
 	/**
+	 * Convert old options to new format.
+	 *
+	 * @since 2.0.0
+	 */
+	protected static function convert_options() {
+		// Get the old nLingual-options
+		$options = get_option( 'nLingual-options', array() );
+
+		// Reassign to new options
+		$renamed_options = array(
+			'admin_only'        => 'nlingual_backend_only',
+			'default_lang'      => 'nlingual_default_language',
+			'delete_sisters'    => 'nlingual_delete_sisters',
+			'get_var'           => 'nlingual_query_var',
+			'l10n_dateformat'   => 'nlingual_localize_date',
+			'method'            => 'nlingual_redirection_method',
+			'post_types'        => 'nlingual_post_types',
+			'skip_default_l10n' => 'nlingual_skip_default_l10n',
+			'separator'         => 'nlingual-old_separator',
+		);
+		foreach ( $renamed_options as $oldname => $newname ) {
+			if ( isset( $options[ $oldname ] ) ) {
+				update_option( $newname, $options[ $oldname ] );
+			}
+		}
+
+		// Get the old nLingual-sync_rules
+		$old_sync_rules = get_option( 'nLingual-sync_rules', array() );
+		$new_sync_rules = array( 'post_type' => array() );
+		foreach ( $old_sync_rules as $post_type => $rules ) {
+			$new_sync_rules['post_type'][ $post_type ] = array(
+				'post_fields' => $rules['data'],
+				'post_terms' => $rules['tax'],
+				'post_meta' => $rules['meta'],
+			);
+		}
+
+		// Save the new sync rules
+		update_option( 'nlingual_sync_rules', $new_sync_rules );
+
+		// Automatically set options that weren't present in old version
+		update_option( 'nlingual_post_language_override', 1 );
+	}
+
+	/**
 	 * Upgrade database structure from < 2.0.0.
 	 *
 	 * Converts old languages and translations tables to new formats.
@@ -217,7 +264,7 @@ class Loader extends Functional {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 */
-	public static function upgrade_database() {
+	protected static function upgrade_database() {
 		global $wpdb;
 
 		// Get the collation if applicable
