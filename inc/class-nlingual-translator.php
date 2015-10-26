@@ -189,35 +189,42 @@ class Translator {
 	public static function get_object_translations( $type, $id, $include_self = false ) {
 		global $wpdb;
 
-		$query = "
-			SELECT
-				t2.language_id,
-				t2.object_id
-			FROM
-				$wpdb->nl_translations AS t1
-				LEFT JOIN
-					$wpdb->nl_translations AS t2
-					ON (t1.group_id = t2.group_id)
-			WHERE 1=1
-				AND t1.object_type = %s
-				AND t1.object_id = %2\$d
-		";
+		// Check if it's cached, fetch if not
+		if ( ! ( $translations = Registry::cache_get( "{$type}_translations", $id ) ) ) {
+			$query = "
+				SELECT
+					t2.language_id,
+					t2.object_id
+				FROM
+					$wpdb->nl_translations AS t1
+					LEFT JOIN
+						$wpdb->nl_translations AS t2
+						ON (t1.group_id = t2.group_id)
+				WHERE 1=1
+					AND t1.object_type = %s
+					AND t1.object_id = %2\$d
+			";
 
-		// Add the additional where clause if $include_self is false
+			// Get the results of the query
+			$results = $wpdb->get_results( $wpdb->prepare( $query, $type, $id ) );
+
+			// Loop through the results and build the language_id => object_id list
+			$translations = array();
+			foreach ( $results as $row ) {
+				$translations[ $row->language_id ] = $row->object_id;
+			}
+
+			// Add it to the cache
+			Registry::cache_set( "{$type}_translations", $id, $translations );
+		}
+
+		// Remove the target posts ID if desired
 		if ( ! $include_self ) {
-			$query .= "AND t2.object_id != %2\$d";
+			$language_id = array_search( $id, $translations );
+			unset( $translations[ $language_id ] );
 		}
 
-		// Get the results of the query
-		$results = $wpdb->get_results( $wpdb->prepare( $query, $type, $id ) );
-
-		// Loop through the results and build the language_id => object_id list
-		$objects = array();
-		foreach ( $results as $row ) {
-			$objects[ $row->id ] = $row->object_id;
-		}
-
-		return $objects;
+		return $translations;
 	}
 
 	/**
