@@ -279,29 +279,32 @@ class Loader extends Functional {
 		$wpdb->query("ALTER TABLE {$wpdb->prefix}nL_languages RENAME TO {$wpdb->prefix}nl_languages2");
 		$wpdb->query("ALTER TABLE {$wpdb->prefix}nl_languages2 RENAME TO $wpdb->nl_languages");
 		// Rename lang_id to language_id, keeping it at the beginning
-		$wpdb->query("ALTER TABLE $wpdb->nL_languages CHANGE `lang_id` `language_id` bigint(20) unsigned NOT NULL FIRST");
+		$wpdb->query("ALTER TABLE $wpdb->nl_languages CHANGE `lang_id` `language_id` bigint(20) unsigned NOT NULL FIRST");
 		// Rename mo to locale_name, placing it after short_name
-		$wpdb->query("ALTER TABLE $wpdb->nL_languages CHANGE `mo` `locale_name` varchar(10) DEFAULT '' NOT NULL AFTER `short_name`");
+		$wpdb->query("ALTER TABLE $wpdb->nl_languages CHANGE `mo` `locale_name` varchar(10) DEFAULT '' NOT NULL AFTER `short_name`");
 		// Rename iso to iso_code, placing it after locale_name
-		$wpdb->query("ALTER TABLE $wpdb->nL_languages CHANGE `iso` `iso_code` varchar(2) DEFAULT '' NOT NULL AFTER `locale_name`");
+		$wpdb->query("ALTER TABLE $wpdb->nl_languages CHANGE `iso` `iso_code` varchar(2) DEFAULT '' NOT NULL AFTER `locale_name`");
 		// Relocate slug to after iso_code
-		$wpdb->query("ALTER TABLE $wpdb->nL_languages MODIFY `slug` varchar(10) DEFAULT '' NOT NULL AFTER `iso_code`");
+		$wpdb->query("ALTER TABLE $wpdb->nl_languages MODIFY `slug` varchar(10) DEFAULT '' NOT NULL AFTER `iso_code`");
 
 		// We need to alter the translations table to the new format
 
 		// Rename to lowercase
 		$wpdb->query("ALTER TABLE {$wpdb->prefix}nL_translations RENAME TO {$wpdb->prefix}nl_translations2");
 		$wpdb->query("ALTER TABLE {$wpdb->prefix}nl_translations2 RENAME TO $wpdb->nl_translations");
-		// Start by removing the old unique key
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations DROP KEY `post_id`");
+		// Start by removing the old unique keys
+		$wpdb->query("ALTER TABLE $wpdb->nl_translations DROP KEY post");
+		$wpdb->query("ALTER TABLE $wpdb->nl_translations DROP KEY translation");
 		// Rename lang_id to language_id, keeping it after group_id
-		$wpdb->query("ALTER TABLE $wpdb->nL_languages CHANGE `lang_id` `language_id` bigint(20) unsigned NOT NULL AFTER `group_id`");
+		$wpdb->query("ALTER TABLE $wpdb->nl_translations CHANGE `lang_id` `language_id` bigint(20) unsigned NOT NULL AFTER `group_id`");
 		// Now add the new object_type column
 		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD `object_type` varchar(20) $collate NOT NULL DEFAULT 'post'");
 		// Rename post_id to object_id, placing it after object_type
 		$wpdb->query("ALTER TABLE $wpdb->nl_translations CHANGE `post_id` `object_id` bigint(20) unsigned NOT NULL AFTER `object_type`");
-		// Add the new unique key for object type/id pairs
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD UNIQUE KEY object_type_id (object_id, object_type)");
+		// Add the new keys
+		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD UNIQUE KEY group_lang (group_id, language_id)");
+		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD UNIQUE KEY group_object (group_id, object_id)");
+		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD UNIQUE KEY object_type (object_type, object_id)");
 
 		// Just in case, mark them down as being at least up to 2.0.0
 		update_option( 'nlingual_database_version', '2.0.0' );
