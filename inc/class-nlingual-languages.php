@@ -1,6 +1,4 @@
 <?php
-namespace nLingual;
-
 /**
  * nLingual Languages Collection
  *
@@ -8,6 +6,8 @@ namespace nLingual;
  *
  * @since 2.0.0
  */
+
+namespace nLingual;
 
 class Languages implements \Iterator {
 	// =========================

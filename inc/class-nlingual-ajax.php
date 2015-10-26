@@ -1,6 +1,4 @@
 <?php
-namespace nLingual;
-
 /**
  * nLingual AJAX Handler
  *
@@ -8,6 +6,8 @@ namespace nLingual;
  *
  * @since 2.0.0
  */
+
+namespace nLingual;
 
 class AJAX extends Functional {
 	// =========================

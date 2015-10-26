@@ -1,6 +1,4 @@
 <?php
-namespace nLingual_Autoloader;
-
 /**
  * nLingual Autoloading System
  *
@@ -8,6 +6,8 @@ namespace nLingual_Autoloader;
  * @subpackage Autoloader
  * @since 2.0.0
  */
+
+namespace nLingual_Autoloader;
 
 /**
  * Handle file locating and loading.
