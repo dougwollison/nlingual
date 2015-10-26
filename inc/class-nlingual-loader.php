@@ -122,6 +122,9 @@ class Loader extends Functional {
 			if ( version_compare( $db_version, '2.0.0', '<' ) ) {
 				static::convert_options();
 				static::upgrade_database();
+
+				// Flag as needing backwards compatability
+				update_option( 'nlingual_backwards_compatible', 1 );
 			}
 
 			// Just install/update the languages table as normal
