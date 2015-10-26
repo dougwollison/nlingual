@@ -161,9 +161,9 @@ jQuery( function( $ ) {
 			}
 
 			// Default values
-			data.language_id = languageRowIndex;
-			data.slug    = data.iso_code;
-			data.active  = true;
+			data.id     = languageRowIndex;
+			data.slug   = data.iso_code;
+			data.active = true;
 
 			buildLangRow( data );
 
@@ -216,7 +216,7 @@ jQuery( function( $ ) {
 	var $localizer = $('<span class="nl-localizer"></span>').html(function(){
 		var html = '<span class="nl-localizer-toggle" title="' + nlingualL10n.LocalizeThis + '"></span>', language;
 		_.each( NL_LANGUAGES, function( language ) {
-			html += '<span class="nl-localizer-option" title="' + nlingualL10n.LocalizeFor.replace( '%s', language.system_name ) + '" data-language="' + language.language_id + '"><i class="nl-option-text">' + language.system_name + '</i></span>';
+			html += '<span class="nl-localizer-option" title="' + nlingualL10n.LocalizeFor.replace( '%s', language.system_name ) + '" data-language="' + language.id + '"><i class="nl-option-text">' + language.system_name + '</i></span>';
 		} );
 		return html;
 	});
@@ -249,23 +249,23 @@ jQuery( function( $ ) {
 		// Add copies of the field for each language
 		_.each( NL_LANGUAGES, function( language ) {
 			// Skip the default language
-			if ( NL_DEFAULT_LANGUAGE === language.language_id ) {
+			if ( NL_DEFAULT_LANGUAGE === language.id ) {
 				return;
 			}
 
 			// Get the localized version of the value
-			var localized = values[ language.language_id ] || null;
+			var localized = values[ language.id ] || null;
 
 			// Copy, update the id/name, and set the value
 			var $localized = $field.clone();
 			$localized.attr( {
-				id   : 'nl_localized-' + $field.attr( 'id' ) + '-language_' + language.language_id,
-				name : 'nlingual_localized[' + $field.attr( 'name' ) + '][' + language.language_id + ']'
+				id   : 'nl_localized-' + $field.attr( 'id' ) + '-language_' + language.id,
+				name : 'nlingual_localized[' + $field.attr( 'name' ) + '][' + language.id + ']'
 			} );
 			$localized.val( localized );
 
 			// Store it for later use
-			$control.data( '$nl_localized_' + language.language_id, $localized );
+			$control.data( '$nl_localized_' + language.id, $localized );
 
 			// Add to the container and hide
 			$localized.appendTo( $wrap ).hide();
@@ -312,13 +312,13 @@ jQuery( function( $ ) {
 
 	// Update visible translation fields based on current language
 	$( '#nl_language' ).change( function() {
-		var language_id = $( this ).val();
+		var id = $( this ).val();
 
 		// Show all translation fields by default
 		$( '.nl-translation' ).show();
 
 		// Hide the one for the current language
-		$( '#nl_translation_' + language_id ).hide();
+		$( '#nl_translation_' + id ).hide();
 
 	} ).change(); // Update on page load
 
@@ -327,13 +327,13 @@ jQuery( function( $ ) {
 		var $input = $( this );
 		var value = $input.val();
 		var post_id = $( '#post_ID' ).val();
-		var language_id = $input.parents( '.nl-field' ).data( 'languageid' );
+		var id = $input.parents( '.nl-field' ).data( 'languageid' );
 
 		if ( value === 'new' ) {
 			// Ask for a title for the translation
 			var title = $( '#title' ).val();
 			var placeholder = nlingualL10n.TranslationTitlePlaceholder
-				.replace( /%s/, NL_LANGUAGES[ language_id ].system_name )
+				.replace( /%s/, NL_LANGUAGES[ id ].system_name )
 				.replace( /%s/, title );
 			var translation_title = prompt( nlingualL10n.TranslationTitle, placeholder );
 
@@ -349,7 +349,7 @@ jQuery( function( $ ) {
 				data: {
 					action       : 'nl_new_translation',
 					post_id      : post_id,
-					language_id      : language_id,
+					id      : id,
 					title        : translation_title,
 					custom_title : translation_title === placeholder
 				},
@@ -417,8 +417,8 @@ jQuery( function( $ ) {
 
 			// Update the translations fields
 			$editRow.find( '.nl-translation' ).each( function() {
-				var language_id = $( this ).data( 'languageid' );
-				var translation = $postRow.find( '.nl-translation-' + language_id ).val();
+				var id = $( this ).data( 'languageid' );
+				var translation = $postRow.find( '.nl-translation-' + id ).val();
 				$( this ).find( 'select' ).val( translation || -1 );
 			} );
 		};
