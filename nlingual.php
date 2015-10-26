@@ -18,7 +18,7 @@ require( __DIR__ . '/inc/load.php' );
 
 // Check for update notices
 if ( is_admin() ) {
-	add_action( 'in_plugin_update_message-' . basename( __DIR__ ) . '/' . basename( __FILE__ ), 'nlingual_update_notice_check' );
+	add_action( 'in_plugin_update_message-' . plugin_basename( __FILE__ ), 'nlingual_update_notice_check' );
 	function nlingual_update_notice_check( $plugin ) {
 		// get the version number
 		$version = $plugin['new_version'];
