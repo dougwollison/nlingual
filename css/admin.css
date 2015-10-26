@@ -179,9 +179,9 @@
   #nlingual-sync-form .nl-inputlist br {
     display: none; }
 
-#nl_lang_controls {
+#nl_language_controls {
   margin: 2em 0 1em; }
-  #nl_lang_controls select, #nl_lang_controls button {
+  #nl_language_controls select, #nl_language_controls button {
     margin: 0; }
 
 #nlingual_languages tr {
@@ -201,24 +201,24 @@
   height: 27px; }
 #nlingual_languages input[type="checkbox"] {
   margin: 6px 0; }
-#nlingual_languages .nl-lang-slug,
-#nlingual_languages .nl-lang-locale_name,
-#nlingual_languages .nl-lang-iso_code,
-#nlingual_languages .nl-lang-active,
-#nlingual_languages .nl-lang-delete {
+#nlingual_languages .nl-language-slug,
+#nlingual_languages .nl-language-locale_name,
+#nlingual_languages .nl-language-iso_code,
+#nlingual_languages .nl-language-active,
+#nlingual_languages .nl-language-delete {
   text-align: center; }
-#nlingual_languages .nl-lang-locale_name input,
-#nlingual_languages .nl-lang-iso_code input,
-#nlingual_languages .nl-lang-slug input {
+#nlingual_languages .nl-language-locale_name input,
+#nlingual_languages .nl-language-iso_code input,
+#nlingual_languages .nl-language-slug input {
   font-family: 'Courier New', monospace;
   text-align: center; }
-#nlingual_languages .nl-lang-slug,
-#nlingual_languages .nl-lang-iso_code {
+#nlingual_languages .nl-language-slug,
+#nlingual_languages .nl-language-iso_code {
   width: 30px; }
-#nlingual_languages .nl-lang-short_name {
+#nlingual_languages .nl-language-short_name {
   width: 100px; }
-#nlingual_languages .nl-lang-locale_name {
+#nlingual_languages .nl-language-locale_name {
   width: 60px; }
-#nlingual_languages .nl-lang-active,
-#nlingual_languages .nl-lang-delete {
+#nlingual_languages .nl-language-active,
+#nlingual_languages .nl-language-delete {
   width: 60px; }
