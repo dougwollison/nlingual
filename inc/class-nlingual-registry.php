@@ -436,8 +436,40 @@ class Registry {
 	}
 
 	// =========================
-	// ! Option Testinging
+	// ! Property Testinging
 	// =========================
+
+	/**
+	 * Check if the current language is the specified one.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::current_language() to get the current language.
+	 *
+	 * @param mixed $language The language to test for (by id, slug or object).
+	 */
+	public static function is_language( $language ) {
+		// Ensure $language is a Language
+		if ( ! static::_language( $language ) ) {
+			return false; // Does not exist
+		}
+
+		// Test if the IDs match
+		$result = static::current_language()->id == $language->id;
+
+		return $result;
+	}
+
+	/**
+	 * Alias of is_language(), check if it's the default language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @see Registry::is_language() for details.
+	 */
+	public static function is_default_language() {
+		return static::is_language( static::default_language() );
+	}
 
 	/**
 	 * Check if localizable feature is supported.
