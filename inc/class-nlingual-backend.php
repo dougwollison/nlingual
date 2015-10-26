@@ -197,6 +197,9 @@ class Backend extends Functional {
 		global $$global;
 		$list =& $$global;
 
+		// Cache the old version of the menus for reference
+		Registry::cache_set( 'vars', $global, $list );
+
 		// Abort if not supported
 		if ( ! Registry::is_feature_localizable( "{$type}_locations", $list ) ) {
 			return;
@@ -223,9 +226,6 @@ class Backend extends Functional {
 				}
 			}
 		}
-
-		// Cache the old version of the menus for reference
-		Registry::cache_set( 'vars', $global, $list );
 
 		// Replace the registered nav menu array with the new one
 		$list = $localized_locations;
@@ -798,7 +798,7 @@ class Backend extends Functional {
 			if(typeof admin_url === 'undefined'){
 				var admin_url = '<?php echo admin_url(); ?>';
 			}
-			var NL_DEFAULT_LANG = <?php echo Registry::get( 'default_language' ); ?>;
+			var NL_DEFAULT_LANGUAGE = <?php echo Registry::get( 'default_language' ); ?>;
 			var NL_LANGUAGES = <?php echo json_encode( Registry::languages()->export() ); ?>;
 		</script>
 		<?php
