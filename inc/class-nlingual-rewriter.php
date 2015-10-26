@@ -495,4 +495,45 @@ class Rewriter {
 
 		return $url;
 	}
+
+	// =========================
+	// ! Utilities
+	// =========================
+
+	/**
+	 * Get a list of links for each language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::current_language() to get the current language.
+	 * @uses Registry::languages() to loop through all languages registered.
+	 * @uses Rewriter::localize_here() to get each URL.
+	 *
+	 * @param bool   $skip_current Wether or not to skip the current language.
+	 * @param string $index_by     What language property to use for the array index (typically id or slug).
+	 *
+	 * @return array A list of URLs for the current page in each language.
+	 */
+	public static function get_links( $skip_current = false, $index_by = 'id' ) {
+		// Get the current language
+		$current_language = Registry::current_language( 'id' );
+
+		$links = array();
+
+		// Loop through each language
+		foreach ( Registry::languages() as $language ) {
+			// Skip if this is the current language and it's not wanted
+			if ( $skip_current && $language->id == $current_language ) {
+				continue;
+			}
+
+			// Get the localized version of the current URL
+			$url = Rewriter::localize_here( $language );
+
+			// Add the entry for this language
+			$links[ $language->$index_by ] = $url;
+		}
+
+		return $links;
+	}
 }
