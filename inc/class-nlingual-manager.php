@@ -426,7 +426,13 @@ class Manager extends Functional {
 	protected static function setup_localizables_fields() {
 		add_settings_section( 'default', null, null, 'nlingual-localizables' );
 
-		// Build the post types list
+		$settings = array();
+
+		/**
+		 * Post Types
+		 */
+
+		// Build the list
 		$post_types = array();
 		foreach ( get_post_types( array(
 			'show_ui' => true,
@@ -438,7 +444,21 @@ class Manager extends Functional {
 			$post_types[ $post_type->name ] = $post_type->labels->name;
 		}
 
-		// Build the taxonomies list
+		// Add if we have any
+		if ( $post_types ) {
+			$fields['post_types'] = array(
+				'title' => __( 'Post Types' ),
+				'help'  => __( 'What post types should support language and translations?' ),
+				'type'  => 'checklist',
+				'data'  => $post_types,
+			);
+		}
+
+		/**
+		 * Taxonomies
+		 */
+
+		// Build the list
 		$taxonomies = array();
 		foreach ( get_taxonomies( array(
 			'show_ui' => true,
@@ -450,42 +470,55 @@ class Manager extends Functional {
 			$taxonomies[ $taxonomy->name ] = $taxonomy->labels->name;
 		}
 
-		// Get the original nav menus list
+		// Add if we have any
+		if ( $taxonomies ) {
+			$fields['taxonomies'] = array(
+				'title' => __( 'Taxonomies' ),
+				'help'  => __( 'What taxonomies should support name and description localization?' ),
+				'type'  => 'checklist',
+				'data'  => $taxonomies,
+			);
+		}
+
+		/**
+		 * Nav Menus
+		 */
+
+		// Get the original list
 		$nav_locations = Registry::cache_get( 'vars', '_wp_registered_nav_menus' );
 
-		// Build the original sidebars list
+		// Add if we have any
+		if ( $nav_locations ) {
+			$fields['localizables[nav_menu_locations]'] = array(
+				'title' => __( 'Menu Locations' ),
+				'help'  => __( 'Should any navigation menus have versions for each language?' ),
+				'type'  => 'checklist',
+				'data'  => $nav_locations,
+			);
+		}
+
+		/**
+		 * Sidebars
+		 */
+
+		// Get the original list and convert to appropriate format
 		$sidebars = Registry::cache_get( 'vars', 'wp_registered_sidebars' );
 		foreach ( $sidebars as &$sidebar ) {
 			$sidebar = $sidebar['name'];
 		}
 
-		// Add the fields
-		Settings::add_fields( array(
-			'post_types' => array(
-				'title' => __( 'Post Types' ),
-				'help'  => __( 'What post types should support language and translations?' ),
-				'type'  => 'checklist',
-				'data'  => $post_types,
-			),
-			'taxonomies' => array(
-				'title' => __( 'Taxonomies' ),
-				'help'  => __( 'What taxonomies should support name and description localization?' ),
-				'type'  => 'checklist',
-				'data'  => $taxonomies,
-			),
-			'localizables[nav_menu_locations]' => array(
-				'title' => __( 'Menu Locations' ),
-				'help'  => __( 'Should any navigation menus have versions for each language?' ),
-				'type'  => 'checklist',
-				'data'  => $nav_locations,
-			),
-			'localizables[sidebar_locations]' => array(
+		// Add if we have any
+		if ( $sidebars ) {
+			$fields['localizables[sidebar_locations]'] = array(
 				'title' => __( 'Sidebar Locations' ),
 				'help'  => __( 'Should any widget areas have versions for each language?' ),
 				'type'  => 'checklist',
 				'data'  => $sidebars,
-			),
-		), 'localizables' );
+			);
+		}
+
+		// Add the fields
+		Settings::add_fields( $fields, 'localizables' );
 	}
 
 	/**
