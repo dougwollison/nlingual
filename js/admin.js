@@ -1,4 +1,4 @@
-/* globals console, alert, prompt, _, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n, NL_LANGUAGES, NL_DEFAULT_LANG, NL_PRESETS */
+/* globals console, alert, prompt, _, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n, NL_LANGUAGES, NL_DEFAULT_LANGUAGE, NL_PRESETS */
 var NL_LOCALIZABLE_FIELDS = {};
 
 // Register a field to be localized
@@ -52,12 +52,12 @@ jQuery( function( $ ) {
 
 	// Handle rendering of the previews
 	$( '.nl-preview' ).on( 'nl:render', function() {
-		var lang, slug, qvar, skip, format;
+		var language, slug, qvar, skip, format;
 
 		// Get the default language slug, defaulting to "en"
-		lang = $( '#nlingual_default_language' ).val();
-		if ( lang && typeof NL_LANGUAGES[ lang ] === 'object' ) {
-			slug = NL_LANGUAGES[ lang ].slug || 'en';
+		language = $( '#nlingual_default_language' ).val();
+		if ( language && typeof NL_LANGUAGES[ language ] === 'object' ) {
+			slug = NL_LANGUAGES[ language ].slug || 'en';
 		}
 
 		// Get the query var, defaulting to "nl_language"
@@ -106,18 +106,18 @@ jQuery( function( $ ) {
 	// =========================
 
 	$( '#nlingual_languages' ).each( function() {
-		var langRowTemplate = $( '#nl_lang_row' ).text();
-		var langRowIndex = -1;
+		var languageRowTemplate = $( '#nl_language_row' ).text();
+		var languageRowIndex = -1;
 
 		// Load preset selector
-		var $preset = $( '#nl_lang_preset' );
+		var $preset = $( '#nl_language_preset' );
 		for ( var preset in NL_PRESETS ) {
 			$preset.append( '<option value="' + preset + '">' + NL_PRESETS[ preset ].system_name + '</option>' );
 		}
 
 		// Row builder utility
 		function buildLangRow( data ) {
-			var row = langRowTemplate, regex;
+			var row = languageRowTemplate, regex;
 			// Loop through properties and replace
 			for ( var prop in data ) {
 				regex = new RegExp( '%' + prop + '%', 'g' );
@@ -128,17 +128,17 @@ jQuery( function( $ ) {
 			var $row = $( row );
 
 			// Check active checkbox if true
-			$row.find( '.nl-lang-active input' ).attr( 'checked', data.active );
+			$row.find( '.nl-language-active input' ).attr( 'checked', data.active );
 
 			// Add the row to the table
-			$( '#nl_lang_list' ).append( $row );
+			$( '#nl_language_list' ).append( $row );
 		}
 
 		// Load table with current languages
 		_.each( NL_LANGUAGES, buildLangRow );
 
 		// Add button functionality
-		$( '#nl_lang_add' ).click( function() {
+		$( '#nl_language_add' ).click( function() {
 			var data, preset;
 
 			// Check if preset was selected
@@ -161,17 +161,17 @@ jQuery( function( $ ) {
 			}
 
 			// Default values
-			data.lang_id = langRowIndex;
+			data.language_id = languageRowIndex;
 			data.slug    = data.iso_code;
 			data.active  = true;
 
 			buildLangRow( data );
 
-			langRowIndex--;
+			languageRowIndex--;
 		} );
 
 		// Delete button functionality
-		$( this ).on( 'change', '.nl-lang-delete input', function() {
+		$( this ).on( 'change', '.nl-language-delete input', function() {
 			// Get the parent row
 			var $row = $( this ).parents( 'tr' ).first();
 			// Toggle delete class and inputs
@@ -180,7 +180,7 @@ jQuery( function( $ ) {
 		} );
 
 		// Auto-fill locale_name, iso_code and slug
-		$( this ).on( 'change', '.nl-lang-system_name input', function() {
+		$( this ).on( 'change', '.nl-language-system_name input', function() {
 			// Get the parent row
 			var $row = $( this ).parents( 'tr' ).first();
 
@@ -188,9 +188,9 @@ jQuery( function( $ ) {
 			var system_name = $( this ).val();
 
 			// Get the other fields
-			var $locale_name = $row.find( '.nl-lang-locale_name input' );
-			var $iso_code    = $row.find( '.nl-lang-iso_code input' );
-			var $slug        = $row.find( '.nl-lang-slug input' );
+			var $locale_name = $row.find( '.nl-language-locale_name input' );
+			var $iso_code    = $row.find( '.nl-language-iso_code input' );
+			var $slug        = $row.find( '.nl-language-slug input' );
 
 			// Guess values accordingly if not set
 			if ( ! $iso_code.val() ) {
@@ -214,9 +214,9 @@ jQuery( function( $ ) {
 
 	// Setup the base localizer
 	var $localizer = $('<span class="nl-localizer"></span>').html(function(){
-		var html = '<span class="nl-localizer-toggle" title="' + nlingualL10n.LocalizeThis + '"></span>', lang;
-		_.each( NL_LANGUAGES, function( lang ) {
-			html += '<span class="nl-localizer-option" title="' + nlingualL10n.LocalizeFor.replace( '%s', lang.system_name ) + '" data-lang="' + lang.lang_id + '"><i class="nl-option-text">' + lang.system_name + '</i></span>';
+		var html = '<span class="nl-localizer-toggle" title="' + nlingualL10n.LocalizeThis + '"></span>', language;
+		_.each( NL_LANGUAGES, function( language ) {
+			html += '<span class="nl-localizer-option" title="' + nlingualL10n.LocalizeFor.replace( '%s', language.system_name ) + '" data-language="' + language.language_id + '"><i class="nl-option-text">' + language.system_name + '</i></span>';
 		} );
 		return html;
 	});
@@ -243,29 +243,29 @@ jQuery( function( $ ) {
 		var $control = $localizer.clone();
 
 		// Store the field and wrapper references in the control
-		$control.data( '$nl_localized_' + NL_DEFAULT_LANG, $field );
+		$control.data( '$nl_localized_' + NL_DEFAULT_LANGUAGE, $field );
 		$control.data( '$wrap', $wrap );
 
 		// Add copies of the field for each language
-		_.each( NL_LANGUAGES, function( lang ) {
+		_.each( NL_LANGUAGES, function( language ) {
 			// Skip the default language
-			if ( NL_DEFAULT_LANG === lang.lang_id ) {
+			if ( NL_DEFAULT_LANGUAGE === language.language_id ) {
 				return;
 			}
 
 			// Get the localized version of the value
-			var localized = values[ lang.lang_id ] || null;
+			var localized = values[ language.language_id ] || null;
 
 			// Copy, update the id/name, and set the value
 			var $localized = $field.clone();
 			$localized.attr( {
-				id   : 'nl_localized-' + $field.attr( 'id' ) + '-lang_' + lang.lang_id,
-				name : 'nlingual_localized[' + $field.attr( 'name' ) + '][' + lang.lang_id + ']'
+				id   : 'nl_localized-' + $field.attr( 'id' ) + '-language_' + language.language_id,
+				name : 'nlingual_localized[' + $field.attr( 'name' ) + '][' + language.language_id + ']'
 			} );
 			$localized.val( localized );
 
 			// Store it for later use
-			$control.data( '$nl_localized_' + lang.lang_id, $localized );
+			$control.data( '$nl_localized_' + language.language_id, $localized );
 
 			// Add to the container and hide
 			$localized.appendTo( $wrap ).hide();
@@ -277,7 +277,7 @@ jQuery( function( $ ) {
 
 		// Add the current class to the default language if localized versions are set
 		if ( hasLocalized ) {
-			$control.find( '[data-lang="' + NL_DEFAULT_LANG + '"]' ).addClass( 'nl-current' );
+			$control.find( '[data-language="' + NL_DEFAULT_LANGUAGE + '"]' ).addClass( 'nl-current' );
 		}
 
 		// Add the nonce field
@@ -291,19 +291,19 @@ jQuery( function( $ ) {
 		// Get the localizer and the language
 		var $option = $( this );
 		var $control = $option.parent();
-		var lang = $option.data( 'lang' );
+		var language = $option.data( 'language' );
 
 		// Mark this as the new current one
 		$( this ).addClass( 'nl-current' ).siblings().removeClass( 'nl-current' );
 
-		// Default lang if nothing selected
-		if ( ! lang ) {
-			lang = NL_DEFAULT_LANG;
+		// Default language if nothing selected
+		if ( ! language ) {
+			language = NL_DEFAULT_LANGUAGE;
 		}
 
 		// Show the target version of the field
 		$control.data( '$wrap' ).find( '.nl-localizable-input' ).hide();
-		$control.data( '$nl_localized_' + lang ).show();
+		$control.data( '$nl_localized_' + language ).show();
 	} );
 
 	// =========================
@@ -312,13 +312,13 @@ jQuery( function( $ ) {
 
 	// Update visible translation fields based on current language
 	$( '#nl_language' ).change( function() {
-		var lang_id = $( this ).val();
+		var language_id = $( this ).val();
 
 		// Show all translation fields by default
 		$( '.nl-translation' ).show();
 
 		// Hide the one for the current language
-		$( '#nl_translation_' + lang_id ).hide();
+		$( '#nl_translation_' + language_id ).hide();
 
 	} ).change(); // Update on page load
 
@@ -327,13 +327,13 @@ jQuery( function( $ ) {
 		var $input = $( this );
 		var value = $input.val();
 		var post_id = $( '#post_ID' ).val();
-		var lang_id = $input.parents( '.nl-field' ).data( 'langid' );
+		var language_id = $input.parents( '.nl-field' ).data( 'languageid' );
 
 		if ( value === 'new' ) {
 			// Ask for a title for the translation
 			var title = $( '#title' ).val();
 			var placeholder = nlingualL10n.TranslationTitlePlaceholder
-				.replace( /%s/, NL_LANGUAGES[ lang_id ].system_name )
+				.replace( /%s/, NL_LANGUAGES[ language_id ].system_name )
 				.replace( /%s/, title );
 			var translation_title = prompt( nlingualL10n.TranslationTitle, placeholder );
 
@@ -349,7 +349,7 @@ jQuery( function( $ ) {
 				data: {
 					action       : 'nl_new_translation',
 					post_id      : post_id,
-					lang_id      : lang_id,
+					language_id      : language_id,
 					title        : translation_title,
 					custom_title : translation_title === placeholder
 				},
@@ -412,13 +412,13 @@ jQuery( function( $ ) {
 				$editRow = $( '#edit-' + post_id );
 
 			// Update the language field
-			var post_lang = $postRow.find( '.nl-language' ).val();
-			$( '#nl_language' ).val( post_lang ).change();
+			var post_language = $postRow.find( '.nl-language' ).val();
+			$( '#nl_language' ).val( post_language ).change();
 
 			// Update the translations fields
 			$editRow.find( '.nl-translation' ).each( function() {
-				var lang_id = $( this ).data( 'langid' );
-				var translation = $postRow.find( '.nl-translation-' + lang_id ).val();
+				var language_id = $( this ).data( 'languageid' );
+				var translation = $postRow.find( '.nl-translation-' + language_id ).val();
 				$( this ).find( 'select' ).val( translation || -1 );
 			} );
 		};
