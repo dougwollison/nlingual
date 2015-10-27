@@ -29,6 +29,19 @@ function is_backend() {
 }
 
 /**
+ * Check if backwards compatability is needed.
+ *
+ * @since 2.0.0
+ *
+ * @uses Registry::get() to get the backwards_compatible option.
+ *
+ * @return bool Wether or not backwards compatibility is needed.
+ */
+function backwards_compatible() {
+	return Registry::get( 'backwards_compatible' );
+}
+
+/**
  * Triggers the standard "Cheatin’ uh?" wp_die message.
  *
  * @since 2.0.0
