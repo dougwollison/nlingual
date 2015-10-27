@@ -72,6 +72,17 @@ class Registry {
 	protected static $show_all_languages;
 
 	/**
+	 * The localize date format string option.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var bool
+	 */
+	protected static $localize_date;
+
+	/**
 	 * The skip default language localizing option.
 	 *
 	 * @since 2.0.0
@@ -598,11 +609,14 @@ class Registry {
 	 * @since 2.0.0
 	 *
 	 * @see Registry::$default_language
+	 * @see Registry::$show_all_languages
+	 * @see Registry::$localize_date
 	 * @see Registry::$skip_default_l10n
 	 * @see Registry::$query_var
 	 * @see Registry::$redirection_method
-	 * @see Registry::$postlanguage_override
+	 * @see Registry::$post_language_override
 	 * @see Registry::$post_types
+	 * @see Registry::$taxonomies
 	 * @see Registry::$localizables
 	 * @see Registry::$sync_rules
 	 * @see Registry::$clone_rules
@@ -624,6 +638,7 @@ class Registry {
 		// Load simple options
 		static::$default_language       = get_option( 'nlingual_default_language', 0 );
 		static::$show_all_languages     = get_option( 'nlingual_show_all_languages', 1 );
+		static::$localize_date          = get_option( 'nlingual_localize_date', 0 );
 		static::$skip_default_l10n      = get_option( 'nlingual_skip_default_l10n', 0 );
 		static::$query_var              = get_option( 'nlingual_query_var', 'nl_language' );
 		static::$redirection_method     = get_option( 'nlingual_redirection_method', NL_REDIRECT_USING_GET );

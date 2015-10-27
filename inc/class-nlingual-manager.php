@@ -171,6 +171,7 @@ class Manager extends Functional {
 		Settings::register( array(
 			'default_language'       => 'intval',
 			'show_all_languages'     => 'intval',
+			'localize_date'          => 'intval',
 			'skip_default_l10n'      => 'intval',
 			'backwards_compatible'   => 'intval',
 			'query_var'              => null,
@@ -379,6 +380,11 @@ class Manager extends Functional {
 			'show_all_languages' => array(
 				'title' => __( 'Show All Languages?' ),
 				'help'  => __( 'Should objects of all languages be listed by default in the admin?' ),
+				'type'  => 'checkbox',
+			),
+			'localize_date' => array(
+				'title' => __( 'Localize date format?' ),
+				'help'  => __( 'Run localization on the date format defined under General Settings. Useful if any languages you use require custom date formats.' ),
 				'type'  => 'checkbox',
 			),
 			'skip_default_l10n' => array(

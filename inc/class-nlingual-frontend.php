@@ -52,6 +52,10 @@ class Frontend extends Functional {
 		static::add_filter( 'body_class', 'add_body_classes', 10, 1 );
 		static::add_filter( 'option_page_on_front', 'current_language_version', 10, 1 );
 		static::add_filter( 'option_page_for_posts', 'current_language_version', 10, 1 );
+		// Localize date format if desired
+		if ( Registry::get( 'localize_date' ) ) {
+			static::add_filter( 'option_date_format', 'localize_date_format', 10, 1 );
+		}
 
 		// Front-end only query rewrites
 		static::add_filter( 'get_previous_post_join', 'add_adjacent_translation_join_clause', 10, 1 );
@@ -390,6 +394,21 @@ class Frontend extends Functional {
 		$post_id = Translator::get_post_translation( $post_id, $current_language, true );
 
 		return $post_id;
+	}
+
+	/**
+	 * Localizes the date_format option.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $format The date format string to filter.
+	 *
+	 * @return string The filtered date format string.
+	 */
+	public static function localize_date_format( $format ) {
+		$domain = wp_get_theme()->get( 'TextDomain' );
+		$format = \__( $format, $domain );
+		return $format;
 	}
 
 	// =========================
