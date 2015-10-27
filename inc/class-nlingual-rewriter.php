@@ -420,56 +420,60 @@ class Rewriter {
 			$language = Registry::current_language();
 		}
 
-		// Try various conditional tags
-
-		// Front page? just use home_url()
-		if ( is_front_page() ) {
-			$url = home_url();
-		} else
-		// Home page? Get the translation permalink
-		if ( is_home() ) {
-			$page = get_option( 'page_for_posts' );
-			$url = Translator::get_permalink( $page, $language );
-		} else
-		// Singular? Get the translation permalink
+		// First, check if it's a singular
 		if ( is_singular() ) {
-			$post = get_queried_object_id();
-			$url = Translator::get_permalink( $post, $language );
-		} else
-		// Term page? Get the term link
-		if ( is_tax() || is_tag() || is_category() ) {
-			$url = get_term_link( get_queried_object() );
-		} else
-		// Post type archive? Get the link
-		if ( is_post_type_archive() ) {
-			$url = get_post_type_archive_link( get_queried_object()->name );
-		} else
-		// Author archive? Get the link
-		if ( is_author() ) {
-			$url = get_author_posts_link( get_queried_object_id() );
-		} else
-		// Date archive? Get link
-		if ( is_day() ) {
-			$url = get_day_link( get_query_var( 'year' ), get_query_var( 'month' ), get_query_var( 'day' ) );
-		} else
-		// Month archive? Get link
-		if ( is_month() ) {
-			$url = get_month_link( get_query_var( 'year' ), get_query_var( 'month' ) );
-		} else
-		// Year archive? Get link
-		if ( is_year() ) {
-			$url = get_year_link( get_query_var( 'year' ) );
-		} else
-		// Search page? Rebuild the link
-		if ( is_search() ) {
-			$url = home_url( '/?s=' . get_query_var( 's' ) );
-		} else {
-			// Give up and just get the orginally requested URL.
-			$url = NL_ORIGINAL_URL;
-		}
+			// Get the permalink for the translation in the specified language
+			$post_id = get_queried_object_id();
+			$post_id = Translator::get_post_translation( $post_id, $language );
+			$url = get_permalink( $post_id );
 
-		// Relocalize the URL
-		$url = static::localize_url( $url, $language, true );
+			// Relocalize the URL
+			$url = static::localize_url( $url, $language, true );
+		} else {
+			// Switch to the language (redundant for current one but doesn't matter)
+			Registry::switch_language( $language );
+
+			// Now try various other conditional tags...
+
+			// Front page? just use home_url()
+			if ( is_front_page() ) {
+				$url = home_url();
+			} else
+			// Term page? Get the term link
+			if ( is_tax() || is_tag() || is_category() ) {
+				$url = get_term_link( get_queried_object() );
+			} else
+			// Post type archive? Get the link
+			if ( is_post_type_archive() ) {
+				$url = get_post_type_archive_link( get_queried_object()->name );
+			} else
+			// Author archive? Get the link
+			if ( is_author() ) {
+				$url = get_author_posts_link( get_queried_object_id() );
+			} else
+			// Date archive? Get link
+			if ( is_day() ) {
+				$url = get_day_link( get_query_var( 'year' ), get_query_var( 'month' ), get_query_var( 'day' ) );
+			} else
+			// Month archive? Get link
+			if ( is_month() ) {
+				$url = get_month_link( get_query_var( 'year' ), get_query_var( 'month' ) );
+			} else
+			// Year archive? Get link
+			if ( is_year() ) {
+				$url = get_year_link( get_query_var( 'year' ) );
+			} else
+			// Search page? Rebuild the link
+			if ( is_search() ) {
+				$url = home_url( '/?s=' . get_query_var( 's' ) );
+			} else {
+				// Give up and just get the orginally requested URL, relocalized
+				$url = static::localize_url( NL_ORIGINAL_URL, null, true );
+			}
+
+			// Switch back to the current language
+			Registry::restore_language();
+		}
 
 		// Now parse the URL
 		$url_data = parse_url( $url );
