@@ -217,8 +217,12 @@ class Loader extends Functional {
 	 * Convert old options to new format.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
 	 */
 	protected static function convert_options() {
+		global $wpdb;
+
 		// Get the old nLingual-options
 		$options = get_option( 'nLingual-options', array() );
 
@@ -256,6 +260,36 @@ class Loader extends Functional {
 
 		// Automatically set options that weren't present in old version
 		update_option( 'nlingual_post_language_override', 1 );
+
+		// Get the assigned menus
+		$old_menus = get_theme_mod( 'nav_menu_locations' );
+
+		// Loop through all menus and convert to new scheme if applicable
+		$new_menus = array();
+		$menu_locations = array();
+		foreach ( $old_menus as $location => $menu ) {
+			if ( preg_match( '/(.+?)--(\w{2})$/', $location, $matches ) ) {
+				list( , $location, $slug ) = $matches;
+				// Find a language matching the slug
+				if ( $language_id = $wpdb->get_var( "SELECT lang_id FROM {$wpdb->prefix}nL_languages WHERE slug = '$slug'" ) ) {
+					// Add the location to the list of localizable ones
+					$menu_locations[] = $location;
+
+					// Create the new localized slug for the location
+					$location .= '-language' . $language_id;
+				}
+			}
+
+			$new_menus[ $location ] = $menu;
+		}
+
+		// Update the nav menu locations for localizables
+		$localizables = get_option( 'nlingual_localizables', array() );
+		$localizables['nav_menu_locations'] = $menu_locations;
+		update_option( 'nlingual_localizables', $localizables );
+
+		// Update the assigned menus
+		set_theme_mod( 'nav_menu_locations', $new_menus );
 	}
 
 	/**
