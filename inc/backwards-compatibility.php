@@ -53,6 +53,13 @@ function nl_query_var() {
 }
 
 /**
+ * @see Translator::get_post_language()
+ */
+function nl_get_post_lang( $id ) {
+	return Translator::get_post_language( $id );
+}
+
+/**
  * @see Translator::get_post_translation()
  */
 function nl_get_translation( $id, $lang = null, $return_self = true ) {
