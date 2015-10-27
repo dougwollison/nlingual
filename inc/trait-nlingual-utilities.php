@@ -1,6 +1,6 @@
 <?php
 /**
- * nLingual Translation API
+ * nLingual Shared Utilities
  *
  * @package nLingual
  *
