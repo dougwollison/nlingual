@@ -118,13 +118,14 @@ class Loader extends Functional {
 
 		// Install/update the tables
 		if ( version_compare( $db_version, NL_DB_VERSION, '<' ) ) {
-			// Check if upgrading from before 2.0.0
-			if ( version_compare( $db_version, '2.0.0', '<' ) ) {
+			// Check if upgrading from nLingual 1
+			if ( get_option( 'nLingual-options' ) ) {
 				static::convert_options();
 				static::upgrade_database();
 
-				// Flag as needing backwards compatability
-				update_option( 'nlingual_backwards_compatible', 1 );
+				// Flag as having been upgraded and needing backwards compatability
+				add_option( 'nlingual_upgraded', 1 );
+				add_option( 'nlingual_backwards_compatible', 1 );
 			}
 
 			// Just install/update the languages table as normal
