@@ -205,9 +205,18 @@ class API extends Functional {
 			return;
 		}
 
-		// If not a supported post type, abort
-		if ( ! Registry::is_post_type_supported( $query->get( 'post_type' ) ) ) {
+		// If it's a post type archive, check if the post type is supported
+		if ( is_post_type_archive() && ! Registry::is_post_type_supported( $query->get( 'post_type' ) ) ) {
 			return;
+		}
+
+		// If it's a taxonomy, check if the object types are supported
+		if ( is_tax() && $query->queried_object->taxonomy ) {
+			$object_types = get_taxonomy( $query->queried_object->taxonomy )->object_type;
+
+			if ( ! Registry::is_post_type_supported( $object_types ) ) {
+				return;
+			}
 		}
 
 		// If in the backend and the show_all_languages option is enabled, abort
@@ -245,11 +254,6 @@ class API extends Functional {
 	public static function add_post_translations_join_clause( $clause, \WP_Query $query ) {
 		global $wpdb;
 
-		// Abort if post type is not supported
-		if ( ! Registry::is_post_type_supported( $query->get('post_type') ) ) {
-			return $clause;
-		}
-
 		// Abort if language isn't specified
 		if ( $query->get( Registry::get( 'query_var' ) ) === '' ) {
 			return $clause;
@@ -281,12 +285,7 @@ class API extends Functional {
 	public static function add_post_translations_where_clause( $clause, \WP_Query $query ) {
 		global $wpdb;
 
-		// Abort if post type is not supported
-		if ( ! Registry::is_post_type_supported( $query->get('post_type') ) ) {
-			return $clause;
-		}
-
-		// Get the language, in array form
+		// Get the language(s) specified
 		$languages = $query->get( Registry::get( 'query_var' ) );
 
 		// Abort if not set
