@@ -34,7 +34,7 @@ class Liaison extends Functional {
 	 */
 	public static function register_hooks() {
 		// QuickStart compatability
-		static::add_action( 'after_theme_setup', 'add_quickstart_helpers', 10 );
+		static::add_action( 'after_setup_theme', 'add_quickstart_helpers', 10 );
 	}
 
 	// =========================
