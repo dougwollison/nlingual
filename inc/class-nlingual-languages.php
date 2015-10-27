@@ -15,7 +15,18 @@ class Languages implements \Iterator {
 	// =========================
 
 	/**
-	 * The Language object index
+	 * The current position in the array.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected
+	 *
+	 * @var int
+	 */
+	protected $position = 0;
+
+	/**
+	 * The array of Language objects.
 	 *
 	 * @since 2.0.0
 	 *
@@ -23,7 +34,7 @@ class Languages implements \Iterator {
 	 *
 	 * @var array
 	 */
-	protected $languages = array();
+	protected $items = array();
 
 	// =========================
 	// ! Iterator Methods
@@ -35,7 +46,7 @@ class Languages implements \Iterator {
 	 * @since 2.0.0
 	 */
 	public function rewind() {
-		reset( $this->languages );
+		$this->position = 0;
 	}
 
 	/**
@@ -46,7 +57,7 @@ class Languages implements \Iterator {
 	 * @return mixed The current element.
 	 */
 	public function current() {
-		return current( $this->languages );
+		return $this->items[ $this->position ];
 	}
 
 	/**
@@ -57,7 +68,7 @@ class Languages implements \Iterator {
 	 * @return int|string The current key.
 	 */
 	public function key() {
-		return key( $this->languages );
+		return $this->position;
 	}
 
 	/**
@@ -68,7 +79,7 @@ class Languages implements \Iterator {
 	 * @return mixed The next element.
 	 */
 	public function next() {
-		return next( $this->languages );
+		++$this->position;
 	}
 
 	/**
@@ -79,8 +90,7 @@ class Languages implements \Iterator {
 	 * @return bool Wether or not the position is valid.
 	 */
 	public function valid() {
-		$key = key( $this->languages );
-		return isset( $this->languages[ $key ] );
+		return isset( $this->items[ $this->position ] );
 	}
 
 	/**
@@ -91,7 +101,7 @@ class Languages implements \Iterator {
 	 * @return int The length of the array.
 	 */
 	public function count() {
-		return count( $this->languages );
+		return count( $this->items );
 	}
 
 	// =========================
@@ -114,6 +124,9 @@ class Languages implements \Iterator {
 
 		// Sort the collection
 		$this->sort();
+
+		// Reset the position
+		$this->position = 0;
 	}
 
 	/**
@@ -125,7 +138,7 @@ class Languages implements \Iterator {
 	 * @param string $order Optional Which way to sort (defaults to ascending).
 	 */
 	public function sort( $field = 'list_order', $order = 'asc' ) {
-		usort( $this->languages, function( $a, $b ) use ( $field ) {
+		usort( $this->items, function( $a, $b ) use ( $field ) {
 			if ( $a->$field == $b->$field ) {
 				return 0;
 			}
@@ -135,7 +148,7 @@ class Languages implements \Iterator {
 
 		// If not in ascending order, reverse the array
 		if ( $order != 'asc' ) {
-			$this->languages = array_reverse( $this->languages );
+			$this->items = array_reverse( $this->items );
 		}
 	}
 
@@ -187,7 +200,7 @@ class Languages implements \Iterator {
 		}
 
 		// Loop through all languages and return the first match
-		foreach ( $this->languages as $language ) {
+		foreach ( $this->items as $language ) {
 			if ( $language->$field == $value ) {
 				return $language;
 			}
@@ -212,7 +225,7 @@ class Languages implements \Iterator {
 
 		// Add to the index if successful
 		if ( $language ) {
-			$this->languages[] = $language;
+			$this->items[] = $language;
 		}
 
 		if ( $sort ) {
@@ -234,7 +247,7 @@ class Languages implements \Iterator {
 		// Get the object's index
 		if ( $index = $this->get( $language, 'index' ) ) {
 			// Remove it
-			unset( $this->languages[ $index ] );
+			unset( $this->items[ $index ] );
 			return true;
 		}
 
@@ -254,7 +267,7 @@ class Languages implements \Iterator {
 	public function export( $field = null ) {
 		$data = array();
 
-		foreach ( $this->languages as $language ) {
+		foreach ( $this->items as $language ) {
 			$data[ $language->id ] = $field ? $language->$field : $language->export();
 		}
 
