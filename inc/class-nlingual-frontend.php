@@ -10,6 +10,8 @@
 namespace nLingual;
 
 class Frontend extends Functional {
+	use Filters;
+
 	/**
 	 * The name of the class.
 	 *
@@ -50,8 +52,8 @@ class Frontend extends Functional {
 		// General fitlering
 		static::add_filter( 'locale', 'rewrite_locale', 10, 1 );
 		static::add_filter( 'body_class', 'add_body_classes', 10, 1 );
-		static::add_filter( 'option_page_on_front', 'current_language_version', 10, 1 );
-		static::add_filter( 'option_page_for_posts', 'current_language_version', 10, 1 );
+		static::add_filter( 'option_page_on_front', 'current_language_post', 10, 1 );
+		static::add_filter( 'option_page_for_posts', 'current_language_post', 10, 1 );
 		// Localize date format if desired
 		if ( Registry::get( 'localize_date' ) ) {
 			static::add_filter( 'option_date_format', 'localize_date_format', 10, 1 );
@@ -374,26 +376,6 @@ class Frontend extends Functional {
 		$classes[] = 'language-' . Registry::current_language( 'slug' );
 
 		return $classes;
-	}
-
-	/**
-	 * Replace a post ID with it's translation for the current language.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Registry::current_language() to get the current language.
-	 * @uses Translator::get_object_translation() to get the translated post ID.
-	 *
-	 * @param int|string $post_id The post ID to be replaced.
-	 *
-	 * @return int The ID of the translation.
-	 */
-	public static function current_language_version( $post_id ) {
-		$current_language = Registry::current_language();
-
-		$post_id = Translator::get_post_translation( $post_id, $current_language, true );
-
-		return $post_id;
 	}
 
 	/**

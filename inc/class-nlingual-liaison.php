@@ -10,6 +10,8 @@
 namespace nLingual;
 
 class Liaison extends Functional {
+	use Filters;
+
 	/**
 	 * The name of the class.
 	 *
@@ -53,7 +55,7 @@ class Liaison extends Functional {
 		// Custom index page feature adjustments
 		if ( current_theme_supports( 'quickstart-index_page' ) ) {
 			// Replace the retrieved index page's ID with it's translation counterpart
-			API::add_filter( 'qs_helper_get_index', 'current_language_version', 10, 1 );
+			static::add_filter( 'qs_helper_get_index', 'current_language_post', 10, 1 );
 		}
 	}
 }
