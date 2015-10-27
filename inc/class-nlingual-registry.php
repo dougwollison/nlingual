@@ -116,6 +116,17 @@ class Registry {
 	protected static $post_language_override;
 
 	/**
+	 * The backwards compatibility option
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var bool
+	 */
+	protected static $backwards_compatible;
+
+	/**
 	 * The supported post types.
 	 *
 	 * @since 2.0.0
@@ -617,6 +628,7 @@ class Registry {
 		static::$query_var              = get_option( 'nlingual_query_var', 'nl_language' );
 		static::$redirection_method     = get_option( 'nlingual_redirection_method', NL_REDIRECT_USING_GET );
 		static::$post_language_override = get_option( 'nlingual_post_language_override', 0 );
+		static::$backwards_compatible   = get_option( 'nlingual_backwards_compatible', 0 );
 
 		// Load complex options
 		static::$post_types   = get_option( 'nlingual_post_types', array() );
