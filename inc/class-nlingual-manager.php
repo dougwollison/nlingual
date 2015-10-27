@@ -172,9 +172,10 @@ class Manager extends Functional {
 			'default_language'       => 'intval',
 			'show_all_languages'     => 'intval',
 			'skip_default_l10n'      => 'intval',
+			'backwards_compatible'   => 'intval',
 			'query_var'              => null,
 			'redirection_method'     => null,
-			'post_language_override' => null,
+			'post_language_override' => 'intval',
 		), 'options' );
 
 		static::setup_options_fields();
@@ -413,6 +414,17 @@ class Manager extends Functional {
 				'type'  => 'checkbox',
 			),
 		), 'options', 'redirection' );
+
+		// If this is an upgraded install, offer the backwards compatability option
+		if ( get_option( 'nlingual_upgraded' ) ) {
+			Settings::add_fields( array(
+				'backwards_compatible' => array(
+					'title' => __( 'Backwards Compatability' ),
+					'help'  => __( 'Include support for old features like language splitting.' ),
+					'type'  => 'checkbox',
+				),
+			), 'options' );
+		}
 	}
 
 	/**
