@@ -169,12 +169,12 @@ class Manager extends Functional {
 	public static function register_settings() {
 		// Translation Options
 		Settings::register( array(
-			'default_language'   => 'intval',
-			'show_all_languages' => 'intval',
-			'skip_default_l10n'  => 'intval',
-			'query_var'          => null,
-			'redirection_method' => null,
-			'postlanguage_override'  => null,
+			'default_language'       => 'intval',
+			'show_all_languages'     => 'intval',
+			'skip_default_l10n'      => 'intval',
+			'query_var'              => null,
+			'redirection_method'     => null,
+			'post_language_override' => null,
 		), 'options' );
 
 		static::setup_options_fields();
