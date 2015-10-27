@@ -76,6 +76,11 @@ class API extends Functional {
 
 		// Finally, setup the Liaison for supporting other plugins
 		Liaison::register_hooks();
+
+		// P.S. add backwards compatibilty stuff if needed
+		if ( backwards_compatible() ) {
+			require( __DIR__ . '/backwards-compatibility.php' );
+		}
 	}
 
 	// =========================
