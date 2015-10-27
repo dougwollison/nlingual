@@ -62,8 +62,15 @@ function nl_get_post_lang( $id ) {
 /**
  * @see Translator::get_post_translation()
  */
-function nl_get_translation( $id, $lang = null, $return_self = true ) {
-	return Translator::get_post_translation( $id, $lang, $return_self );
+function nl_get_translation( $id, $language = null, $return_self = true ) {
+	// Default to current language
+	if ( ! $language ) {
+		$language = Registry::current_language();
+	}
+
+	$translation_id = Translator::get_post_translation( $id, $language, $return_self );
+
+	return $translation_id;
 }
 
 /**
