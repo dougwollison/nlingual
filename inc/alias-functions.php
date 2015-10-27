@@ -114,7 +114,7 @@ function nl_get_lang( $field = null, $language = null ) {
  * @see Rewriter::get_links()
  */
 function nl_get_lang_links( $skip_current = false ) {
-	return Rewriter::get_lang_links( $skip_current, 'slug' );
+	return Rewriter::get_links( $skip_current, 'slug' );
 }
 
 /**
