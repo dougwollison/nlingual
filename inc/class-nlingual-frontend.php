@@ -121,7 +121,7 @@ class Frontend extends Functional {
 		global $wp_query;
 
 		// Don't proceed if this feature is disabled
-		if ( ! Registry::get( 'postlanguage_override', 0 ) ) {
+		if ( ! Registry::get( 'post_language_override', 0 ) ) {
 			return;
 		}
 

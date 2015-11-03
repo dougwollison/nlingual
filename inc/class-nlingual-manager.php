@@ -414,7 +414,7 @@ class Manager extends Functional {
 					NL_REDIRECT_USING_DOMAIN => __( 'Subdomain' ),
 				),
 			),
-			'postlanguage_override' => array(
+			'post_language_override' => array(
 				'title' => __( 'Post Language Override' ),
 				'help'  => __( 'Should the requested post/page/object’s language override the one requested?' ),
 				'type'  => 'checkbox',
