@@ -376,13 +376,13 @@ jQuery( function( $ ) {
 		var $input = $( this );
 		var value = $input.val();
 		var post_id = $( '#post_ID' ).val();
-		var id = $input.parents( '.nl-field' ).data( 'languageid' );
+		var language_id = $input.parents( '.nl-field' ).data( 'nl_language' );
 
 		if ( value === 'new' ) {
 			// Ask for a title for the translation
 			var title = $( '#title' ).val();
 			var placeholder = nlingualL10n.TranslationTitlePlaceholder
-				.replace( /%s/, NL_LANGUAGES[ id ].system_name )
+				.replace( /%s/, NL_LANGUAGES[ language_id ].system_name )
 				.replace( /%s/, title );
 			var translation_title = prompt( nlingualL10n.TranslationTitle, placeholder );
 
@@ -398,7 +398,7 @@ jQuery( function( $ ) {
 				data: {
 					action       : 'nl_new_translation',
 					post_id      : post_id,
-					id      : id,
+					language_id  : language_id,
 					title        : translation_title,
 					custom_title : translation_title === placeholder
 				},
@@ -466,7 +466,7 @@ jQuery( function( $ ) {
 
 			// Update the translations fields
 			$editRow.find( '.nl-translation' ).each( function() {
-				var id = $( this ).data( 'languageid' );
+				var id = $( this ).data( 'nl_language' );
 				var translation = $postRow.find( '.nl-translation-' + id ).val();
 				$( this ).find( 'select' ).val( translation || -1 );
 			} );

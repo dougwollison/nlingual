@@ -421,7 +421,7 @@ class Backend extends Functional {
 			<div class="inline-edit-col">
 				<h4>Translations</h4>
 				<?php foreach ( $languages as $language ) : ?>
-				<label id="nl_translation_<?php echo $language->id; ?>" class="nl-translation"  data-languageid="<?php echo $language->id; ?>">
+				<label id="nl_translation_<?php echo $language->id; ?>" class="nl-translation"  data-nl_language="<?php echo $language->id; ?>">
 					<span class="title"><?php echo $language->system_name;?></span>
 					<select name="nlingual_translation[<?php echo $language->id; ?>]">
 						<option value="0">&mdash; <?php _ex( 'None', 'no translation' ); ?> &mdash;</option>
@@ -597,7 +597,7 @@ class Backend extends Functional {
 		<?php if ( $languages->count() > 1 ) : ?>
 		<h4 class="nl-heading"><?php _e( 'Translations' ); ?></h4>
 		<?php foreach ( $languages as $language ) : ?>
-		<div id="nl_translation_<?php echo $language->id; ?>" class="nl-field nl-translation-field" data-languageid="<?php echo $language->id?>">
+		<div id="nl_translation_<?php echo $language->id; ?>" class="nl-field nl-translation-field" data-nl_language="<?php echo $language->id?>">
 			<label for="nl_translation_<?php echo $language->id; ?>_input">
 				<?php echo $language->system_name; ?>
 				<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' );?>"><?php _e( 'Edit' );?></button>
