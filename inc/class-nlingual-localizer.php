@@ -433,7 +433,7 @@ class Localizer extends Functional {
 
 		$strings = array();
 		foreach ( $results as $result ) {
-			$strings[ $result->id ] = $result->string_value;
+			$strings[ $result->language_id ] = $result->string_value;
 		}
 
 		// Fill with empty values for all languages
@@ -691,11 +691,15 @@ class Localizer extends Functional {
 		}
 
 		// Now get the strings registered to this screen (by id or base)
-		$strings = array_merge(
-			static::get_strings_by_page( $screen->id ),
-			static::get_strings_by_page( $screen->base )
-		);
-
+		if ( $screen->id == $screen->base ) {
+			// They're the same; don't want to fetch them twice
+			$strings = static::get_strings_by_page( $screen->id );
+		} else {
+			$strings = array_merge(
+				static::get_strings_by_page( $screen->id ),
+				static::get_strings_by_page( $screen->base )
+			);
+		}
 
 		// If no strings are found, abort
 		if ( ! $strings ) {
