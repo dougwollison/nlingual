@@ -273,6 +273,7 @@ class Settings {
 			// or <textarea> as the case may be.
 			$html .= sprintf( '<textarea name="%s" id="%s"%s>%s</textarea>', $name, $id, $atts, $value );
 		} else {
+			$value = esc_attr( $value );
 			$html .= sprintf( '<input type="%s" name="%s" id="%s" value="%s"%s />', $type, $name, $id, $value, $atts );
 		}
 

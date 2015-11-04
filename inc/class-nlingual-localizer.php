@@ -657,6 +657,9 @@ class Localizer extends Functional {
 					wp_die( __( 'That language does not exist.' ) );
 				}
 
+				// Unescape the value
+				$value = stripslashes( $value );
+
 				// Add the entry to save
 				$to_save[] = array( $key, $language_id, $object_id, $value );
 			}
