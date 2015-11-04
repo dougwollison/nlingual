@@ -66,7 +66,7 @@ class Localizer extends Functional {
 	protected static $strings_by_type = array( 'option' => array() );
 
 	/**
-	 * An index of strings by page they are to appear on.
+	 * An index of strings by screen they are to appear on based on property.
 	 *
 	 * @since 2.0.0
 	 *
@@ -74,7 +74,7 @@ class Localizer extends Functional {
 	 *
 	 * @var array
 	 */
-	protected static $strings_by_page = array();
+	protected static $strings_by_screen = array();
 
 	/**
 	 * Storage for the strings found for the current screen.
@@ -137,7 +137,7 @@ class Localizer extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $index The index to search in ("type" or "page")
+	 * @param string $index The index to search in ("type" or "screen")
 	 * @param string $value The index value to get entries for.
 	 *
 	 * @return array A list of strings for the specified index value.
@@ -151,6 +151,33 @@ class Localizer extends Functional {
 		} else {
 			return array();
 		}
+	}
+
+	/**
+	 * Find strings for the current screen.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param WP_Screen $screen Optional The screen to get strings for.
+	 *
+	 * @return array The strings found for the screen provided.
+	 */
+	public static function get_strings_for_screen( $screen ) {
+		$list = static::$strings_by_screen;
+
+		$strings = array();
+
+		// Loop through each property and check if a list exists for it
+		foreach ( $screen as $property => $value ) {
+			if ( isset( $list[ $property ] ) ) {
+				// Now check if there's a match for the exact value
+				if ( isset( $list[ $property ][ $value ] ) ) {
+					$strings = array_merge( $strings, $list[ $property ][ $value ] );
+				}
+			}
+		}
+
+		return $strings;
 	}
 
 	// =========================
@@ -183,14 +210,14 @@ class Localizer extends Functional {
 	 * @since 2.0.0
 	 *
 	 * @param array $args The arguments for the string.
-	 * 		@option string "key"         The key the string will be stored under.
-	 * 		@option string "field"       The name of the HTML field that handles this string.
-	 * 		@option string "field_id"    The id of the HTML field to target. (Defaults to field value)
-	 *		@option string "type"        The type string this is (e.g. 'option' or an object type).
-	 *		@option string "page"        The id/base of the screen this field should appear on.
-	 *		@option string "title"       An descriptive name of this string.
-	 *		@option string "description" The details of this string's purpose.
-	 * 		@option string "input"       The field input to use ("textarea" or an <input> type).
+	 * 		@option string       "key"         The key the string will be stored under.
+	 *		@option string|array "screen"      A screen ID or property/value pair to match.
+	 * 		@option string       "field"       The name of the HTML field that handles this string.
+	 * 		@option string       "field_id"    The id of the HTML field to target. (Defaults to field value)
+	 *		@option string       "type"        The type string this is (e.g. 'option' or an object type).
+	 *		@option string       "title"       An descriptive name of this string.
+	 *		@option string       "description" The details of this string's purpose.
+	 * 		@option string       "input"       The field input to use ("textarea" or an <input> type).
 	 */
 	public static function register_field( $args ) {
 		// Parse the args with the defaults
@@ -199,7 +226,7 @@ class Localizer extends Functional {
 			'field'       => null,
 			'field_id'    => null,
 			'type'        => 'option',
-			'page'        => null,
+			'screen'      => array(),
 			'title'       => null,
 			'description' => null,
 			'input'       => 'text',
@@ -210,8 +237,8 @@ class Localizer extends Functional {
 			return;
 		}
 
-		// Abort if no page is passed
-		if ( is_null( $args['page'] ) ) {
+		// Abort if no screen is passed
+		if ( is_null( $args['screen'] ) ) {
 			return;
 		}
 
@@ -240,12 +267,23 @@ class Localizer extends Functional {
 		}
 		static::$strings_by_type[ $type ][] = $string;
 
-		// Add to the page index
-		$type = $args['page'];
-		if ( ! isset( static::$strings_by_page[ $type ] ) ) {
-			static::$strings_by_page[ $type ] = array();
+		// Add to the screen index
+
+		$screen = (array) $args['screen'];
+		if ( count( $screen ) == 1 ) {
+			// Assume we're looking for the ID
+			$screen = array( 'id', $screen );
 		}
-		static::$strings_by_page[ $type ][] = $string;
+
+		list( $property, $match ) = $screen;
+		if ( ! isset( static::$strings_by_screen[ $property ] ) ) {
+			static::$strings_by_screen[ $property ] = array();
+		}
+		if ( ! isset( static::$strings_by_screen[ $property ][ $match ] ) ) {
+			static::$strings_by_screen[ $property ][ $match ] = array();
+		}
+
+		static::$strings_by_screen[ $property ][ $match ][] = $string;
 	}
 
 	/**
@@ -257,21 +295,21 @@ class Localizer extends Functional {
 	 * @param string $option The name of the option (as identified by get_option()).
 	 * @param string $page   The id or base of the screen the field should be found on.
 	 * @param array  $args   The custom arguments for the string.
-	 * 		@option string "field"       The name of the field that handles this string.
-	 * 		@option string "field_id"    The id of the HTML field to target. (Defaults to field value)
-	 *		@option string "page"        The id/base of the screen this field should appear on.
-	 *		@option string "title"       An descriptive name of this string.
-	 *		@option string "description" The details of this string's purpose.
-	 * 		@option string "input"       The field input to use ("textarea" or an <input> type).
+	 *		@option string|array "screen"      A screen ID or property/value pair to match.
+	 * 		@option string       "field"       The name of the input that handles this string.
+	 * 		@option string       "field_id"    The id of the HTML input to target. (Defaults to input name)
+	 *		@option string       "title"       An descriptive name of this string.
+	 *		@option string       "description" The details of this string's purpose.
+	 * 		@option string       "input"       The field input to use ("textarea" or an <input> type).
 	 */
 	public static function register_option( $option, $page, $args = array() ) {
 		if ( is_admin() ) {
 			// Build the args for the string and register it
 			$args = wp_parse_args( $args, array(
-				'key'   => "option_{$option}",
-				'page'  => $page,
-				'field' => $option,
-				'type'  => 'option',
+				'key'    => "option_{$option}",
+				'screen' => array( 'id', $page ),
+				'field'  => $option,
+				'type'   => 'option',
 			) );
 			static::register_field( $args );
 		} else {
@@ -299,7 +337,7 @@ class Localizer extends Functional {
 			static::register_field( array(
 				'key'      => "term_{$taxonomy}_name",
 				'field'    => 'name',
-				'page'     => $page,
+				'screen'   => array( 'id', $page ),
 				'title'    => __( 'Name' ),
 				'type'     => $type,
 				'input'    => 'text',
@@ -307,7 +345,7 @@ class Localizer extends Functional {
 			static::register_field( array(
 				'key'      => "term_{$taxonomy}_description",
 				'field'    => 'description',
-				'page'     => $page,
+				'screen'   => array( 'id', $page ),
 				'title'    => __( 'Description' ),
 				'type'     => $type,
 				'input'    => 'textarea',
@@ -323,27 +361,77 @@ class Localizer extends Functional {
 	}
 
 	/**
-	 * Localize a meta data field.
+	 * Localize a post data field.
 	 *
 	 * This will assume the field name/ID is the same as the key.
 	 *
-	 * This will guess the $page and $object_key based on $meta_type
-	 * if not provided.
+	 * The post type value if provided will be used as the screen post_type value.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $meta_type   The type of object the meta data is for.
-	 * @param string $meta_key    The metadata key (and the field name/ID).
-	 * @param array  $args   The custom arguments for the string.
-	 * 		@option string "field"       The name of the field that handles this string.
-	 * 		@option string "field_id"    The id of the HTML field to target. (Defaults to field value)
-	 *		@option string "page"        The id/base of the screen this field should appear on.
+	 * @param string $field_name The post_field name (and the field name/ID).
+	 * @param array  $args       The custom arguments for the string.
+	 *		@option string "post_type"   The post type this applies to.
+	 * 		@option string "field"       The name of the input that handles this string.
+	 * 		@option string "field_id"    The id of the HTML input to target. (Defaults to input name)
 	 *		@option string "title"       An descriptive name of this string.
 	 *		@option string "description" The details of this string's purpose.
 	 * 		@option string "input"       The field input to use ("textarea" or an <input> type).
 	 */
+	public static function register_postfield( $field_name, $args = array() ) {
+		if ( is_backend() ) {
+			// Rename post_type to screen if present
+			if ( isset($args['post_type'] ) ) {
+				$screen = array( 'post_type', $args['post_type'] );
+				unset( $args['post_type'] );
+			} else {
+				$screen = array( 'base', 'post' );
+			}
+
+			// Build the args for the string and register it
+			$args = wp_parse_args( $args, array(
+				'key'    => "postfield_{$field_name}",
+				'field'  => $meta_key,
+				'type'   => 'postfield',
+				'screen' => $screen,
+			) );
+
+			// Register the field as normal
+			static::register_field( $args );
+		} else {
+			return;
+			// Register it for filtering
+			if ( ! isset( static::$registered_metadata[ $type ] ) ) {
+				static::$registered_metadata[ $type ] = array();
+				// The filter for this meta type hasn't been setup yet
+				static::add_filter( "get_{$meta_type}_metadata", 'handle_localized_metadata', 10, 4 );
+			}
+			static::$registered_metadata[ $type ][] = $meta;
+		}
+	}
+
+	/**
+	 * Localize a meta data field.
+	 *
+	 * This will assume the field name/ID is the same as the key.
+	 *
+	 * This will guess the screen base based on $meta_type
+	 * if not provided.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $meta_type The type of object the meta data is for.
+	 * @param string $meta_key  The metadata key (and the field name/ID).
+	 * @param array  $args      The custom arguments for the string.
+	 *		@option string|array "screen"      A screen ID or property/value pair to match.
+	 * 		@option string       "field"       The name of the input that handles this string.
+	 * 		@option string       "field_id"    The id of the HTML input to target. (Defaults to input name)
+	 *		@option string       "title"       An descriptive name of this string.
+	 *		@option string       "description" The details of this string's purpose.
+	 * 		@option string       "input"       The field input to use ("textarea" or an <input> type).
+	 */
 	public static function register_metadata( $meta_type, $meta_key, $args = array() ) {
-		if ( is_admin() ) {
+		if ( is_backend() ) {
 			// Guess the page if not set
 			if ( is_null( $page ) ) {
 				if ( $meta_type == 'post' ) {
@@ -357,10 +445,10 @@ class Localizer extends Functional {
 
 			// Build the args for the string and register it
 			$args = wp_parse_args( $args, array(
-				'key'   => "meta_{$meta_type}_{$meta_key}",
-				'field' => $meta_key,
-				'type'  => $meta_type,
-				'page'  => $page,
+				'key'    => "meta_{$meta_type}_{$meta_key}",
+				'field'  => $meta_key,
+				'type'   => $meta_type,
+				'screen' => array( 'base', $page ),
 			) );
 
 			// Register the field as normal
@@ -677,7 +765,7 @@ class Localizer extends Functional {
 	 * @since 2.0.0
 	 *
 	 * @uses Localizer::$current_strings to store the strings found.
-	 * @uses Localizer::get_strings_by_page() to get the strings for the screen.
+	 * @uses Localizer::get_strings_for_screen() to get the strings for the screen.
 	 */
 	public static function setup_localized_strings() {
 		// Get the current screen
@@ -705,15 +793,7 @@ class Localizer extends Functional {
 		}
 
 		// Now get the strings registered to this screen (by id or base)
-		if ( $screen->id == $screen->base ) {
-			// They're the same; don't want to fetch them twice
-			$strings = static::get_strings_by_page( $screen->id );
-		} else {
-			$strings = array_merge(
-				static::get_strings_by_page( $screen->id ),
-				static::get_strings_by_page( $screen->base )
-			);
-		}
+		$strings = static::get_strings_for_screen( $screen );
 
 		// If no strings are found, abort
 		if ( ! $strings ) {
