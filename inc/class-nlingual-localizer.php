@@ -44,17 +44,6 @@ class Localizer extends Functional {
 	protected static $registered_taxonomies = array();
 
 	/**
-	 * A list of all metadata keys registered for localizing.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var array
-	 */
-	protected static $registered_metadata = array();
-
-	/**
 	 * An index of strings by type.
 	 *
 	 * @since 2.0.0
@@ -369,44 +358,30 @@ class Localizer extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @param string $post_type  The post type this applies to.
 	 * @param string $field_name The post_field name (and the field name/ID).
 	 * @param array  $args       The custom arguments for the string.
-	 *		@option string "post_type"   The post type this applies to.
 	 * 		@option string "field"       The name of the input that handles this string.
 	 * 		@option string "field_id"    The id of the HTML input to target. (Defaults to input name)
 	 *		@option string "title"       An descriptive name of this string.
 	 *		@option string "description" The details of this string's purpose.
 	 * 		@option string "input"       The field input to use ("textarea" or an <input> type).
 	 */
-	public static function register_postfield( $field_name, $args = array() ) {
+	public static function register_postfield( $post_type, $field_name, $args = array() ) {
 		if ( is_backend() ) {
-			// Rename post_type to screen if present
-			if ( isset($args['post_type'] ) ) {
-				$screen = array( 'post_type', $args['post_type'] );
-				unset( $args['post_type'] );
-			} else {
-				$screen = array( 'base', 'post' );
-			}
-
 			// Build the args for the string and register it
 			$args = wp_parse_args( $args, array(
-				'key'    => "postfield_{$field_name}",
+				'key'    => "postfield_{$post_type}_{$field_name}",
 				'field'  => $meta_key,
 				'type'   => 'postfield',
-				'screen' => $screen,
+				'screen' => array( 'post_type', $post_type ),
 			) );
 
 			// Register the field as normal
 			static::register_field( $args );
 		} else {
-			return;
-			// Register it for filtering
-			if ( ! isset( static::$registered_metadata[ $type ] ) ) {
-				static::$registered_metadata[ $type ] = array();
-				// The filter for this meta type hasn't been setup yet
-				static::add_filter( "get_{$meta_type}_metadata", 'handle_localized_metadata', 10, 4 );
-			}
-			static::$registered_metadata[ $type ][] = $meta;
+			// Setup filtering (if not already)
+			static::maybe_add_action( 'the_post', 'handle_localized_postfields', 10, 1 );
 		}
 	}
 
@@ -454,13 +429,8 @@ class Localizer extends Functional {
 			// Register the field as normal
 			static::register_field( $args );
 		} else {
-			// Register it for filtering
-			if ( ! isset( static::$registered_metadata[ $type ] ) ) {
-				static::$registered_metadata[ $type ] = array();
-				// The filter for this meta type hasn't been setup yet
-				static::add_filter( "get_{$meta_type}_metadata", 'handle_localized_metadata', 10, 4 );
-			}
-			static::$registered_metadata[ $type ][] = $meta;
+			// Setup filtering (if not already)
+			static::maybe_add_filter( "get_{$meta_type}_metadata", 'handle_localized_metadata', 10, 4 );
 		}
 	}
 
@@ -640,6 +610,30 @@ class Localizer extends Functional {
 			$term = static::handle_localized_term( $term, $taxonomy[0] );
 		}
 		return $terms;
+	}
+
+	/**
+	 * Update a post's fields with their localized versions if found.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::current_language() to get the current language.
+	 * @uses Localizer::get_string_value() to retrieve the localized value.
+	 *
+	 * @param WP_Post $post The post object to filter.
+	 */
+	public static function handle_localized_postfields( $post ) {
+		$post_fields = get_object_vars( $post );
+
+		// Get the current language
+		$language = Registry::current_language();
+
+		// Loop through each field and replace with localized values if found
+		foreach ( $post_fields as $field_name => $value ) {
+			if ( $localized = static::get_string_value( "postfield_{$post->post_type}_{$field_name}", $language->id, $post->ID ) ) {
+				$post->$field_name = $localized;
+			}
+		}
 	}
 
 	/**
