@@ -87,6 +87,17 @@ class Localizer extends Functional {
 	 */
 	protected static $current_strings = array();
 
+	/**
+	 * Storage for the current object ID if applicable.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected
+	 *
+	 * @var int
+	 */
+	protected static $current_object_id = 0;
+
 	// =========================
 	// ! Property Access
 	// =========================
@@ -598,7 +609,7 @@ class Localizer extends Functional {
 
 		// Determin object ID to use
 		$object_id_keys = array(
-			'edit.php'      => 'post_ID',
+			'post.php'      => 'post_ID',
 			'edit-tags.php' => 'tag_ID',
 			'profile.php'   => 'user_id',
 		);
@@ -706,8 +717,9 @@ class Localizer extends Functional {
 			return;
 		}
 
-		// Store the strings
+		// Store the strings and object id
 		static::$current_strings = $strings;
+		static::$current_object_id = $object_id;
 
 		// Add the help tab to this screen if we can
 		if ( $content = Documenter::get_tab_content( 'localize-this' ) ) {
@@ -732,6 +744,9 @@ class Localizer extends Functional {
 		if ( ! $strings = static::$current_strings ) {
 			return;
 		}
+
+		// Get the current object id
+		$object_id = static::$current_object_id;
 
 		// Create the entries for each strings
 		$data = array();
