@@ -180,7 +180,7 @@ function nl_split_langs( $text, $language = null, $sep = null, $force = false ){
 		return $text;
 	}
 
-	if ( is_admin() && ! $force && did_action( 'admin_notices' ) ) {
+	if ( is_admin() && ! $force ) {
 		return $text;
 	}
 
@@ -200,6 +200,6 @@ function nl_split_langs( $text, $language = null, $sep = null, $force = false ){
 // ! Old Filters
 // =========================
 
-add_filter( 'option_blogname', 'nl_split_langs' );
-add_filter( 'option_blogdescription', 'nl_split_langs' );
-add_filter( 'the_title', 'nl_split_langs' );
+add_filter( 'option_blogname', 'nl_split_langs', 10, 1 );
+add_filter( 'option_blogdescription', 'nl_split_langs', 10, 1 );
+add_filter( 'the_title', 'nl_split_langs', 10, 1 );
