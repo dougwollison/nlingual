@@ -209,14 +209,17 @@ jQuery( function( $ ) {
 	} );
 
 	// =========================
-	// ! Localizeable Strings
+	// ! Input Localizer
 	// =========================
+
+	// Flag for skipping redundant localizer update
+	var nlLocalizerSkipUpdate = 'nlLocalizerSkipUpdate';
 
 	// Setup the base localizer
 	var $localizer = $('<span class="nl-localizer"></span>').html(function(){
 		var html = '<span class="nl-localizer-toggle" title="' + nlingualL10n.LocalizeThis + '"></span>', language;
 		_.each( NL_LANGUAGES, function( language ) {
-			html += '<span class="nl-localizer-option" title="' + nlingualL10n.LocalizeFor.replace( '%s', language.system_name ) + '" data-language="' + language.id + '"><i class="nl-option-text">' + language.system_name + '</i></span>';
+			html += '<span class="nl-localizer-option" title="' + nlingualL10n.LocalizeFor.replace( '%s', language.system_name ) + '" data-nl_language="' + language.id + '"><i class="nl-option-text">' + language.system_name + '</i></span>';
 		} );
 		return html;
 	});
@@ -242,11 +245,27 @@ jQuery( function( $ ) {
 		// Create the control
 		var $control = $localizer.clone();
 
-		// Store the field and wrapper references in the control
-		$control.data( '$nl_localized_' + NL_DEFAULT_LANGUAGE, $field );
-		$control.data( '$wrap', $wrap );
+		// Store the control reference in the field
+		$field.data( '$nl_localizer', $control );
 
-		// Add copies of the field for each language
+		// Store the current language of the control
+		$control.data( 'nl_current_language', NL_DEFAULT_LANGUAGE );
+
+		// Store the field and wrapper reference in the control
+		$control.data( '$nl_localizer_field', $field );
+
+		// Create the storage input for the unlocalized field
+		var $unlocalized = $( '<input type="hidden" />' );
+			$unlocalized.attr( 'name', $field.attr( 'name' ) );
+			$unlocalized.val( $field.val() );
+
+		// Add to the wrapper
+		$unlocalized.appendTo( $wrap );
+
+		// Store the unlocalized input reference in the control
+		$control.data( '$nl_localized_' + NL_DEFAULT_LANGUAGE, $unlocalized );
+
+		// Add hidden storage inputs
 		_.each( NL_LANGUAGES, function( language ) {
 			// Skip the default language
 			if ( NL_DEFAULT_LANGUAGE === language.id ) {
@@ -256,19 +275,16 @@ jQuery( function( $ ) {
 			// Get the localized version of the value
 			var localized = values[ language.id ] || null;
 
-			// Copy, update the id/name, and set the value
-			var $localized = $field.clone();
-			$localized.attr( {
-				id   : 'nl_localized-' + $field.attr( 'id' ) + '-language_' + language.id,
-				name : 'nlingual_localized[' + $field.attr( 'name' ) + '][' + language.id + ']'
-			} );
-			$localized.val( localized );
+			// Create a hidden field for the input
+			var $localized = $( '<input type="hidden" />' );
+				$localized.attr( 'name', 'nlingual_localized[' + $field.attr( 'name' ) + '][' + language.id + ']' );
+				$localized.val( localized );
 
 			// Store it for later use
 			$control.data( '$nl_localized_' + language.id, $localized );
 
-			// Add to the container and hide
-			$localized.appendTo( $wrap ).hide();
+			// Add to the wrapper
+			$localized.appendTo( $wrap );
 
 			if ( localized !== '' && localized !== null ) {
 				hasLocalized = true;
@@ -277,7 +293,7 @@ jQuery( function( $ ) {
 
 		// Add the current class to the default language if localized versions are set
 		if ( hasLocalized ) {
-			$control.find( '[data-language="' + NL_DEFAULT_LANGUAGE + '"]' ).addClass( 'nl-current' );
+			$control.find( '[data-nl_language="' + NL_DEFAULT_LANGUAGE + '"]' ).addClass( 'nl-current' );
 		}
 
 		// Add the nonce field
@@ -288,10 +304,10 @@ jQuery( function( $ ) {
 	} );
 
 	$( 'body' ).on( 'click', '.nl-localizer-option', function () {
-		// Get the localizer and the language
-		var $option = $( this );
-		var $control = $option.parent();
-		var language = $option.data( 'language' );
+		// Get the localizer control, and the selected language
+		var $option = $( this ),
+			$control = $option.parent(),
+			language = $option.data( 'nl_language' );
 
 		// Mark this as the new current one
 		$( this ).addClass( 'nl-current' ).siblings().removeClass( 'nl-current' );
@@ -301,9 +317,42 @@ jQuery( function( $ ) {
 			language = NL_DEFAULT_LANGUAGE;
 		}
 
-		// Show the target version of the field
-		$control.data( '$wrap' ).find( '.nl-localizable-input' ).hide();
-		$control.data( '$nl_localized_' + language ).show();
+		// Get the current field and the localized storage field
+		var $field = $control.data( '$nl_localizer_field' ),
+			$localized = $control.data( '$nl_localized_' + language );
+
+		// Before we begin changing stuff, trigger an update on the field
+		$field.trigger( 'nl:localizer:update' );
+
+		// Update the controls current language
+		$control.data( 'nl_current_language', language );
+
+		// Get the value/name of the target localized field
+		var value = $localized.val(),
+			name = $localized.attr( 'name' );
+
+		// Swap the field's value/name
+		$field.val( value ).attr( 'name', name );
+
+		// Trigger a change event, for potential extensibility
+		$field.trigger( 'change', nlLocalizerSkipUpdate );
+	} );
+
+	$( 'body' ).on( 'change nl:localizer:update', '.nl-localizable-input', function ( event, extra ) {
+		// Skip if this was a change event triggered by the update above
+		if ( event.type === 'change' && extra === nlLocalizerSkipUpdate ) {
+			return;
+		}
+
+		// Get the control reference and it's current language
+		var $control = $( this ).data( '$nl_localizer' );
+		var language = $control.data( 'nl_current_language' );
+
+		// Get the localized storage field
+		var $localized = $control.data( '$nl_localized_' + language );
+
+		// Update it with the current value
+		$localized.val( this.value );
 	} );
 
 	// =========================
