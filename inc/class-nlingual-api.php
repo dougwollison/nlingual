@@ -79,7 +79,13 @@ class API extends Functional {
 
 		// P.S. add backwards compatibilty stuff if needed
 		if ( backwards_compatible() ) {
-			require( __DIR__ . '/backwards-compatibility.php' );
+			require( __DIR__ . '/compatibility-template.php' );
+
+			if ( is_backend() ) {
+				require( __DIR__ . '/compatibility-tools.php' );
+			} else {
+				require( __DIR__ . '/compatibility-hooks.php' );
+			}
 		}
 	}
 

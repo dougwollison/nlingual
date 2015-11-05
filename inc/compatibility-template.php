@@ -1,9 +1,9 @@
 <?php
 /**
- * nLingual Backwards Compatibilty
+ * nLingual Compatibilty Functions
  *
  * @package nLingual
- * @subpackage Backwards Compatibilty
+ * @subpackage Compatibilty Functions
  * @since 2.0.0
  */
 
@@ -156,14 +156,14 @@ function nl_print_lang_links( $prefix = '', $sep = ' ', $skip_current = false ) 
  *
  * @since 2.0.0
  *
- * @param string $text     The text to split up.
- * @param mixed  $language Optional The language to get the matching version for (defaults to current).
- * @param string $sep      Optional The separator to use when splitting the text (defaults to one defined under nLingual before 2.0.0).
- * @param bool   $force    Optional Wether or not to force the split to happen instead of only when outside the admin.
+ * @param string $text       The text to split up.
+ * @param mixed  $language   Optional The language to get the matching version for (defaults to current).
+ * @param string $$separator Optional The separator to use when splitting the text (defaults to one defined under nLingual before 2.0.0).
+ * @param bool   $force      Optional Wether or not to force the split to happen instead of only when outside the admin.
  *
  * @return string The part of the text corresponding to the language desired.
  */
-function nl_split_langs( $text, $language = null, $sep = null, $force = false ){
+function nl_split_langs( $text, $language = null, $separator = null, $force = false ){
 	if ( is_null( $language ) ) {
 		$language = Registry::current_language();
 	} elseif ( ! is_a( $language, 'nLingual\\Language' ) ) {
@@ -172,11 +172,11 @@ function nl_split_langs( $text, $language = null, $sep = null, $force = false ){
 
 	$index = $language->list_order;
 
-	if ( is_null( $sep ) ) {
-		$sep = get_option( 'nlingual-old_separator' );
+	if ( is_null( $separator ) ) {
+		$separator = get_option( 'nlingual-old_separator' );
 	}
 
-	if ( ! $sep ) {
+	if ( ! $separator ) {
 		return $text;
 	}
 
@@ -184,22 +184,14 @@ function nl_split_langs( $text, $language = null, $sep = null, $force = false ){
 		return $text;
 	}
 
-	$sep = preg_quote( $sep, '/' );
-	$text = preg_split( "/\s*$sep\s*/", $text );
+	$separator = preg_quote( $separator, '/' );
+	$parts = preg_split( "/\s*$separator\s*/", $text );
 
-	if ( isset( $text[ $index ] ) ) {
-		$text = $text[ $index ];
+	if ( isset( $parts[ $index ] ) ) {
+		$text = $parts[ $index ];
 	} else {
-		$text = $text[0];
+		$text = $parts[0];
 	}
 
 	return $text;
 }
-
-// =========================
-// ! Old Filters
-// =========================
-
-add_filter( 'option_blogname', 'nl_split_langs', 10, 1 );
-add_filter( 'option_blogdescription', 'nl_split_langs', 10, 1 );
-add_filter( 'the_title', 'nl_split_langs', 10, 1 );
