@@ -199,6 +199,11 @@ class Languages implements \Iterator {
 			}
 		}
 
+		// If $field is "@", return the entry in the $items array for that index
+		if ( $field == '@' ) {
+			return $this->items[ $value ];
+		}
+
 		// Loop through all languages and return the first match
 		foreach ( $this->items as $language ) {
 			if ( $language->$field == $value ) {
