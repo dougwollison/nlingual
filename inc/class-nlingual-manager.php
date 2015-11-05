@@ -426,7 +426,7 @@ class Manager extends Functional {
 			Settings::add_fields( array(
 				'backwards_compatible' => array(
 					'title' => __( 'Backwards Compatability' ),
-					'help'  => __( 'Include support for old features like language splitting.' ),
+					'help'  => __( 'Include support for old template functions, and features like language splitting.' ),
 					'type'  => 'checkbox',
 				),
 			), 'options' );
@@ -728,7 +728,7 @@ class Manager extends Functional {
 
 					foreach ( $terms as $term ) : ?>
 					<hr />
-					<h4><?php echo $term->name; ?></h4>
+					<h4><a href="<?php echo get_edit_term_link( $term->term_id, $term->taxonomy ); ?>" target="_blank"><?php echo $term->name ?></a></h4>
 					<table class="form-table nl-taxonomy-strings">
 						<tbody>
 							<tr>
