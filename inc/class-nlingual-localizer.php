@@ -623,6 +623,10 @@ class Localizer extends Functional {
 	 * @param WP_Post $post The post object to filter.
 	 */
 	public static function handle_localized_postfields( $post ) {
+		// Abort if no post is specified
+		if ( ! $post ) return;
+
+		// Get the fields
 		$post_fields = get_object_vars( $post );
 
 		// Get the current language
