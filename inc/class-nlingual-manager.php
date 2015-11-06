@@ -136,7 +136,7 @@ class Manager extends Functional {
 		$strings_page_hook = add_submenu_page(
 			'nlingual-options', // parent
 			__( 'Manage Localized Strings' ), // page title
-			_x( 'Strings', 'menu title' ), // menu title
+			_x( 'String Localization', 'menu title' ), // menu title
 			'manage_options', // capability
 			'nlingual-strings', // slug
 			array( static::$name, 'settings_page_strings' ) // callback
@@ -689,13 +689,12 @@ class Manager extends Functional {
 		global $plugin_page;
 		?>
 		<div class="wrap">
-			<h2><?php _e( 'Manage Localized Taxonomies' ); ?></h2>
+			<h2><?php _e( 'Manage Localized Strings' ); ?></h2>
 			<?php settings_errors( $plugin_page ); ?>
 			<form method="post" action="options.php" id="<?php echo $plugin_page; ?>-form">
 				<?php settings_fields( $plugin_page ); ?>
 
 				<?php if ( $strings = Localizer::get_strings_by_type( 'option' ) ) : ?>
-				<h3><?php _e( 'Options & Settings' ); ?></h3>
 				<table class="form-table nl-option-strings">
 					<tbody>
 					<?php foreach ( $strings as $string ) : ?>
@@ -709,44 +708,6 @@ class Manager extends Functional {
 					<?php endforeach; ?>
 					</tbody>
 				</table>
-				<?php endif; ?>
-
-				<?php if ( $taxonomies = Localizer::get_registered_taxonomies() ) : ?>
-				<h2><?php _e( 'Manage Localized Taxonomies' ); ?></h2>
-				<?php foreach ( $taxonomies as $taxonomy ) : $taxonomy_obj = get_taxonomy( $taxonomy ); ?>
-					<h3><?php echo $taxonomy_obj->labels->name; ?></h3>
-					<?php
-					// Get the terms
-					$terms = get_terms( $taxonomy, array(
-						'orderby' => 'id',
-						'hide_empty' => false,
-					) );
-
-					// Get the strings
-					$name_string = Localizer::get_string( "term_{$taxonomy}_name" );
-					$desc_string = Localizer::get_string( "term_{$taxonomy}_description" );
-
-					foreach ( $terms as $term ) : ?>
-					<hr />
-					<h4><a href="<?php echo get_edit_term_link( $term->term_id, $term->taxonomy ); ?>" target="_blank"><?php echo $term->name ?></a></h4>
-					<table class="form-table nl-taxonomy-strings">
-						<tbody>
-							<tr>
-								<th scope="row"><?php _e( 'Name' ); ?></th>
-								<td>
-									<?php static::print_strings_table( $name_string, $term->name, $term->term_id );?>
-								</td>
-							</tr>
-							<tr>
-								<th scope="row"><?php _e( 'Description' ); ?></th>
-								<td>
-									<?php static::print_strings_table( $desc_string, $term->description, $term->term_id );?>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-					<?php endforeach; ?>
-				<?php endforeach; ?>
 				<?php endif; ?>
 
 				<?php submit_button(); ?>

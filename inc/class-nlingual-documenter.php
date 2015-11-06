@@ -60,7 +60,6 @@ class Documenter extends Functional {
 		'strings' => array(
 			'tabs' => array(
 				'overview' => 'Overview',
-				'taxonomies' => 'Taxonomies',
 			),
 			'sidebar' => false,
 		),

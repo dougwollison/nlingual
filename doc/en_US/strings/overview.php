@@ -1,3 +1,3 @@
-Any options and taxonomies registered for localization can be managed from here rather than their individual screens.
+Options that have been registered for localization can be managed here rather than on their respective screens.
 
-Options and setting values can also have their unlocalized versions edited here. The unlocalized version is considered to be the value to use for the default language.
+The unlocalized value is considered the version for the default language.
