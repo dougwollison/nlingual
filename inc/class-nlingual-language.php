@@ -9,7 +9,7 @@
 
 namespace nLingual;
 
-class Language extends SimpleObject {
+class Language extends Model {
 	// =========================
 	// ! Properties
 	// =========================

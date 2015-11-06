@@ -1,6 +1,6 @@
 <?php
 /**
- * nLingual Language Model
+ * nLingual Abstract Model
  *
  * @package nLingual
  *

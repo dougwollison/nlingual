@@ -1,6 +1,6 @@
 <?php
 /**
- * nLingual Language Model
+ * nLingual Localizable String Model
  *
  * @package nLingual
  *
@@ -9,7 +9,7 @@
 
 namespace nLingual;
 
-class LocalizableString extends SimpleObject {
+class LocalizableString extends Model {
 	// =========================
 	// ! Properties
 	// =========================
