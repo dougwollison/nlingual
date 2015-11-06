@@ -216,7 +216,7 @@ class Localizer extends Functional {
 	// =========================
 
 	/**
-	 * Localize a field on an admin page.
+	 * Register a string for localization.
 	 *
 	 * @since 2.0.0
 	 *
@@ -231,7 +231,7 @@ class Localizer extends Functional {
 	 *		@option string       "description" The details of this string's purpose.
 	 * 		@option string       "input"       The field input to use ("textarea" or an <input> type).
 	 */
-	public static function register_field( $args ) {
+	public static function register_string( $args ) {
 		// Parse the args with the defaults
 		$args = wp_parse_args( $args, array(
 			'id'          => null,
@@ -334,7 +334,7 @@ class Localizer extends Functional {
 				'field'  => $option,
 				'type'   => 'option',
 			) );
-			static::register_field( $args );
+			static::register_string( $args );
 		} else {
 			// Add the filter to handle retrieval
 			static::add_filter( "pre_option_{$option}", 'handle_localized_option', 10, 1 );
@@ -359,7 +359,7 @@ class Localizer extends Functional {
 			$page = "edit-{$taxonomy}";
 			$type = "term_{$taxonomy}";
 
-			static::register_field( array(
+			static::register_string( array(
 				'id'       => "term_{$taxonomy}_name",
 				'key'      => "term_name",
 				'field'    => 'name',
@@ -368,7 +368,7 @@ class Localizer extends Functional {
 				'type'     => $type,
 				'input'    => 'text',
 			) );
-			static::register_field( array(
+			static::register_string( array(
 				'id'       => "term_{$taxonomy}_description",
 				'key'      => "term_description",
 				'field'    => 'description',
@@ -426,7 +426,7 @@ class Localizer extends Functional {
 			) );
 
 			// Register the field as normal
-			static::register_field( $args );
+			static::register_string( $args );
 		} else {
 			// Setup filtering (if not already)
 			static::maybe_add_action( 'the_post', 'handle_localized_postfields', 10, 1 );
@@ -477,7 +477,7 @@ class Localizer extends Functional {
 			) );
 
 			// Register the field as normal
-			static::register_field( $args );
+			static::register_string( $args );
 		} else {
 			// Setup filtering (if not already)
 			static::maybe_add_filter( "get_{$meta_type}_metadata", 'handle_localized_metadata', 10, 4 );
