@@ -220,7 +220,8 @@ class Localizer extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param array $args The arguments for the string.
+	 * @param string $id   A unique ID for the strings.
+	 * @param array  $args The arguments for the string.
 	 * 		@option string       "id"          A unique ID for the string.
 	 * 		@option string       "key"         The key the string will be stored under (defaults to ID).
 	 *		@option string|array "screen"      A screen ID or property/value pair to match.
@@ -231,10 +232,9 @@ class Localizer extends Functional {
 	 *		@option string       "description" The details of this string's purpose.
 	 * 		@option string       "input"       The field input to use ("textarea" or an <input> type).
 	 */
-	public static function register_string( $args ) {
+	public static function register_string( $id, array $args ) {
 		// Parse the args with the defaults
 		$args = wp_parse_args( $args, array(
-			'id'          => null,
 			'key'         => null,
 			'field'       => null,
 			'field_id'    => null,
@@ -245,17 +245,10 @@ class Localizer extends Functional {
 			'input'       => 'text',
 		) );
 
-		// Abort if no ID is passed
-		if ( is_null( $args['id'] ) ) {
-			return;
-		}
-
 		// Abort if no screen is passed
 		if ( is_null( $args['screen'] ) ) {
 			return;
 		}
-
-		$id = $args['id'];
 
 		// Assume key is the same as id if not set
 		if ( is_null( $args['key'] ) ) {
@@ -281,16 +274,17 @@ class Localizer extends Functional {
 
 		// Cast as object
 		$string = (object) $args;
+		$string->id = $id;
 
 		// Add to the registry
 		static::$registered_strings[ $id ] = $string;
 
 		// Add to the key index
 		$key = $args['key'];
-		if ( ! isset( static::$strings_by_type[ $key ] ) ) {
-			static::$strings_by_type[ $key ] = array();
+		if ( ! isset( static::$strings_by_key[ $key ] ) ) {
+			static::$strings_by_key[ $key ] = array();
 		}
-		static::$strings_by_type[ $key ][] = $string;
+		static::$strings_by_key[ $key ][] = $string;
 
 		// Add to the type index
 		$type = $args['type'];
@@ -326,19 +320,19 @@ class Localizer extends Functional {
 	 * 		@option string       "input"       The field input to use ("textarea" or an <input> type).
 	 */
 	public static function register_option( $option, $page, $args = array() ) {
-		if ( is_backend() ) {
-			// Build the args for the string and register it
-			$args = wp_parse_args( $args, array(
-				'id'     => "option_{$option}",
-				'screen' => array( 'id', $page ),
-				'field'  => $option,
-				'type'   => 'option',
-			) );
-			static::register_string( $args );
-		} else {
-			// Add the filter to handle retrieval
+		// Build the args for the string and register it
+		$args = wp_parse_args( $args, array(
+			'screen' => array( 'id', $page ),
+			'field'  => $option,
+			'type'   => 'option',
+		) );
+		static::register_string( "option:{$option}", $args );
+
+		// Add the filter to handle retrieval (frontend only)
+		if ( ! is_backend() ) {
 			static::add_filter( "pre_option_{$option}", 'handle_localized_option', 10, 1 );
 		}
+
 		// Add action to handle updating
 		static::add_action( "update_option_{$option}", 'update_unlocalized_option', 10, 2 );
 	}
@@ -354,37 +348,36 @@ class Localizer extends Functional {
 	 * @param string $taxonomy The taxonomy to localize term names for.
 	 */
 	public static function register_taxonomy( $taxonomy ) {
-		if ( is_backend() ) {
-			// Register the name and description fields as normal
-			$page = "edit-{$taxonomy}";
-			$type = "term_{$taxonomy}";
+		// Register the name and description fields as normal
+		$page = "edit-{$taxonomy}";
+		$type = "term_{$taxonomy}";
 
-			static::register_string( array(
-				'id'       => "term_{$taxonomy}_name",
-				'key'      => "term_name",
-				'field'    => 'name',
-				'screen'   => array( 'id', $page ),
-				'title'    => __( 'Name' ),
-				'type'     => $type,
-				'input'    => 'text',
-			) );
-			static::register_string( array(
-				'id'       => "term_{$taxonomy}_description",
-				'key'      => "term_description",
-				'field'    => 'description',
-				'screen'   => array( 'id', $page ),
-				'title'    => __( 'Description' ),
-				'type'     => $type,
-				'input'    => 'textarea',
-			) );
+		static::register_string( "term.{$taxonomy}:term_name", array(
+			'key'      => "term_name",
+			'field'    => 'name',
+			'screen'   => array( 'id', $page ),
+			'title'    => __( 'Name' ),
+			'type'     => 'term_field',
+			'input'    => 'text',
+		) );
+		static::register_string( "term.{$taxonomy}:term_description", array(
+			'key'      => "term_description",
+			'field'    => 'description',
+			'screen'   => array( 'id', $page ),
+			'title'    => __( 'Description' ),
+			'type'     => 'term_field',
+			'input'    => 'textarea',
+		) );
 
-			// Add the taxonomy to the registered list
-			static::$registered_taxonomies[] = $taxonomy;
-		} else {
-			// Add the filter to handle it
+		// Add the taxonomy to the registered list
+		static::$registered_taxonomies[] = $taxonomy;
+
+		// Add the filters to handle it (frontend only)
+		if ( ! is_backend() ) {
 			static::add_filter( "get_{$taxonomy}", 'handle_localized_term', 10, 2 );
 			static::add_filter( 'get_terms', 'handle_localized_terms', 10, 2 );
 		}
+
 		// Add action to handle updating
 		static::add_action( "edited_term", 'update_unlocalized_term', 10, 3 );
 	}
@@ -409,30 +402,30 @@ class Localizer extends Functional {
 	 *		@option string "description" The details of this string's purpose.
 	 * 		@option string "input"       The field input to use ("textarea" or an <input> type).
 	 */
-	public static function register_postfield( $post_type, $field_name, $args = array() ) {
+	public static function register_post_field( $post_type, $field_name, $args = array() ) {
 		// Abort if the field name isn't allowed
 		if ( ! in_array( $field_name, static::$localizable_post_fields ) ) {
 			return;
 		}
 
-		if ( is_backend() ) {
-			// Build the args for the string and register it
-			$args = wp_parse_args( $args, array(
-				'id'     => "postfield_{$post_type}_{$field_name}",
-				'key'    => "postfield_{$field_name}",
-				'field'  => $meta_key,
-				'type'   => 'postfield',
-				'screen' => array( 'post_type', $post_type ),
-			) );
+		// Build the args for the string and register it
+		$args = wp_parse_args( $args, array(
+			'key'    => "post_field:{$field_name}",
+			'field'  => $meta_key,
+			'type'   => 'post_field',
+			'screen' => array( 'post_type', $post_type ),
+		) );
 
-			// Register the field as normal
-			static::register_string( $args );
-		} else {
-			// Setup filtering (if not already)
-			static::maybe_add_action( 'the_post', 'handle_localized_postfields', 10, 1 );
+		// Register the field as normal
+		static::register_string( "post_field.{$post_type}:{$field_name}", $args );
+
+		if ( ! is_backend() ) {
+			// Setup filtering if needed (frontend only)
+			static::maybe_add_action( 'the_post', 'handle_localized_post_fields', 10, 1 );
 		}
+
 		// Add action to handle updating
-		static::maybe_add_action( 'post_updated', 'update_unlocalized_postfields', 10, 2 );
+		static::maybe_add_action( 'post_updated', 'update_unlocalized_post_fields', 10, 2 );
 	}
 
 	/**
@@ -456,32 +449,32 @@ class Localizer extends Functional {
 	 * 		@option string       "input"       The field input to use ("textarea" or an <input> type).
 	 */
 	public static function register_metadata( $meta_type, $meta_key, $args = array() ) {
-		if ( is_backend() ) {
-			// Guess the page if not set
-			if ( is_null( $page ) ) {
-				if ( $meta_type == 'post' ) {
-					$page = $meta_type;
-				} elseif ( $meta_type == 'term' ) {
-					$page = 'edit-tags';
-				} else {
-					$page = "{$meta_type}-edit";
-				}
+		// Guess the page if not set
+		if ( is_null( $page ) ) {
+			if ( $meta_type == 'post' ) {
+				$page = $meta_type;
+			} elseif ( $meta_type == 'term' ) {
+				$page = 'edit-tags';
+			} else {
+				$page = "{$meta_type}-edit";
 			}
+		}
 
-			// Build the args for the string and register it
-			$args = wp_parse_args( $args, array(
-				'id'     => "meta_{$meta_type}_{$meta_key}",
-				'field'  => $meta_key,
-				'type'   => $meta_type,
-				'screen' => array( 'base', $page ),
-			) );
+		// Build the args for the string and register it
+		$args = wp_parse_args( $args, array(
+			'field'  => $meta_key,
+			'type'   => "{$meta_type}meta",
+			'screen' => array( 'base', $page ),
+		) );
 
-			// Register the field as normal
-			static::register_string( $args );
-		} else {
+		// Register the field as normal
+		static::register_string( "meta.{$meta_type}:{$meta_key}", $args );
+
+		if ( ! is_backend() ) {
 			// Setup filtering (if not already)
 			static::maybe_add_filter( "get_{$meta_type}_metadata", 'handle_localized_metadata', 10, 4 );
 		}
+
 		// Add action to handle updating
 		static::maybe_add_action( "update_{$meta_type}_metadata", 'update_unlocalized_metadata', 10, 4 );
 	}
@@ -515,7 +508,7 @@ class Localizer extends Functional {
 		}
 
 		// Check if it's cached, return if so
-		if ( $cached = Registry::cache_get( 'localized', "$key-$language_id-$object_id" ) ) {
+		if ( $cached = Registry::cache_get( 'localized', "$key;$language_id;$object_id" ) ) {
 			return $cached;
 		}
 
@@ -528,7 +521,7 @@ class Localizer extends Functional {
 		", $key, $language_id, $object_id ) );
 
 		// Add it to the cache
-		Registry::cache_set( 'localized', "$key-$language_id-$object_id", $value );
+		Registry::cache_set( 'localized', "$key;$language_id;$object_id", $value );
 
 		return $value;
 	}
@@ -552,7 +545,7 @@ class Localizer extends Functional {
 		global $wpdb;
 
 		// Abort if check isn't bypassed and fails
-		if ( $check_reg && ! isset( static::$registered_strings[ $key ] ) ) {
+		if ( $check_reg && ! isset( static::$strings_by_key[ $key ] ) ) {
 			return array();
 		}
 
@@ -589,9 +582,15 @@ class Localizer extends Functional {
 	 * @param int    $language_id The language ID to save for.
 	 * @param int    $object_id   The object ID if relevent (otherwise 0).
 	 * @param string $value       The localized value of the string.
+	 * @param bool   $check_reg   Optional Wether or not to check if the string is regsitered before fetching (default TRUE).
 	 */
-	public static function save_string_value( $key, $language_id, $object_id, $value ) {
+	public static function save_string_value( $key, $language_id, $object_id, $value, $check_reg = true ) {
 		global $wpdb;
+
+		// Abort if check isn't bypassed and fails
+		if ( $check_reg && ! isset( static::$strings_by_key[ $key ] ) ) {
+			return array();
+		}
 
 		return $wpdb->replace( $wpdb->nl_strings, array(
 			'language_id'      => $language_id,
@@ -626,7 +625,7 @@ class Localizer extends Functional {
 		$language = Registry::current_language();
 
 		// Get the localized version of the string if it exists
-		if ( $value = static::get_string_value( "option_{$option}", $language->id ) ) {
+		if ( $value = static::get_string_value( "option:{$option}", $language->id ) ) {
 			return $value;
 		}
 
@@ -653,7 +652,7 @@ class Localizer extends Functional {
 		$language = Registry::default_language();
 
 		// Store this value as the version for the default language
-		static::save_string_value( "option_{$option}", $language->id, 0, $value );
+		static::save_string_value( "option:{$option}", $language->id, 0, $value );
 	}
 
 	/**
@@ -738,7 +737,7 @@ class Localizer extends Functional {
 	 *
 	 * @param WP_Post $post The post object to filter.
 	 */
-	public static function handle_localized_postfields( $post ) {
+	public static function handle_localized_post_fields( $post ) {
 		// Abort if no post is specified
 		if ( ! $post ) return;
 
@@ -752,7 +751,7 @@ class Localizer extends Functional {
 				return;
 			}
 			// Get the localized version, replace it if found
-			if ( $localized = static::get_string_value( "postfield_{$field_name}", $language->id, $post->ID ) ) {
+			if ( $localized = static::get_string_value( "post_field:{$field_name}", $language->id, $post->ID ) ) {
 				$post->$field_name = $localized;
 			}
 		}
@@ -770,7 +769,7 @@ class Localizer extends Functional {
 	 * @param int $post_id The ID of the post being updated.
 	 * @param WP_Post $post The updated post object.
 	 */
-	public static function update_unlocalized_postfields( $post_id, $post ) {
+	public static function update_unlocalized_post_fields( $post_id, $post ) {
 		// Abort if no post is specified
 		if ( ! $post ) return;
 
@@ -784,7 +783,7 @@ class Localizer extends Functional {
 				return;
 			}
 			// Store this value as the version for the default language
-			static::save_string_value( "postfield_{$field_name}", $language->id, $post_id, $value );
+			static::save_string_value( "post_field:{$field_name}", $language->id, $post_id, $value );
 		}
 	}
 
@@ -812,7 +811,7 @@ class Localizer extends Functional {
 		$language = Registry::current_language();
 
 		// Get the localized version of the string if it exists
-		if ( $value = static::get_string_value( "meta_{$meta_type}_{$meta_key}", $language->id, $object_id ) ) {
+		if ( $value = static::get_string_value( "{$meta_type}meta:{$meta_key}", $language->id, $object_id ) ) {
 			return $value;
 		}
 
@@ -841,7 +840,7 @@ class Localizer extends Functional {
 		$language = Registry::default_language();
 
 		// Store this value as the version for the default language
-		static::save_string_value( "meta_{$meta_type}_{$meta_key}", $language->id, $object_id, $meta_value );
+		static::save_string_value( "{$meta_type}meta:{$meta_key}", $language->id, $object_id, $meta_value );
 	}
 
 	// =========================
