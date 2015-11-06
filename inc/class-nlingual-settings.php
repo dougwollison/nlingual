@@ -298,7 +298,7 @@ class Settings {
 		$html .= sprintf( '<select name="%s" id="%s">', $name, $id );
 		foreach ( $options as $val => $label ) {
 			$selected = $val == $value ? ' selected' : '';
-			$html .= sprintf( '<option value="%s">%s</option>', $val, $label );
+			$html .= sprintf( '<option value="%s"%s>%s</option>', $val, $selected, $label );
 		}
 		$html .= '</select>';
 
