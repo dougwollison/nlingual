@@ -292,7 +292,7 @@ class Localizer extends Functional {
 	 * 		@option string       "input"       The field input to use ("textarea" or an <input> type).
 	 */
 	public static function register_option( $option, $page, $args = array() ) {
-		if ( is_admin() ) {
+		if ( is_backend() ) {
 			// Build the args for the string and register it
 			$args = wp_parse_args( $args, array(
 				'key'    => "option_{$option}",
@@ -302,9 +302,11 @@ class Localizer extends Functional {
 			) );
 			static::register_field( $args );
 		} else {
-			// Add the filter to handle it
-			static::add_filter( "pre_option_{$option}", 'handle_localized_option' );
+			// Add the filter to handle retrieval
+			static::add_filter( "pre_option_{$option}", 'handle_localized_option', 10, 1 );
 		}
+		// Add action to handle updating
+		static::add_action( "update_option_{$option}", 'update_unlocalized_option', 10, 2 );
 	}
 
 	/**
@@ -318,7 +320,7 @@ class Localizer extends Functional {
 	 * @param string $taxonomy The taxonomy to localize term names for.
 	 */
 	public static function register_taxonomy( $taxonomy ) {
-		if ( is_admin() ) {
+		if ( is_backend() ) {
 			// Register the name and description fields as normal
 			$page = "edit-{$taxonomy}";
 			$type = "term_{$taxonomy}";
@@ -347,6 +349,8 @@ class Localizer extends Functional {
 			static::add_filter( "get_{$taxonomy}", 'handle_localized_term', 10, 2 );
 			static::add_filter( 'get_terms', 'handle_localized_terms', 10, 2 );
 		}
+		// Add action to handle updating
+		static::add_action( "edited_term", 'update_unlocalized_term', 10, 3 );
 	}
 
 	/**
@@ -383,6 +387,8 @@ class Localizer extends Functional {
 			// Setup filtering (if not already)
 			static::maybe_add_action( 'the_post', 'handle_localized_postfields', 10, 1 );
 		}
+		// Add action to handle updating
+		static::maybe_add_action( 'post_updated', 'update_unlocalized_postfields', 10, 2 );
 	}
 
 	/**
@@ -432,6 +438,8 @@ class Localizer extends Functional {
 			// Setup filtering (if not already)
 			static::maybe_add_filter( "get_{$meta_type}_metadata", 'handle_localized_metadata', 10, 4 );
 		}
+		// Add action to handle updating
+		static::maybe_add_action( "update_{$meta_type}_metadata", 'update_unlocalized_metadata', 10, 4 );
 	}
 
 	// =========================
@@ -454,8 +462,13 @@ class Localizer extends Functional {
 	 *
 	 * @return string|bool The localized version, false if nothing found.
 	 */
-	public static function get_string_value( $key, $language_id, $object_id = 0 ) {
+	public static function get_string_value( $key, $language_id, $object_id = 0, $check_reg = true ) {
 		global $wpdb;
+
+		// Abort if check isn't bypassed and fails
+		if ( $check_reg && ! isset( static::$registered_strings[ $key ] ) ) {
+			return null;
+		}
 
 		// Check if it's cached, return if so
 		if ( $cached = Registry::cache_get( 'localized', "$key-$language_id-$object_id" ) ) {
@@ -486,12 +499,18 @@ class Localizer extends Functional {
 	 * @uses Registry::languages() to fill out empty slots for each language as needed.
 	 *
 	 * @param string $key       The string key to search for.
-	 * @param int    $object_id The object ID if relevent (otherwise 0).
+	 * @param int    $object_id Optional The object ID if relevent (otherwise 0).
+	 * @param bool   $check_reg Optional Wether or not to check if the string is regsitered before fetching (default TRUE).
 	 *
 	 * @return array The localized versions of the specified string.
 	 */
-	public static function get_string_values( $key, $object_id = 0 ) {
+	public static function get_string_values( $key, $object_id = 0, $check_reg = true ) {
 		global $wpdb;
+
+		// Abort if check isn't bypassed and fails
+		if ( $check_reg && ! isset( static::$registered_strings[ $key ] ) ) {
+			return array();
+		}
 
 		$results = $wpdb->get_results( $wpdb->prepare( "
 			SELECT language_id, string_value
@@ -571,6 +590,29 @@ class Localizer extends Functional {
 	}
 
 	/**
+	 * Stores the new option value as the localized version for the default language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::current_language() to get the current language.
+	 * @uses Localizer::save_string_value() to save the unlocalized value.
+	 *
+	 * @param mixed $old_value The old value of the option (unused).
+	 * @param mixed $value     The new value of the option.
+	 */
+	public static function update_unlocalized_option( $old_value, $value ) {
+		// Get the current filter and the option based on it
+		$filter = current_filter();
+		$option = preg_replace( '/^update_option_/', '', $filter );
+
+		// Get the default language
+		$language = Registry::default_language();
+
+		// Store this value as the version for the default language
+		static::save_string_value( "option_{$option}", $language->id, 0, $value );
+	}
+
+	/**
 	 * Replace a term's name and description with the localized versions if found.
 	 *
 	 * @since 2.0.0
@@ -599,6 +641,35 @@ class Localizer extends Functional {
 	}
 
 	/**
+	 * Stores the new name/description as the localized versions for the default language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::current_language() to get the current language.
+	 * @uses Localizer::save_string_value() to save the unlocalized values.
+	 *
+	 * @param int $term_id     The ID of the term being updated.
+	 * @param int $tt_id       The term taxonomy ID of the term (unused).
+	 * @param string $taxonomy The taxonomy of the term being updated.
+	 */
+	public static function update_unlocalized_term( $term_id, $tt_id, $taxonomy ) {
+		// Get the udpated term, since we aren't provided with the updated values
+		$term = get_term( $term_id, $taxonomy );
+
+		// Abort if no term is found
+		if ( ! $term ) {
+			return;
+		}
+
+		// Get the default language
+		$language = Registry::default_language();
+
+		// Store this value as the version for the default language
+		static::save_string_value( "term_{$taxonomy}_name", $language->id, $term_id, $term->name );
+		static::save_string_value( "term_{$taxonomy}_description", $language->id, $term_id, $term->description );
+	}
+
+	/**
 	 * Alias for handle_lcoalize_term() but for a collection of terms.
 	 *
 	 * @since 2.0.0
@@ -613,7 +684,7 @@ class Localizer extends Functional {
 	}
 
 	/**
-	 * Update a post's fields with their localized versions if found.
+	 * Replace a post's fields with their localized versions if found.
 	 *
 	 * @since 2.0.0
 	 *
@@ -634,9 +705,37 @@ class Localizer extends Functional {
 
 		// Loop through each field and replace with localized values if found
 		foreach ( $post_fields as $field_name => $value ) {
-			if ( $localized = static::get_string_value( "postfield_{$post->post_type}_{$field_name}", $language->id, $post->ID ) ) {
+			if ( static::get_string_value( "postfield_{$post->post_type}_{$field_name}", $language->id, $post->ID ) ) {
 				$post->$field_name = $localized;
 			}
+		}
+	}
+
+	/**
+	 * Stores the updated values of a posts field as the localized version for the default language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::current_language() to get the current language.
+	 * @uses Localizer::save_string_value() to save the unlocalized value.
+	 *
+	 * @param int $post_id The ID of the post being updated.
+	 * @param WP_Post $post The updated post object.
+	 */
+	public static function update_unlocalized_postfields( $post_id, $post ) {
+		// Abort if no post is specified
+		if ( ! $post ) return;
+
+		// Get the fields
+		$post_fields = get_object_vars( $post );
+
+		// Get the current language
+		$language = Registry::current_language();
+
+		// Loop through each field and replace with localized values if found
+		foreach ( $post_fields as $field_name => $value ) {
+			// Store this value as the version for the default language
+			static::save_string_value( "postfield_{$post->post_type}_{$field_name}", $language->id, $post_id, $value );
 		}
 	}
 
@@ -669,6 +768,31 @@ class Localizer extends Functional {
 		}
 
 		return $pre_value;
+	}
+
+	/**
+	 * Stores the new meta value as the localized version for the default language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::current_language() to get the current language.
+	 * @uses Localizer::save_string_value() to save the unlocalized value.
+	 *
+	 * @param int    $meta_id The ID of updated metadata entry (ignored).
+	 * @param int    $object_id The object's ID.
+	 * @param string $meta_key  The metadata key to retrieve data for.
+	 * @param string $meta_value The update meta value.
+	 */
+	public static function update_unlocalized_metadata( $meta_id, $object_id, $meta_key, $meta_value ) {
+		// Get the meta type based on the current filter name
+		$filter = current_filter();
+		$meta_type = preg_replace( '/^get_(.+?)_metadata$/', '$1', $filter );
+
+		// Get the default language
+		$language = Registry::default_language();
+
+		// Store this value as the version for the default language
+		static::save_string_value( "meta_{$meta_type}_{$meta_key}", $language->id, $object_id, $meta_value );
 	}
 
 	// =========================
