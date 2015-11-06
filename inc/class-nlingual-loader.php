@@ -156,13 +156,13 @@ class Loader extends Functional {
 			) $charset_collate;";
 			dbDelta( $sql_translations );
 
-			// The string localization table
-			$sql_strings = "CREATE TABLE $wpdb->nl_strings (
+			// The localizer data table
+			$sql_strings = "CREATE TABLE $wpdb->nl_localizerdata (
 				language_id bigint(20) unsigned NOT NULL,
 				object_id bigint(20) unsigned NOT NULL,
 				string_key varchar(128) DEFAULT '' NOT NULL,
-				string_value longtext NOT NULL,
-				UNIQUE KEY language_object_string (language_id,object_id,string_key)
+				localized_value longtext NOT NULL,
+				UNIQUE KEY language_object_string (language_id,object_id,localized_value)
 			) $charset_collate;";
 			dbDelta( $sql_strings );
 
@@ -205,7 +205,7 @@ class Loader extends Functional {
 		// Delete the object and string translation tables
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_languages" );
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_translations" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_strings" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_localizerdata" );
 
 		// And delete the options
 		$wpdb->query( "DELETE FORM $wpdb->options WHERE option_name like 'nlingual\_%'" );

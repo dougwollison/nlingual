@@ -473,8 +473,8 @@ class Localizer extends Functional {
 		}
 
 		$value = $wpdb->get_var( $wpdb->prepare( "
-			SELECT string_value
-			FROM $wpdb->nl_strings
+			SELECT localized_value
+			FROM $wpdb->nl_localizerdata
 			WHERE string_key = %s
 			AND language_id = %d
 			AND object_id = %d
@@ -510,15 +510,15 @@ class Localizer extends Functional {
 		}
 
 		$results = $wpdb->get_results( $wpdb->prepare( "
-			SELECT language_id, string_value
-			FROM $wpdb->nl_strings
+			SELECT language_id, localized_value
+			FROM $wpdb->nl_localizerdata
 			WHERE string_key = %s
 			AND object_id = %d
 		", $key, $object_id ) );
 
 		$strings = array();
 		foreach ( $results as $result ) {
-			$strings[ $result->language_id ] = $result->string_value;
+			$strings[ $result->language_id ] = $result->localized_value;
 		}
 
 		// Fill with empty values for all languages
@@ -552,11 +552,11 @@ class Localizer extends Functional {
 			return array();
 		}
 
-		return $wpdb->replace( $wpdb->nl_strings, array(
-			'language_id'      => $language_id,
-			'object_id'    => $object_id,
-			'string_key'   => $key,
-			'string_value' => $value,
+		return $wpdb->replace( $wpdb->nl_localizerdata, array(
+			'language_id'     => $language_id,
+			'object_id'       => $object_id,
+			'string_key'      => $key,
+			'localized_value' => $value,
 		), array( '%d', '%d', '%s', '%s' ) );
 	}
 

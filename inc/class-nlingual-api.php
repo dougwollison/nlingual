@@ -48,7 +48,7 @@ class API extends Functional {
 		// Register the database tables (with backwards compatability for nL_ version)
 		$wpdb->nl_languages = $wpdb->nL_languages = $wpdb->prefix . 'nl_languages';
 		$wpdb->nl_translations = $wpdb->nL_translations = $wpdb->prefix . 'nl_translations';
-		$wpdb->nl_strings = $wpdb->prefix . 'nl_strings';
+		$wpdb->nl_localizerdata = $wpdb->prefix . 'nl_localizerdata';
 
 		// Register the loader hooks
 		Loader::register_hooks();
