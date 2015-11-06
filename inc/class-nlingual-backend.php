@@ -613,7 +613,7 @@ class Backend extends Functional {
 					$label = $option->post_title;
 					// If this post is already a translation of something, identify it as such.
 					if ( Translator::get_post_translations( $option->ID ) ) {
-						$label = _ex( '[Taken]' ) . ' ' . $label;
+						$label = _e( '[Taken]' ) . ' ' . $label;
 					}
 					printf( '<option value="%s" %s>%s</option>', $option->ID, $selected, $label );
 				}
