@@ -57,12 +57,6 @@ class Documenter extends Functional {
 			),
 			'sidebar' => false,
 		),
-		'strings' => array(
-			'tabs' => array(
-				'overview' => 'Overview',
-			),
-			'sidebar' => false,
-		),
 		'post-translation' => array(
 			'tabs' => array(
 				'translation' => 'Languages & Translations',

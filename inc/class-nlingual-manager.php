@@ -132,23 +132,12 @@ class Manager extends Functional {
 			array( static::$name, 'settings_page_languages' ) // callback
 		);
 
-		// Strings manager
-		$strings_page_hook = add_submenu_page(
-			'nlingual-options', // parent
-			__( 'Manage Localized Strings' ), // page title
-			_x( 'String Localization', 'menu title' ), // menu title
-			'manage_options', // capability
-			'nlingual-strings', // slug
-			array( static::$name, 'settings_page_strings' ) // callback
-		);
-
 		// Setup the help tabs for each page
 		Documenter::register_help_tabs( array(
 			$options_page_hook	    => 'options',
 			$localizables_page_hook => 'localizables',
 			$sync_page_hook		    => 'sync',
 			$languages_page_hook    => 'languages',
-			$strings_page_hook	    => 'strings',
 		) );
 	}
 
@@ -287,51 +276,6 @@ class Manager extends Functional {
 			add_settings_error( 'nlingual-languages', 'settings_updated', __( 'Languages saved.' ), 'updated' );
 		}
 		set_transient( 'settings_errors', get_settings_errors(), 30);
-
-		// Return to settings page
-		$redirect = add_query_arg( 'settings-updated', 'true',  wp_get_referer() );
-		wp_redirect( $redirect );
-		exit;
-	}
-
-	/**
-	 * Save strings from the manager.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
-	 *
-	 * @uses Localizer::save_string_value() to save each updated string value.
-	 */
-	public static function save_strings() {
-		// Abort if not saving for the language manager page
-		if ( ! isset( $_POST['option_page'] ) || $_POST['option_page'] != 'nlingual-strings' ) {
-			return;
-		}
-
-		// Fail if nonce does
-		check_admin_referer( 'nlingual-strings-options' );
-		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'nlingual-strings-options' ) ) {
-			cheatin();
-		}
-
-		// Get the strings to save
-		$strings = $_POST['nlingual_strings'];
-
-		// Loop through each string and save for each language and object ID
-		foreach ( $strings as $string => $localized ) {
-			foreach ( $localized as $language_id => $objects ) {
-				foreach ( $objects as $object_id => $value ) {
-					Localizer::save_string_value( $string, $language_id, $object_id, $value );
-				}
-			}
-		}
-
-		// Check for setting errors; add an "updated" message if none are found
-		if ( ! count( get_settings_errors() ) ) {
-			add_settings_error( 'nlingual-strings', 'settings_updated', __( 'Strings saved.' ), 'updated' );
-		}
-		set_transient( 'settings_errors', get_settings_errors(), 30 );
 
 		// Return to settings page
 		$redirect = add_query_arg( 'settings-updated', 'true',  wp_get_referer() );
@@ -669,111 +613,6 @@ class Manager extends Functional {
 				<?php submit_button(); ?>
 			</form>
 		</div>
-		<?php
-	}
-
-	/**
-	 * Output for the strings management page.
-	 *
-	 * Offers a central place to manage localized versions
-	 * of option and term name/description strings.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @global $plugin_page The slug of the current admin page.
-	 *
-	 * @uses Manager::print_strings_table() to print the editors for each string.
-	 * @uses Localizer::get_string() to get string objects.
-	 */
-	public static function settings_page_strings() {
-		global $plugin_page;
-		?>
-		<div class="wrap">
-			<h2><?php _e( 'Manage Localized Strings' ); ?></h2>
-			<?php settings_errors( $plugin_page ); ?>
-			<form method="post" action="options.php" id="<?php echo $plugin_page; ?>-form">
-				<?php settings_fields( $plugin_page ); ?>
-
-				<?php if ( $strings = Localizer::get_strings_by_type( 'option' ) ) : ?>
-				<table class="form-table nl-option-strings">
-					<tbody>
-					<?php foreach ( $strings as $string ) : ?>
-						<tr>
-							<th scope="row"><?php echo $string->title; ?></th>
-							<td>
-								<?php static::print_strings_table( $string, get_option( $string->field ) );?>
-								<p class="description"><?php echo $string->description; ?></p>
-							</td>
-						</tr>
-					<?php endforeach; ?>
-					</tbody>
-				</table>
-				<?php endif; ?>
-
-				<?php submit_button(); ?>
-			</form>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Print a strings editor table.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Registry::languages() to loop through each language.
-	 * @uses Registry::get() to retrieve the default language ID.
-	 * @uses Localizer::get_string_values() to get the available values for the current string.
-	 * @uses Settings::build_field() to build the input/textarea for editing the string.
-	 *
-	 * @param object $string      The string settings object.
-	 * @param string $unlocalized Optional The unlocalized value of the string.
-	 * @param int    $object_id   Optional The object id to get values for (default 0).
-	 */
-	protected static function print_strings_table( $string, $unlocalized, $object_id = 0 ) {
-		$default_language = Registry::get( 'default_language' );
-		$localized = Localizer::get_string_values( $string->key, $object_id );
-		?>
-		<table class="nl-strings-table">
-			<thead class="screen-reader-text">
-				<th><?php _e( 'Language' ); ?></th>
-				<th><?php _e( 'Localized Value' ); ?></th>
-			</thead>
-			<tbody>
-				<?php foreach ( Registry::languages() as $language ) : ?>
-				<tr>
-					<?php
-					$is_default_language = $language->id == $default_language;
-
-					$id = sprintf( '%s-%d-%d', $string->key, $language->id, $object_id );
-					$name = sprintf( 'nlingual_strings[%s][%d][%d]', $string->key, $language->id, $object_id );
-
-					if ( $is_default_language ) {
-						$value = $unlocalized;
-					} else {
-						$value = $localized[ $language->id ];
-					}
-
-					// Build the field parameters
-					$field = array(
-						'name' => $is_default_language ? '' : $name,
-						'type' => $string->input ?: 'text',
-						'data' => array(
-							'id' => $id,
-							'readonly' => $is_default_language,
-						),
-					);
-					?>
-					<th scope="row">
-						<label for="<?php echo $id; ?>"><?php echo $language->system_name; ?></label>
-					</th>
-					<td>
-						<?php echo Settings::build_field( $field, $value ); ?>
-					</td>
-				</tr>
-				<?php endforeach; ?>
-			</tbody>
-		</table>
 		<?php
 	}
 
