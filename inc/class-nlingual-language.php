@@ -9,7 +9,7 @@
 
 namespace nLingual;
 
-class Language {
+class Language extends SimpleObject {
 	// =========================
 	// ! Properties
 	// =========================
@@ -23,7 +23,7 @@ class Language {
 	 *
 	 * @var int
 	 */
-	protected $id = 0;
+	protected $id;
 
 	/**
 	 * The active status of the language
@@ -34,7 +34,7 @@ class Language {
 	 *
 	 * @var bool
 	 */
-	protected $active = true;
+	protected $active;
 
 	/**
 	 * The slug of the language for URL use.
@@ -45,7 +45,7 @@ class Language {
 	 *
 	 * @var string
 	 */
-	protected $slug = '';
+	protected $slug;
 
 	/**
 	 * The name of the language within the admin.
@@ -56,7 +56,7 @@ class Language {
 	 *
 	 * @var string
 	 */
-	protected $system_name = '';
+	protected $system_name;
 
 	/**
 	 * The native name of the language.
@@ -67,7 +67,7 @@ class Language {
 	 *
 	 * @var string
 	 */
-	protected $native_name = '';
+	protected $native_name;
 
 	/**
 	 * A shorthand name for the language.
@@ -78,7 +78,7 @@ class Language {
 	 *
 	 * @var string
 	 */
-	protected $short_name = '';
+	protected $short_name;
 
 	/**
 	 * The local to use for this language (i.e. MO file)
@@ -89,7 +89,7 @@ class Language {
 	 *
 	 * @var string
 	 */
-	protected $locale_name = '';
+	protected $locale_name;
 
 	/**
 	 * The ISO 639-1 code for the language.
@@ -100,7 +100,7 @@ class Language {
 	 *
 	 * @var string
 	 */
-	protected $iso_code = '';
+	protected $iso_code;
 
 	/**
 	 * The disired order of the language.
@@ -111,10 +111,10 @@ class Language {
 	 *
 	 * @var int
 	 */
-	protected $list_order = '';
+	protected $list_order;
 
 	/**
-	 * The list of properties this object should have.
+	 * The whitelist of properties and default values they should have.
 	 *
 	 * @since 2.0.0
 	 *
@@ -122,7 +122,17 @@ class Language {
 	 *
 	 * @var array
 	 */
-	protected static $properties = array( 'id', 'slug', 'system_name', 'native_name', 'short_name', 'iso_code', 'locale_name', 'list_order', 'active' );
+	protected static $properties = array(
+		'id'          => 0,
+		'slug'        => '',
+		'system_name' => '',
+		'native_name' => '',
+		'short_name'  => '',
+		'iso_code'    => '',
+		'locale_name' => '',
+		'list_order'  => 0,
+		'active'      => false,
+	);
 
 	// =========================
 	// ! Methods
@@ -133,17 +143,11 @@ class Language {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses static::$properties
-	 *
 	 * @param array $values The property values.
 	 */
 	public function __construct( $values ) {
-		// Set all values provided
-		foreach ( static::$properties as $key ) {
-			if ( isset( $values[ $key ] ) ) {
-				$this->$key = $values[ $key ];
-			}
-		}
+		// Setup the object with the provided values
+		parent::__construct( $values );
 
 		// If language_id was passed, use that for id
 		if ( isset( $values['language_id'] ) ) {
@@ -155,55 +159,5 @@ class Language {
 
 		// Ensure $active is boolean
 		$this->active = (bool) intval( $this->active );
-	}
-
-	/**
-	 * Public access to properties (retrieval).
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param string $name The name of the property being accessed.
-	 *
-	 * @return mixed The value of the property.
-	 */
-	public function __get( $name ) {
-		if ( property_exists( $this, $name ) ) {
-			return $this->$name;
-		}
-		return null;
-	}
-
-	/**
-	 * Public access to properties (assignment).
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param string $name  The name of the property being change.
-	 * @param mixed  $value The new value of the property.
-	 */
-	public function __set( $name, $value ) {
-		if ( property_exists( $this, $name ) ) {
-			$this->$name = $value;
-		}
-		return null;
-	}
-
-	/**
-	 * Convert to a simple array.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses static::$properties
-	 *
-	 * @return array An associative array of properites/values.
-	 */
-	public function export() {
-		$data = array();
-
-		foreach ( static::$properties as $key ) {
-			$data[ $key ] = $this->$key;
-		}
-
-		return $data;
 	}
 }

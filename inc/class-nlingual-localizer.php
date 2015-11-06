@@ -120,7 +120,7 @@ class Localizer extends Functional {
 	 *
 	 * @param string $id The ID of the string to retrieve.
 	 *
-	 * @return object|bool The retreived string, FALSE on failure.
+	 * @return LocalizableString|bool The retreived string, FALSE on failure.
 	 */
 	public static function get_string( $id ) {
 		if ( isset( static::$registered_strings[ $id ] ) ) {
@@ -220,81 +220,39 @@ class Localizer extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $id   A unique ID for the strings.
-	 * @param array  $args The arguments for the string.
-	 * 		@option string       "id"          A unique ID for the string.
-	 * 		@option string       "key"         The key the string will be stored under (defaults to ID).
-	 *		@option string|array "screen"      A screen ID or property/value pair to match.
-	 * 		@option string       "field"       The name of the HTML field that handles this string.
-	 * 		@option string       "field_id"    The id of the HTML field to target. (Defaults to field value)
-	 *		@option string       "type"        The type string this is (e.g. 'option' or an object type).
-	 *		@option string       "title"       An descriptive name of this string.
-	 *		@option string       "description" The details of this string's purpose.
-	 * 		@option string       "input"       The field input to use ("textarea" or an <input> type).
+	 * @see LocalizableString::$properties for a list of valid values for $options.
+	 *
+	 * @param string $id      A unique ID for the strings.
+	 * @param array  $options The options for the string.
+	 *
+	 * @return LocalizableString the registered string object.
 	 */
-	public static function register_string( $id, array $args ) {
-		// Parse the args with the defaults
-		$args = wp_parse_args( $args, array(
-			'key'         => null,
-			'field'       => null,
-			'field_id'    => null,
-			'type'        => 'option',
-			'screen'      => array(),
-			'title'       => null,
-			'description' => null,
-			'input'       => 'text',
-		) );
-
-		// Abort if no screen is passed
-		if ( is_null( $args['screen'] ) ) {
+	public static function register_string( $id, array $options ) {
+		// Abort if the screen isn't set
+		if ( ! isset( $options['screen'] ) ) {
 			return;
 		}
 
-		// Assume key is the same as id if not set
-		if ( is_null( $args['key'] ) ) {
-			$args['key'] = $id;
-		}
-
-		// Assume field is the same as key if not set
-		if ( is_null( $args['field'] ) ) {
-			$args['field'] = $key;
-		}
-
-		// Assume field_id is the same as field if not set
-		if ( is_null( $args['field_id'] ) ) {
-			$args['field_id'] = $args['field'];
-		}
-
-		// Convert the screen value to appropriate format
-		$screen = (array) $args['screen'];
-		if ( count( $screen ) == 1 ) {
-			// Assume we're looking for the ID
-			$screen = array( 'id', $screen );
-		}
-
-		// Cast as object
-		$string = (object) $args;
-		$string->id = $id;
+		// Create a new string object from the arguments
+		$string = new LocalizableString( $id, $options );
 
 		// Add to the registry
 		static::$registered_strings[ $id ] = $string;
 
 		// Add to the key index
-		$key = $args['key'];
-		if ( ! isset( static::$strings_by_key[ $key ] ) ) {
-			static::$strings_by_key[ $key ] = array();
+		if ( ! isset( static::$strings_by_key[ $string->key ] ) ) {
+			static::$strings_by_key[ $string->key ] = array();
 		}
-		static::$strings_by_key[ $key ][] = $string;
+		static::$strings_by_key[ $string->key ][] = $string;
 
 		// Add to the type index
-		$type = $args['type'];
-		if ( ! isset( static::$strings_by_type[ $type ] ) ) {
-			static::$strings_by_type[ $type ] = array();
+		if ( ! isset( static::$strings_by_type[ $string->type ] ) ) {
+			static::$strings_by_type[ $string->type ] = array();
 		}
-		static::$strings_by_type[ $type ][] = $string;
+		static::$strings_by_type[ $string->type ][] = $string;
 
 		// Add to the screen index
-		list( $property, $match ) = $screen;
+		list( $property, $match ) = $string->screen;
 		if ( ! isset( static::$strings_by_screen[ $property ] ) ) {
 			static::$strings_by_screen[ $property ] = array();
 		}
@@ -302,6 +260,8 @@ class Localizer extends Functional {
 			static::$strings_by_screen[ $property ][ $match ] = array();
 		}
 		static::$strings_by_screen[ $property ][ $match ][] = $string;
+
+		return $string;
 	}
 
 	/**
@@ -322,9 +282,9 @@ class Localizer extends Functional {
 	public static function register_option( $option, $page, $args = array() ) {
 		// Build the args for the string and register it
 		$args = wp_parse_args( $args, array(
+			'type'   => 'option',
 			'screen' => array( 'id', $page ),
 			'field'  => $option,
-			'type'   => 'option',
 		) );
 		static::register_string( "option:{$option}", $args );
 
@@ -354,18 +314,18 @@ class Localizer extends Functional {
 
 		static::register_string( "term.{$taxonomy}:term_name", array(
 			'key'      => "term_name",
-			'field'    => 'name',
-			'screen'   => array( 'id', $page ),
-			'title'    => __( 'Name' ),
 			'type'     => 'term_field',
+			'screen'   => array( 'id', $page ),
+			'field'    => 'name',
+			'title'    => __( 'Name' ),
 			'input'    => 'text',
 		) );
 		static::register_string( "term.{$taxonomy}:term_description", array(
 			'key'      => "term_description",
-			'field'    => 'description',
-			'screen'   => array( 'id', $page ),
-			'title'    => __( 'Description' ),
 			'type'     => 'term_field',
+			'screen'   => array( 'id', $page ),
+			'field'    => 'description',
+			'title'    => __( 'Description' ),
 			'input'    => 'textarea',
 		) );
 
@@ -411,9 +371,9 @@ class Localizer extends Functional {
 		// Build the args for the string and register it
 		$args = wp_parse_args( $args, array(
 			'key'    => "post_field:{$field_name}",
-			'field'  => $meta_key,
 			'type'   => 'post_field',
 			'screen' => array( 'post_type', $post_type ),
+			'field'  => $meta_key,
 		) );
 
 		// Register the field as normal
@@ -462,9 +422,9 @@ class Localizer extends Functional {
 
 		// Build the args for the string and register it
 		$args = wp_parse_args( $args, array(
-			'field'  => $meta_key,
 			'type'   => "{$meta_type}meta",
 			'screen' => array( 'base', $page ),
+			'field'  => $meta_key,
 		) );
 
 		// Register the field as normal
@@ -745,11 +705,7 @@ class Localizer extends Functional {
 		$language = Registry::current_language();
 
 		// Loop through each localizable field and replace as needed
-		foreach ( static::$localizable_post_fields as $field_name => $value ) {
-			// Skip if not a string
-			if ( ! is_null( $value ) && ! is_string( $value ) ) {
-				return;
-			}
+		foreach ( static::$localizable_post_fields as $field_name ) {
 			// Get the localized version, replace it if found
 			if ( $localized = static::get_string_value( "post_field:{$field_name}", $language->id, $post->ID ) ) {
 				$post->$field_name = $localized;
@@ -777,13 +733,9 @@ class Localizer extends Functional {
 		$language = Registry::current_language();
 
 		// Loop through each localizable field and replace with localized values if found
-		foreach ( static::$localizable_post_fields as $field_name => $value ) {
-			// Skip alltogether if not a string
-			if ( ! is_null( $value ) && ! is_string( $value ) ) {
-				return;
-			}
+		foreach ( static::$localizable_post_fields as $field_name ) {
 			// Store this value as the version for the default language
-			static::save_string_value( "post_field:{$field_name}", $language->id, $post_id, $value );
+			static::save_string_value( "post_field:{$field_name}", $language->id, $post_id, $post->$field_name );
 		}
 	}
 
@@ -811,7 +763,7 @@ class Localizer extends Functional {
 		$language = Registry::current_language();
 
 		// Get the localized version of the string if it exists
-		if ( $value = static::get_string_value( "{$meta_type}meta:{$meta_key}", $language->id, $object_id ) ) {
+		if ( $value = static::get_string_value( "meta.{$meta_type}:{$meta_key}", $language->id, $object_id ) ) {
 			return $value;
 		}
 
@@ -840,7 +792,7 @@ class Localizer extends Functional {
 		$language = Registry::default_language();
 
 		// Store this value as the version for the default language
-		static::save_string_value( "{$meta_type}meta:{$meta_key}", $language->id, $object_id, $meta_value );
+		static::save_string_value( "meta.{$meta_type}:{$meta_key}", $language->id, $object_id, $meta_value );
 	}
 
 	// =========================
