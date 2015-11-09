@@ -185,7 +185,7 @@ class Languages implements \Iterator {
 	 * @param int|string $value A value to retrieve the language by.
 	 * @param string     $field Optional The field to search in (defaults to id or slug).
 	 *
-	 * @return bool|nLingual_Language The language if found (false if not).
+	 * @return bool|Language The language if found (false if not).
 	 */
 	public function get( $value, $field = null ) {
 		// Guess $field based on nature of $language if not provided
@@ -201,7 +201,7 @@ class Languages implements \Iterator {
 
 		// If $field is "@", return the entry in the $items array for that index
 		if ( $field == '@' ) {
-			return $this->items[ $value ];
+			return isset( $this->items[ $value ] ) ? $this->items[ $value ] : false;
 		}
 
 		// Loop through all languages and return the first match
@@ -215,11 +215,24 @@ class Languages implements \Iterator {
 	}
 
 	/**
+	 * Alias of get(); retrieves the language at the specific array index.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param int $index The index to get the item at.
+	 *
+	 * @return bool|Language The language if found (false if not).
+	 */
+	public function nth( $index ) {
+		return $this->get( $index, '@' );
+	}
+
+	/**
 	 * Add a language to the index.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param array|nLingual_Language $language The language to add.
+	 * @param array|Language $language The language to add.
 	 * @param bool                    $sort     Wether or not to sort after adding.
 	 */
 	public function add( $language, $sort = true ) {
