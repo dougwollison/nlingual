@@ -165,7 +165,7 @@ class Migrator {
 		update_option( 'nlingual_database_version', '2.0.0' );
 
 		// Flag as having been upgraded
-		add_option( '_nlingual_tables_converted', 1 );
+		update_option( '_nlingual_tables_converted', 1 );
 	}
 
 	/**
@@ -207,9 +207,12 @@ class Migrator {
 		);
 		foreach ( $renamed_options as $oldname => $newname ) {
 			if ( isset( $options[ $oldname ] ) ) {
-				add_option( $newname, $options[ $oldname ] );
+				update_option( $newname, $options[ $oldname ] );
 			}
 		}
+
+		// Automatically set options that weren't present in old version
+		update_option( 'nlingual_post_language_override', 1 );
 
 		/**
 		 * Convert Sync Rules
@@ -227,10 +230,7 @@ class Migrator {
 		}
 
 		// Save the new sync rules
-		add_option( 'nlingual_sync_rules', $new_sync_rules );
-
-		// Automatically set options that weren't present in old version
-		add_option( 'nlingual_post_language_override', 1 );
+		update_option( 'nlingual_sync_rules', $new_sync_rules );
 
 		/**
 		 * Convert Navigation Menu Locations
@@ -261,7 +261,7 @@ class Migrator {
 		// Update the nav menu locations for localizables
 		$localizables = array();
 		$localizables['nav_menu_locations'] = $menu_locations;
-		add_option( 'nlingual_localizables', $localizables );
+		update_option( 'nlingual_localizables', $localizables );
 
 		// Update the assigned menus
 		set_theme_mod( 'nav_menu_locations', $new_menus );
@@ -287,6 +287,6 @@ class Migrator {
 		 */
 
 		// Flag as having been upgraded
-		add_option( '_nlingual_options_converted', 1 );
+		update_option( '_nlingual_options_converted', 1 );
 	}
 }
