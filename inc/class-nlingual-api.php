@@ -134,6 +134,7 @@ class API extends Functional {
 		static::add_action( 'parse_query', 'maybe_set_queried_language' );
 		static::add_filter( 'posts_join_request', 'add_post_translations_join_clause', 10, 2 );
 		static::add_filter( 'posts_where_request', 'add_post_translations_where_clause', 10, 2 );
+		static::add_filter( 'get_pages', 'filter_pages', 10, 2 );
 	}
 
 	/**
@@ -327,5 +328,45 @@ class API extends Functional {
 		$clause .= " AND (" . implode( ' OR ', $subclause ) . ")";
 
 		return $clause;
+	}
+
+	/**
+	 * Filter the results of get_pages, removing those not in the current language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $pages The list of pages to filter.
+	 * @param array $args  The arugments passed to get_pages().
+	 *
+	 * @return array The filtered list of pages.
+	 */
+	public static function filter_pages( $pages, $args ) {
+		// Abort if $pages is empty or show_all_languages is set
+		if ( ! $pages || Registry::get( 'show_all_languages' ) ) {
+			return $pages;
+		}
+
+		// Get the id of the current language or the requested one
+		if ( isset( $args['language'] ) ) {
+			$filter_language = Registry::languages()->get( $args['language'] );
+
+			// If it's not a valid language, return the original list
+			if ( ! $filter_language ) {
+				return $pages;
+			}
+		} else {
+			$filter_language = Registry::current_language();
+		}
+
+		$filtered_pages = array();
+		foreach ( $pages as $page ) {
+			// If the language isn't set or is the current one, include it
+			$language = Translator::get_post_language( $page->ID );
+			if ( ! $language || $language->id == $filter_language ) {
+				$filtered_pages[] = $page;
+			}
+		}
+
+		return $filtered_pages;
 	}
 }
