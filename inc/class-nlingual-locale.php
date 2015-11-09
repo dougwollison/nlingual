@@ -101,7 +101,7 @@ class Locale extends \WP_Locale {
 		if ( isset( $GLOBALS[ 'text_direction' ] ) ) {
 			$this->text_direction = $GLOBALS[ 'text_direction' ];
 		/* translators: 'rtl' or 'ltr'. This sets the text direction for WordPress. */
-		} elseif ( 'rtl' == \_x( 'ltr', 'text direction' ) ) {
+		} elseif ( 'rtl' == \_x( 'ltr', 'text direction', $domain ) ) {
 			$this->text_direction = 'rtl';
 		}
 	}
