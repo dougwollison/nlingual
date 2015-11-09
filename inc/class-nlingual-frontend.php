@@ -65,6 +65,10 @@ class Frontend extends Functional {
 		static::add_filter( 'get_next_post_join', 'add_adjacent_translation_join_clause', 10, 1 );
 		static::add_filter( 'get_previous_post_where', 'add_adjacent_translation_where_clause', 10, 1 );
 		static::add_filter( 'get_next_post_where', 'add_adjacent_translation_where_clause', 10, 1 );
+
+		// GetText Rewrites
+		static::add_filter( 'gettext', 'translate', 10, 3 );
+		static::add_filter( 'gettext_with_context', 'translate_with_context', 10, 4 );
 	}
 
 	// =========================
@@ -480,5 +484,40 @@ class Frontend extends Functional {
 		$clause .= $wpdb->prepare( " AND $wpdb->nl_translations.language_id = %d", $language->id );
 
 		return $clause;
+	}
+
+	// =========================
+	// ! GetText Rewriting
+	// =========================
+
+	/**
+	 * Filter the text translation.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $translation The translated text.
+	 * @param string $text        The original text.
+	 * @param string $domain      The text domain to translate for.
+	 *
+	 * @return string The filtered translation.
+	 */
+	public static function translate( $translation, $text, $domain ) {
+		return $translation;
+	}
+
+	/**
+	 * Filter the text translation with regard to a context.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $translation The translated text.
+	 * @param string $text        The original text.
+	 * @param string $context     The unique context for this text.
+	 * @param string $domain      The text domain to translate for.
+	 *
+	 * @return string The filtered translation.
+	 */
+	public static function translate_with_context( $translation, $text, $context, $domain ) {
+		return $translation;
 	}
 }
