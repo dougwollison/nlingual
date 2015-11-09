@@ -549,7 +549,7 @@ class Localizer extends Functional {
 
 		// Abort if check isn't bypassed and fails
 		if ( $check_reg && ! isset( static::$strings_by_key[ $key ] ) ) {
-			return array();
+			return;
 		}
 
 		return $wpdb->replace( $wpdb->nl_localizerdata, array(
