@@ -420,12 +420,12 @@ class Rewriter {
 			$language = Registry::current_language();
 		}
 
-		// First, check if it's a singular
-		if ( is_singular() ) {
+		// First, check if it's the queried object is a post
+		$queried_object = get_queried_object();
+		if ( is_a( $queried_object, 'WP_Post' ) ) {
 			// Get the permalink for the translation in the specified language
-			$post_id = get_queried_object_id();
-			$post_id = Translator::get_post_translation( $post_id, $language );
-			$url = get_permalink( $post_id );
+			$translation = Translator::get_post_translation( $queried_object->ID, $language, true );
+			$url = get_permalink( $translation );
 
 			// Relocalize the URL
 			$url = static::localize_url( $url, $language, true );
