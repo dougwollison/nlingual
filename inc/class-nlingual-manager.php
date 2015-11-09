@@ -37,7 +37,6 @@ class Manager extends Functional {
 
 		// Custom settings saving
 		static::add_action( 'admin_init', 'save_languages' );
-		static::add_action( 'admin_init', 'save_strings' );
 	}
 
 	// =========================
