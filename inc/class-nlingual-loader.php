@@ -162,7 +162,7 @@ class Loader extends Functional {
 				object_id bigint(20) unsigned NOT NULL,
 				string_key varchar(128) DEFAULT '' NOT NULL,
 				localized_value longtext NOT NULL,
-				UNIQUE KEY language_object_string (language_id,object_id,localized_value)
+				UNIQUE KEY language_object_string (language_id,object_id,string_key)
 			) $charset_collate;";
 			dbDelta( $sql_strings );
 
