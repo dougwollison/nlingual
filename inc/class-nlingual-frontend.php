@@ -43,6 +43,7 @@ class Frontend extends Functional {
 
 		// URL Rewriting
 		static::add_filter( 'home_url', 'localize_home_url', 10, 4 );
+		static::add_filter( 'page_link', 'localize_page_link', 10, 2 );
 
 		// The Mod rewriting
 		static::add_filter( 'theme_mod_nav_menu_locations', 'localize_nav_menu_locations', 10, 1 );
@@ -216,6 +217,29 @@ class Frontend extends Functional {
 
 		// Return the localized version of the URL
 		return Rewriter::localize_url( $url );
+	}
+
+	/**
+	 * Localize a page's URL.
+	 *
+	 * Namely, detect if it's a translation of the home page and return the localize home URL.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $permalink The permalink of the post.
+	 * @param int    $page_id   The ID of the page.
+	 *
+	 * @return string The localized permalink.
+	 */
+	public static function localize_page_link( $permalink, $page_id ) {
+		$current_language = Registry::current_language();
+		$translation = Translator::get_post_translation( $page_id, $current_language, true );
+
+		if ( $translation == get_option( 'page_on_front' ) ) {
+			$permalink = home_url();
+		}
+
+		return $permalink;
 	}
 
 	// =========================
