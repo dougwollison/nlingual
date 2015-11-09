@@ -208,17 +208,17 @@ class API extends Functional {
 		}
 
 		// If not the admin or some kind of posts feed, abort
-		if ( ! ( is_admin() || is_home() || is_archive() || is_search() ) ) {
+		if ( ! ( is_admin() || $query->is_home() || $query->is_archive() || $query->is_search() ) ) {
 			return;
 		}
 
 		// If it's a post type archive, check if the post type is supported
-		if ( is_post_type_archive() && ! Registry::is_post_type_supported( $query->get( 'post_type' ) ) ) {
+		if ( $query->is_post_type_archive() && ! Registry::is_post_type_supported( $query->get( 'post_type' ) ) ) {
 			return;
 		}
 
 		// If it's a taxonomy, check if the object types are supported
-		if ( is_tax() && $query->queried_object->taxonomy ) {
+		if ( $query->is_tax() && $query->queried_object->taxonomy ) {
 			$object_types = get_taxonomy( $query->queried_object->taxonomy )->object_type;
 
 			if ( ! Registry::is_post_type_supported( $object_types ) ) {
