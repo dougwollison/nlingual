@@ -491,8 +491,13 @@ class Manager extends Functional {
 	 * @uses Registry::add_fields() to add the sycn/clone controls for the page.
 	 */
 	protected static function setup_sync_fields() {
-		// Build the fields list based on the supported post types
+		// Abort if no post types are registered
 		$post_types = Registry::get( 'post_types' );
+		if ( ! $post_types ) {
+			return;
+		}
+
+		// Build the fields list based on the supported post types
 		foreach ( $post_types as $post_type ) {
 			$field = array(
 				'title' => get_post_type_object( $post_type )->labels->name,
