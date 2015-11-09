@@ -105,28 +105,6 @@ class Registry {
 	protected static $patch_wp_locale;
 
 	/**
-	 * The language query var.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected (static)
-	 *
-	 * @var string
-	 */
-	protected static $query_var;
-
-	/**
-	 * The URL redirection method.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected (static)
-	 *
-	 * @var string
-	 */
-	protected static $redirection_method;
-
-	/**
 	 * The post language override option.
 	 *
 	 * @since 2.0.0
@@ -147,6 +125,28 @@ class Registry {
 	 * @var bool
 	 */
 	protected static $backwards_compatible;
+
+	/**
+	 * The language query var.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var string
+	 */
+	protected static $query_var;
+
+	/**
+	 * The URL redirection method.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var string
+	 */
+	protected static $redirection_method;
 
 	/**
 	 * The supported post types.
@@ -210,7 +210,7 @@ class Registry {
 	 *
 	 * @access protected (static)
 	 *
-	 * @var nLingualLanguages
+	 * @var Languages
 	 */
 	protected static $languages;
 
@@ -647,15 +647,15 @@ class Registry {
 		}
 
 		// Load simple options
-		static::$default_language       = get_option( 'nlingual_default_language', 0 );
-		static::$show_all_languages     = get_option( 'nlingual_show_all_languages', 1 );
-		static::$localize_date          = get_option( 'nlingual_localize_date', 0 );
-		static::$skip_default_l10n      = get_option( 'nlingual_skip_default_l10n', 0 );
+		static::$default_language       = (bool) get_option( 'nlingual_default_language', 0 );
+		static::$show_all_languages     = (bool) get_option( 'nlingual_show_all_languages', 1 );
+		static::$localize_date          = (bool) get_option( 'nlingual_localize_date', 0 );
+		static::$skip_default_l10n      = (bool) get_option( 'nlingual_skip_default_l10n', 0 );
+		static::$post_language_override = (bool) get_option( 'nlingual_post_language_override', 0 );
+		static::$patch_wp_locale        = (bool) get_option( 'nlingual_patch_wp_locale', 0 );
+		static::$backwards_compatible   = (bool) get_option( 'nlingual_backwards_compatible', 0 );
 		static::$query_var              = get_option( 'nlingual_query_var', 'nl_language' );
 		static::$redirection_method     = get_option( 'nlingual_redirection_method', NL_REDIRECT_USING_GET );
-		static::$post_language_override = get_option( 'nlingual_post_language_override', 0 );
-		static::$patch_wp_locale        = get_option( 'nlingual_patch_wp_locale', 0 );
-		static::$backwards_compatible   = get_option( 'nlingual_backwards_compatible', 0 );
 
 		// Load complex options
 		static::$post_types   = get_option( 'nlingual_post_types', array() );
