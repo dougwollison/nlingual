@@ -335,12 +335,13 @@ jQuery( function( $ ) {
 		$field.val( value ).attr( 'name', name );
 
 		// Trigger a change event, for potential extensibility
-		$field.trigger( 'change', nlLocalizerSkipUpdate );
+		$field.trigger( 'input', nlLocalizerSkipUpdate );
 	} );
 
-	$( 'body' ).on( 'change nl:localizer:update', '.nl-localizable-input', function ( event, extra ) {
+	$( 'body' ).on( 'input nl:localizer:update', '.nl-localizable-input', function ( event, extra ) {
 		// Skip if this was a change event triggered by the update above
-		if ( event.type === 'change' && extra === nlLocalizerSkipUpdate ) {
+		console.log(event.type);
+		if ( event.type === 'input' && extra === nlLocalizerSkipUpdate ) {
 			return;
 		}
 
