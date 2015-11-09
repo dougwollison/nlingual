@@ -122,6 +122,20 @@ function nl_get_lang( $field = null, $language = null ) {
 }
 
 /**
+ * @see nl_get_lang()
+ */
+function nL_lang_id( $slug = null ) {
+	return nl_get_lang( 'slug', $slug );
+}
+
+/**
+ * @see nl_get_lang()
+ */
+function nL_lang_slug( $lang_id = null ) {
+	return nl_get_lang( 'id', $lang_id );
+}
+
+/**
  * @see Rewriter::get_links()
  */
 function nl_get_lang_links( $skip_current = false ) {
