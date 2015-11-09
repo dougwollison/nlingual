@@ -94,6 +94,17 @@ class Registry {
 	protected static $skip_default_l10n;
 
 	/**
+	 * The patch WP_Locale option.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected (static)
+	 *
+	 * @var bool
+	 */
+	protected static $patch_wp_locale;
+
+	/**
 	 * The language query var.
 	 *
 	 * @since 2.0.0
@@ -643,6 +654,7 @@ class Registry {
 		static::$query_var              = get_option( 'nlingual_query_var', 'nl_language' );
 		static::$redirection_method     = get_option( 'nlingual_redirection_method', NL_REDIRECT_USING_GET );
 		static::$post_language_override = get_option( 'nlingual_post_language_override', 0 );
+		static::$patch_wp_locale        = get_option( 'nlingual_patch_wp_locale', 0 );
 		static::$backwards_compatible   = get_option( 'nlingual_backwards_compatible', 0 );
 
 		// Load complex options

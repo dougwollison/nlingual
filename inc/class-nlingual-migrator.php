@@ -213,6 +213,7 @@ class Migrator {
 
 		// Automatically set options that weren't present in old version
 		update_option( 'nlingual_post_language_override', 1 );
+		update_option( 'nlingual_patch_wp_locale', 1 );
 
 		/**
 		 * Convert Sync Rules

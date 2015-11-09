@@ -161,6 +161,7 @@ class Manager extends Functional {
 			'show_all_languages'     => 'intval',
 			'localize_date'          => 'intval',
 			'skip_default_l10n'      => 'intval',
+			'patch_wp_locale'        => 'intval',
 			'backwards_compatible'   => 'intval',
 			'query_var'              => null,
 			'redirection_method'     => null,
@@ -334,6 +335,11 @@ class Manager extends Functional {
 				'title' => __( 'Skip Localization for Default Language?' ),
 				'help'  => __( 'URLs for the default language will be unmodified.' ) .
 					' <span class="nl-previews">' . _f( 'Example: %s', $url_previews ) . '</span>',
+				'type'  => 'checkbox',
+			),
+			'patch_wp_locale' => array(
+				'title' => __( 'Patch <code>WP_Locale</code>?' ),
+				'help'  => __( 'Replaced the Date/Time localization system with one using your Theme’s translation files instead (front-end only).' ),
 				'type'  => 'checkbox',
 			),
 		), 'options' );

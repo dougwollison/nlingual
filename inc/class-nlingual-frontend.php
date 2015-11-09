@@ -66,7 +66,8 @@ class Frontend extends Functional {
 		static::add_filter( 'get_previous_post_where', 'add_adjacent_translation_where_clause', 10, 1 );
 		static::add_filter( 'get_next_post_where', 'add_adjacent_translation_where_clause', 10, 1 );
 
-		// GetText Rewrites
+		// Locale & GetText Rewrites
+		static::add_action( 'wp', 'maybe_patch_wp_locale', 10, 0 );
 		static::add_filter( 'gettext', 'translate', 10, 3 );
 		static::add_filter( 'gettext_with_context', 'translate_with_context', 10, 4 );
 	}
@@ -487,8 +488,29 @@ class Frontend extends Functional {
 	}
 
 	// =========================
-	// ! GetText Rewriting
+	// ! Locale & GetText Rewrites
 	// =========================
+
+	/**
+	 * Replace $wp_locale with patched version if desired.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global WP_Locale $wp_locale The original Date/Time Locale object.
+	 *
+	 * @uses Registry::get() to check for the patch_wp_locale option.
+	 */
+	public static function maybe_patch_wp_locale() {
+		global $wp_locale;
+
+		// Abort if no patching is wanted
+		if ( ! Registry::get( 'patch_wp_locale' ) ) {
+			return;
+		}
+
+		// Replace with new isntance of patched one
+		$wp_locale = new Locale();
+	}
 
 	/**
 	 * Filter the text translation.
