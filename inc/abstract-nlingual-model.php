@@ -9,7 +9,7 @@
 
 namespace nLingual;
 
-abstract class SimpleObject {
+abstract class Model {
 	/**
 	 * Setup the property values.
 	 *
