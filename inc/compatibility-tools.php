@@ -7,6 +7,7 @@
  * @since 2.0.0
  */
 
+use nLingual\Registry as Registry;
 use nLingual\Localizer as Localizer;
 
 // =========================
