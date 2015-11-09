@@ -8,7 +8,7 @@
  */
 
 use nLingual\Registry as Registry;
-use nLingual\Localizer as Localizer;
+use nLingual\Migrator as Migrator;
 
 // =========================
 // ! Localizable Term Conversion
@@ -44,7 +44,7 @@ function nl_compatibility_convert_terms_notice() {
 	}
 
 	// Print the message with the upgrade link
-	$message = __( 'Some of the terms you have registered are using the old language splitting method. <a href="%s">Click here</a> to convert them to the new localized format.', NL_TXTDMN );
+	$message = __( 'It looks like some of your terms use the old language splitting method. <a href="%s">Click here</a> to convert them to the new localized format.', NL_TXTDMN );
 	$nonce = wp_create_nonce( 'convert-localized-terms' );
 	$link = admin_url( 'admin.php?nlingual-action=convert-terms&_nlnonce=' . $nonce );
 	$message = sprintf( $message, $link );
@@ -86,20 +86,17 @@ function nl_compatibility_convert_terms_process() {
 		wp_die( _e( 'No language separator found, unable to convert terms.', NL_TXTDMN ) );
 	}
 
-	// Escape % and _ characters in separator
-	$separator = str_replace( array( '%', '_' ), array( '\\%', '\\_' ), $separator );
+	// Escape % and _ characters in separator for MySQL use
+	$separator_mysql = str_replace( array( '%', '_' ), array( '\\%', '\\_' ), $separator );
 
 	// Get all terms that need to be converted
 	$terms = $wpdb->get_results( "
 		SELECT t.name, x.description, x.term_taxonomy_id, x.term_id, x.taxonomy
 		FROM $wpdb->terms AS t
 			LEFT JOIN $wpdb->term_taxonomy AS x ON (t.term_id = x.term_id)
-		WHERE t.name LIKE '%$separator%'
-			OR x.description LIKE '%$separator%'
+		WHERE t.name LIKE '%$separator_mysql%'
+			OR x.description LIKE '%$separator_mysql%'
 	" );
-
-	// Prep the separator for regex use
-	$separator = preg_quote( $separator, '/' );
 
 	// Fail if nothing is found
 	if ( ! $terms ) {
@@ -117,15 +114,10 @@ function nl_compatibility_convert_terms_process() {
 		// add taxonomy to list
 		$taxonomies[] = $term->taxonomy;
 
-		// Split the name/description
-		$name_values = preg_split( "/\s*$separator\s*/", $term->name );
-		$description_values = preg_split( "/\s*$separator\s*/", $term->description );
+		$unlocalized_name = Migrator::convert_split_string( $term->name, 'term_name', $term->term_id );
+		$unlocalized_description = Migrator::convert_split_string( $term->description, 'term_description', $term->term_id );
 
-		// Get the first entry as the unlocalized value
-		$unlocalized_name = array_shift( $name_values );
-		$unlocalized_description = array_shift( $description_values );
-
-		// Update the values in the database
+		// Update the values in the database with unlocalized versions
 		$wpdb->update( $wpdb->terms, array(
 			'name' => $unlocalized_name,
 		), array(
@@ -136,25 +128,6 @@ function nl_compatibility_convert_terms_process() {
 		), array(
 			'term_taxonomy_id' => $term->term_taxonomy_id,
 		) );
-
-		// Store each localized version
-		$fields = array( 'name', 'description' );
-		foreach ( $fields as $field ) {
-			$list = ${ $field . '_values' };
-
-			foreach ( $list as $i => $value ) {
-				// Get the corresponding language
-				$language = $languages->get( $i + 1, '@' );
-
-				// Break if not found
-				if ( ! $language ) {
-					break;
-				}
-
-				// Save the value
-				Localizer::save_string_value( "term_{$term->taxonomy}_{$field}", $language->id, $term->term_id, $value );
-			}
-		}
 	}
 
 	// Now ensure all those taxonomies are registered for localization

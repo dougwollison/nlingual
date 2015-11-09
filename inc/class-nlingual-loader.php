@@ -79,6 +79,9 @@ class Loader extends Functional {
 	 * @since 2.0.0
 	 *
 	 * @uses Loader::plugin_security_check() to check for activation nonce.
+	 * @uses Migrator::is_upgrading() to check if upgrading from nLingual 1.
+	 * @uses Migrator::convert_tables() to convert database structure.
+	 * @uses Migrator::convert_options() to convert plugin/blog options.
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 */
@@ -111,18 +114,20 @@ class Loader extends Functional {
 		) );
 
 		// Get database version and upgrade if needed.
-		$db_version = get_option( 'nlingual_database_version' );
+		$db_version = get_option( 'nlingual_database_version', '1.0' );
 		$charset_collate = $wpdb->get_charset_collate();
+
+		// Test if we're upgrading from nLingual 1, by checking for the old options array
+		$upgrade_from_v1 = Migrator::is_upgrading();
 
 		// Load dbDelta utility
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
 		// Install/update the tables
 		if ( version_compare( $db_version, NL_DB_VERSION, '<' ) ) {
-			// Check if upgrading from nLingual 1
-			if ( get_option( 'nLingual-options' ) ) {
-				static::convert_options();
-				static::upgrade_database();
+			// [Upgrading] convert the database tables and flag as having been upgraded
+			if ( $upgrade_from_v1 ) {
+				Migrator::convert_tables();
 
 				// Flag as having been upgraded and needing backwards compatability
 				add_option( 'nlingual_upgraded', 1 );
@@ -168,6 +173,11 @@ class Loader extends Functional {
 
 			// Log the current database version
 			update_option( 'nlingual_database_version', NL_DB_VERSION );
+
+			// [Upgrading] Now that the tables are setup, convert the options
+			if ( $upgrade_from_v1 ) {
+				Migrator::convert_options();
+			}
 		}
 	}
 
@@ -209,143 +219,5 @@ class Loader extends Functional {
 
 		// And delete the options
 		$wpdb->query( "DELETE FORM $wpdb->options WHERE option_name like 'nlingual\_%'" );
-	}
-
-	// =========================
-	// ! Migration Utilities
-	// =========================
-
-	/**
-	 * Convert old options to new format.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
-	 */
-	protected static function convert_options() {
-		global $wpdb;
-
-		// Get the old nLingual-options
-		$options = get_option( 'nLingual-options', array() );
-
-		// Reassign to new options
-		$renamed_options = array(
-			'admin_only'        => 'nlingual_backend_only',
-			'default_lang'      => 'nlingual_default_language',
-			'delete_sisters'    => 'nlingual_delete_sisters',
-			'get_var'           => 'nlingual_query_var',
-			'l10n_dateformat'   => 'nlingual_localize_date',
-			'method'            => 'nlingual_redirection_method',
-			'post_types'        => 'nlingual_post_types',
-			'skip_default_l10n' => 'nlingual_skip_default_l10n',
-			'separator'         => 'nlingual-old_separator',
-		);
-		foreach ( $renamed_options as $oldname => $newname ) {
-			if ( isset( $options[ $oldname ] ) ) {
-				update_option( $newname, $options[ $oldname ] );
-			}
-		}
-
-		// Get the old nLingual-sync_rules
-		$old_sync_rules = get_option( 'nLingual-sync_rules', array() );
-		$new_sync_rules = array( 'post_type' => array() );
-		foreach ( $old_sync_rules as $post_type => $rules ) {
-			$new_sync_rules['post_type'][ $post_type ] = array(
-				'post_fields' => $rules['data'],
-				'post_terms' => $rules['tax'],
-				'post_meta' => $rules['meta'],
-			);
-		}
-
-		// Save the new sync rules
-		update_option( 'nlingual_sync_rules', $new_sync_rules );
-
-		// Automatically set options that weren't present in old version
-		update_option( 'nlingual_post_language_override', 1 );
-
-		// Get the assigned menus
-		$old_menus = get_theme_mod( 'nav_menu_locations' );
-
-		// Loop through all menus and convert to new scheme if applicable
-		$new_menus = array();
-		$menu_locations = array();
-		foreach ( $old_menus as $location => $menu ) {
-			if ( preg_match( '/(.+?)--(\w{2})$/', $location, $matches ) ) {
-				list( , $location, $slug ) = $matches;
-				// Find a language matching the slug
-				if ( $language_id = $wpdb->get_var( "SELECT lang_id FROM {$wpdb->prefix}nL_languages WHERE slug = '$slug'" ) ) {
-					// Add the location to the list of localizable ones
-					$menu_locations[] = $location;
-
-					// Create the new localized slug for the location
-					$location .= '-language' . $language_id;
-				}
-			}
-
-			$new_menus[ $location ] = $menu;
-		}
-
-		// Update the nav menu locations for localizables
-		$localizables = get_option( 'nlingual_localizables', array() );
-		$localizables['nav_menu_locations'] = $menu_locations;
-		update_option( 'nlingual_localizables', $localizables );
-
-		// Update the assigned menus
-		set_theme_mod( 'nav_menu_locations', $new_menus );
-	}
-
-	/**
-	 * Upgrade database structure from < 2.0.0.
-	 *
-	 * Converts old languages and translations tables to new formats.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
-	 */
-	protected static function upgrade_database() {
-		global $wpdb;
-
-		// Get the collation if applicable
-		$collate = '';
-		if ( ! empty( $wpdb->collate ) ) {
-			$collate = "COLLATE $wpdb->collate";
-		}
-
-		// We need to alter the languages table to the new format
-
-		// Rename to lowercase
-		$wpdb->query("ALTER TABLE {$wpdb->prefix}nL_languages RENAME TO {$wpdb->prefix}nl_languages2");
-		$wpdb->query("ALTER TABLE {$wpdb->prefix}nl_languages2 RENAME TO $wpdb->nl_languages");
-		// Rename lang_id to language_id, keeping it at the beginning
-		$wpdb->query("ALTER TABLE $wpdb->nl_languages CHANGE `lang_id` `language_id` bigint(20) unsigned NOT NULL FIRST");
-		// Rename mo to locale_name, placing it after short_name
-		$wpdb->query("ALTER TABLE $wpdb->nl_languages CHANGE `mo` `locale_name` varchar(10) DEFAULT '' NOT NULL AFTER `short_name`");
-		// Rename iso to iso_code, placing it after locale_name
-		$wpdb->query("ALTER TABLE $wpdb->nl_languages CHANGE `iso` `iso_code` varchar(2) DEFAULT '' NOT NULL AFTER `locale_name`");
-		// Relocate slug to after iso_code
-		$wpdb->query("ALTER TABLE $wpdb->nl_languages MODIFY `slug` varchar(10) DEFAULT '' NOT NULL AFTER `iso_code`");
-
-		// We need to alter the translations table to the new format
-
-		// Rename to lowercase
-		$wpdb->query("ALTER TABLE {$wpdb->prefix}nL_translations RENAME TO {$wpdb->prefix}nl_translations2");
-		$wpdb->query("ALTER TABLE {$wpdb->prefix}nl_translations2 RENAME TO $wpdb->nl_translations");
-		// Start by removing the old unique keys
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations DROP KEY post");
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations DROP KEY translation");
-		// Rename lang_id to language_id, keeping it after group_id
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations CHANGE `lang_id` `language_id` bigint(20) unsigned NOT NULL AFTER `group_id`");
-		// Now add the new object_type column
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD `object_type` varchar(20) $collate NOT NULL DEFAULT 'post'");
-		// Rename post_id to object_id, placing it after object_type
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations CHANGE `post_id` `object_id` bigint(20) unsigned NOT NULL AFTER `object_type`");
-		// Add the new keys
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD UNIQUE KEY group_lang (group_id, language_id)");
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD UNIQUE KEY group_object (group_id, object_id)");
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD UNIQUE KEY object_type (object_type, object_id)");
-
-		// Just in case, mark them down as being at least up to 2.0.0
-		update_option( 'nlingual_database_version', '2.0.0' );
 	}
 }
