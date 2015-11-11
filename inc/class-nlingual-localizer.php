@@ -467,8 +467,10 @@ class Localizer extends Functional {
 			return null;
 		}
 
+		$cache_id = "$key/$object_id/$language_id";
+
 		// Check if it's cached, return if so
-		if ( $cached = Registry::cache_get( 'localized', "$key;$language_id;$object_id" ) ) {
+		if ( $cached = Registry::cache_get( 'localized', $cache_id ) ) {
 			return $cached;
 		}
 
@@ -481,7 +483,7 @@ class Localizer extends Functional {
 		", $key, $language_id, $object_id ) );
 
 		// Add it to the cache
-		Registry::cache_set( 'localized', "$key;$language_id;$object_id", $value );
+		Registry::cache_set( 'localized', $cache_id, $value );
 
 		return $value;
 	}

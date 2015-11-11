@@ -305,11 +305,11 @@ class Rewriter {
 		}
 
 		// Create an identifier for the url for caching
-		$id = "[{$language->id}]$url";
+		$cache_id = "$url({$language->id})";
 
 		// Check if this URL has been taken care of before,
 		// return cached result
-		if ( $cached = Registry::cache_get( 'url', $id ) ) {
+		if ( $cached = Registry::cache_get( 'url', $cache_id ) ) {
 			return $cached;
 		}
 
@@ -370,7 +370,7 @@ class Rewriter {
 		$url = apply_filters( 'nlingual_localize_url', $url, $old_url, $language, $relocalize );
 
 		// Store the URL in the cache
-		Registry::cache_set( 'url', $id, $url );
+		Registry::cache_set( 'url', $cache_id, $url );
 
 		return $url;
 	}

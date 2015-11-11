@@ -67,8 +67,10 @@ class Translator {
 	public static function get_object_language( $type, $id ) {
 		global $wpdb;
 
+		$cache_id = "{$type}/{$id}";
+
 		// Check if it's cached, return if so
-		if ( $language = Registry::cache_get( "{$type}_language", $id ) ) {
+		if ( $language = Registry::cache_get( 'language', $cache_id ) ) {
 			return $language;
 		}
 
@@ -77,7 +79,7 @@ class Translator {
 		$language = Registry::languages()->get( $language_id );
 
 		// Add it to the cache
-		Registry::cache_set( "{$type}_language", $id, $language );
+		Registry::cache_set( 'language', $cache_id, $language );
 
 		return $language;
 	}
@@ -135,7 +137,7 @@ class Translator {
 		), array( '%d', '%s', '%d', '%d' ) );
 
 		// Add it to the cache
-		Registry::cache_set( "{$type}_language", $id, $language );
+		Registry::cache_delete( 'language', "{$type}/{$id}", $language );
 
 		return true;
 	}
@@ -164,7 +166,7 @@ class Translator {
 		) );
 
 		// Remove it from the cache
-		Registry::cache_delete( "{$type}_language", $id );
+		Registry::cache_delete( 'language', "{$type}/{$id}" );
 
 		return true;
 	}
@@ -194,8 +196,10 @@ class Translator {
 			return false; // Does not exist
 		}
 
+		$cache_id = "{$type}/{$id}/{$language->id}";
+
 		// Check if it's cached, fetch if not
-		if ( ! ( $translation = Registry::cache_get( "{$type}_translations_{$language->id}", $id ) ) ) {
+		if ( ! ( $translation = Registry::cache_get( 'translation', $cache_id ) ) ) {
 			$query = "
 				SELECT
 					t2.object_id
@@ -214,7 +218,7 @@ class Translator {
 			$translation = $wpdb->get_var( $wpdb->prepare( $query, $type, $id, $language->id ) );
 
 			// Add it to the cache
-			Registry::cache_set( "{$type}_translations_{$language->id}", $id, $translation );
+			Registry::cache_set( 'translation', $cache_id, $translation );
 		}
 
 		// If a translation is found, return it
@@ -242,8 +246,10 @@ class Translator {
 	public static function get_object_translations( $type, $id, $include_self = false ) {
 		global $wpdb;
 
+		$cache_id = "{$type}/{$id}";
+
 		// Check if it's cached, fetch if not
-		if ( ! ( $translations = Registry::cache_get( "{$type}_translations", $id ) ) ) {
+		if ( ! ( $translations = Registry::cache_get( 'translations', $cache_id ) ) ) {
 			$query = "
 				SELECT
 					t2.language_id,
@@ -268,7 +274,7 @@ class Translator {
 			}
 
 			// Add it to the cache
-			Registry::cache_set( "{$type}_translations", $id, $translations );
+			Registry::cache_set( 'translations', $cache_id, $translations );
 		}
 
 		// Remove the target posts ID if desired

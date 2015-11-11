@@ -25,7 +25,7 @@ class Registry {
 	 *
 	 * @var array
 	 */
-	protected static $cache = array();
+	public static $cache = array();
 
 	/**
 	 * Language switching log.
