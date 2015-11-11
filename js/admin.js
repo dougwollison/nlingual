@@ -52,7 +52,7 @@ jQuery( function( $ ) {
 
 	// Handle rendering of the previews
 	$( '.nl-preview' ).on( 'nl:render', function() {
-		var language, slug, qvar, skip, format;
+		var language, slug, qvar, skip, override, format;
 
 		// Get the default language slug, defaulting to "en"
 		language = $( '#nlingual_default_language' ).val();
@@ -63,18 +63,25 @@ jQuery( function( $ ) {
 		// Get the query var, defaulting to "nl_language"
 		qvar = $( '#nlingual_query_var' ).val() || 'nl_language';
 
-		// Get the skip option, will dictate what format to use
+		// Get the skip and override options
 		skip = $( '#nlingual_skip_default_l10n' ).attr( 'checked' );
+		override = $( '#nlingual_post_language_override' ).attr( 'checked' );
 
-		// Get the format; url-previews will depend on skip
+		// Get the format; some previews are dependent on options
 		if ( $( this ).hasClass( 'nl-url-preview' ) ) {
 			format = $( this ).data( skip ? 'excluded' : 'included' );
+		} else if ( $( this ).hasClass( 'nl-override-preview' ) ) {
+			format = $( this ).data( override ? 'on' : 'off' );
 		} else {
 			format = $( this ).data( 'format' );
 		}
 
 		// Update the preview
-		$( this ).text( format.replace( '%l', slug ).replace( '%v', qvar ) );
+		$( this ).text(
+			format
+			.replace( /%l/g, slug )
+			.replace( /%v/g, qvar )
+		);
 	} ).trigger( 'nl:render' );
 
 	// Changing any of these will trigger re-rendering of the previews
@@ -82,6 +89,9 @@ jQuery( function( $ ) {
 		$( '.nl-preview' ).trigger( 'nl:render' );
 	} );
 	$( '#nlingual_skip_default_l10n' ).change( function() {
+		$( '.nl-preview' ).trigger( 'nl:render' );
+	} );
+	$( '#nlingual_post_language_override' ).change(function() {
 		$( '.nl-preview' ).trigger( 'nl:render' );
 	} );
 	$( '#nlingual_query_var' ).on( 'keyup change', function() {

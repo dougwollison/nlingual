@@ -312,6 +312,19 @@ class Manager extends Functional {
 			sprintf( $redirect_format, NL_REDIRECT_USING_PATH, "$domain/%l/" ).
 			sprintf( $redirect_format, NL_REDIRECT_USING_DOMAIN, "%l.$domain" );
 
+		// The post language override URL samples
+		$override_format = '<span class="nl-preview nl-override-preview %s" data-on="%s" data-off="%s"></span>';
+		$override_previews =
+			sprintf( $override_format, NL_REDIRECT_USING_GET,
+				"$domain/french-page/?%v=en > $domain/french-page/?%v=fr",
+				"$domain/french-page/?%v=en > $domain/english-page/?%v=en" ).
+			sprintf( $override_format, NL_REDIRECT_USING_PATH,
+				"$domain/en/french-page/ > $domain/fr/french-page/",
+				"$domain/en/french-page/ > $domain/en/english-page/" ).
+			sprintf( $override_format, NL_REDIRECT_USING_DOMAIN,
+				"en.$domain/french-page/ > fr.$domain/french-page/" ,
+				"en.$domain/french-page/ > en.$domain/english-page/" );
+
 		// The general setting fields
 		add_settings_section( 'default', null, null, 'nlingual-options' );
 		Settings::add_fields( array(
@@ -334,7 +347,7 @@ class Manager extends Functional {
 			'skip_default_l10n' => array(
 				'title' => __( 'Skip Localization for Default Language?' ),
 				'help'  => __( 'URLs for the default language will be unmodified.' ) .
-					' <span class="nl-previews">' . _f( 'Example: %s', $url_previews ) . '</span>',
+					' <span class="nl-previews">' . _f( 'Preview: %s', $url_previews ) . '</span>',
 				'type'  => 'checkbox',
 			),
 			'patch_wp_locale' => array(
@@ -365,7 +378,8 @@ class Manager extends Functional {
 			),
 			'post_language_override' => array(
 				'title' => __( 'Post Language Override' ),
-				'help'  => __( 'Should the requested post/page/object’s language override the one requested?' ),
+				'help'  => __( 'Should the requested post’s language override in the event of a language mismatch?' ) .
+					' <span class="nl-previews">' . _f( 'Example: %s', $override_previews ) . '</span>',
 				'type'  => 'checkbox',
 			),
 		), 'options', 'redirection' );
