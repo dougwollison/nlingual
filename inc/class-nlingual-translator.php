@@ -174,6 +174,59 @@ class Translator {
 	// =========================
 
 	/**
+	 * Get a translation for an object.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @param string $type        The type of object.
+	 * @param int    $id          The ID of the object.
+	 * @param bool   $return_self Optional Return $id if nothing is found (default false).
+	 *
+	 * @return bool|int The id of the translation.
+	 */
+	public static function get_object_translation( $type, $id, $language, $return_self = false ) {
+		global $wpdb;
+
+		// Ensure $language is a Language
+		if ( ! static::_language( $language ) ) {
+			return false; // Does not exist
+		}
+
+		// Check if it's cached, fetch if not
+		if ( ! ( $translation = Registry::cache_get( "{$type}_translations_{$language->id}", $id ) ) ) {
+			$query = "
+				SELECT
+					t2.object_id
+				FROM
+					$wpdb->nl_translations AS t1
+					LEFT JOIN
+						$wpdb->nl_translations AS t2
+						ON (t1.group_id = t2.group_id)
+				WHERE 1=1
+					AND t1.object_type = %s
+					AND t1.object_id = %d
+					AND t2.language_id = %d
+			";
+
+			// Get the results of the query
+			$translation = $wpdb->get_var( $wpdb->prepare( $query, $type, $id, $language->id ) );
+
+			// Add it to the cache
+			Registry::cache_set( "{$type}_translations_{$language->id}", $id, $translation );
+		}
+
+		// If a translation is found, return it
+		if ( $translation ) {
+			return $translation;
+		}
+
+		// Otherwise, return the original ID or false, depending on $return_self
+		return $return_self ? $id : false;
+	}
+
+	/**
 	 * Get all translations for an object.
 	 *
 	 * @since 2.0.0
@@ -202,7 +255,7 @@ class Translator {
 						ON (t1.group_id = t2.group_id)
 				WHERE 1=1
 					AND t1.object_type = %s
-					AND t1.object_id = %2\$d
+					AND t1.object_id = %d
 			";
 
 			// Get the results of the query
@@ -225,41 +278,6 @@ class Translator {
 		}
 
 		return $translations;
-	}
-
-	/**
-	 * Get specific translation for an object.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Utilities::_language() to ensure $language is a Language object.
-	 *
-	 * @see Translator::get_object_translations() For how the list is retrieved.
-	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
-	 *
-	 * @param string $type        The type of object.
-	 * @param int    $id          The ID of the object.
-	 * @param mixed  $language    The language to get the translation for.
-	 * @param bool   $return_self Optional Return $id if nothing found? (default false).
-	 *
-	 * @return int The ID of the object's counterpart in that language (false on failure).
-	 */
-	public static function get_object_translation( $type, $id, $language, $return_self = false ) {
-		// Ensure $language is a Language
-		if ( ! static::_language( $language ) ) {
-			return false; // Does not exist
-		}
-
-		$translations = static::get_object_translations( $type, $id );
-
-		// Check if translation exists
-		if ( isset( $translations[ $language->id ] ) ) {
-			return $translations[ $language->id ];
-		}
-
-		// Otherwise, return the original id or false, depending on $return_self
-		return $return_self ? $id : false;
 	}
 
 	/**
