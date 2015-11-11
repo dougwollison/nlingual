@@ -151,16 +151,14 @@ class Frontend extends Functional {
 		 * Now to determine which language to redirect to...
 		 *
 		 * The current declared langauge IF:
-		 * - the post has no language, OR
 		 * - a translation exists for the current language AND
 		 * - the override is disabled
 		 *
 		 * The detected post's langauge IF:
-		 * - it has a language AND
 		 * - the override is enabled, OR
 		 * - it has no translation in the current language
 		 */
-		if ( ! $post_language || ( $translation && ! $override ) ) {
+		if ( $translation && ! $override ) {
 			$redirect_language = $current_language;
 		} else {
 			$redirect_language = $post_language;
