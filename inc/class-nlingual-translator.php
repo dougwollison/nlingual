@@ -303,7 +303,7 @@ class Translator {
 	 * @param int    $id      The ID of the primary object.
 	 * @param array  $objects A list of objects to associate (id => language_id format).
 	 *
-	 * @param bool Wether or not the association could be done.
+	 * @param bool Wether or not the association could be done (false if aborted).
 	 */
 	public static function set_object_translations( $type, $id, $objects ) {
 		global $wpdb;
@@ -312,11 +312,11 @@ class Translator {
 		$group_id = static::_translation_group_id( $type, $id, false );
 
 		// Also get the language for this object
-		$language = static::get_object_language( $type, $id );
+		$the_language = static::get_object_language( $type, $id );
 
-		// If none was found, fail
+		// If none was found, abort
 		if ( ! $group_id ) {
-			return false;
+			return null;
 		}
 
 		// Start the query
@@ -324,23 +324,23 @@ class Translator {
 
 		// Go through the $objects and handle accordingly
 		$values = array();
-		foreach ( $objects as $language => $object_id ) {
+		foreach ( $objects as $object_language => $object_id ) {
 			// Ensure $language is a Language
-			if ( ! static::_language( $language ) ) {
+			if ( ! static::_language( $object_language ) ) {
 				return false; // Does not exist
 			}
 
 			// Skip if we're trying assign a translation for the object's language
-			if ( $language->id == $language->id ) {
+			if ( $object_language->id == $the_language->id ) {
 				continue;
 			}
 
 			// If $object_id isn't valid, assume we want to unlink it
 			if ( $object_id <= 0 ) {
-				static::unlink_object_translation( $type, $id, $language );
+				static::unlink_object_translation( $type, $id, $object_language );
 			} else {
 				// Build the row data for the query
-				$values[] = $wpdb->prepare( "(%d, %s, %d, %d)", $group_id, $type, $object_id, $language->id );
+				$values[] = $wpdb->prepare( "(%d, %s, %d, %d)", $group_id, $type, $object_id, $object_language->id );
 			}
 		}
 
