@@ -374,12 +374,14 @@ jQuery( function( $ ) {
 	$( '#nl_language' ).change( function() {
 		var id = $( this ).val();
 
+		// Toggle visibility of the translations interface if language isn't set
+		$( '#nl_manage_translations' ).toggleClass( 'hidden', id === '0' );
+
 		// Show all translation fields by default
-		$( '.nl-translation' ).show();
+		$( '.nl-translation-field' ).show();
 
 		// Hide the one for the current language
 		$( '#nl_translation_' + id ).hide();
-
 	} ).change(); // Update on page load
 
 	// Handle creating new translation

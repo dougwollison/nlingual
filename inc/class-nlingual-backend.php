@@ -400,7 +400,7 @@ class Backend extends Functional {
 		?>
 		<br class="clear" />
 
-		<fieldset class="inline-edit-col-left">
+		<fieldset id="nl_manage_language" class="inline-edit-col-left">
 			<div class="inline-edit-col">
 				<label>
 					<span class="title"><?php _e( 'Language' );?></span>
@@ -417,7 +417,7 @@ class Backend extends Functional {
 			</div>
 		</fieldset>
 
-		<fieldset class="inline-edit-col-right" style="margin: 0;">
+		<fieldset id="nl_manage_translations" class="inline-edit-col-right" style="margin: 0;">
 			<div class="inline-edit-col">
 				<h4>Translations</h4>
 				<?php foreach ( $languages as $language ) : ?>
@@ -477,7 +477,7 @@ class Backend extends Functional {
 		// Get the languages list
 		$languages = Registry::languages();
 		?>
-		<fieldset class="inline-edit-col-right">
+		<fieldset id="nl_bulk_post_language" class="inline-edit-col-right">
 			<div class="inline-edit-col">
 				<label>
 					<span class="title"><?php _e( 'Language' );?></span>
@@ -580,7 +580,7 @@ class Backend extends Functional {
 			}
 		}
 		?>
-		<div class="nl-field nl-language-field">
+		<div id="nl_manage_language" class="nl-field nl-language-field">
 			<label for="nl_language" class="nl-field-label"><?php _e( 'Language' ); ?></label>
 			<select name="nlingual_language" id="nl_language" class="nl-input">
 				<option value="0">&mdash; <?php _ex( 'None', 'no language' ); ?> &mdash;</option>
@@ -594,34 +594,37 @@ class Backend extends Functional {
 			</select>
 		</div>
 
-		<?php if ( $languages->count() > 1 ) : ?>
-		<h4 class="nl-heading"><?php _e( 'Translations' ); ?></h4>
-		<?php foreach ( $languages as $language ) : ?>
-		<div id="nl_translation_<?php echo $language->id; ?>" class="nl-field nl-translation-field" data-nl_language="<?php echo $language->id?>">
-			<label for="nl_translation_<?php echo $language->id; ?>_input">
-				<?php echo $language->system_name; ?>
-				<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' );?>"><?php _e( 'Edit' );?></button>
-			</label>
+		<div id="nl_manage_translations">
+			<?php if ( $languages->count() > 1 ) : ?>
+			<h4 class="nl-heading"><?php _e( 'Translations' ); ?></h4>
+			<?php foreach ( $languages as $language ) : ?>
+			<div id="nl_translation_<?php echo $language->id; ?>" class="nl-field nl-translation-field" data-nl_language="<?php echo $language->id?>">
+				<label for="nl_translation_<?php echo $language->id; ?>_input">
+					<?php echo $language->system_name; ?>
+					<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' );?>"><?php _e( 'Edit' );?></button>
+				</label>
 
-			<select name="nlingual_translation[<?php echo $language->id; ?>]" id="nl_translation_<?php echo $language->id; ?>_input" class="nl-input">
-				<option value="0">&mdash; <?php _ex( 'None', 'no translation' ); ?> &mdash;</option>
-				<option value="new" class="nl-new-translation"><?php _ef( '&mdash; New %s %s &mdash;', $language->system_name, $post_type->labels->singular_name ); ?></option>
-				<?php
-				// Print the options
-				foreach ( $post_options[ $language->id ] as $option ) {
-					$selected = $translations[ $language->id ] == $option->ID ? 'selected' : '';
-					$label = $option->post_title;
-					// If this post is already a translation of something, identify it as such.
-					if ( Translator::get_post_translations( $option->ID ) ) {
-						$label = _e( '[Taken]' ) . ' ' . $label;
+				<select name="nlingual_translation[<?php echo $language->id; ?>]" id="nl_translation_<?php echo $language->id; ?>_input" class="nl-input">
+					<option value="0">&mdash; <?php _ex( 'None', 'no translation' ); ?> &mdash;</option>
+					<option value="new" class="nl-new-translation"><?php _ef( '&mdash; New %s %s &mdash;', $language->system_name, $post_type->labels->singular_name ); ?></option>
+					<?php
+					// Print the options
+					foreach ( $post_options[ $language->id ] as $option ) {
+						$selected = $translations[ $language->id ] == $option->ID ? 'selected' : '';
+						$label = $option->post_title;
+						// If this post is already a translation of something, identify it as such.
+						if ( Translator::get_post_translations( $option->ID ) ) {
+							$label = _e( '[Taken]' ) . ' ' . $label;
+						}
+						printf( '<option value="%s" %s>%s</option>', $option->ID, $selected, $label );
 					}
-					printf( '<option value="%s" %s>%s</option>', $option->ID, $selected, $label );
-				}
-				?>
-			</select>
+					?>
+				</select>
+			</div>
+			<?php endforeach; ?>
+			<?php endif; ?>
 		</div>
-		<?php endforeach; ?>
-		<?php endif;
+		<?php
 
 		// Nonce fields for save validation
 		wp_nonce_field( 'nlingual_post', '_nl_nonce', false );
@@ -702,7 +705,7 @@ class Backend extends Functional {
 		}
 
 		// Assign the translations, fail if there's an error
-		if ( ! Translator::set_post_translations( $post_id, $_REQUEST['nlingual_translation'] ) ) {
+		if ( false === Translator::set_post_translations( $post_id, $_REQUEST['nlingual_translation'] ) ) {
 			wp_die( __( 'Error saving translations; one or more languages do not exist.' ) );
 		}
 
