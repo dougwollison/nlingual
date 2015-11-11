@@ -120,7 +120,6 @@ class Frontend extends Functional {
 	 *
 	 * @uses Registry::current_language() to get the current language object.
 	 * @uses Translator::get_post_language() to get the language of the queried post.
-	 * @uses Registry::is_language() to check if that lanuage is the current one.
 	 * @uses Translator::get_post_translation() to find the post's translation.
 	 * @uses Registry::get() to retrieve the post_language_override option.
 	 */
@@ -138,7 +137,7 @@ class Frontend extends Functional {
 		$post_language = Translator::get_post_language( $object->ID );
 
 		// If languages match, nothing needs to be done
-		if ( Registry::is_language( $language ) ) {
+		if ( $current_language->id == $post_language->id ) {
 			return;
 		}
 
