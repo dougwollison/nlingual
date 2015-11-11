@@ -347,7 +347,7 @@ class Manager extends Functional {
 			'skip_default_l10n' => array(
 				'title' => __( 'Skip Localization for Default Language?' ),
 				'help'  => __( 'URLs for the default language will be unmodified.' ) .
-					' <span class="nl-previews">' . _f( 'Preview: %s', $url_previews ) . '</span>',
+					'<br /> <span class="nl-previews">' . _f( 'Preview: %s', $url_previews ) . '</span>',
 				'type'  => 'checkbox',
 			),
 			'patch_wp_locale' => array(
@@ -368,7 +368,7 @@ class Manager extends Functional {
 			'redirection_method' => array(
 				'title' => __( 'Redirection Method' ),
 				'help'  => __( 'What style should be used for the translated URLs?' ) .
-					' <span class="nl-previews">' . _f( 'Preview: %s', $redirect_previews ) . '</span>',
+					'<br /> <span class="nl-previews">' . _f( 'Preview: %s', $redirect_previews ) . '</span>',
 				'type'  => 'radiolist',
 				'data'  => array(
 					NL_REDIRECT_USING_GET    => __( 'HTTP query' ),
@@ -378,8 +378,8 @@ class Manager extends Functional {
 			),
 			'post_language_override' => array(
 				'title' => __( 'Post Language Override' ),
-				'help'  => __( 'Should the requested post’s language override in the event of a language mismatch?' ) .
-					' <span class="nl-previews">' . _f( 'Example: %s', $override_previews ) . '</span>',
+				'help'  => __( 'Should the language of the requested post take precedence in the event of a language mismatch?' ) .
+					'<br /> <span class="nl-previews">' . _f( 'Example: %s', $override_previews ) . '</span>',
 				'type'  => 'checkbox',
 			),
 		), 'options', 'redirection' );
