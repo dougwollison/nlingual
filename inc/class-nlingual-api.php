@@ -317,9 +317,9 @@ class API extends Functional {
 			// Check if the language specified is "None"
 			if ( $language === '0' ) {
 				$subclause[] = "$wpdb->nl_translations.language_id IS NULL";
-			} else
+			}
 			// Otherwise check if the language exists
-			if ( $language = $all_languages->get( $language ) ) {
+			elseif ( $language = $all_languages->get( $language ) ) {
 				$subclause[] = $wpdb->prepare( "$wpdb->nl_translations.language_id = %d", $language->id );
 			}
 		}

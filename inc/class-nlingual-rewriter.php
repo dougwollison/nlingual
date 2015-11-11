@@ -438,36 +438,37 @@ class Rewriter {
 			// Front page? just use home_url()
 			if ( is_front_page() ) {
 				$url = home_url();
-			} else
+			}
 			// Term page? Get the term link
-			if ( is_tax() || is_tag() || is_category() ) {
+			elseif ( is_tax() || is_tag() || is_category() ) {
 				$url = get_term_link( get_queried_object() );
-			} else
+			}
 			// Post type archive? Get the link
-			if ( is_post_type_archive() ) {
+			elseif ( is_post_type_archive() ) {
 				$url = get_post_type_archive_link( get_queried_object()->name );
-			} else
+			}
 			// Author archive? Get the link
-			if ( is_author() ) {
+			elseif ( is_author() ) {
 				$url = get_author_posts_link( get_queried_object_id() );
-			} else
+			}
 			// Date archive? Get link
-			if ( is_day() ) {
+			elseif ( is_day() ) {
 				$url = get_day_link( get_query_var( 'year' ), get_query_var( 'month' ), get_query_var( 'day' ) );
-			} else
+			}
 			// Month archive? Get link
-			if ( is_month() ) {
+			elseif ( is_month() ) {
 				$url = get_month_link( get_query_var( 'year' ), get_query_var( 'month' ) );
-			} else
+			}
 			// Year archive? Get link
-			if ( is_year() ) {
+			elseif ( is_year() ) {
 				$url = get_year_link( get_query_var( 'year' ) );
-			} else
+			}
 			// Search page? Rebuild the link
-			if ( is_search() ) {
+			elseif ( is_search() ) {
 				$url = home_url( '/?s=' . get_query_var( 's' ) );
-			} else {
-				// Give up and just get the orginally requested URL, relocalized
+			}
+			// Give up and just get the orginally requested URL, relocalized
+			else {
 				$url = static::localize_url( NL_ORIGINAL_URL, null, true );
 			}
 
