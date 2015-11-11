@@ -33,13 +33,10 @@ class Frontend extends Functional {
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
-		// Language Detection
+		// Language Detection/Redirection
 		static::add_action( 'plugins_loaded', 'detect_requested_language', 10, 0 );
-		static::add_action( 'wp', 'detect_queried_language', 10, 0 );
-
-		// URL Redirection
+		static::add_filter( 'wp', 'maybe_redirect_language', 10, 0 );
 		static::add_filter( 'redirect_canonical', 'localize_canonical', 10, 2 );
-		static::add_action( 'template_redirect', 'maybe_redirect', 10, 0 );
 
 		// URL Rewriting
 		static::add_filter( 'home_url', 'localize_home_url', 10, 4 );
@@ -73,7 +70,7 @@ class Frontend extends Functional {
 	}
 
 	// =========================
-	// ! Language Detection
+	// ! Language Detection/Redirection
 	// =========================
 
 	/**
@@ -113,35 +110,83 @@ class Frontend extends Functional {
 	}
 
 	/**
-	 * Detect the language based on the first queried post.
+	 * Check if the language declared matches that of the queried object.
+	 *
+	 * If not, redirect appropriately based on post_language_override option.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::get() to get the postlanguage_override option.
-	 * @uses Translator::get_object_language() to get the queried posts language.
-	 * @uses API::set_language() to permanently apply the detected language.
-	 *
 	 * @global WP_Query $wp_query The main WP_Query instance.
+	 *
+	 * @uses Registry::current_language() to get the current language object.
+	 * @uses Translator::get_post_language() to get the language of the queried post.
+	 * @uses Registry::is_language() to check if that lanuage is the current one.
+	 * @uses Translator::get_post_translation() to find the post's translation.
+	 * @uses Registry::get() to retrieve the post_language_override option.
 	 */
-	public static function detect_queried_language() {
+	public static function maybe_redirect_language() {
 		global $wp_query;
 
-		// Don't proceed if this feature is disabled
-		if ( ! Registry::get( 'post_language_override', 0 ) ) {
+		// If the queried object is not a post, abort
+		$object = get_queried_object();
+		if ( ! is_a( $object, 'WP_Post' ) ) {
 			return;
 		}
 
-		if ( isset( $wp_query->post ) ) {
-			$language = Translator::get_post_language( $wp_query->post->ID );
+		// Get the current language and taht of the queried object
+		$current_language = Registry::current_language();
+		$post_language = Translator::get_post_language( $object->ID );
 
-			// Set the language and lock it
-			API::set_language( $language, true );
+		// If languages match, nothing needs to be done
+		if ( Registry::is_language( $language ) ) {
+			return;
+		}
+
+		// Get the translation in the current language
+		$translation = Translator::get_post_translation( $object->ID, $current_language );
+
+		// Get the override
+		$override = Registry::get( 'post_language_override', 0 );
+
+		/**
+		 * Now to determine which language to redirect to...
+		 *
+		 * The current declared langauge IF:
+		 * - the post has no language, OR
+		 * - a translation exists for the current language AND
+		 * - the override is disabled
+		 *
+		 * The detected post's langauge IF:
+		 * - it has a language AND
+		 * - the override is enabled, OR
+		 * - it has no translation in the current language
+		 */
+		if ( ! $post_language || ( $translation && ! $override ) ) {
+			$redirect_language = $current_language;
+		} else {
+			$redirect_language = $post_language;
+		}
+
+		// Get the new URL localized for the determined language
+		$redirect_url = Rewriter::localize_here( $redirect_language );
+
+		/**
+		 * Filter the language redirect URL.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param string $redirect_url The URL localized for the determined language.
+		 *
+		 * @return string The filtered redirect URL.
+		 */
+		$redirect_url = apply_filters( 'nlingual_maybe_redirect_language', $redirect_url );
+
+		// Redirect
+		if ( $redirect_url ) {
+			wp_redirect( $redirect_url, 302 );
+			exit;
 		}
 	}
-
-	// =========================
-	// ! Language Redirection
-	// =========================
 
 	/**
 	 * Check for proper localized redirection.
@@ -162,36 +207,6 @@ class Frontend extends Functional {
 		}
 
 		return $redirect_url;
-	}
-
-	/**
-	 * Check if language redirection is necessary.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses NL_UNLOCALIZED to get the unlocalized home URL.
-	 * @uses NL_ORIGINAL_URL for comparison.
-	 * @uses Rewriter::localize_here() to determine the proper URL.
-	 *
-	 * @uses Rewriter::localize_url()
-	 */
-	public static function maybe_redirect() {
-		// Get the plain home URL for comparison (allow unlocalized version)
-		$unlocalized_home = get_home_url( null, '', NL_UNLOCALIZED );
-
-		// Abort if it's just the homepage
-		if ( untrailingslashit( NL_ORIGINAL_URL ) == $unlocalized_home ) {
-			return;
-		}
-
-		// Get the correct localized version of the URL
-		$redirect_url = Rewriter::localize_here();
-
-		// Perform the redirect if applicable
-		if ( NL_ORIGINAL_URL != $redirect_url ) {
-			wp_redirect( $redirect_url );
-			exit;
-		}
 	}
 
 	// =========================
@@ -284,9 +299,9 @@ class Frontend extends Functional {
 				// Check if a location is set for the current language
 				if ( isset( $locations[ "{$slug}-language{$current_language}"] ) ) {
 					$locations[ $slug ] = $locations[ "{$slug}-language{$current_language}"];
-				} else
+				}
 				// Alternatively check if a location is set for the default one
-				if ( isset( $locations[ "{$slug}-language{$default_language}"] ) ) {
+				elseif ( isset( $locations[ "{$slug}-language{$default_language}"] ) ) {
 					$locations[ $slug ] = $locations[ "{$slug}-language{$default_language}"];
 				}
 			}
