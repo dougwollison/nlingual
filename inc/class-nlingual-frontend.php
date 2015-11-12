@@ -10,7 +10,7 @@
 namespace nLingual;
 
 class Frontend extends Functional {
-	use Filters;
+	use Shared_Filters;
 
 	/**
 	 * The name of the class.

@@ -9,7 +9,7 @@
 
 namespace nLingual;
 
-trait Filters {
+trait Shared_Filters {
 	/**
 	 * Replace a post ID with it's translation for the current language.
 	 *

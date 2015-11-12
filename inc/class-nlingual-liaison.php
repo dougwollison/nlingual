@@ -10,7 +10,7 @@
 namespace nLingual;
 
 class Liaison extends Functional {
-	use Filters;
+	use Shared_Filters;
 
 	/**
 	 * The name of the class.
