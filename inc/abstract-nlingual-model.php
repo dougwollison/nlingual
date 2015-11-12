@@ -10,6 +10,17 @@
 
 namespace nLingual;
 
+/**
+ * The Model Framework
+ *
+ * A baseline for any Model objects used by nLingual.
+ *
+ * @package nLingual
+ * @subpackage Abstracts
+ *
+ * @since 2.0.0
+ */
+
 abstract class Model {
 	/**
 	 * Setup the property values.

@@ -10,6 +10,18 @@
 
 namespace nLingual;
 
+/**
+ * Shared filters for Handler-based classes.
+ *
+ * Just a collection of methods that could be used
+ * as hook methods by multiple Handlers.
+ *
+ * @package nLingual
+ * @subpackage Utilities
+ *
+ * @since 2.0.0
+ */
+
 trait Shared_Filters {
 	/**
 	 * Replace a post ID with it's translation for the current language.

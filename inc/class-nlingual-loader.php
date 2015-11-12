@@ -10,7 +10,19 @@
 
 namespace nLingual;
 
-class Loader extends Functional {
+/**
+ * The Plugin Loader
+ *
+ * Registers the necessary hooks to handle the nLingual plugin's
+ * (un)installation and (de)activation.
+ *
+ * @package nLingual
+ * @subpackage Handlers
+ *
+ * @since 2.0.0
+ */
+
+class Loader extends Handler {
 	/**
 	 * The name of the class.
 	 *

@@ -10,6 +10,18 @@
 
 namespace nLingual;
 
+/**
+ * The Language Model
+ *
+ * Provides a predictable interface for accessing
+ * properties of Languages stored in the database.
+ *
+ * @package nLingual
+ * @subpackage Structures
+ *
+ * @since 2.0.0
+ */
+
 class Language extends Model {
 	// =========================
 	// ! Properties

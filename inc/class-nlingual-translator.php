@@ -10,6 +10,18 @@
 
 namespace nLingual;
 
+/**
+ * The Translator API
+ *
+ * A toolkit for accessing and managing the language
+ * and translations of objects.
+ *
+ * @package nLingual
+ * @subpackage Tools
+ *
+ * @since 2.0.0
+ */
+
 class Translator {
 	// =========================
 	// ! Utilities
@@ -22,9 +34,9 @@ class Translator {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
-	 * @param string $type Optional The type of object.
-	 * @param int    $id   Optional The ID of the object.
-	 * @param bool   $inc  Optional Get new group ID if not found? (default true)
+	 * @param string $type Optional. The type of object.
+	 * @param int    $id   Optional. The ID of the object.
+	 * @param bool   $inc  Optional. Get new group ID if not found? (default true)
 	 *
 	 * @return int The existing or new group ID.
 	 */
@@ -183,7 +195,7 @@ class Translator {
 	 *
 	 * @param string $type        The type of object.
 	 * @param int    $id          The ID of the object.
-	 * @param bool   $return_self Optional Return $id if nothing is found (default false).
+	 * @param bool   $return_self Optional. Return $id if nothing is found (default false).
 	 *
 	 * @return bool|int The id of the translation.
 	 */
@@ -238,7 +250,7 @@ class Translator {
 	 *
 	 * @param string $type         The type of object.
 	 * @param int    $id           The ID of the object.
-	 * @param bool   $include_self Optional Include this object in the list (default false).
+	 * @param bool   $include_self Optional. Include this object in the list (default false).
 	 *
 	 * @return array An associative array of objects in language_id => object_id format.
 	 */
@@ -438,7 +450,7 @@ class Translator {
 	 * @uses Translator::get_object_translation() to get the post's translation.
 	 *
 	 * @param int   $post_id  The ID of the post.
-	 * @param mixed $language Optional The desired language.
+	 * @param mixed $language Optional. The desired language.
 	 *
 	 * @return string The translation's permalink.
 	 */

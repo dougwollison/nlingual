@@ -10,7 +10,21 @@
 
 namespace nLingual;
 
-class Localizer extends Functional {
+/**
+ * The Localizer System
+ *
+ * An API for registering strings that required
+ * localization, adding LocalizeThis tools to their
+ * respective fields in the admin and filtering the
+ * output on the frontend.
+ *
+ * @package nLingual
+ * @subpackage Tools
+ *
+ * @since 2.0.0
+ */
+
+class Localizer extends Handler {
 	/**
 	 * The name of the class.
 	 *
@@ -170,7 +184,7 @@ class Localizer extends Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param WP_Screen $screen Optional The screen to get strings for.
+	 * @param WP_Screen $screen Optional. The screen to get strings for.
 	 *
 	 * @return array The strings found for the screen provided.
 	 */
@@ -499,8 +513,8 @@ class Localizer extends Functional {
 	 * @uses Registry::languages() to fill out empty slots for each language as needed.
 	 *
 	 * @param string $key       The string key to search for.
-	 * @param int    $object_id Optional The object ID if relevent (otherwise 0).
-	 * @param bool   $check_reg Optional Wether or not to check if the string is regsitered before fetching (default TRUE).
+	 * @param int    $object_id Optional. The object ID if relevent (otherwise 0).
+	 * @param bool   $check_reg Optional. Wether or not to check if the string is regsitered before fetching (default TRUE).
 	 *
 	 * @return array The localized versions of the specified string.
 	 */
@@ -545,7 +559,7 @@ class Localizer extends Functional {
 	 * @param int    $language_id The language ID to save for.
 	 * @param int    $object_id   The object ID if relevent (otherwise 0).
 	 * @param string $value       The localized value of the string.
-	 * @param bool   $check_reg   Optional Wether or not to check if the string is regsitered before fetching (default TRUE).
+	 * @param bool   $check_reg   Optional. Wether or not to check if the string is regsitered before fetching (default TRUE).
 	 */
 	public static function save_string_value( $key, $language_id, $object_id, $value, $check_reg = true ) {
 		global $wpdb;

@@ -10,6 +10,18 @@
 
 namespace nLingual;
 
+/**
+ * The Settings Kit
+ *
+ * Internal-use utility kit for printing out
+ * the option fields for the Manager.
+ *
+ * @package nLingual
+ * @subpackage Helpers
+ *
+ * @since 2.0.0
+ */
+
 class Settings {
 	/**
 	 * Register the desired settings.
@@ -46,7 +58,7 @@ class Settings {
 	 *		@option string "type"  The type of field to print out.
 	 *		@option string "args"  Special arguments for the field callback.
 	 * @param string $page    The name of the page to display on.
-	 * @param string $section Optional The name of the section to display in.
+	 * @param string $section Optional. The name of the section to display in.
 	 */
 	public static function add_field( $field, $options, $page, $section = 'default' ) {
 		// Parse the options
@@ -94,7 +106,7 @@ class Settings {
 	 *
 	 * @param array  $fields  The fields to add.
 	 * @param string $page    The name of the page to display on.
-	 * @param string $section Optional The name of the section to display in.
+	 * @param string $section Optional. The name of the section to display in.
 	 */
 	public static function add_fields( $fields, $page, $section = 'default' ) {
 		foreach ( $fields as $field => $options ) {
@@ -182,9 +194,9 @@ class Settings {
 	 * @param array $args The arguments for the field.
 	 *		@option string "name" The field name/ID.
 	 *		@option string "type" The field type.
-	 *		@option mixed  "data" Optional data for the field.
-	 * 		@option string "help" Optional Help text.
-	 * @param mixed $value Optional A specifi value to use
+	 *		@option mixed  "data" Optional. data for the field.
+	 * 		@option string "help" Optional. Help text.
+	 * @param mixed $value Optional. A specifi value to use
 	 *                     instead of dynamically retrieving it.
 	 */
 	public static function build_field( $args, $value = null ) {
@@ -232,8 +244,8 @@ class Settings {
 	 *
 	 * @param string $name       The name/ID of the field.
 	 * @param mixed  $value      The value of the field.
-	 * @param string $label      Optional The label for the input.
-	 * @param array  $attributes Optional Custom attributes for the field.
+	 * @param string $label      Optional. The label for the input.
+	 * @param array  $attributes Optional. Custom attributes for the field.
 	 *
 	 * @return string The HTML of the field.
 	 */

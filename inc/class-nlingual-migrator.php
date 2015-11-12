@@ -10,6 +10,18 @@
 
 namespace nLingual;
 
+/**
+ * The Migration System
+ *
+ * Provides internal-use tools for converting from
+ * the old nLingual 1.* system.
+ *
+ * @package nLingual
+ * @subpackage Tools
+ *
+ * @since 2.0.0
+ */
+
 class Migrator {
 	// =========================
 	// ! Utilities
@@ -60,7 +72,7 @@ class Migrator {
 	 *
 	 * @param string $value      The value to convert.
 	 * @param string $string_key The key to save the localized values under.
-	 * @param int    $object_id  Optional The object ID to save under.
+	 * @param int    $object_id  Optional. The object ID to save under.
 	 *
 	 * @return string The unlocalized version found.
 	 */

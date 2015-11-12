@@ -10,6 +10,17 @@
 
 namespace nLingual;
 
+/**
+ * The Rewriter System
+ *
+ * A toolkit for converting URLs to their localized versions.
+ *
+ * @package nLingual
+ * @subpackage Tools
+ *
+ * @since 2.0.0
+ */
+
 class Rewriter {
 	/**
 	 * Internal flag for wether or not to localize a URL.
@@ -56,7 +67,7 @@ class Rewriter {
 	 * @since 2.0.0
 	 *
 	 * @param string $url      The url to parse.
-	 * @param array  $defaults Optional The default values for the components list.
+	 * @param array  $defaults Optional. The default values for the components list.
 	 *
 	 * @return array The URL components list.
 	 */
@@ -299,8 +310,8 @@ class Rewriter {
 	 * @uses Registry::cache_set() to store the result for future reuse.
 	 *
 	 * @param string   $url        The URL to parse.
-	 * @param Language $language   Optional The desired language to localize to.
-	 * @param bool     $relocalize Optional Wether or not to relocalize the url if it already is.
+	 * @param Language $language   Optional. The desired language to localize to.
+	 * @param bool     $relocalize Optional. Wether or not to relocalize the url if it already is.
 	 *
 	 * @return string The new localized URL.
 	 */

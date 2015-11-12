@@ -10,7 +10,19 @@
 
 namespace nLingual;
 
-class Manager extends Functional {
+/**
+ * The Management System
+ *
+ * Hooks into the backend to add the interfaces for
+ * managing the configuration of nLingual.
+ *
+ * @package nLingual
+ * @subpackage Handlers
+ *
+ * @since 2.0.0
+ */
+
+class Manager extends Handler {
 	/**
 	 * The name of the class.
 	 *

@@ -10,6 +10,19 @@
 
 namespace nLingual;
 
+/**
+ * The Localizable String Model
+ *
+ * Provides a predictable interface for accessing
+ * properties of strings that have been registered
+ * by the Localizer.
+ *
+ * @package nLingual
+ * @subpackage Structures
+ *
+ * @since 2.0.0
+ */
+
 class LocalizableString extends Model {
 	// =========================
 	// ! Properties

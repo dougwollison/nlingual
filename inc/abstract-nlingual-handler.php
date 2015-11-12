@@ -1,6 +1,6 @@
 <?php
 /**
- * nLingual Abstract Functionality
+ * nLingual Abstract Handler
  *
  * @package nLingual
  * @subpackage Abstracts
@@ -10,7 +10,21 @@
 
 namespace nLingual;
 
-abstract class Functional {
+/**
+ * The Handler Framework
+ *
+ * The basis for the any classes that need to hook into WordPress.
+ * Must be initialized after loading (handled by autoloader),
+ * and defines aliases to the WordPress Plugin API, adding the
+ * specified method of the current class to the specified hook.
+ *
+ * @package nLingual
+ * @subpackage Abstracts
+ *
+ * @since 2.0.0
+ */
+
+abstract class Handler {
 	/**
 	 * Initialize common stuff.
 	 *
@@ -25,7 +39,12 @@ abstract class Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @see add_filter() for arguement defails.
+	 * @see add_filter() for details.
+	 *
+	 * @param string $tag           The name of the filter to hook the $method to.
+	 * @param string $method        The name of the called classe's method to run when applied.
+	 * @param int    $priority      Optional. The priority to use for this particular callback.
+	 * @param int    $accepted_args Optional. The number of arguments the callback accepts.
 	 */
 	final public static function add_filter( $tag, $method, $priority = 10, $accepted_args = 1 ) {
 		add_filter( $tag, array( static::$name, $method ), $priority, $accepted_args );
@@ -35,6 +54,8 @@ abstract class Functional {
 	 * Alias; add internal method from an action hook.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @see Functional::add_filter() for argument details.
 	 */
 	final public static function add_action() {
 		call_user_func_array( 'self::add_filter', func_get_args() );
@@ -45,7 +66,11 @@ abstract class Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @see remove_filter() for arguement defails.
+	 * @see remove_filter() for defails.
+	 *
+	 * @param string $tag      The name of the filter to hook the $method to.
+	 * @param string $method   The name of the called class' method to run when applied.
+	 * @param int    $priority Optional. The priority to use for this particular callback.
 	 */
 	final public static function remove_filter( $tag, $method, $priority = 10 ) {
 		remove_filter( $tag, array( static::$name, $method ), $priority );
@@ -55,6 +80,8 @@ abstract class Functional {
 	 * Alias; remove internal method from an action hook.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @see Functional::remove_filter() for argument details.
 	 */
 	final public static function remove_action() {
 		call_user_func_array( 'self::remove_filter', func_get_args() );
@@ -65,7 +92,10 @@ abstract class Functional {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @see add_filter() for arguement defails.
+	 * @see Functional::add_filter() for argument defails.
+	 *
+	 * @param string $tag    The name of the filter to hook the $method to.
+	 * @param string $method The name of the called class' method to add/check for.
 	 */
 	final public static function maybe_add_filter( $tag, $method ) {
 		if ( ! has_filter( $tag, array( static::$name, $method ) ) ) {
@@ -77,6 +107,8 @@ abstract class Functional {
 	 * Alias; Add an internal method to an action hook if it hasn't already been.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @see Functional::maybe_add_filter() for argument details
 	 */
 	final public static function maybe_add_action() {
 		call_user_func_array( 'self::maybe_add_filter', func_get_args() );

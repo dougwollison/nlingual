@@ -8,6 +8,18 @@
 
 namespace nLingual;
 
+/**
+ * The WP_Locale Replacement
+ *
+ * Intended to replace the $wp_locale object so that the
+ * theme's own text domain is used in localizing these strings.
+ *
+ * @package nLingual
+ * @subpackage Patches
+ *
+ * @since 2.0.0
+ */
+
 class Locale extends \WP_Locale {
 	/**
 	 * @see WP_Locale::init()

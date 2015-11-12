@@ -10,7 +10,19 @@
 
 namespace nLingual;
 
-class AJAX extends Functional {
+/**
+ * The AJAX Request Handler
+ *
+ * Add necessary wp_ajax_* hooks to fullfill any
+ * custom AJAX requests.
+ *
+ * @package nLingual
+ * @subpackage Handlers
+ *
+ * @since 2.0.0
+ */
+
+class AJAX extends Handler {
 	// =========================
 	// ! Properties
 	// =========================

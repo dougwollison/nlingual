@@ -30,4 +30,4 @@ require( NL_DIR . '/inc/functions-gettext.php' );
 require( NL_DIR . '/inc/functions-alias.php' );
 
 // Setup
-nLingual\API::setup();
+nLingual\System::setup();

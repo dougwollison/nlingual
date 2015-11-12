@@ -3,12 +3,24 @@
  * nLingual Synchronization API
  *
  * @package nLingual
- * @subpackage Tools
+ * @subpackage Helpers
  *
  * @since 2.0.0
  */
 
 namespace nLingual;
+
+/**
+ * The Synchronizer API
+ *
+ * Internal-use utility kit for handling post
+ * synchronization and cloning.
+ *
+ * @package nLingual
+ * @subpackage Helpers
+ *
+ * @since 2.0.0
+ */
 
 class Synchronizer {
 	// =========================
@@ -28,7 +40,7 @@ class Synchronizer {
 	 *
 	 * @param int|WP_Post $original The original post ID/object.
 	 * @param int|WP_Post $target   The target post ID/object.
-	 * @param array       $rules    Optional The rules to use for syncing.
+	 * @param array       $rules    Optional. The rules to use for syncing.
 	 *		@option array      "post_fields" A whitelist of fields to copy over.
 	 *		@option bool|array "post_meta"   A whitelist of meta fields (TRUE for all).
 	 *		@option bool|array "post_terms"  A whitelist of taxonomies (TRUE for all).
@@ -150,8 +162,8 @@ class Synchronizer {
 	 *
 	 * @param int|WP_Post  $post             The ID/object of the post to clone.
 	 * @param int|Language $language          The language to assign the clone to.
-	 * @param string       $title             Optional The custom title for the clone.
-	 * @param bool         $_title_is_default Optional Was $title the default "Translate to..."?
+	 * @param string       $title             Optional. The custom title for the clone.
+	 * @param bool         $_title_is_default Optional. Was $title the default "Translate to..."?
 	 *                                        Internal use only by Backend::ajax_new_translation()
 	 *
 	 * @return WP_Post|false The cloned post or false on failure.

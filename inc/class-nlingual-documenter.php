@@ -1,16 +1,28 @@
 <?php
 /**
- * nLingual Documenter Funtionality
+ * nLingual Documenter
  *
  * @package nLingual
- * @subpackage Tools
+ * @subpackage Helpers
  *
  * @since 2.0.0
  */
 
 namespace nLingual;
 
-class Documenter extends Functional {
+/**
+ * The Documentation System
+ *
+ * Handles printing out the help screen tabs/sidebar for
+ * documenting different parts of the admin interface.
+ *
+ * @package nLingual
+ * @subpackage Helpers
+ *
+ * @since 2.0.0
+ */
+
+class Documenter extends Handler {
 	/**
 	 * The name of the class.
 	 *
@@ -153,7 +165,7 @@ class Documenter extends Functional {
 	 * @since 2.0.0
 	 *
 	 * @param string $tab     The ID of the tab to get.
-	 * @param string $section Optional The section the tab belongs to.
+	 * @param string $section Optional. The section the tab belongs to.
 	 *
 	 * @return string The HTML of the help tab.
 	 */

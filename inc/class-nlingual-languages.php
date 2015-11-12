@@ -10,6 +10,19 @@
 
 namespace nLingual;
 
+/**
+ * The Languages Collection
+ *
+ * An array-like system for storing multiple Language objects.
+ * Works like an array within `foreach` loops, and includes
+ * methods for sorting, filtering, and searching for languages.
+ *
+ * @package nLingual
+ * @subpackage Structures
+ *
+ * @since 2.0.0
+ */
+
 class Languages implements \Iterator {
 	// =========================
 	// ! Properties
@@ -114,7 +127,7 @@ class Languages implements \Iterator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param array $languages Optional A list of languages to add.
+	 * @param array $languages Optional. A list of languages to add.
 	 */
 	public function __construct( $languages = array() ) {
 		if ( is_array( $languages ) && ! empty ( $languages ) ) {
@@ -135,8 +148,8 @@ class Languages implements \Iterator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $field Optional The field to sort by (defaults to list_order).
-	 * @param string $order Optional Which way to sort (defaults to ascending).
+	 * @param string $field Optional. The field to sort by (defaults to list_order).
+	 * @param string $order Optional. Which way to sort (defaults to ascending).
 	 */
 	public function sort( $field = 'list_order', $order = 'asc' ) {
 		usort( $this->items, function( $a, $b ) use ( $field ) {
@@ -158,8 +171,8 @@ class Languages implements \Iterator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $filter Optional The property to filter by.
-	 * @param string $value  Optional A specific value to filter by.
+	 * @param string $filter Optional. The property to filter by.
+	 * @param string $value  Optional. A specific value to filter by.
 	 *
 	 * @return nLingual\Languages A new collection of languages
 	 */
@@ -184,7 +197,7 @@ class Languages implements \Iterator {
 	 * @since 2.0.0
 	 *
 	 * @param int|string $value A value to retrieve the language by.
-	 * @param string     $field Optional The field to search in (defaults to id or slug).
+	 * @param string     $field Optional. The field to search in (defaults to id or slug).
 	 *
 	 * @return bool|Language The language if found (false if not).
 	 */
@@ -306,7 +319,7 @@ class Languages implements \Iterator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $field Optional A specific field to get
+	 * @param string $field Optional. A specific field to get
 	 *                      instead of the whole language object.
 	 *
 	 * @return array A numeric array of the languages.

@@ -10,7 +10,20 @@
 
 namespace nLingual;
 
-class Backend extends Functional {
+/**
+ * The Backend Functionality
+ *
+ * Hooks into various backend systems to load
+ * custom assets, modify the interface, and
+ * add language management to relevent screens.
+ *
+ * @package nLingual
+ * @subpackage Handlers
+ *
+ * @since 2.0.0
+ */
+
+class Backend extends Handler {
 	/**
 	 * The name of the class.
 	 *

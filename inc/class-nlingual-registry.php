@@ -10,6 +10,17 @@
 
 namespace nLingual;
 
+/**
+ * The Options Registry
+ *
+ * Stores all the configuration options for the system.
+ *
+ * @package nLingual
+ * @subpackage Helpers
+ *
+ * @since 2.0.0
+ */
+
 class Registry {
 	// =========================
 	// ! Properties
@@ -223,7 +234,7 @@ class Registry {
 	 * @since 2.0.0
 	 *
 	 * @param string $property The property name.
-	 * @param mixed  $default  Optional The default value to return.
+	 * @param mixed  $default  Optional. The default value to return.
 	 *
 	 * @return mixed The property value.
 	 */
@@ -255,8 +266,8 @@ class Registry {
 	 *
 	 * @uses Languages::filter() to filter the languages before returning it.
 	 *
-	 * @param string $filter Optional A filter property to pass to Languages->filter().
-	 * @param string $value  Optional A filter value to pass to Languages->filter().
+	 * @param string $filter Optional. A filter property to pass to Languages->filter().
+	 * @param string $value  Optional. A filter value to pass to Languages->filter().
 	 *
 	 * @return Language The languages collection (optionally filtered).
 	 */
@@ -272,7 +283,7 @@ class Registry {
 	 * @uses Languages::get() to validate/retrieve the language ID.
 	 *
 	 * @param int    $language_id The ID of the language to get info for.
-	 * @param string $field       Optional The field to get from language.
+	 * @param string $field       Optional. The field to get from language.
 	 *
 	 * @return mixed The language or the value of the language's field.
 	 */
@@ -337,7 +348,7 @@ class Registry {
 	 *
 	 * @uses Registry::$default_language
 	 *
-	 * @param string $field Optional The field to get from the language.
+	 * @param string $field Optional. The field to get from the language.
 	 */
 	public static function default_language( $field = null ) {
 		$language_id = static::$default_language;
@@ -353,7 +364,7 @@ class Registry {
 	 *
 	 * @uses Registry::$current_language
 	 *
-	 * @param string $field Optional The field to get from the language.
+	 * @param string $field Optional. The field to get from the language.
 	 */
 	public static function current_language( $field = null ) {
 		$language_id = static::$current_language ?: static::$default_language;

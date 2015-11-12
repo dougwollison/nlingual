@@ -1,6 +1,6 @@
 <?php
 /**
- * nLingual Primary Functionality
+ * nLingual System
  *
  * @package nLingual
  * @subpackage Handlers
@@ -10,7 +10,20 @@
 
 namespace nLingual;
 
-class API extends Functional {
+/**
+ * Main System Class
+ *
+ * Sets up the database table aliases, the Registry,
+ * and all the Handler classes. Also loads the backwards
+ * compatability system assets if needed.
+ *
+ * @package nLingual
+ * @subpackage Helpers
+ *
+ * @since 2.0.0
+ */
+
+class System extends Handler {
 	/**
 	 * The name of the class.
 	 *
@@ -35,12 +48,13 @@ class API extends Functional {
 	 *
 	 * @uses Loader::register_hooks() to setup plugin management.
 	 * @uses Registry::load() to load the options.
-	 * @uses API::register_hooks() to setup global functionality.
+	 * @uses System::register_hooks() to setup global functionality.
 	 * @uses Backend::register_hooks() to setup backend functionality.
 	 * @uses Manager::register_hooks() to setup admin screens.
 	 * @uses Localizer::register_hooks() to setup Localize This widget.
 	 * @uses Documenter::register_hooks() to setup admin documentation.
 	 * @uses Frontend::register_hooks() to setup frontend functionality.
+	 * @uses Liaison::register_hooks() to setup plugin cross-compatability.
 	 * @uses is_backend() to check if the query is for wp-admin.
 	 */
 	public static function setup() {
@@ -57,7 +71,7 @@ class API extends Functional {
 		// Setup the registry
 		Registry::load();
 
-		// Register global hooks
+		// Register own hooks
 		static::register_hooks();
 
 		// Register admin or public hooks

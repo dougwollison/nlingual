@@ -10,7 +10,19 @@
 
 namespace nLingual;
 
-class Liaison extends Functional {
+/**
+ * The Liaison System
+ *
+ * Hooks into select 3rd party systems to provide
+ * better compatability with them.
+ *
+ * @package nLingual
+ * @subpackage Handlers
+ *
+ * @since 2.0.0
+ */
+
+class Liaison extends Handler {
 	use Shared_Filters;
 
 	/**

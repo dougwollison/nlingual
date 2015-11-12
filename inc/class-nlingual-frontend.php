@@ -10,7 +10,21 @@
 
 namespace nLingual;
 
-class Frontend extends Functional {
+/**
+ * The Frontend Functionality
+ *
+ * Hooks into various frontend systems to detect
+ * the language, redirect as necessary, and filter
+ * various forms of data including URLs, options, and
+ * queries.
+ *
+ * @package nLingual
+ * @subpackage Handlers
+ *
+ * @since 2.0.0
+ */
+
+class Frontend extends Handler {
 	use Shared_Filters;
 
 	/**
@@ -121,7 +135,7 @@ class Frontend extends Functional {
 
 		// Set the language if it worked, but don't lock it in
 		if ( $language ) {
-			API::set_language( $language );
+			System::set_language( $language );
 		}
 	}
 
