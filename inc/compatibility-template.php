@@ -76,7 +76,7 @@ function nl_get_translation( $id, $language = null, $return_self = true ) {
 /**
  * @see Translator::get_post_translations()
  */
-function nl_get_translation( $id, $include_self = false ) {
+function nl_get_translations( $id, $include_self = false ) {
 	$translations = Translator::get_post_translations( $id, $include_self );
 
 	return $translations;
