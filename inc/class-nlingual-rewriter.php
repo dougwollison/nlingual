@@ -44,8 +44,42 @@ class Rewriter {
 	}
 
 	// =========================
-	// ! URL Building
+	// ! URL Parsing/Building
 	// =========================
+
+	/**
+	 * Parse a URL, including it's query string, with optional default values.
+	 *
+	 * An extension of PHP's native parse_url().
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $url      The url to parse.
+	 * @param array  $defaults Optional The default values for the components list.
+	 *
+	 * @return array The URL components list.
+	 */
+	public static function parse_url( $url, $defaults = array() ) {
+		// If it's a string, parse into components list
+		if ( is_string( $url ) ) {
+			$url = parse_url( $url );
+		}
+		// If not an array, fail
+		elseif ( ! is_array( $url ) ) {
+			return false;
+		}
+
+		// Parse components with defaults
+		$url = wp_parse_args( $url, $defaults );
+
+		// If a query is set, parse that into a new args entry
+		if ( isset( $url['query'] ) ) {
+			parse_str( $url['query'], $url['args'] );
+			unset( $url['query'] );
+		}
+
+		return $url;
+	}
 
 	/**
 	 * Build a URL from provided parts.
@@ -149,7 +183,7 @@ class Rewriter {
 	 * @uses Registry::get() to get the query var and redirection method options.
 	 * @uses Registry::languages() to validate and retrieve the parsed language.
 	 *
-	 * @param mixed $url_data The URL string or parsed array to proces.
+	 * @param mixed $url_data The URL string or parsed array to process.
 	 *
 	 * @return array An array of the resulting language and true hostname/path.
 	 */
@@ -167,21 +201,14 @@ class Rewriter {
 			$url_data = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 		}
 
-		// If not already an array, parse it
-		if ( ! is_array( $url_data ) ) {
-			$url_data = parse_url( $url_data );
-		}
-
-		// Ensure default host/path/query values are set
-		$url_data = wp_parse_args( $url_data, array(
-			'host'  => '',
-			'path'  => '/',
-			'query' => '',
+		// Parse it
+		$url_data = static::parse_url( $url_data, array(
+			'host'      => '',
+			'path'      => '/',
+			'query'     => '',
+			'args'      => array(),
 			'language'  => null
 		) );
-
-		// Parse the query string into new args entry
-		parse_str( $url_data['query'], $url_data['args'] );
 
 		// Check if the language was already part of the arguments
 		$query_var = Registry::get( 'query_var' );
@@ -270,7 +297,7 @@ class Rewriter {
 	 * @uses Rewriter::build_url() to assemble the new URL from the modified components.
 	 * @uses Registry::cache_set() to store the result for future reuse.
 	 *
-	 * @param string   $url        The URL or parsed URL data.
+	 * @param string   $url        The URL to parse.
 	 * @param Language $language   Optional The desired language to localize to.
 	 * @param bool     $relocalize Optional Wether or not to relocalize the url if it already is.
 	 *
@@ -477,7 +504,14 @@ class Rewriter {
 		}
 
 		// Now parse the URL
-		$url_data = parse_url( $url );
+		$url_data = static::parse_url( $url, array( 'args' => array() ) );
+
+		// Merge the args with the $_GET variables
+		if ( ! isset( $url_data['args'] ) ) {
+			$url_data['args'] = $_GET;
+		} else {
+			$url_data['args'] = wp_parse_args( $url_data['args'], $_GET );
+		}
 
 		// Check if paged and add entry to $url_data
 		if ( is_paged() ) {
