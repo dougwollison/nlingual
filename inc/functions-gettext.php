@@ -1,11 +1,12 @@
 <?php
 /**
- * nLingual External Utilities
+ * nLingual GetText Utilities
  *
- * Additions to the existing L10n functions.
+ * Additions to the existing l10n functions.
  *
  * @package nLingual
- * @subpackage External
+ * @subpackage i18n
+ *
  * @since 2.0.0
  */
 

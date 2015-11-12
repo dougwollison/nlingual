@@ -3,6 +3,7 @@
  * nLingual Abstract Model
  *
  * @package nLingual
+ * @subpackage Abstracts
  *
  * @since 2.0.0
  */

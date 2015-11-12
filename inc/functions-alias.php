@@ -2,8 +2,11 @@
 /**
  * nLingual Alias Functions
  *
+ * Namely for use by templates and other plugins.
+ *
  * @package nLingual
- * @subpackage Aliases
+ * @subpackage Template
+ *
  * @since 2.0.0
  */
 

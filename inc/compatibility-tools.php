@@ -3,7 +3,8 @@
  * nLingual Compatibilty Tools
  *
  * @package nLingual
- * @subpackage Compatibilty Tools
+ * @subpackage Backwards_Compatibilty
+ *
  * @since 2.0.0
  */
 

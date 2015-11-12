@@ -2,6 +2,9 @@
 /**
  * Presets for Language Manager.
  *
+ * @package nLingual
+ * @subpackage Utilities
+ *
  * @since 2.0.0
  *
  * @return array The preset list.

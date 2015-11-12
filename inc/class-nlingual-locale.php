@@ -3,6 +3,7 @@
  * nLingual Theme Local Patch
  *
  * @package nLingual
+ * @subpackage Patches
  */
 
 namespace nLingual;

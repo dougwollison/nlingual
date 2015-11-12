@@ -3,7 +3,7 @@
  * nLingual Autoloading System
  *
  * @package nLingual
- * @subpackage Autoloader
+ *
  * @since 2.0.0
  */
 

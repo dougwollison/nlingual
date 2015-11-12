@@ -3,6 +3,7 @@
  * nLingual Manager Funtionality
  *
  * @package nLingual
+ * @subpackage Handlers
  *
  * @since 2.0.0
  */
@@ -631,7 +632,7 @@ class Manager extends Functional {
 					</tr>
 				</script>
 				<script>
-					<?php $presets = require( NL_DIR . '/inc/nlingual-presets.php' ); ?>
+					<?php $presets = require( NL_DIR . '/inc/presets-languages.php' ); ?>
 					var NL_PRESETS = <?php echo json_encode( $presets );?>
 				</script>
 				<?php submit_button(); ?>

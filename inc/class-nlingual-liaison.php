@@ -3,6 +3,7 @@
  * nLingual Liaison Functionality
  *
  * @package nLingual
+ * @subpackage Handlers
  *
  * @since 2.0.0
  */

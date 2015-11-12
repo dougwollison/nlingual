@@ -3,7 +3,8 @@
  * nLingual Internal Functions
  *
  * @package nLingual
- * @subpackage Functions
+ * @subpackage Utilities
+ *
  * @since 2.0.0
  */
 

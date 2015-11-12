@@ -24,10 +24,10 @@ define( 'NL_REDIRECT_USING_PATH', 'NL_REDIRECT_USING_PATH' );
 define( 'NL_REDIRECT_USING_DOMAIN', 'NL_REDIRECT_USING_DOMAIN' );
 
 // Load includes
-require( NL_DIR . '/inc/utilities.php' );
 require( NL_DIR . '/inc/autoloader.php' );
-require( NL_DIR . '/inc/nlingual-functions.php' );
-require( NL_DIR . '/inc/alias-functions.php' );
+require( NL_DIR . '/inc/functions-nlingual.php' );
+require( NL_DIR . '/inc/functions-gettext.php' );
+require( NL_DIR . '/inc/functions-alias.php' );
 
 // Setup
 nLingual\API::setup();

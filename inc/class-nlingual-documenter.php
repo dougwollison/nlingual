@@ -3,6 +3,7 @@
  * nLingual Documenter Funtionality
  *
  * @package nLingual
+ * @subpackage Tools
  *
  * @since 2.0.0
  */

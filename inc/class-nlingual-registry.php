@@ -3,6 +3,7 @@
  * nLingual Options Registry
  *
  * @package nLingual
+ * @subpackage Helpers
  *
  * @since 2.0.0
  */

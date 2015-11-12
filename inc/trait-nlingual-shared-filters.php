@@ -3,6 +3,7 @@
  * nLingual Shared Filters
  *
  * @package nLingual
+ * @subpackage Utilities
  *
  * @since 2.0.0
  */

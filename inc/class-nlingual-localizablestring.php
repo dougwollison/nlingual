@@ -3,6 +3,7 @@
  * nLingual Localizable String Model
  *
  * @package nLingual
+ * @subpackage Structures
  *
  * @since 2.0.0
  */
