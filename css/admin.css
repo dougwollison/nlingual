@@ -120,10 +120,13 @@
 
 .nl-localizer-option {
   font-size: 14px;
-  max-width: 0; }
+  max-width: 0;
+  -moz-box-shadow: inset 1px 0 0 #ccc;
+  -webkit-box-shadow: inset 1px 0 0 #ccc;
+  box-shadow: inset 1px 0 0 #ccc; }
   .nl-localizer-option .nl-option-text {
     font-style: normal;
-    padding: 0 5px; }
+    padding: 0 5px 0 6px; }
   .nl-localizer-option:hover, .nl-localizer-option.nl-current {
     color: #32373c; }
   .nl-localizer-option:hover {
