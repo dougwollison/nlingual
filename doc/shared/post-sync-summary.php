@@ -1,8 +1,5 @@
-<?php
-namespace nLingual;
-
-if ( $rules = Registry::get_rules( 'sync', 'post_type', $post_type ) ) :
-	?>
+<?php namespace nLingual; ?>
+<?php if ( $rules = Registry::get_rules( 'sync', 'post_type', $post_type ) ) : ?>
 	<hr />
 	<strong><?php _ef( 'The following details will be synchronized between sister %s', $plural ); ?></strong>
 	<ul>

@@ -162,11 +162,8 @@ class Documenter extends Functional {
 		$tab = sanitize_file_name( $tab );
 		$section = sanitize_file_name( $section );
 
-		// Get the current locale
-		$locale = get_locale();
-
 		// Build the path to the doc file
-		$path = NL_DIR . '/doc/' . $locale . '/';
+		$path = NL_DIR . '/doc';
 
 		// If a section is specified, add to the path
 		if ( ! is_null( $section ) ) {

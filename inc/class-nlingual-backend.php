@@ -81,7 +81,7 @@ class Backend extends Functional {
 	// =========================
 
 	/**
-	 * Setup documentation for relevant screens.
+	 * Load the text domain, setup documentation for relevant screens.
 	 *
 	 * @since 2.0.0
 	 *
@@ -89,6 +89,10 @@ class Backend extends Functional {
 	 * @uses Documenter::register_help_tab() to register help tabs for each post type.
 	 */
 	public static function ready() {
+		// Load the textdomain
+		load_plugin_textdomain( NL_TXTDMN, false, NL_DIR . '/language' );
+
+		// Setup translation help tab for applicable post types
 		$post_types = Registry::get( 'post_types' );
 		foreach ( $post_types as $post_type ) {
 			Documenter::register_help_tab( $post_type, 'post-translation' );

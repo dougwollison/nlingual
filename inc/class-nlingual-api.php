@@ -139,7 +139,7 @@ class API extends Functional {
 	}
 
 	/**
-	 * Load text domain for localization, and register options/taxonomies for localization.
+	 * Register options/taxonomies for localization.
 	 *
 	 * @since 2.0.0
 	 *
@@ -148,9 +148,6 @@ class API extends Functional {
 	 * @uses Localizer::register_taxonomy() to register the enabled taxonomies for localization.
 	 */
 	public static function ready() {
-		// Load the textdomain
-		load_plugin_textdomain( NL_TXTDMN, false, NL_DIR . '/language' );
-
 		// Register the blogname and blogdescription for localization
 		Localizer::register_option( 'blogname', 'options-general', array(
 			'title'  => 'Site Title'
