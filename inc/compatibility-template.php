@@ -8,9 +8,9 @@
  * @since 2.0.0
  */
 
-use nLingual\Registry as Registry;
+use nLingual\Registry   as Registry;
 use nLingual\Translator as Translator;
-use nLingual\Rewriter as Rewriter;
+use nLingual\Rewriter   as Rewriter;
 
 // =========================
 // ! Old Template Functions
@@ -94,7 +94,7 @@ function nl_associated_posts( $id, $include_self = false ) {
  * @uses Languages->get() to get the language specified.
  * @uses Language->export() to get the language in array form.
  *
- * @param bool|mixed $field    The name of the field, TRUE to get the whole langauge as an array.
+ * @param bool|mixed $field    The name of the field, TRUE to get the whole language as an array.
  * @param int|string $language The id or slug of the language to retrieve. NULL for current.
  *
  * @return mixed The desired language array or field.
@@ -180,10 +180,10 @@ function nl_print_lang_links( $prefix = '', $sep = ' ', $skip_current = false ) 
  *
  * @since 2.0.0
  *
- * @param string $text       The text to split up.
- * @param mixed  $language   Optional. The language to get the matching version for (defaults to current).
- * @param string $$separator Optional. The separator to use when splitting the text (defaults to one defined under nLingual before 2.0.0).
- * @param bool   $force      Optional. Wether or not to force the split to happen instead of only when outside the admin.
+ * @param string $text      The text to split up.
+ * @param mixed  $language  Optional. The language to get the matching version for (defaults to current).
+ * @param string $separator Optional. The separator to use when splitting the text (defaults to one defined under nLingual before 2.0.0).
+ * @param bool   $force     Optional. Wether or not to force the split to happen instead of only when outside the admin.
  *
  * @return string The part of the text corresponding to the language desired.
  */

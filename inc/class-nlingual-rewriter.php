@@ -540,7 +540,7 @@ class Rewriter {
 		 *
 		 * @param string   $url      The new URL.
 		 * @param array    $url_data The parsed URL data.
-		 * @param Langauge $language The desired language to localize for.
+		 * @param Language $language The desired language to localize for.
 		 */
 		$url_data = apply_filters( 'nLingual_localize_here', $url, $url_data, $language );
 

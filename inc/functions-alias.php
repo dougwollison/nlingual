@@ -10,9 +10,9 @@
  * @since 2.0.0
  */
 
-use nLingual\Registry as Registry;
+use nLingual\Registry   as Registry;
 use nLingual\Translator as Translator;
-use nLingual\Rewriter as Rewriter;
+use nLingual\Rewriter   as Rewriter;
 
 /**
  * @see Registry::get() for details.

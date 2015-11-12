@@ -126,7 +126,7 @@ class Frontend extends Handler {
 				// Remove the quality flag
 				$language_tag = preg_replace( '/;q=[\d\.]+/', '', $language_tag );
 
-				// Stop at the first matched langauge found
+				// Stop at the first matched language found
 				if ( $language = Registry::languages()->match_tag( $language_tag ) ) {
 					break;
 				}
@@ -200,11 +200,11 @@ class Frontend extends Handler {
 				/**
 				 * Now to determine which language to redirect to...
 				 *
-				 * The current declared langauge IF:
+				 * The current declared language IF:
 				 * - a translation exists for the current language AND
 				 * - the override is disabled
 				 *
-				 * The detected post's langauge IF:
+				 * The detected post's language IF:
 				 * - the override is enabled, OR
 				 * - it has no translation in the current language
 				 */
