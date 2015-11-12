@@ -851,14 +851,14 @@ class Localizer extends Functional {
 		$to_save = array();
 
 		// Loop through registered strings
-		foreach ( static::$registered_strings as $key => $string ) {
+		foreach ( static::$registered_strings as $string ) {
 			// Check if set, skip otherwise
 			if ( ! isset( $localized[ $string->field ] ) ) {
 				continue;
 			}
 
 			// Fail if nonce does
-			if ( ! isset( $nonces[ $string->field ] ) || ! wp_verify_nonce( $nonces[ $string->field ], "nlingual_localize_{$key}" ) ) {
+			if ( ! isset( $nonces[ $string->field ] ) || ! wp_verify_nonce( $nonces[ $string->field ], "nlingual_localize_{$string->key}" ) ) {
 				cheatin();
 			}
 
@@ -873,7 +873,7 @@ class Localizer extends Functional {
 				$value = stripslashes( $value );
 
 				// Add the entry to save
-				$to_save[] = array( $key, $language_id, $object_id, $value );
+				$to_save[] = array( $string->key, $language_id, $object_id, $value );
 			}
 		}
 
