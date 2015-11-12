@@ -84,12 +84,6 @@ class Frontend extends Functional {
 	 * @uses API::set_language() to tentatively apply the detected language.
 	 */
 	public static function detect_requested_language() {
-		// Get the accepted language
-		$accepted_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-
-		// Start with that if it exists
-		$language = Registry::languages()->get( $accepted_language );
-
 		// Override with result of url_process() if it works
 		$processed_url = Rewriter::process_url();
 		if ( $processed_url['language'] ) {
@@ -102,6 +96,12 @@ class Frontend extends Functional {
 		&& ( $language = Registry::languages()->get( $_REQUEST[ $query_var ] ) ) ) {
 			$language = $language;
 		}
+
+		// Record the requested language
+		define( 'NL_REQUESTED_LANGUAGE', $language ? $language->slug : false );
+
+		// If the language couldn't be detected, try the browsers accepted language
+		$accepted_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
 
 		// Set the language if it worked, but don't lock it in
 		if ( $language ) {
@@ -126,45 +126,73 @@ class Frontend extends Functional {
 	public static function maybe_redirect_language() {
 		global $wp_query;
 
-		// If the queried object is not a post, abort
-		$object = get_queried_object();
-		if ( ! is_a( $object, 'WP_Post' ) ) {
+		// Don't do anything on non-HEAD/GET request
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) && ! in_array( strtoupper( $_SERVER['REQUEST_METHOD'] ), array( 'GET', 'HEAD' ) ) ) {
 			return;
 		}
 
-		// Get the current language and taht of the queried object
+		// Don't do anything on 404s either
+		if ( is_404() ) {
+			return;
+		}
+
+		// Get the current language and the queried object
 		$current_language = Registry::current_language();
-		$post_language = Translator::get_post_language( $object->ID );
+		$object = get_queried_object();
 
-		// If languages match, nothing needs to be done
-		if ( $current_language->id == $post_language->id ) {
+		// If the front page, check if the URL is correct
+		if ( is_front_page() ) {
+			// If language is specified or skip is enabled (but not both) do nothing
+			if ( NL_REQUESTED_LANGUAGE xor Registry::get( 'skip_default_l10n' ) ) {
+				return;
+			}
+
+			$redirect_language = $current_language;
+		}
+		// Some queried post
+		elseif ( is_a( $object, 'WP_Post' ) ) {
+			// Get the language of the queried object
+			$post_language = Translator::get_post_language( $object->ID );
+
+			// If the post has a language, check for a conflict, resolve as needed
+			if ( $post_language ) {
+				// If languages match, nothing needs to be done
+				if ( $current_language->id == $post_language->id ) {
+					return;
+				}
+
+				// Get the translation in the current language
+				$translation = Translator::get_post_translation( $object->ID, $current_language );
+
+				// Get the override
+				$override = Registry::get( 'post_language_override', 0 );
+
+				/**
+				 * Now to determine which language to redirect to...
+				 *
+				 * The current declared langauge IF:
+				 * - a translation exists for the current language AND
+				 * - the override is disabled
+				 *
+				 * The detected post's langauge IF:
+				 * - the override is enabled, OR
+				 * - it has no translation in the current language
+				 */
+				if ( $translation && ! $override ) {
+					$redirect_language = $current_language;
+				} else {
+					$redirect_language = $post_language;
+				}
+			} else {
+				$redirect_language = $current_language;
+			}
+		}
+		// Something else, but the language was requested (do nothing)
+		elseif ( NL_REQUESTED_LANGUAGE !== false ) {
 			return;
 		}
 
-		// Get the translation in the current language
-		$translation = Translator::get_post_translation( $object->ID, $current_language );
-
-		// Get the override
-		$override = Registry::get( 'post_language_override', 0 );
-
-		/**
-		 * Now to determine which language to redirect to...
-		 *
-		 * The current declared langauge IF:
-		 * - a translation exists for the current language AND
-		 * - the override is disabled
-		 *
-		 * The detected post's langauge IF:
-		 * - the override is enabled, OR
-		 * - it has no translation in the current language
-		 */
-		if ( $translation && ! $override ) {
-			$redirect_language = $current_language;
-		} else {
-			$redirect_language = $post_language;
-		}
-
-		// Get the new URL localized for the determined language
+		// Get the new URL localized for the redirect language
 		$redirect_url = Rewriter::localize_here( $redirect_language );
 
 		/**
@@ -178,8 +206,8 @@ class Frontend extends Functional {
 		 */
 		$redirect_url = apply_filters( 'nlingual_maybe_redirect_language', $redirect_url );
 
-		// Redirect
-		if ( $redirect_url ) {
+		// Redirect (but don't allow a loop)
+		if ( $redirect_url && NL_ORIGINAL_URL != $redirect_url ) {
 			wp_redirect( $redirect_url, 302 );
 			exit;
 		}
