@@ -101,7 +101,22 @@ class Frontend extends Functional {
 		define( 'NL_REQUESTED_LANGUAGE', $language ? $language->slug : false );
 
 		// If the language couldn't be detected, try the browsers accepted language
-		$accepted_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+		if ( ! $language ) {
+			$accepted_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+
+			// Split into the language list
+			$accepted_languages = explode( ',', $accepted_language );
+			// Loop through them and get the first match
+			foreach ( $accepted_languages as $language_tag ) {
+				// Remove the quality flag
+				$language_tag = preg_replace( '/;q=[\d\.]+/', '', $language_tag );
+
+				// Stop at the first matched langauge found
+				if ( $language = Registry::languages()->match_tag( $language_tag ) ) {
+					break;
+				}
+			}
+		}
 
 		// Set the language if it worked, but don't lock it in
 		if ( $language ) {

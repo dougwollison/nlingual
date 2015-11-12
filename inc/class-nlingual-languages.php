@@ -273,6 +273,34 @@ class Languages implements \Iterator {
 	}
 
 	/**
+	 * Try to find a language whose locale_name/iso_code matches the language tag specified.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $language_tag The language tag to try and find a match for.
+	 *
+	 * @return bool|Language The language object if found, false otherwise.
+	 */
+	public function match_tag( $language_tag ) {
+		// Sanitize for looser comparison
+		$language_tag = sanitize_tag( $language_tag );
+
+		// Loop through all languages and return the first match
+		foreach ( $this->items as $language ) {
+			// Try the full locale...
+			if ( sanitize_tag( $language->locale_name ) == $language_tag ) {
+				return $language;
+			}
+			// Failing that, try the ISO code
+			elseif ( sanitize_tag( $language->iso_code ) == $language_tag ) {
+				return $language;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Convert to a simple array for storage.
 	 *
 	 * @since 2.0.0
