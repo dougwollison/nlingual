@@ -605,28 +605,28 @@ class Manager extends Functional {
 				<script type="text/template" id="nl_language_row">
 					<tr>
 						<td class="nl-language-system_name">
-							<input type="text" name="nlingual_languages[%language_id%][system_name]" value="%system_name%" />
+							<input type="text" name="nlingual_languages[%id%][system_name]" value="%system_name%" />
 						</td>
 						<td class="nl-language-native_name">
-							<input type="text" name="nlingual_languages[%language_id%][native_name]" value="%native_name%" />
+							<input type="text" name="nlingual_languages[%id%][native_name]" value="%native_name%" />
 						</td>
 						<td class="nl-language-short_name">
-							<input type="text" name="nlingual_languages[%language_id%][short_name]" value="%short_name%" />
+							<input type="text" name="nlingual_languages[%id%][short_name]" value="%short_name%" />
 						</td>
 						<td class="nl-language-locale_name">
-							<input type="text" name="nlingual_languages[%language_id%][locale_name]" value="%locale_name%" />
+							<input type="text" name="nlingual_languages[%id%][locale_name]" value="%locale_name%" />
 						</td>
 						<td class="nl-language-iso_code">
-							<input type="text" name="nlingual_languages[%language_id%][iso_code]" value="%iso_code%" />
+							<input type="text" name="nlingual_languages[%id%][iso_code]" value="%iso_code%" />
 						</td>
 						<td class="nl-language-slug">
-							<input type="text" name="nlingual_languages[%language_id%][slug]" value="%slug%" />
+							<input type="text" name="nlingual_languages[%id%][slug]" value="%slug%" />
 						</td>
 						<td class="nl-language-active">
-							<input type="checkbox" name="nlingual_languages[%language_id%][active]" value="1" />
+							<input type="checkbox" name="nlingual_languages[%id%][active]" value="1" />
 						</td>
 						<td scope="row" class="nl-language-delete">
-							<input type="checkbox" name="nlingual_languages[%language_id%][delete]" value="1" />
+							<input type="checkbox" name="nlingual_languages[%id%][delete]" value="1" />
 						</td>
 					</tr>
 				</script>
