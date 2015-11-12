@@ -10,8 +10,6 @@
 namespace nLingual;
 
 class Translator {
-	use Utilities;
-
 	// =========================
 	// ! Utilities
 	// =========================
@@ -111,7 +109,7 @@ class Translator {
 		}
 
 		// Ensure $language is a Language
-		if ( ! static::_language( $language ) ) {
+		if ( ! is_language( $language ) ) {
 			return false; // Does not exist
 		}
 
@@ -192,7 +190,7 @@ class Translator {
 		global $wpdb;
 
 		// Ensure $language is a Language
-		if ( ! static::_language( $language ) ) {
+		if ( ! is_language( $language ) ) {
 			return false; // Does not exist
 		}
 
@@ -326,7 +324,7 @@ class Translator {
 		$values = array();
 		foreach ( $objects as $object_language => $object_id ) {
 			// Ensure $language is a Language
-			if ( ! static::_language( $object_language ) ) {
+			if ( ! is_language( $object_language ) ) {
 				return false; // Does not exist
 			}
 
@@ -371,7 +369,7 @@ class Translator {
 	 */
 	public static function set_object_translation( $type, $id, $language, $object ) {
 		// Ensure $language is a Language
-		if ( ! static::_language( $language ) ) {
+		if ( ! is_language( $language ) ) {
 			return false; // Does not exist
 		}
 
@@ -401,7 +399,7 @@ class Translator {
 		global $wpdb;
 
 		// Ensure $language is a Language
-		if ( ! static::_language( $language ) ) {
+		if ( ! is_language( $language ) ) {
 			return false; // Does not exist
 		}
 
@@ -445,7 +443,7 @@ class Translator {
 	 */
 	public static function get_permalink( $post_id, $language = null ) {
 		// Ensure $language is a Language
-		if ( ! static::_language( $language ) ) {
+		if ( ! is_language( $language ) ) {
 			// Doesn't exit; resort to original permalink
 			return get_permalink( $post_id );
 		}

@@ -10,8 +10,6 @@
 namespace nLingual;
 
 class Registry {
-	use Utilities;
-
 	// =========================
 	// ! Properties
 	// =========================
@@ -299,7 +297,7 @@ class Registry {
 	 */
 	public static function switch_language( $language ) {
 		// Ensure $language is a Language
-		if ( ! static::_language( $language ) ) {
+		if ( ! is_language( $language ) ) {
 			return false; // Does not exist
 		}
 
@@ -483,7 +481,7 @@ class Registry {
 	 */
 	public static function is_language( $language ) {
 		// Ensure $language is a Language
-		if ( ! static::_language( $language ) ) {
+		if ( ! is_language( $language ) ) {
 			return false; // Does not exist
 		}
 

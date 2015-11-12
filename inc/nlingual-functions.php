@@ -9,6 +9,10 @@
 
 namespace nLingual;
 
+// =========================
+// ! Conditional Tags
+// =========================
+
 /**
  * Check if we're in the backend of the site (excluding frontend AJAX requests)
  *
@@ -41,14 +45,52 @@ function backwards_compatible() {
 	return Registry::get( 'backwards_compatible' );
 }
 
+// =========================
+// ! Sanitizing Tools
+// =========================
+
 /**
- * Triggers the standard "Cheatin’ uh?" wp_die message.
+ * Convert $language passed into proper object format.
  *
  * @since 2.0.0
+ *
+ * @uses Registry::languages() to validate and retrieve the passed language.
+ *
+ * @param mixed &$language The language to be converted.
+ *
+ * @return bool If the language was successfully converted.
  */
-function cheatin() {
-	wp_die( \__( 'Cheatin&#8217; uh?' ), 403 );
+function is_language( &$language ) {
+	if ( is_a( $language, __NAMESPACE__ . '\Language' ) ) {
+		return true;
+	} else {
+		$language = Registry::languages()->get( $language );
+	}
+
+	return (bool) $language;
 }
+
+/**
+ * Sanitize a tag name (lowercase alpha-numeric with optional underscores).
+ *
+ * @since 2.0.0
+ *
+ * @param string $tag The tag name to sanitize.
+ * @param bool   $_   Allow underscores.
+ *
+ * @return string The sanitize tag name (default false).
+ */
+function sanitize_tag( $tag, $_ = false ) {
+	$replace = $_ ? '_' : '';
+
+	$tag = preg_replace( '/[^A-Za-z0-9]+/', $replace, $tag );
+
+	return $tag;
+}
+
+// =========================
+// ! GetText Functions
+// =========================
 
 /**
  * The following functions are aliases to the public
@@ -147,4 +189,17 @@ function _a( $array ) {
  */
 function _ax( $array, $context ) {
 	return \_a( $array, $context, NL_TXTDMN );
+}
+
+// =========================
+// ! Misc. Utilities
+// =========================
+
+/**
+ * Triggers the standard "Cheatin’ uh?" wp_die message.
+ *
+ * @since 2.0.0
+ */
+function cheatin() {
+	wp_die( \__( 'Cheatin&#8217; uh?' ), 403 );
 }
