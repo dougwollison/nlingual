@@ -310,7 +310,7 @@ class Frontend extends Functional {
 	protected static function localize_locations( $type, $locations, $registered ) {
 		// Abort if not supported
 		if ( ! Registry::is_feature_localizable( "{$type}_locations", true ) ) {
-			return;
+			return $locations;
 		}
 
 		// Get the default and current languages
