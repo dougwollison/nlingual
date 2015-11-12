@@ -145,18 +145,15 @@
 			font-size: 20px;
 			line-height: 20px;
 		}
-
-		.nl-localizer:hover & {
-			//color: #00a0d2;
-		}
 	}
 	.nl-localizer-option {
 		font-size: 14px;
 		max-width: 0;
+		@include box-shadow(inset 1px 0 0 #ccc);
 
 		.nl-option-text {
 			font-style: normal;
-			padding: 0 5px;
+			padding: 0 5px 0 6px;
 		}
 
 		&:hover,
