@@ -1,6 +1,6 @@
 <?php
 /**
- * nLingual Localizable String Model
+ * nLingual String Model
  *
  * @package nLingual
  * @subpackage Structures
@@ -11,7 +11,7 @@
 namespace nLingual;
 
 /**
- * The Localizable String Model
+ * The String Model
  *
  * Provides a predictable interface for accessing
  * properties of strings that have been registered
@@ -32,7 +32,7 @@ namespace nLingual;
  * @property string $field_id The ID of the field the string is for.
  */
 
-class LocalizableString extends Model {
+class LocalizerString extends Model {
 	// =========================
 	// ! Properties
 	// =========================
