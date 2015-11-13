@@ -159,6 +159,9 @@ class Synchronizer {
 	 * @uses Registry::languages() to validate/retrieve the desired language.
 	 * @uses Registry::get() to retrieve the cloning rules.
 	 * @uses Synchronizer::sync_posts() to handle meta data and term copying.
+	 * @uses Translator::get_post_translation() to get the parent post's translation.
+	 * @uses Translator::set_post_language() to assign the language to the clone.
+	 * @uses Translator::set_post_translation() to link the clone to the original.
 	 *
 	 * @param int|WP_Post  $post             The ID/object of the post to clone.
 	 * @param int|Language $language          The language to assign the clone to.
@@ -229,8 +232,8 @@ class Synchronizer {
 		$translation = get_post( $translation );
 
 		// Set the language of the translation and it's associate it with the original
-		static::set_post_language( $translation->ID, $language );
-		static::set_post_translation( $post->ID, $language, $translation->ID );
+		Translator::set_post_language( $translation->ID, $language );
+		Translator::set_post_translation( $post->ID, $language, $translation->ID );
 
 		// Synchronize the two posts
 		static::sync_posts( $post->ID, $translation->ID, $rules );

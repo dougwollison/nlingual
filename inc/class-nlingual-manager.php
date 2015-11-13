@@ -23,6 +23,10 @@ namespace nLingual;
  */
 
 class Manager extends Handler {
+	// =========================
+	// ! Properties
+	// =========================
+
 	/**
 	 * The name of the class.
 	 *
@@ -102,6 +106,7 @@ class Manager extends Handler {
 	 * @uses Manager::settings_page() for general options page output.
 	 * @uses Manager::settings_page_languages() for language manager output.
 	 * @uses Manager::settings_page_strings() for strings editor output.
+	 * @uses Documenter::register_help_tabs() to register help tabs for all screens.
 	 */
 	public static function add_menu_pages() {
 		// Main Options page
@@ -305,6 +310,8 @@ class Manager extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Registry::language() to get the list of registered languages.
+	 * @uses Languages::export() to export the language list to an array.
 	 * @uses Settings::add_fields() to define the controls on the page.
 	 */
 	protected static function setup_options_fields() {
@@ -379,7 +386,7 @@ class Manager extends Handler {
 				'type'  => 'input',
 			),
 			'redirection_method' => array(
-				'title' => __( 'Redirection Method' ),
+				'title' => __( 'URL Scheme' ),
 				'help'  => __( 'What style should be used for the translated URLs?' ) .
 					'<br /> <span class="nl-previews">' . _f( 'Preview: %s', $redirect_previews ) . '</span>',
 				'type'  => 'radiolist',

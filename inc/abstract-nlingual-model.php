@@ -27,7 +27,7 @@ abstract class Model {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses static::$properties
+	 * @uses Model::$properties
 	 *
 	 * @param array $values The property values.
 	 */
@@ -78,7 +78,7 @@ abstract class Model {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses static::$properties
+	 * @uses Model::$properties
 	 *
 	 * @return array An associative array of properites/values.
 	 */

@@ -150,6 +150,8 @@ class Languages implements \Iterator {
 	 *
 	 * @param string $field Optional. The field to sort by (defaults to list_order).
 	 * @param string $order Optional. Which way to sort (defaults to ascending).
+	 *
+	 * @return self.
 	 */
 	public function sort( $field = 'list_order', $order = 'asc' ) {
 		usort( $this->items, function( $a, $b ) use ( $field ) {
@@ -164,6 +166,8 @@ class Languages implements \Iterator {
 		if ( $order != 'asc' ) {
 			$this->items = array_reverse( $this->items );
 		}
+
+		return $this;
 	}
 
 	/**
@@ -233,6 +237,8 @@ class Languages implements \Iterator {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @see Languages::get() for details.
+	 *
 	 * @param int $index The index to get the item at.
 	 *
 	 * @return bool|Language The language if found (false if not).
@@ -242,12 +248,42 @@ class Languages implements \Iterator {
 	}
 
 	/**
+	 * Get the index of the first language matching the provided ID/slug.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param mixed $language The language object, ID or slug.
+	 *
+	 * @return int|bool The index if found, false otherwise.
+	 */
+	public function find( $language ) {
+		// Get the language object
+		if ( ! is_a( $language, __NAMESPACE__ . '\Language' ) ) {
+			$language = $this->get( $language );
+		}
+
+		// If not found, fail
+		if ( ! $language ) {
+			return false;
+		}
+
+		// Loop through all languages and return index of first match
+		foreach ( $this->items as $index => $item ) {
+			if ( $item->id == $language->id ) {
+				return $index;
+			}
+		}
+	}
+
+	/**
 	 * Add a language to the index.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @param array|Language $language The language to add.
-	 * @param bool                    $sort     Wether or not to sort after adding.
+	 * @param bool           $sort     Wether or not to sort after adding.
+	 *
+	 * @return self.
 	 */
 	public function add( $language, $sort = true ) {
 		// Create new Language object from array if needed
@@ -264,6 +300,8 @@ class Languages implements \Iterator {
 			// Sort the collection
 			$this->sort();
 		}
+
+		return $this;
 	}
 
 	/**
@@ -273,17 +311,16 @@ class Languages implements \Iterator {
 	 *
 	 * @param int|string $language The ID or slug of the language to remove.
 	 *
-	 * @return bool True/False on success/failure.
+	 * @return self.
 	 */
 	public function remove( $language ) {
 		// Get the object's index
-		if ( $index = $this->get( $language, 'index' ) ) {
+		if ( $index = $this->find( $language ) ) {
 			// Remove it
 			unset( $this->items[ $index ] );
-			return true;
 		}
 
-		return false;
+		return $this;
 	}
 
 	/**
@@ -319,6 +356,8 @@ class Languages implements \Iterator {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Language::export() on each Language object.
+	 *
 	 * @param string $field Optional. A specific field to get
 	 *                      instead of the whole language object.
 	 *
@@ -332,14 +371,5 @@ class Languages implements \Iterator {
 		}
 
 		return $data;
-	}
-
-	/**
-	 * Auto-sort once unserialized.
-	 *
-	 * @since 2.0.0
-	 */
-	public function __wakeup() {
-		$this->sort();
 	}
 }

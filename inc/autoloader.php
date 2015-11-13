@@ -45,7 +45,7 @@ function find( $type, $name ) {
  *
  * @since 2.0.0
  *
- * @see find() to find and load the class if it exists.
+ * @uses find() to find and load the class if it exists.
  *
  * @param string $class The name of the class being requested.
  */
@@ -64,7 +64,7 @@ function find_class( $class ) {
  *
  * @since 2.0.0
  *
- * @see find() to find and load the class if it exists.
+ * @uses find() to find and load the class if it exists.
  *
  * @param string $class The name of the class being requested.
  */
@@ -77,7 +77,7 @@ function find_abstract( $class ) {
  *
  * @since 2.0.0
  *
- * @see find() to find and load the trait if it exists.
+ * @uses find() to find and load the trait if it exists.
  *
  * @param string $trait The name of the trait being requested.
  */

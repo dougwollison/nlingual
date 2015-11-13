@@ -22,12 +22,16 @@ namespace nLingual;
  */
 
 class Rewriter {
+	// =========================
+	// ! Properties
+	// =========================
+
 	/**
 	 * Internal flag for wether or not to localize a URL.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access procted
+	 * @access procted (static)
 	 *
 	 * @var array
 	 */
@@ -104,6 +108,16 @@ class Rewriter {
 	 * @since 2.0.0
 	 *
 	 * @param array $data The parsed URL parts.
+	 *		@option string "scheme"   the URL scheme (http, https, etc.).
+	 *		@option string "user"     the username.
+	 *		@option string "pass"     the password.
+	 *		@option string "host"     the host name.
+	 *		@option int    "port"     the port number.
+	 *		@option string "path"     the URI path.
+	 *		@option int    "paged"    the paged parameter (for WordPress)
+	 *		@option string "query"    the query string.
+	 *		@option array  "args"     the query args (overrites "query" option).
+	 *		@option string "fragment" the document fragment.
 	 *
 	 * @return string The assembled URL.
 	 */
@@ -192,6 +206,7 @@ class Rewriter {
 	 * @since 2.0.0
 	 *
 	 * @uses NL_UNLOCALIZED to get the unlocalized home URL.
+	 * @uses Rewriter::parse_url() to parse the URL data.
 	 * @uses Registry::get() to get the query var and redirection method options.
 	 * @uses Registry::languages() to validate and retrieve the parsed language.
 	 *
@@ -277,7 +292,7 @@ class Rewriter {
 		/**
 		 * Filter the $url_data array.
 		 *
-		 * @since 1.1.3
+		 * @since 2.0.0
 		 *
 		 * @param array $url_data     The updated URL data.
 		 * @param array $old_url_data The original URL data.
@@ -370,11 +385,11 @@ class Rewriter {
 			&& ! preg_match( '#^wp-([\w-]+.php|(admin|content|includes)/)#', $url_data['path'] )
 			&& ( $language !== Registry::default_language() || ! Registry::get( 'skip_default_l10n' ) ) ) {
 				switch ( Registry::get( 'redirection_method' ) ) {
-					case NL_REDIRECT_USING_DOMAIN:
+					case 'domain':
 						// Prepend hostname with language slug
 						$url_data['host'] = "{$language->slug}.{$url_data['host']}";
 						break;
-					case NL_REDIRECT_USING_PATH:
+					case 'path':
 						// Add language slug to path (after any home path)
 						$home_path = parse_url( $home, PHP_URL_PATH ) ?: '';
 						$request_path = substr( $url_data['path'], strlen( $home_path ) );
@@ -444,9 +459,11 @@ class Rewriter {
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current Language object.
-	 * @uses Translator::get_permalink() to get the page/post translation's permalink.
-	 * @uses Rewriter::process_url() to localize the original URL of the page.
+	 * @uses Translator::get_post_translation() to get the page/post's translation.
+	 * @uses Registry::switch_language() to switch to the specified language.
+	 * @uses Registry::restore_language() to switch back to the previous language.
 	 * @uses Rewriter::localize_url() to localize the current URI as-is.
+	 * @uses Rewriter::process_url() to localize the original URL of the page.
 	 * @uses Rewriter::build_url() to build the localized URL from it's components.
 	 *
 	 * @param Language $language The language to localize the current page for.

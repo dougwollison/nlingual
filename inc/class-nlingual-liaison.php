@@ -25,6 +25,10 @@ namespace nLingual;
 class Liaison extends Handler {
 	use Shared_Filters;
 
+	// =========================
+	// ! Properties
+	// =========================
+
 	/**
 	 * The name of the class.
 	 *

@@ -119,6 +119,8 @@ class Settings {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Settings::extract_value() to handle any array map stuff.
+	 *
 	 * @param array        $array The array to extract from.
 	 * @param array|string $map   The map to follow, in myvar[mykey] or [myvar, mykey] form.
 	 *
@@ -371,6 +373,7 @@ class Settings {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Documenter::$post_field_names
 	 * @uses Settings::build_checklist_field() to build checklists of fields and terms to enable.
 	 *
 	 * @param string $name      The name of the field.

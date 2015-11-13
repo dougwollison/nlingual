@@ -152,7 +152,7 @@ class Language extends Model {
 	// =========================
 
 	/**
-	 * Setup the property values.
+	 * Setup/sanitize the property values.
 	 *
 	 * @since 2.0.0
 	 *

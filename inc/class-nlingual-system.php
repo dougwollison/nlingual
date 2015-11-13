@@ -24,6 +24,10 @@ namespace nLingual;
  */
 
 class System extends Handler {
+	// =========================
+	// ! Properties
+	// =========================
+
 	/**
 	 * The name of the class.
 	 *
@@ -56,6 +60,7 @@ class System extends Handler {
 	 * @uses Frontend::register_hooks() to setup frontend functionality.
 	 * @uses Liaison::register_hooks() to setup plugin cross-compatability.
 	 * @uses is_backend() to check if the query is for wp-admin.
+	 * @uses backwards_compatible() to check if backwards compatability is enabled.
 	 */
 	public static function setup() {
 		global $wpdb;
@@ -346,6 +351,11 @@ class System extends Handler {
 	 * Filter the results of get_pages, removing those not in the current language.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Registry::get() to retrieve the show_all_languages option.
+	 * @uses Registry::languages() to check/get the matching language object.
+	 * @uses Registry::current_language() as the default language to fitler by.
+	 * @uses Translator::get_post_language() to get the translation in that language.
 	 *
 	 * @param array $pages The list of pages to filter.
 	 * @param array $args  The arugments passed to get_pages().

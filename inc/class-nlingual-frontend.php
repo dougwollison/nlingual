@@ -27,6 +27,10 @@ namespace nLingual;
 class Frontend extends Handler {
 	use Shared_Filters;
 
+	// =========================
+	// ! Properties
+	// =========================
+
 	/**
 	 * The name of the class.
 	 *
@@ -80,8 +84,8 @@ class Frontend extends Handler {
 
 		// Locale & GetText Rewrites
 		static::add_action( 'wp', 'maybe_patch_wp_locale', 10, 0 );
-		static::add_filter( 'gettext', 'translate', 10, 3 );
-		static::add_filter( 'gettext_with_context', 'translate_with_context', 10, 4 );
+		//static::add_filter( 'gettext', 'translate', 10, 3 );
+		//static::add_filter( 'gettext_with_context', 'translate_with_context', 10, 4 );
 	}
 
 	// =========================
@@ -93,10 +97,10 @@ class Frontend extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::languages() to validate and retrieve the detected language.
 	 * @uses Rewriter::process_url() to parse the current page URL.
 	 * @uses Registry::get() to get the query var option.
-	 * @uses API::set_language() to tentatively apply the detected language.
+	 * @uses Registry::languages() to validate and retrieve the detected language.
+	 * @uses System::set_language() to tentatively apply the detected language.
 	 */
 	public static function detect_requested_language() {
 		// Override with result of url_process() if it works
@@ -152,6 +156,7 @@ class Frontend extends Handler {
 	 * @uses Translator::get_post_language() to get the language of the queried post.
 	 * @uses Translator::get_post_translation() to find the post's translation.
 	 * @uses Registry::get() to retrieve the post_language_override option.
+	 * @uses Rewriter::localize_here() to generate the localized URL for the language.
 	 */
 	public static function maybe_redirect_language() {
 		global $wp_query;
@@ -301,6 +306,9 @@ class Frontend extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Registry::current_language() to get the current language.
+	 * @uses Translator::get_post_translation() to get the post for that language.
+	 *
 	 * @param string $permalink The permalink of the post.
 	 * @param int    $page_id   The ID of the page.
 	 *
@@ -344,20 +352,20 @@ class Frontend extends Handler {
 		}
 
 		// Get the default and current languages
-		$default_language = Registry::get( 'default_language' );
-		$current_language = Registry::get( 'current_language' ) ?: $default_language;
+		$default_language = Registry::default_language();
+		$current_language = Registry::current_language();
 
 		// Ensure the unlocalized locations are set to the appropriate version.
 		foreach ( $registered as $slug => $name ) {
 			// Check if this location specifically supports localizing
 			if ( Registry::is_location_localizable( $type, $slug ) ) {
 				// Check if a location is set for the current language
-				if ( isset( $locations[ "{$slug}-language{$current_language}"] ) ) {
-					$locations[ $slug ] = $locations[ "{$slug}-language{$current_language}"];
+				if ( isset( $locations[ "{$slug}-language{$current_language->id}"] ) ) {
+					$locations[ $slug ] = $locations[ "{$slug}-language{$current_language->id}"];
 				}
 				// Alternatively check if a location is set for the default one
-				elseif ( isset( $locations[ "{$slug}-language{$default_language}"] ) ) {
-					$locations[ $slug ] = $locations[ "{$slug}-language{$default_language}"];
+				elseif ( isset( $locations[ "{$slug}-language{$default_language->id}"] ) ) {
+					$locations[ $slug ] = $locations[ "{$slug}-language{$default_language->id}"];
 				}
 			}
 		}
@@ -417,7 +425,7 @@ class Frontend extends Handler {
 	 */
 	public static function handle_language_links( $items ) {
 		foreach ( $items as $i => $item ) {
-			if ( $item->type == 'languagelink' ) {
+			if ( $item->type == 'nl_language_link' ) {
 				// Language link, set URL to the localized version of the current location
 				// Delete the item if it's for a language that doesn't exist or is inactive
 				if ( $language = Registry::languages()->get( $item->object ) ) {
@@ -447,11 +455,6 @@ class Frontend extends Handler {
 	 * @return string The replaced locale.
 	 */
 	public static function rewrite_locale( $locale ) {
-		// Abort if in the backend
-		if ( is_backend() ) {
-			return $locale;
-		}
-
 		// Return the current language's locale_name
 		return Registry::current_language( 'locale_name' );
 	}
@@ -468,8 +471,11 @@ class Frontend extends Handler {
 	 * @return array The modified list of classes.
 	 */
 	public static function add_body_classes( $classes ) {
-		// Add text direction
-		$classes[] = is_rtl() ? 'rtl' : 'ltr';
+		// Add text direction if not already there
+		$direction = is_rtl() ? 'rtl' : 'ltr';
+		if ( ! in_array( $direction, $classes ) ) {
+			$classes[] = $direction;
+		}
 
 		// Add language slug
 		$classes[] = 'language-' . Registry::current_language( 'slug' );
@@ -503,6 +509,8 @@ class Frontend extends Handler {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
+	 * @uses Registry::is_post_type_supported() to check for post type support.
+	 *
 	 * @param string $clause The join clause to add to.
 	 *
 	 * @return string The modified join clause.
@@ -530,6 +538,9 @@ class Frontend extends Handler {
 	 * @since 2.0.0
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @uses Registry::is_post_type_supported() to check for post type support.
+	 * @uses Translator::get_post_language() to get the language of the current post.
 	 *
 	 * @param string $clause The where clause to add to.
 	 *

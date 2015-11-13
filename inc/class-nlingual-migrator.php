@@ -186,10 +186,10 @@ class Migrator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Migrator::get_old_option() to fetch/archive general/sync options.
-	 * @uses Migrator::convert_split_strings() to convert blog name/description.
-	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @uses Migrator::get_old_option() to fetch/archive general/sync options.
+	 * @uses Migrator::convert_split_string() to convert blog name/description.
 	 */
 	public static function convert_options() {
 		global $wpdb;

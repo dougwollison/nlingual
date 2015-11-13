@@ -23,6 +23,10 @@ namespace nLingual;
  */
 
 class Loader extends Handler {
+	// =========================
+	// ! Properties
+	// =========================
+
 	/**
 	 * The name of the class.
 	 *

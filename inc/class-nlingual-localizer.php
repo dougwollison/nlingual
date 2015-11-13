@@ -22,6 +22,10 @@ namespace nLingual;
  * @subpackage Tools
  *
  * @since 2.0.0
+ *
+ * @method array get_strings_by_*() return the matching $strings_by_* property.
+ * @method void register_*_meta( string $meta_key, array $args )
+ *              localize a metadata field for an object type.
  */
 
 class Localizer extends Handler {
@@ -124,20 +128,6 @@ class Localizer extends Handler {
 			return static::$registered_strings[ $id ];
 		}
 		return false;
-	}
-
-	/**
-	 * Get a registration list.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param string $type The type of list to get (strings, taxonomies, metadata).
-	 *
-	 * @return string The requested list.
-	 */
-	public static function get_registered( $type ) {
-		$property = "registered_{$type}";
-		return static::$$property;
 	}
 
 	/**
@@ -978,7 +968,6 @@ class Localizer extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Localizer::get_registered() if the method name starts with "get_registered_".
 	 * @uses Localizer::get_strings_by() if the method name starts with "get_strings_by_".
 	 * @uses Localizer::register_metadata() if method name is "register_[post_type]_meta".
 	 *
@@ -988,11 +977,6 @@ class Localizer extends Handler {
 	 * @return mixed The result of the redirected method.
 	 */
 	public static function __callStatic( $name, $args ) {
-		// Check if it's a get_list alias
-		if ( preg_match( '/^get_registered_(\w+)$/', $name, $matches ) ) {
-			$type = $matches[1];
-			return static::get_registered( $type );
-		}
 		// Check if it's a get_strings_by alias
 		if ( preg_match( '/^get_strings_by_(\w+)$/', $name, $matches ) ) {
 			$index = $matches[1];

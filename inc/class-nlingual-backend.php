@@ -24,6 +24,10 @@ namespace nLingual;
  */
 
 class Backend extends Handler {
+	// =========================
+	// ! Properties
+	// =========================
+
 	/**
 	 * The name of the class.
 	 *
@@ -751,7 +755,7 @@ class Backend extends Handler {
 	 */
 	public static function add_nav_menu_meta_box() {
 		add_meta_box(
-			'add-nl_languagelink', // metabox id
+			'add-nl_language_link', // metabox id
 			__( 'Language Links' ), // title
 			array( get_called_class(), 'do_nav_menu_meta_box' ), // callback
 			'nav-menus', // screen
@@ -769,9 +773,9 @@ class Backend extends Handler {
 	public static function do_nav_menu_meta_box() {
 		global $nav_menu_selected_id;
 		?>
-		<div class="posttypediv" id="nl_languagelink">
+		<div class="posttypediv" id="nl_language_link">
 			<p><?php _e( 'These links will go to the respective language versions of the current URL.' );?></p>
-			<div id="tabs-panel-nl_languagelink-all" class="tabs-panel tabs-panel-active">
+			<div id="tabs-panel-nl_language_link-all" class="tabs-panel tabs-panel-active">
 				<ul id="pagechecklist-most-recent" class="categorychecklist form-no-clear">
 				<?php $i = -1; foreach ( Registry::languages() as $language ):?>
 					<li>
@@ -779,7 +783,7 @@ class Backend extends Handler {
 							<input type="checkbox" class="menu-item-checkbox" name="menu-item[<?php echo $i?>][menu-item-object-id]" value="-1">
 							<?php echo $language->system_name?>
 						</label>
-						<input type="hidden" class="menu-item-type" name="menu-item[<?php echo $i?>][menu-item-type]" value="languagelink">
+						<input type="hidden" class="menu-item-type" name="menu-item[<?php echo $i?>][menu-item-type]" value="nl_language_link">
 						<input type="hidden" class="menu-item-title" name="menu-item[<?php echo $i?>][menu-item-title]" value="<?php echo $language->native_name?>">
 						<input type="hidden" class="menu-item-url" name="menu-item[<?php echo $i?>][menu-item-object]" value="<?php echo $language->slug?>">
 					</li>
@@ -789,11 +793,11 @@ class Backend extends Handler {
 
 			<p class="button-controls">
 				<span class="list-controls">
-					<a href="/wp-admin/nav-menus.php?languagelink-tab=all&amp;selectall=1#nl_languagelink" class="select-all">Select All</a>
+					<a href="/wp-admin/nav-menus.php?nl_language_link-tab=all&amp;selectall=1#nl_language_link" class="select-all">Select All</a>
 				</span>
 
 				<span class="add-to-menu">
-					<input type="submit"<?php wp_nav_menu_disabled_check( $nav_menu_selected_id ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( __( 'Add to Menu' ) ); ?>" name="add-post-type-menu-item" id="submit-nl_languagelink" />
+					<input type="submit"<?php wp_nav_menu_disabled_check( $nav_menu_selected_id ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( __( 'Add to Menu' ) ); ?>" name="add-post-type-menu-item" id="submit-nl_language_link" />
 					<span class="spinner"></span>
 				</span>
 			</p>
