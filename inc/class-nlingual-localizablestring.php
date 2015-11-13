@@ -20,7 +20,16 @@ namespace nLingual;
  * @package nLingual
  * @subpackage Structures
  *
+ * @api
+ *
  * @since 2.0.0
+ *
+ * @property int    $id       The unique ID of the string.
+ * @property string $key      The database key of the string.
+ * @property string $type     The type of string, for reference purposes.
+ * @property array  $screen   The screen the strings belong to (property/value pair to match).
+ * @property string $field    The name of the field the string is for.
+ * @property string $field_id The ID of the field the string is for.
  */
 
 class LocalizableString extends Model {
@@ -29,123 +38,21 @@ class LocalizableString extends Model {
 	// =========================
 
 	/**
-	 * The ID of the language for the database
+	 * The list of properties for the string (with defaults).
+	 *
+	 * @internal
 	 *
 	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var string
-	 */
-	protected $id;
-
-	/**
-	 * The database key of the string.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var string
-	 */
-	protected $key;
-
-	/**
-	 * The type of string, for reference purposes.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var string
-	 */
-	protected $type;
-
-	/**
-	 * The screen the strings belong to (a property/value pair to match).
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
 	 *
 	 * @var array
 	 */
-	protected $screen;
-
-	/**
-	 * The type of input element the string is for.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var string
-	 */
-	protected $input;
-
-	/**
-	 * The name of the field the string is for.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var string
-	 */
-	protected $field;
-
-	/**
-	 * The ID of the field the string is for.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var string
-	 */
-	protected $field_id;
-
-	/**
-	 * A descriptive title for what the string is for.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var string
-	 */
-	protected $title;
-
-	/**
-	 * Further description for what the string is for.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var string
-	 */
-	protected $description;
-
-	/**
-	 * The whitelist of properties and default values they should have.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var array
-	 */
-	protected static $properties = array(
+	protected $properties = array(
 		'id'          => '',
 		'key'         => null,
 		'type'        => 'option',
 		'screen'      => array(),
-		'input'       => 'text',
 		'field'       => null,
 		'field_id'    => null,
-		'title'       => '',
-		'description' => '',
 	);
 
 	// =========================
@@ -155,9 +62,13 @@ class LocalizableString extends Model {
 	/**
 	 * Setup the property values.
 	 *
+	 * @internal Should only be created by the Localizer.
+	 *
 	 * @since 2.0.0
 	 *
-	 * @uses static::$properties
+	 * @see Language::$properties for a list of allowed values.
+	 *
+	 * @uses Model::__construct() to setup the values.
 	 *
 	 * @param int   $id     The ID of the string.
 	 * @param array $values The property values.

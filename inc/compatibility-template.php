@@ -88,6 +88,8 @@ function nl_associated_posts( $id, $include_self = false ) {
  *
  * @since 2.0.0
  *
+ * @api
+ *
  * @see Registry::get_language() for details.
  *
  * @uses Registry::current_language() to get the current language ID if needed.
@@ -157,6 +159,8 @@ function nl_get_lang_links( $skip_current = false ) {
  *
  * @since 2.0.0
  *
+ * @api
+ *
  * @see Rewriter::get_links() for how the links are retrieved.
  *
  * @param string $prefix Optional. A prefix to place before the links (should end with a space).
@@ -179,6 +183,8 @@ function nl_print_lang_links( $prefix = '', $sep = ' ', $skip_current = false ) 
  * Backwards compatability support for the old split-language method.
  *
  * @since 2.0.0
+ *
+ * @api
  *
  * @param string $text      The text to split up.
  * @param mixed  $language  Optional. The language to get the matching version for (defaults to current).

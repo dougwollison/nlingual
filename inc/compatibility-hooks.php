@@ -5,6 +5,8 @@
  * @package nLingual
  * @subpackage Backwards_Compatibilty
  *
+ * @api
+ *
  * @since 2.0.0
  */
 
@@ -25,6 +27,8 @@ add_filter( 'the_title', 'nl_split_langs', 10, 1 );
  *
  * @since 2.0.0
  *
+ * @api
+ *
  * @param int $id The post ID.
  *
  * @return int The translation ID if found/applicable.
@@ -38,6 +42,8 @@ function nLingual_get_curlang_version( $id ) {
 
 /**
  * Enables support for nLingual_localize_here_array hook.
+ *
+ * @internal
  *
  * @since 2.0.0
  *

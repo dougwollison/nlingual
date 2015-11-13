@@ -19,6 +19,8 @@ namespace nLingual;
  * @package nLingual
  * @subpackage Tools
  *
+ * @internal used by the Autoloader and the Backwards_Compatabilty functions.
+ *
  * @since 2.0.0
  */
 

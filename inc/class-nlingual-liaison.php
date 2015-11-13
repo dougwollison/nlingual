@@ -19,6 +19,8 @@ namespace nLingual;
  * @package nLingual
  * @subpackage Handlers
  *
+ * @internal Used by the System.
+ *
  * @since 2.0.0
  */
 
@@ -33,8 +35,6 @@ class Liaison extends Handler {
 	 * The name of the class.
 	 *
 	 * @since 2.0.0
-	 *
-	 * @access protected (static)
 	 *
 	 * @var string
 	 */

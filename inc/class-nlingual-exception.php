@@ -17,6 +17,8 @@ namespace nLingual;
  *
  * @package nLingual
  *
+ * @api
+ *
  * @since 2.0.0
  */
 

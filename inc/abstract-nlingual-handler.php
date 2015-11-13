@@ -5,6 +5,8 @@
  * @package nLingual
  * @subpackage Abstracts
  *
+ * @internal
+ *
  * @since 2.0.0
  */
 
@@ -21,12 +23,16 @@ namespace nLingual;
  * @package nLingual
  * @subpackage Abstracts
  *
+ * @internal
+ *
  * @since 2.0.0
  */
 
 abstract class Handler {
 	/**
 	 * Initialize the class (setting the $name property)
+	 *
+	 * @internal Should be called by the autoloader.
 	 *
 	 * @since 2.0.0
 	 */
@@ -36,6 +42,8 @@ abstract class Handler {
 
 	/**
 	 * Add an internal method to a filter hook.
+	 *
+	 * @api
 	 *
 	 * @since 2.0.0
 	 *
@@ -51,11 +59,7 @@ abstract class Handler {
 	}
 
 	/**
-	 * Alias; add internal method from an action hook.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @see Handler::add_filter() for argument details.
+	 * @see Handler::add_filter()
 	 */
 	final public static function add_action() {
 		call_user_func_array( 'self::add_filter', func_get_args() );
@@ -63,6 +67,8 @@ abstract class Handler {
 
 	/**
 	 * Remove an internal method to a filter hook.
+	 *
+	 * @api
 	 *
 	 * @since 2.0.0
 	 *
@@ -77,11 +83,7 @@ abstract class Handler {
 	}
 
 	/**
-	 * Alias; remove internal method from an action hook.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @see Handler::remove_filter() for argument details.
+	 * @see Handler::remove_filter()
 	 */
 	final public static function remove_action() {
 		call_user_func_array( 'self::remove_filter', func_get_args() );
@@ -89,6 +91,8 @@ abstract class Handler {
 
 	/**
 	 * Add an internal method to a filter hook if it hasn't already been.
+	 *
+	 * @api
 	 *
 	 * @since 2.0.0
 	 *
@@ -104,11 +108,7 @@ abstract class Handler {
 	}
 
 	/**
-	 * Alias; Add an internal method to an action hook if it hasn't already been.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @see Handler::maybe_add_filter() for argument details
+	 * @see Handler::maybe_add_filter()
 	 */
 	final public static function maybe_add_action() {
 		call_user_func_array( 'self::maybe_add_filter', func_get_args() );
@@ -116,6 +116,8 @@ abstract class Handler {
 
 	/**
 	 * Must-have hook setup method.
+	 *
+	 * @internal Should be called by System::init().
 	 *
 	 * @since 2.0.0
 	 */

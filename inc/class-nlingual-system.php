@@ -20,6 +20,8 @@ namespace nLingual;
  * @package nLingual
  * @subpackage Helpers
  *
+ * @api
+ *
  * @since 2.0.0
  */
 
@@ -32,8 +34,6 @@ class System extends Handler {
 	 * The name of the class.
 	 *
 	 * @since 2.0.0
-	 *
-	 * @access protected (static)
 	 *
 	 * @var string
 	 */

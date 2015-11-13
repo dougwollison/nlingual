@@ -7,6 +7,8 @@
  * @package nLingual
  * @subpackage Template
  *
+ * @api
+ *
  * @since 2.0.0
  */
 

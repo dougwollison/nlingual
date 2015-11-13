@@ -21,6 +21,8 @@ namespace nLingual;
  * @package nLingual
  * @subpackage Tools
  *
+ * @api
+ *
  * @since 2.0.0
  *
  * @method array get_strings_by_*() return the matching $strings_by_* property.
@@ -36,9 +38,9 @@ class Localizer extends Handler {
 	/**
 	 * The name of the class.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var string
 	 */
@@ -47,9 +49,9 @@ class Localizer extends Handler {
 	/**
 	 * A list of all fields registered for localizing.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var array
 	 */
@@ -58,9 +60,9 @@ class Localizer extends Handler {
 	/**
 	 * An index of strings by key.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var array
 	 */
@@ -69,9 +71,9 @@ class Localizer extends Handler {
 	/**
 	 * An index of strings by screen they are to appear on based on property.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var array
 	 */
@@ -80,9 +82,9 @@ class Localizer extends Handler {
 	/**
 	 * Storage for the strings found for the current screen.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var array
 	 */
@@ -91,9 +93,9 @@ class Localizer extends Handler {
 	/**
 	 * Storage for the current object ID if applicable.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var int
 	 */
@@ -102,9 +104,9 @@ class Localizer extends Handler {
 	/**
 	 * Reference of which post fields are permitted for localization.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var int
 	 */
@@ -185,6 +187,8 @@ class Localizer extends Handler {
 	/**
 	 * Register backend hooks.
 	 *
+	 * @internal
+	 *
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
@@ -260,9 +264,6 @@ class Localizer extends Handler {
 	 *		@option string|array "screen"      A screen ID or property/value pair to match.
 	 * 		@option string       "field"       The name of the input that handles this string.
 	 * 		@option string       "field_id"    The id of the HTML input to target. (Defaults to input name)
-	 *		@option string       "title"       An descriptive name of this string.
-	 *		@option string       "description" The details of this string's purpose.
-	 * 		@option string       "input"       The field input to use ("textarea" or an <input> type).
 	 */
 	public static function register_option( $option, $page, $args = array() ) {
 		// Build the args for the string and register it
@@ -302,16 +303,12 @@ class Localizer extends Handler {
 			'type'     => 'term_field',
 			'screen'   => array( 'id', $page ),
 			'field'    => 'name',
-			'title'    => __( 'Name' ),
-			'input'    => 'text',
 		) );
 		static::register_string( "term.{$taxonomy}:term_description", array(
 			'key'      => "term_description",
 			'type'     => 'term_field',
 			'screen'   => array( 'id', $page ),
 			'field'    => 'description',
-			'title'    => __( 'Description' ),
-			'input'    => 'textarea',
 		) );
 
 		// Add the filters to handle it (frontend only)
@@ -339,10 +336,7 @@ class Localizer extends Handler {
 	 * @param string $field_name The post_field name (and the field name/ID).
 	 * @param array  $args       The custom arguments for the string.
 	 * 		@option string "field"       The name of the input that handles this string.
-	 * 		@option string "field_id"    The id of the HTML input to target. (Defaults to input name)
-	 *		@option string "title"       An descriptive name of this string.
-	 *		@option string "description" The details of this string's purpose.
-	 * 		@option string "input"       The field input to use ("textarea" or an <input> type).
+	 * 		@option string "field_id"    The id of the HTML input to target (Defaults to input name).
 	 */
 	public static function register_post_field( $post_type, $field_name, $args = array() ) {
 		// Abort if the field name isn't allowed
@@ -385,10 +379,7 @@ class Localizer extends Handler {
 	 * @param array  $args      The custom arguments for the string.
 	 *		@option string|array "screen"      A screen ID or property/value pair to match.
 	 * 		@option string       "field"       The name of the input that handles this string.
-	 * 		@option string       "field_id"    The id of the HTML input to target. (Defaults to input name)
-	 *		@option string       "title"       An descriptive name of this string.
-	 *		@option string       "description" The details of this string's purpose.
-	 * 		@option string       "input"       The field input to use ("textarea" or an <input> type).
+	 * 		@option string       "field_id"    The id of the HTML input to target (Defaults to input name).
 	 */
 	public static function register_metadata( $meta_type, $meta_key, $args = array() ) {
 		// Guess the page if not set
@@ -554,6 +545,8 @@ class Localizer extends Handler {
 	/**
 	 * Replace an option with it's localized version if found.
 	 *
+	 * @internal
+	 *
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current language.
@@ -582,6 +575,8 @@ class Localizer extends Handler {
 	/**
 	 * Stores the new option value as the localized version for the default language.
 	 *
+	 * @internal
+	 *
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current language.
@@ -604,6 +599,8 @@ class Localizer extends Handler {
 
 	/**
 	 * Replace a term's name and description with the localized versions if found.
+	 *
+	 * @internal
 	 *
 	 * @since 2.0.0
 	 *
@@ -632,6 +629,8 @@ class Localizer extends Handler {
 	/**
 	 * Alias of handle_lcoalize_term() for a collection of terms.
 	 *
+	 * @internal
+	 *
 	 * @since 2.0.0
 	 *
 	 * @uses Localizer::handle_localized_term() to handle each term.
@@ -649,6 +648,8 @@ class Localizer extends Handler {
 
 	/**
 	 * Stores the new name/description as the localized versions for the default language.
+	 *
+	 * @internal
 	 *
 	 * @since 2.0.0
 	 *
@@ -679,6 +680,8 @@ class Localizer extends Handler {
 	/**
 	 * Replace a post's fields with their localized versions if found.
 	 *
+	 * @internal
+	 *
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current language.
@@ -706,6 +709,8 @@ class Localizer extends Handler {
 	/**
 	 * Stores the updated values of a posts field as the localized version for the default language.
 	 *
+	 * @internal
+	 *
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current language.
@@ -731,6 +736,8 @@ class Localizer extends Handler {
 
 	/**
 	 * Replace a metadata value with it's localized version if found.
+	 *
+	 * @internal
 	 *
 	 * @since 2.0.0
 	 *
@@ -763,6 +770,8 @@ class Localizer extends Handler {
 	/**
 	 * Stores the new meta value as the localized version for the default language.
 	 *
+	 * @internal
+	 *
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current language.
@@ -791,6 +800,8 @@ class Localizer extends Handler {
 
 	/**
 	 * Save handler for localized strings.
+	 *
+	 * @internal
 	 *
 	 * @since 2.0.0
 	 *
@@ -875,6 +886,8 @@ class Localizer extends Handler {
 	/**
 	 * Get the strings relevant to the current screen and add the help tab.
 	 *
+	 * @internal
+	 *
 	 * @since 2.0.0
 	 *
 	 * @uses Localizer::$current_strings to store the strings found.
@@ -924,6 +937,8 @@ class Localizer extends Handler {
 
 	/**
 	 * Print the script for adding the localizer utility to fields.
+	 *
+	 * @internal
 	 *
 	 * @since 2.0.0
 	 *

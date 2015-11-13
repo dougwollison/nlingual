@@ -5,6 +5,8 @@
  * @package nLingual
  * @subpackage Helpers
  *
+ * @internal
+ *
  * @since 2.0.0
  */
 
@@ -18,6 +20,8 @@ namespace nLingual;
  *
  * @package nLingual
  * @subpackage Helpers
+ *
+ * @internal Used by the Backend.
  *
  * @since 2.0.0
  */

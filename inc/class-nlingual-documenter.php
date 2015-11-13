@@ -19,6 +19,8 @@ namespace nLingual;
  * @package nLingual
  * @subpackage Helpers
  *
+ * @internal Used by the Manager and Localizer.
+ *
  * @since 2.0.0
  */
 
@@ -32,8 +34,6 @@ class Documenter extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected (static)
-	 *
 	 * @var string
 	 */
 	protected static $name;
@@ -42,8 +42,6 @@ class Documenter extends Handler {
 	 * A directory of all help tabs available.
 	 *
 	 * @since 2.0.0
-	 *
-	 * @access protected (static)
 	 *
 	 * @var array
 	 */
@@ -94,7 +92,7 @@ class Documenter extends Handler {
 	/**
 	 * An index of screens registered for help tabs.
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var array
 	 */

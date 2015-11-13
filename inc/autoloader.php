@@ -4,6 +4,8 @@
  *
  * @package nLingual
  *
+ * @internal
+ *
  * @since 2.0.0
  */
 
@@ -11,6 +13,8 @@ namespace nLingual_Autoloader;
 
 /**
  * Handle file locating and loading.
+ *
+ * @internal
  *
  * @since 2.0.0
  *
@@ -43,6 +47,8 @@ function find( $type, $name ) {
  *
  * Will automatically initailize if it's a Functional sub-class.
  *
+ * @internal
+ *
  * @since 2.0.0
  *
  * @uses find() to find and load the class if it exists.
@@ -62,6 +68,8 @@ function find_class( $class ) {
 /**
  * Find/load an nLingual abstract class.
  *
+ * @internal
+ *
  * @since 2.0.0
  *
  * @uses find() to find and load the class if it exists.
@@ -74,6 +82,8 @@ function find_abstract( $class ) {
 
 /**
  * Find/load an nLingual trait.
+ *
+ * @internal
  *
  * @since 2.0.0
  *

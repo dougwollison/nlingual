@@ -20,6 +20,8 @@ namespace nLingual;
  * @package nLingual
  * @subpackage Structures
  *
+ * @api
+ *
  * @since 2.0.0
  */
 
@@ -31,9 +33,9 @@ class Languages implements \Iterator {
 	/**
 	 * The current position in the array.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected
+	 * @since 2.0.0
 	 *
 	 * @var int
 	 */
@@ -42,9 +44,9 @@ class Languages implements \Iterator {
 	/**
 	 * The array of Language objects.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected
+	 * @since 2.0.0
 	 *
 	 * @var array
 	 */

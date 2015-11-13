@@ -21,6 +21,8 @@ namespace nLingual;
  * @package nLingual
  * @subpackage Handlers
  *
+ * @internal Used by the System.
+ *
  * @since 2.0.0
  */
 
@@ -35,8 +37,6 @@ class Frontend extends Handler {
 	 * The name of the class.
 	 *
 	 * @since 2.0.0
-	 *
-	 * @access protected (static)
 	 *
 	 * @var string
 	 */

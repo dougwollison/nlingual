@@ -18,6 +18,8 @@ namespace nLingual;
  * @package nLingual
  * @subpackage Tools
  *
+ * @api
+ *
  * @since 2.0.0
  */
 
@@ -29,9 +31,9 @@ class Rewriter {
 	/**
 	 * Internal flag for wether or not to localize a URL.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access procted (static)
+	 * @since 2.0.0
 	 *
 	 * @var array
 	 */
@@ -202,6 +204,8 @@ class Rewriter {
 
 	/**
 	 * Process a URL and get the language.
+	 *
+	 * @internal
 	 *
 	 * @since 2.0.0
 	 *

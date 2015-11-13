@@ -5,6 +5,8 @@
  * @package nLingual
  * @subpackage Utilities
  *
+ * @internal
+ *
  * @since 2.0.0
  */
 
@@ -16,6 +18,8 @@ namespace nLingual;
 
 /**
  * Check if we're in the backend of the site (excluding frontend AJAX requests)
+ *
+ * @internal
  *
  * @since 2.0.0
  *
@@ -36,6 +40,8 @@ function is_backend() {
 /**
  * Check if backwards compatability is needed.
  *
+ * @internal
+ *
  * @since 2.0.0
  *
  * @uses Registry::get() to get the backwards_compatible option.
@@ -52,6 +58,8 @@ function backwards_compatible() {
 
 /**
  * Convert $language passed into proper object format.
+ *
+ * @internal
  *
  * @since 2.0.0
  *
@@ -73,6 +81,8 @@ function is_language( &$language ) {
 
 /**
  * Sanitize a tag name (lowercase alpha-numeric with optional underscores).
+ *
+ * @internal
  *
  * @since 2.0.0
  *
@@ -198,6 +208,8 @@ function _ax( $array, $context ) {
 
 /**
  * Triggers the standard "Cheatin’ uh?" wp_die message.
+ *
+ * @internal
  *
  * @since 2.0.0
  */

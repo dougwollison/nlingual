@@ -19,6 +19,8 @@ namespace nLingual;
  * @package nLingual
  * @subpackage Utilities
  *
+ * @internal
+ *
  * @since 2.0.0
  */
 
@@ -27,6 +29,8 @@ trait Shared_Filters {
 	 * Replace a post ID with it's translation for the current language.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @api
 	 *
 	 * @uses Registry::current_language() to get the current language.
 	 * @uses Translator::get_object_translation() to get the translated post ID.

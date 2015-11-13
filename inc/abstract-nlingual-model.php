@@ -18,6 +18,8 @@ namespace nLingual;
  * @package nLingual
  * @subpackage Abstracts
  *
+ * @internal
+ *
  * @since 2.0.0
  */
 
@@ -32,13 +34,9 @@ abstract class Model {
 	 * @param array $values The property values.
 	 */
 	public function __construct( $values ) {
-		$values = wp_parse_args( $values, static::$properties );
-
 		// Set all values provided
-		foreach ( static::$properties as $key => $default ) {
-			if ( isset( $values[ $key ] ) ) {
-				$this->$key = $values[ $key ];
-			}
+		foreach ( $values as $key => $value ) {
+			$this->properties[ $key ] = $value;
 		}
 	}
 
@@ -52,8 +50,8 @@ abstract class Model {
 	 * @return mixed The value of the property.
 	 */
 	public function __get( $name ) {
-		if ( property_exists( $this, $name ) ) {
-			return $this->$name;
+		if ( isset( $this->properties[ $name ] ) ) {
+			return $this->properties[ $name ];
 		}
 		return null;
 	}
@@ -67,14 +65,16 @@ abstract class Model {
 	 * @param mixed  $value The new value of the property.
 	 */
 	public function __set( $name, $value ) {
-		if ( property_exists( $this, $name ) ) {
-			$this->$name = $value;
+		if ( isset( $this->properties[ $name ] ) ) {
+			$this->properties[ $name ] = $value;
 		}
 		return null;
 	}
 
 	/**
 	 * Convert to a simple array.
+	 *
+	 * @api
 	 *
 	 * @since 2.0.0
 	 *
@@ -83,12 +83,6 @@ abstract class Model {
 	 * @return array An associative array of properites/values.
 	 */
 	public function export() {
-		$data = array();
-
-		foreach ( static::$properties as $key => $default ) {
-			$data[ $key ] = $this->$key;
-		}
-
-		return $data;
+		return $this->properties;
 	}
 }

@@ -18,6 +18,8 @@ use nLingual\Migrator as Migrator;
 /**
  * Print notice offering migration of localizable terms if applicable.
  *
+ * @internal
+ *
  * @since 2.0.0
  *
  * @global wpdb $wpdb The database abstraction class instance.
@@ -61,6 +63,8 @@ add_action( 'admin_notices', 'nl_compatibility_convert_terms_notice' );
  * Proceed to convert applicable terms to the new format.
  *
  * Also enable their respective taxonomies if not already.
+ *
+ * @internal
  *
  * @since 2.0.0
  *
@@ -144,6 +148,8 @@ add_action( 'admin_init', 'nl_compatibility_convert_terms_process' );
 if ( isset( $_GET['notice'] ) && $_GET['notice'] == 'nl-terms-converted' ) :
 	/**
 	 * Print notice confirming the terms were converted.
+	 *
+	 * @internal
 	 *
 	 * @since 2.0.0
 	 */

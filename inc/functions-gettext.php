@@ -7,6 +7,8 @@
  * @package nLingual
  * @subpackage i18n
  *
+ * @api
+ *
  * @since 2.0.0
  */
 

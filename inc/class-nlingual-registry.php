@@ -18,6 +18,8 @@ namespace nLingual;
  * @package nLingual
  * @subpackage Helpers
  *
+ * @api
+ *
  * @since 2.0.0
  */
 
@@ -29,9 +31,9 @@ class Registry {
 	/**
 	 * Internal cache array.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var array
 	 */
@@ -40,9 +42,9 @@ class Registry {
 	/**
 	 * Language switching log.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var array
 	 */
@@ -51,9 +53,9 @@ class Registry {
 	/**
 	 * The current language id.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var int
 	 */
@@ -62,9 +64,9 @@ class Registry {
 	/**
 	 * The default language id.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var int
 	 */
@@ -73,9 +75,9 @@ class Registry {
 	/**
 	 * The show all languages for objects option.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var bool
 	 */
@@ -84,9 +86,9 @@ class Registry {
 	/**
 	 * The localize date format string option.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var bool
 	 */
@@ -95,9 +97,9 @@ class Registry {
 	/**
 	 * The skip default language localizing option.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var bool
 	 */
@@ -106,9 +108,9 @@ class Registry {
 	/**
 	 * The patch WP_Locale option.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var bool
 	 */
@@ -117,20 +119,20 @@ class Registry {
 	/**
 	 * The post language override option.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var bool
 	 */
 	protected static $post_language_override;
 
 	/**
-	 * The backwards compatibility option
+	 * The backwards compatibility option.
+	 *
+	 * @internal
 	 *
 	 * @since 2.0.0
-	 *
-	 * @access protected (static)
 	 *
 	 * @var bool
 	 */
@@ -139,9 +141,9 @@ class Registry {
 	/**
 	 * The language query var.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var string
 	 */
@@ -150,9 +152,9 @@ class Registry {
 	/**
 	 * The URL redirection method.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var string
 	 */
@@ -161,9 +163,9 @@ class Registry {
 	/**
 	 * The supported post types.
 	 *
-	 * @since 2.0.0
+	 * @internal
 	 *
-	 * @access protected (static)
+	 * @since 2.0.0
 	 *
 	 * @var array
 	 */
@@ -174,8 +176,6 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected (static)
-	 *
 	 * @var array
 	 */
 	protected static $taxonomies = array();
@@ -184,8 +184,6 @@ class Registry {
 	 * The list of localizable features.
 	 *
 	 * @since 2.0.0
-	 *
-	 * @access protected (static)
 	 *
 	 * @var array
 	 */
@@ -196,8 +194,6 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected (static)
-	 *
 	 * @var array
 	 */
 	protected static $sync_rules = array();
@@ -207,8 +203,6 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected (static)
-	 *
 	 * @var array
 	 */
 	protected static $clone_rules = array();
@@ -217,8 +211,6 @@ class Registry {
 	 * The language directory.
 	 *
 	 * @since 2.0.0
-	 *
-	 * @access protected (static)
 	 *
 	 * @var Languages
 	 */
@@ -374,6 +366,8 @@ class Registry {
 	/**
 	 * Get the sync or cloning rules for a specific object.
 	 *
+	 * @internal
+	 *
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to retrive the appropriate rules array.
@@ -413,6 +407,8 @@ class Registry {
 	/**
 	 * Get the cached data for an object.
 	 *
+	 * @internal
+	 *
 	 * @since 2.0.0
 	 *
 	 * @see Registry::$cache for the property that store the data.
@@ -440,6 +436,8 @@ class Registry {
 	/**
 	 * Store the cached data for an object.
 	 *
+	 * @internal
+	 *
 	 * @since 2.0.0
 	 *
 	 * @see Registry::$cache for the property that store the data.
@@ -461,6 +459,8 @@ class Registry {
 
 	/**
 	 * Delete the cached data for an object.
+	 *
+	 * @internal
 	 *
 	 * @since 2.0.0
 	 *
@@ -517,6 +517,8 @@ class Registry {
 	/**
 	 * Check if localizable feature is supported.
 	 *
+	 * @internal
+	 *
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::$localizables to get the localizables settings.
@@ -543,6 +545,8 @@ class Registry {
 
 	/**
 	 * Check if a specific location is localizable.
+	 *
+	 * @internal
 	 *
 	 * @since 2.0.0
 	 *
@@ -581,6 +585,8 @@ class Registry {
 	 *
 	 * Will return true if at least 1 is supported.
 	 *
+	 * @internal
+	 *
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::$post_types to get the post_types list.
@@ -602,6 +608,8 @@ class Registry {
 	 * Test if the provided taxonomy(ies) are registered for translation.
 	 *
 	 * Will return true if at least 1 is supported.
+	 *
+	 * @internal
 	 *
 	 * @since 2.0.0
 	 *
@@ -626,6 +634,8 @@ class Registry {
 
 	/**
 	 * Load the relevant options.
+	 *
+	 * @internal
 	 *
 	 * @since 2.0.0
 	 *

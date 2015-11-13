@@ -19,7 +19,18 @@ namespace nLingual;
  * @package nLingual
  * @subpackage Tools
  *
+ * @api
+ *
  * @since 2.0.0
+ *
+ * @method bool|Language get_*_language() get an object's language.
+ * @method bool          set_*_language() set an object's language.
+ * @method bool          delete_*_language() delete an object's language.
+ * @method bool|int      get_*_translation() get an object's translation.
+ * @method bool          set_*_translation() set an object's translation.
+ * @method bool          delete_*_translation() delete an object's translation.
+ * @method bool|array    get_*_translations() get an object's translations.
+ * @method bool          set_*_translations() set an object's translations.
  */
 
 class Translator {
@@ -29,6 +40,8 @@ class Translator {
 
 	/**
 	 * Utility; get a translation group ID for an object.
+	 *
+	 * @internal
 	 *
 	 * @since 2.0.0
 	 *
@@ -40,7 +53,7 @@ class Translator {
 	 *
 	 * @return int The existing or new group ID.
 	 */
-	protected static function _translation_group_id( $type = null, $id = null, $inc = true ) {
+	protected static function translation_group_id( $type = null, $id = null, $inc = true ) {
 		global $wpdb;
 
 		// Attempt to retrieve the group ID for the object if present
@@ -73,7 +86,7 @@ class Translator {
 	 * @param string $type The type of object.
 	 * @param int    $id   The ID of the object.
 	 *
-	 * @return Language The language of the object.
+	 * @return bool|Language The language of the object (false if not found).
 	 */
 	public static function get_object_language( $type, $id ) {
 		global $wpdb;
@@ -104,7 +117,7 @@ class Translator {
 	 *
 	 * @uses Translator::delete_object_language() to allow for replacement.
 	 * @uses Utilities::_language() to ensure $language is a Language object.
-	 * @uses Translator::_translation_group_id() to generate a new group ID.
+	 * @uses Translator::translation_group_id() to generate a new group ID.
 	 * @uses Registry::cache_set() to update the object's cached language result.
 	 *
 	 * @param string $type     The type of object.
@@ -127,7 +140,7 @@ class Translator {
 		}
 
 		// Get a group ID for the object
-		$group_id = static::_translation_group_id( $type, $id );
+		$group_id = static::translation_group_id( $type, $id );
 
 		// Check if a counterpart for the language in this group exists
 		$language_exists = $wpdb->get_var( $wpdb->prepare( "
@@ -136,7 +149,7 @@ class Translator {
 		", $group_id, $language->id ) );
 		if ( $language_exists ) {
 			// Get a new group ID if so
-			$group_id = static::_translation_group_id();
+			$group_id = static::translation_group_id();
 		}
 
 		// Insert a new one
@@ -313,7 +326,7 @@ class Translator {
 	 * @since 2.0.0
 	 *
 	 * @uses is_language() to validate the language and get the Language object.
-	 * @uses Translator::_translation_group_id() to get the existing group ID.
+	 * @uses Translator::translation_group_id() to get the existing group ID.
 	 * @uses Translator::get_object_language() to get the current language of the object.
 	 * @uses Translator::unlink_object_translation() if a translation is to be unset.
 	 *
@@ -329,7 +342,7 @@ class Translator {
 		global $wpdb;
 
 		// Get the group ID for this object
-		$group_id = static::_translation_group_id( $type, $id, false );
+		$group_id = static::translation_group_id( $type, $id, false );
 
 		// Also get the language for this object
 		$the_language = static::get_object_language( $type, $id );
@@ -407,7 +420,7 @@ class Translator {
 	 * @since 2.0.0
 	 *
 	 * @uses is_language() to validate the language and get the Language object.
-	 * @uses Translator::_translation_group_id() to get the group ID for the object
+	 * @uses Translator::translation_group_id() to get the group ID for the object
 	 *                                     as well a new one for it's sister.
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
@@ -425,10 +438,10 @@ class Translator {
 		}
 
 		// Get the group ID for this object
-		$group_id = static::_translation_group_id( $type, $id );
+		$group_id = static::translation_group_id( $type, $id );
 
 		// Get a new group ID for the sister object
-		$new_group_id = static::_translation_group_id();
+		$new_group_id = static::translation_group_id();
 
 		// Update the group ID for the translation
 		$wpdb->update(
@@ -443,6 +456,8 @@ class Translator {
 			array( '%d' ),
 			array( '%d', '%d' )
 		);
+
+		return true;
 	}
 
 	// =========================

@@ -19,7 +19,19 @@ namespace nLingual;
  * @package nLingual
  * @subpackage Structures
  *
+ * @api
+ *
  * @since 2.0.0
+ *
+ * @property int    $id          The ID of the language for the database.
+ * @property bool   $active      The active status of the language.
+ * @property string $slug        The slug of the language for URL use.
+ * @property string $system_name The name of the language within the admin.
+ * @property string $native_name The native name of the language.
+ * @property string $short_name  A shorthand name for the language.
+ * @property string $locale_name The local to use for this language (i.e. MO file).
+ * @property string $iso_code    The ISO 639-1 code for the language.
+ * @property string $list_order  The disired order of the language.
  */
 
 class Language extends Model {
@@ -28,114 +40,15 @@ class Language extends Model {
 	// =========================
 
 	/**
-	 * The ID of the language for the database
+	 * The list of properties for the language (with defaults).
+	 *
+	 * @internal
 	 *
 	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var int
-	 */
-	protected $id;
-
-	/**
-	 * The active status of the language
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var bool
-	 */
-	protected $active;
-
-	/**
-	 * The slug of the language for URL use.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var string
-	 */
-	protected $slug;
-
-	/**
-	 * The name of the language within the admin.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var string
-	 */
-	protected $system_name;
-
-	/**
-	 * The native name of the language.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var string
-	 */
-	protected $native_name;
-
-	/**
-	 * A shorthand name for the language.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var string
-	 */
-	protected $short_name;
-
-	/**
-	 * The local to use for this language (i.e. MO file)
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var string
-	 */
-	protected $locale_name;
-
-	/**
-	 * The ISO 639-1 code for the language.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var string
-	 */
-	protected $iso_code;
-
-	/**
-	 * The disired order of the language.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var int
-	 */
-	protected $list_order;
-
-	/**
-	 * The whitelist of properties and default values they should have.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
 	 *
 	 * @var array
 	 */
-	protected static $properties = array(
+	protected $properties = array(
 		'id'          => 0,
 		'slug'        => '',
 		'system_name' => '',
@@ -155,6 +68,10 @@ class Language extends Model {
 	 * Setup/sanitize the property values.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @see Language::$properties for a list of allowed values.
+	 *
+	 * @uses Model::__construct() to setup the values.
 	 *
 	 * @param array $values The property values.
 	 */
