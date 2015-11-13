@@ -32,7 +32,7 @@ namespace nLingual;
  * @property string $field_id The ID of the field the string is for.
  */
 
-class LocalizerString extends Model {
+class Localizer_String extends Model {
 	// =========================
 	// ! Properties
 	// =========================

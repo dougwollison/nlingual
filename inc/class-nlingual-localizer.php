@@ -123,7 +123,7 @@ class Localizer extends Handler {
 	 *
 	 * @param string $id The ID of the string to retrieve.
 	 *
-	 * @return LocalizerString|bool The retreived string, FALSE on failure.
+	 * @return Localizer_String|bool The retreived string, FALSE on failure.
 	 */
 	public static function get_string( $id ) {
 		if ( isset( static::$registered_strings[ $id ] ) ) {
@@ -211,7 +211,7 @@ class Localizer extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @see LocalizerString::$properties for a list of valid values for $options.
+	 * @see Localizer_String::$properties for a list of valid values for $options.
 	 *
 	 * @uses Localizer::$registered_strings to store the new string by ID.
 	 * @uses Localizer::$strings_by_key to store the new string by key.
@@ -220,7 +220,7 @@ class Localizer extends Handler {
 	 * @param string $id      A unique ID for the strings.
 	 * @param array  $options The options for the string.
 	 *
-	 * @return LocalizerString the registered string object.
+	 * @return Localizer_String the registered string object.
 	 */
 	public static function register_string( $id, array $options ) {
 		// Abort if the screen isn't set
@@ -229,7 +229,7 @@ class Localizer extends Handler {
 		}
 
 		// Create a new string object from the arguments
-		$string = new LocalizerString( $id, $options );
+		$string = new Localizer_String( $id, $options );
 
 		// Add to the registry
 		static::$registered_strings[ $id ] = $string;
