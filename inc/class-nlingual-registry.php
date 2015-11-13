@@ -665,7 +665,7 @@ class Registry {
 		static::$patch_wp_locale        = (bool) get_option( 'nlingual_patch_wp_locale', 0 );
 		static::$backwards_compatible   = (bool) get_option( 'nlingual_backwards_compatible', 0 );
 		static::$query_var              = get_option( 'nlingual_query_var', 'nl_language' );
-		static::$redirection_method     = get_option( 'nlingual_redirection_method', NL_REDIRECT_USING_GET );
+		static::$redirection_method     = get_option( 'nlingual_redirection_method', 'get' );
 
 		// Load complex options
 		static::$post_types   = get_option( 'nlingual_post_types', array() );

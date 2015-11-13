@@ -19,9 +19,6 @@ define( 'NL_ORIGINAL_URL', ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTT
 
 // Flags
 define( 'NL_UNLOCALIZED', 'NL_UNLOCALIZED' );
-define( 'NL_REDIRECT_USING_GET', 'NL_REDIRECT_USING_GET' );
-define( 'NL_REDIRECT_USING_PATH', 'NL_REDIRECT_USING_PATH' );
-define( 'NL_REDIRECT_USING_DOMAIN', 'NL_REDIRECT_USING_DOMAIN' );
 
 // Load includes
 require( NL_DIR . '/inc/autoloader.php' );

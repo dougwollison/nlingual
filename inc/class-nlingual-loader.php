@@ -111,7 +111,7 @@ class Loader extends Handler {
 		add_option( 'nlingual_localize_date', 0 );
 		add_option( 'nlingual_skip_default_l10n', 0 );
 		add_option( 'nlingual_query_var', 'nl_language' );
-		add_option( 'nlingual_redirection_method', NL_REDIRECT_USING_GET );
+		add_option( 'nlingual_redirection_method', 'get' );
 		add_option( 'nlingual_patch_wp_locale', 0 );
 		add_option( 'nlingual_post_language_override', 0 );
 		add_option( 'nlingual_post_types', array() );

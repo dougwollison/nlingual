@@ -312,29 +312,29 @@ class Manager extends Handler {
 		$domain = parse_url( home_url(), PHP_URL_HOST );
 
 		// The default language URL samples
-		$url_format = '<span class="nl-preview nl-url-preview %s" data-included="%s" data-excluded="%s"></span>';
+		$url_format = '<span class="nl-preview nl-url-preview nl-redirect-%s" data-included="%s" data-excluded="%s"></span>';
 		$url_previews =
-			sprintf( $url_format, NL_REDIRECT_USING_GET, "$domain/sample-page/?%v=%l", "$domain/sample-page/" ).
-			sprintf( $url_format, NL_REDIRECT_USING_PATH, "$domain/%l/sample-page/", "$domain/sample-page/" ).
-			sprintf( $url_format, NL_REDIRECT_USING_DOMAIN, "%l.$domain/sample-page/", "$domain/sample-page/" );
+			sprintf( $url_format, 'get', "$domain/sample-page/?%v=%l", "$domain/sample-page/" ).
+			sprintf( $url_format, 'path', "$domain/%l/sample-page/", "$domain/sample-page/" ).
+			sprintf( $url_format, 'domain', "%l.$domain/sample-page/", "$domain/sample-page/" );
 
 		// The redirection method previews
-		$redirect_format = '<span class="nl-preview nl-redirect-preview %s" data-format="%s"></span>';
+		$redirect_format = '<span class="nl-preview nl-redirect-preview nl-redirect-%s" data-format="%s"></span>';
 		$redirect_previews =
-			sprintf( $redirect_format, NL_REDIRECT_USING_GET, "$domain/?%v=%l" ).
-			sprintf( $redirect_format, NL_REDIRECT_USING_PATH, "$domain/%l/" ).
-			sprintf( $redirect_format, NL_REDIRECT_USING_DOMAIN, "%l.$domain" );
+			sprintf( $redirect_format, 'get', "$domain/?%v=%l" ).
+			sprintf( $redirect_format, 'path', "$domain/%l/" ).
+			sprintf( $redirect_format, 'domain', "%l.$domain" );
 
 		// The post language override URL samples
-		$override_format = '<span class="nl-preview nl-override-preview %s" data-on="%s" data-off="%s"></span>';
+		$override_format = '<span class="nl-preview nl-override-preview nl-redirect-%s" data-on="%s" data-off="%s"></span>';
 		$override_previews =
-			sprintf( $override_format, NL_REDIRECT_USING_GET,
+			sprintf( $override_format, 'get',
 				"$domain/french-page/?%v=en > $domain/french-page/?%v=fr",
 				"$domain/french-page/?%v=en > $domain/english-page/?%v=en" ).
-			sprintf( $override_format, NL_REDIRECT_USING_PATH,
+			sprintf( $override_format, 'path',
 				"$domain/en/french-page/ > $domain/fr/french-page/",
 				"$domain/en/french-page/ > $domain/en/english-page/" ).
-			sprintf( $override_format, NL_REDIRECT_USING_DOMAIN,
+			sprintf( $override_format, 'domain',
 				"en.$domain/french-page/ > fr.$domain/french-page/" ,
 				"en.$domain/french-page/ > en.$domain/english-page/" );
 
@@ -384,9 +384,9 @@ class Manager extends Handler {
 					'<br /> <span class="nl-previews">' . _f( 'Preview: %s', $redirect_previews ) . '</span>',
 				'type'  => 'radiolist',
 				'data'  => array(
-					NL_REDIRECT_USING_GET    => __( 'HTTP query' ),
-					NL_REDIRECT_USING_PATH   => __( 'Path prefix' ),
-					NL_REDIRECT_USING_DOMAIN => __( 'Subdomain' ),
+					'get'    => __( 'HTTP query' ),
+					'path'   => __( 'Path prefix' ),
+					'domain' => __( 'Subdomain' ),
 				),
 			),
 			'post_language_override' => array(

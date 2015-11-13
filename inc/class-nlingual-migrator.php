@@ -213,7 +213,6 @@ class Migrator {
 			'delete_sisters'    => 'nlingual_delete_sisters',
 			'get_var'           => 'nlingual_query_var',
 			'l10n_dateformat'   => 'nlingual_localize_date',
-			'method'            => 'nlingual_redirection_method',
 			'post_types'        => 'nlingual_post_types',
 			'skip_default_l10n' => 'nlingual_skip_default_l10n',
 			'separator'         => 'nlingual-old_separator',
@@ -222,6 +221,12 @@ class Migrator {
 			if ( isset( $options[ $oldname ] ) ) {
 				update_option( $newname, $options[ $oldname ] );
 			}
+		}
+
+		// Convert the redirection method
+		if ( isset( $options['method'] ) ) {
+			$method = strtolower( str_replace( 'NL_REDIRECT_USING_', '', $method ) );
+			update_option( 'nlingual_redirection_method', $method );
 		}
 
 		// Automatically set options that weren't present in old version

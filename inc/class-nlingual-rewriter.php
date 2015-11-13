@@ -239,7 +239,7 @@ class Rewriter {
 
 		// Try using the desired method
 		switch( Registry::get( 'redirection_method' ) ) {
-			case NL_REDIRECT_USING_DOMAIN:
+			case 'domain':
 				// Check if a language slug is present, and if it's an existing language
 				if ( preg_match( '#^([a-z]{2})\.#i', $host, $matches ) ) {
 					// Update language with the matched
@@ -250,7 +250,7 @@ class Rewriter {
 				}
 				break;
 
-			case NL_REDIRECT_USING_PATH:
+			case 'path':
 				// Get the path of the home URL, with trailing slash
 				$home = trailingslashit( parse_url( $home, PHP_URL_PATH ) );
 
