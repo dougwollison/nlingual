@@ -116,11 +116,19 @@ class Frontend extends Handler {
 			$language = $language;
 		}
 
-		// Record the requested language
-		define( 'NL_REQUESTED_LANGUAGE', $language ? $language->slug : false );
-
-		// If the language couldn't be detected, try the browsers accepted language
-		if ( ! $language ) {
+		// Log the requested language if found
+		if ( $language ) {
+			/**
+			 * Stores the language requested by the URL.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @var bool|int
+			 */
+			define( 'NL_REQUESTED_LANGUAGE', $language->id );
+		}
+		// Otherwise, try the browser's accepted language
+		else {
 			$accepted_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
 
 			// Split into the language list
@@ -132,6 +140,16 @@ class Frontend extends Handler {
 
 				// Stop at the first matched language found
 				if ( $language = Registry::languages()->match_tag( $language_tag ) ) {
+					/**
+					 * Stores the language detected from the browser.
+					 *
+					 * @since 2.0.0
+					 *
+					 * @var bool|int
+					 */
+					define( 'NL_DETECTED_LANGUAGE', $language );
+
+					// We're done here
 					break;
 				}
 			}
@@ -152,6 +170,8 @@ class Frontend extends Handler {
 	 *
 	 * @global WP_Query $wp_query The main WP_Query instance.
 	 *
+	 * @uses NL_REQUESTED_LANGUAGE to check if the language was specifically requested.
+	 * @uses NL_ORIGINAL_URL to compare the redirect URL with the original, to prevent loops.
 	 * @uses Registry::current_language() to get the current language object.
 	 * @uses Translator::get_post_language() to get the language of the queried post.
 	 * @uses Translator::get_post_translation() to find the post's translation.
@@ -177,8 +197,8 @@ class Frontend extends Handler {
 
 		// If the front page, check if the URL is correct
 		if ( is_front_page() ) {
-			// If language is specified or skip is enabled (but not both) do nothing
-			if ( NL_REQUESTED_LANGUAGE xor Registry::get( 'skip_default_l10n' ) ) {
+			// If language is specified, or skip is enabled (but NOT both), do nothing
+			if ( defined( 'NL_REQUESTED_LANGUAGE' ) xor Registry::get( 'skip_default_l10n' ) ) {
 				return;
 			}
 
@@ -223,7 +243,7 @@ class Frontend extends Handler {
 			}
 		}
 		// Something else, but the language was requested (do nothing)
-		elseif ( NL_REQUESTED_LANGUAGE !== false ) {
+		elseif ( defined( 'NL_REQUESTED_LANGUAGE' ) ) {
 			return;
 		}
 
