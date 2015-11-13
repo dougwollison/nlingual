@@ -98,6 +98,9 @@ jQuery( function( $ ) {
 		$( '.nl-preview' ).trigger( 'nl:render' );
 	} );
 
+	// Default to GET version of previews
+	$( '.nl-preview' ).hide().filter( '.nl-redirect-get' ).show();
+
 	// Changing the method will change which previews are shown
 	$( 'input[name="nlingual_redirection_method"]' ).change( function() {
 		var method = $( this ).val();
@@ -108,7 +111,7 @@ jQuery( function( $ ) {
 		}
 
 		// Show the associated preview while hiding the others
-		$( '.nl-preview' ).hide().filter( '.' + method ).show();
+		$( '.nl-preview' ).hide().filter( '.nl-redirect-' + method ).show();
 	} ).change();
 
 	// =========================
