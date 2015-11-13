@@ -25,6 +25,10 @@ namespace nLingual;
  */
 
 class Localizer extends Handler {
+	// =========================
+	// ! Properties
+	// =========================
+
 	/**
 	 * The name of the class.
 	 *
@@ -41,51 +45,29 @@ class Localizer extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access protected (static)
 	 *
 	 * @var array
 	 */
 	protected static $registered_strings = array();
 
 	/**
-	 * A list of all taxonomies registered for localizing.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var array
-	 */
-	protected static $registered_taxonomies = array();
-
-	/**
 	 * An index of strings by key.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access protected (static)
 	 *
 	 * @var array
 	 */
 	protected static $strings_by_key = array();
 
 	/**
-	 * An index of strings by type.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @access protected
-	 *
-	 * @var array
-	 */
-	protected static $strings_by_type = array( 'option' => array() );
-
-	/**
 	 * An index of strings by screen they are to appear on based on property.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access protected (static)
 	 *
 	 * @var array
 	 */
@@ -96,7 +78,7 @@ class Localizer extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access protected (static)
 	 *
 	 * @var array
 	 */
@@ -107,7 +89,7 @@ class Localizer extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access protected (static)
 	 *
 	 * @var int
 	 */
@@ -118,7 +100,7 @@ class Localizer extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access protected (static)
 	 *
 	 * @var int
 	 */
@@ -237,6 +219,10 @@ class Localizer extends Handler {
 	 *
 	 * @see LocalizableString::$properties for a list of valid values for $options.
 	 *
+	 * @uses Localizer::$registered_strings to store the new string by ID.
+	 * @uses Localizer::$strings_by_key to store the new string by key.
+	 * @uses Localizer::$strings_by_screen to store the new string by screen.
+	 *
 	 * @param string $id      A unique ID for the strings.
 	 * @param array  $options The options for the string.
 	 *
@@ -259,12 +245,6 @@ class Localizer extends Handler {
 			static::$strings_by_key[ $string->key ] = array();
 		}
 		static::$strings_by_key[ $string->key ][] = $string;
-
-		// Add to the type index
-		if ( ! isset( static::$strings_by_type[ $string->type ] ) ) {
-			static::$strings_by_type[ $string->type ] = array();
-		}
-		static::$strings_by_type[ $string->type ][] = $string;
 
 		// Add to the screen index
 		list( $property, $match ) = $string->screen;
@@ -343,9 +323,6 @@ class Localizer extends Handler {
 			'title'    => __( 'Description' ),
 			'input'    => 'textarea',
 		) );
-
-		// Add the taxonomy to the registered list
-		static::$registered_taxonomies[] = $taxonomy;
 
 		// Add the filters to handle it (frontend only)
 		if ( ! is_backend() ) {
@@ -510,6 +487,7 @@ class Localizer extends Handler {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
+	 * @uses Localizer::$strings_by_key to check if any strings are registered under this key.
 	 * @uses Registry::languages() to fill out empty slots for each language as needed.
 	 *
 	 * @param string $key       The string key to search for.
@@ -554,6 +532,8 @@ class Localizer extends Handler {
 	 * @since 2.0.0
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @uses Localizer::$strings_by_key to check if any strings are registered under this key.
 	 *
 	 * @param string $key         The string key to search for.
 	 * @param int    $language_id The language ID to save for.
@@ -641,11 +621,10 @@ class Localizer extends Handler {
 	 * @uses Localizer::get_string_value() to retrieve the localized value.
 	 *
 	 * @param object $term     The term to be localized.
-	 * @param string $taxonomy The term's taxonomy.
 	 *
 	 * @return object The term with localized name and description.
 	 */
-	public static function handle_localized_term( $term, $taxonomy ) {
+	public static function handle_localized_term( $term ) {
 		// Get the current language
 		$language = Registry::current_language();
 
@@ -658,6 +637,24 @@ class Localizer extends Handler {
 		}
 
 		return $term;
+	}
+
+	/**
+	 * Alias of handle_lcoalize_term() for a collection of terms.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Localizer::handle_localized_term() to handle each term.
+	 *
+	 * @param array $terms The list of terms to handle.
+	 *
+	 * @return array The modified list of terms.
+	 */
+	public static function handle_localized_terms( $terms ) {
+		foreach ( $terms as &$term ) {
+			$term = static::handle_localized_term( $term );
+		}
+		return $terms;
 	}
 
 	/**
@@ -687,20 +684,6 @@ class Localizer extends Handler {
 		// Store this value as the version for the default language
 		static::save_string_value( "term_name", $language->id, $term_id, $term->name );
 		static::save_string_value( "term_description", $language->id, $term_id, $term->description );
-	}
-
-	/**
-	 * Alias for handle_lcoalize_term() but for a collection of terms.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @see Localizer::handle_localized_term() for details.
-	 */
-	public static function handle_localized_terms( $terms, $taxonomy ) {
-		foreach ( $terms as &$term ) {
-			$term = static::handle_localized_term( $term, $taxonomy[0] );
-		}
-		return $terms;
 	}
 
 	/**
@@ -824,6 +807,7 @@ class Localizer extends Handler {
 	 * @global string $pagenow The current page slug.
 	 *
 	 * @uses Registry::languages() to get the available languages.
+	 * @uses Localizer::$registered_strings to loop through all registered strings.
 	 * @uses Localizer::save_string_value() to save the localized values.
 	 */
 	public static function save_localized_strings() {
@@ -905,6 +889,7 @@ class Localizer extends Handler {
 	 *
 	 * @uses Localizer::$current_strings to store the strings found.
 	 * @uses Localizer::get_strings_for_screen() to get the strings for the screen.
+	 * @uses Documenter::get_tab_content
 	 */
 	public static function setup_localized_strings() {
 		// Get the current screen
@@ -943,14 +928,8 @@ class Localizer extends Handler {
 		static::$current_strings = $strings;
 		static::$current_object_id = $object_id;
 
-		// Add the help tab to this screen if we can
-		if ( $content = Documenter::get_tab_content( 'localize-this' ) ) {
-			$screen->add_help_tab( array(
-				'id'      => 'nlingual-localize-this',
-				'title'   => __( 'Localize This' ),
-				'content' => $content,
-			) );
-		}
+		// Add the help tab to this screen
+		Documenter::setup_help_tabs( 'localizer' );
 	}
 
 	/**

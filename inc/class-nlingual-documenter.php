@@ -23,6 +23,10 @@ namespace nLingual;
  */
 
 class Documenter extends Handler {
+	// =========================
+	// ! Properties
+	// =========================
+
 	/**
 	 * The name of the class.
 	 *
@@ -80,6 +84,11 @@ class Documenter extends Handler {
 				'translation' => 'Languages & Translations',
 			),
 		),
+		'localizer' => array(
+			'tabs' => array(
+				'localize-this' => 'Localize This',
+			),
+		),
 	);
 
 	/**
@@ -119,7 +128,7 @@ class Documenter extends Handler {
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
-		static::add_action( 'admin_head', 'setup_help_tab' );
+		static::add_action( 'admin_head', 'setup_help_tabs', 10, 0 );
 	}
 
 	// =========================
@@ -204,25 +213,33 @@ class Documenter extends Handler {
 	// =========================
 
 	/**
-	 * Handle setup of the help tab for the current screen.
+	 * Setup the help tabs for the current screen.
+	 *
+	 * A specific tab set ID can be specified, otherwise, it will
+	 * search for a tab set registered already for the screen.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @uses Documenter::$registered_screens to get the tab set ID.
 	 * @uses Documenter::$directory to retrieve the help tab settings.
 	 * @uses Documenter::get_tab_content() to get the HTML for the tab.
+	 *
+	 * @param string $help_id Optional. The ID of the tabset to setup.
 	 */
-	public static function setup_help_tab() {
+	public static function setup_help_tabs( $help_id = null ) {
 		// Get the screen object
 		$screen = get_current_screen();
 
-		// Abort if no help tab is registered for this screen
-		if ( ! isset( static::$registered_screens[ $screen->id ] ) ) {
-			return;
-		}
+		// If no help tab ID is passed, see if one is registered for the screen.
+		if ( is_null( $help_id ) ) {
+			// Abort if no help tab is registered for this screen
+			if ( ! isset( static::$registered_screens[ $screen->id ] ) ) {
+				return;
+			}
 
-		// Get the help tabset
-		$help_id = static::$registered_screens[ $screen->id ];
+			// Get the help tabset
+			$help_id = static::$registered_screens[ $screen->id ];
+		}
 
 		// Fail if no matching help tab exists
 		if ( ! isset( static::$directory[ $help_id ] ) ) {
