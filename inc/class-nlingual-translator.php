@@ -602,6 +602,22 @@ class Translator {
 			if ( method_exists( $class, $method ) ) {
 				// Add the $type argument
 				array_unshift( $args, $type );
+
+				// If the second argument ($id in all cases) is an object, get the ID appropriately if possible.
+				$id = $args[1];
+				if ( is_object( $id ) ) {
+					switch ( $type ) {
+						case 'post' :
+						case 'user' :
+							$id = $id->ID;
+							break;
+						case 'term' :
+							$id = $id->term_id;
+							break;
+					}
+					$args[1] = $id;
+				}
+
 				return call_user_func_array( array( $class, $method ), $args );
 			}
 		}
