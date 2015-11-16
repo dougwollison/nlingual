@@ -23,13 +23,6 @@ namespace nLingual;
  * @api
  *
  * @since 2.0.0
- *
- * @property int    $id       The unique ID of the string.
- * @property string $key      The database key of the string.
- * @property string $type     The type of string, for reference purposes.
- * @property array  $screen   The screen the strings belong to (property/value pair to match).
- * @property string $field    The name of the field the string is for.
- * @property string $field_id The ID of the field the string is for.
  */
 
 class Localizer_String extends Model {
@@ -38,22 +31,70 @@ class Localizer_String extends Model {
 	// =========================
 
 	/**
-	 * The list of properties for the string (with defaults).
-	 *
-	 * @internal
+	 * The unique ID of the string.
 	 *
 	 * @since 2.0.0
 	 *
+	 * @access protected
+	 *
+	 * @var int
+	 */
+	protected $id;
+
+	/**
+	 * The database key of the string.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected
+	 *
+	 * @var string
+	 */
+	protected $key;
+
+	/**
+	 * The type of string, for reference purposes.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected
+	 *
+	 * @var string
+	 */
+	protected $type;
+
+	/**
+	 * The screen the strings belong to (property/value pair to match).
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected
+	 *
 	 * @var array
 	 */
-	protected $properties = array(
-		'id'          => '',
-		'key'         => null,
-		'type'        => 'option',
-		'screen'      => array(),
-		'field'       => null,
-		'field_id'    => null,
-	);
+	protected $screen;
+
+	/**
+	 * The name of the field the string is for.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected
+	 *
+	 * @var string
+	 */
+	protected $field;
+
+	/**
+	 * The ID of the field the string is for.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access protected
+	 *
+	 * @var string
+	 */
+	protected $field_id;
 
 	// =========================
 	// ! Methods

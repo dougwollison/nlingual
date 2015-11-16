@@ -36,39 +36,10 @@ abstract class Model {
 	public function __construct( $values ) {
 		// Set all values provided
 		foreach ( $values as $key => $value ) {
-			$this->properties[ $key ] = $value;
+			if ( property_exists( $this, $key ) ) {
+				$this->$key = $value;
+			}
 		}
-	}
-
-	/**
-	 * Public access to properties (retrieval).
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param string $name The name of the property being accessed.
-	 *
-	 * @return mixed The value of the property.
-	 */
-	public function __get( $name ) {
-		if ( isset( $this->properties[ $name ] ) ) {
-			return $this->properties[ $name ];
-		}
-		return null;
-	}
-
-	/**
-	 * Public access to properties (assignment).
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param string $name  The name of the property being change.
-	 * @param mixed  $value The new value of the property.
-	 */
-	public function __set( $name, $value ) {
-		if ( isset( $this->properties[ $name ] ) ) {
-			$this->properties[ $name ] = $value;
-		}
-		return null;
 	}
 
 	/**
@@ -83,6 +54,6 @@ abstract class Model {
 	 * @return array An associative array of properites/values.
 	 */
 	public function export() {
-		return $this->properties;
+		return get_object_vars( $this );
 	}
 }
