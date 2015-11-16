@@ -372,13 +372,12 @@ class Registry {
 	 *
 	 * @uses Registry::get() to retrive the appropriate rules array.
 	 *
-	 * @param string $rule_type      The type of rules to retrieve ('sync' or 'clone').
-	 * @param string $object_type    The type of object to get sync rules for.
-	 * @param string $object_subtype The subtype of the object.
+	 * @param string $rule_type   The type of rules to retrieve ('sync' or 'clone').
+	 * @param string $sections... Optional A list of indexes drilling down into the value.
 	 *
 	 * @return array The array of rules, empty if not found.
 	 */
-	public static function get_rules( $rule_type, $object_type, $object_subtype ) {
+	public static function get_rules( $rule_type ) {
 		$rules = Registry::get( $rule_type . '_rules' );
 
 		// Fail if no rules found
@@ -386,18 +385,28 @@ class Registry {
 			return array();
 		}
 
-		// Fail if the object type has no rules
-		if ( ! isset( $rules[ $object_type ] ) ) {
-			return array();
+		// Get the args as the sections map
+		$sections = func_get_args();
+		array_shift( $sections ); // Skip the first argment (list type)
+
+		// If no section list is present, return the rules
+		if ( ! $sections ) {
+			return $rules;
 		}
 
-		// Fail if the object subtype has no rules
-		if ( ! isset( $rules[ $object_type ][ $object_subtype ] ) ) {
-			return array();
+		// Loop through the sections list
+		foreach ( $sections as $section ) {
+			// Drill down if found
+			if ( isset( $rules[ $section ] ) ) {
+				$rules = $rules[ $section ];
+			}
+			// Abort and return empty array
+			else {
+				return array();
+			}
 		}
 
-		// Return the rules found
-		return $rules[ $object_type ][ $object_subtype ];
+		return $rules;
 	}
 
 	// =========================
