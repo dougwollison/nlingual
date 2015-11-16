@@ -147,7 +147,7 @@ class Frontend extends Handler {
 					 *
 					 * @var bool|int
 					 */
-					define( 'NL_DETECTED_LANGUAGE', $language );
+					define( 'NL_DETECTED_LANGUAGE', $language->id );
 
 					// We're done here
 					break;
@@ -547,7 +547,7 @@ class Frontend extends Handler {
 		}
 
 		// Add the join for the translations table
-		$clause .= " LEFT JOIN $wpdb->nl_translations ON ($wpdb->posts.ID = $wpdb->nl_translations.object_id AND $wpdb->nl_translations.object_type = 'post')";
+		$clause .= " LEFT JOIN $wpdb->nl_translations AS nl ON (p.ID = nl.object_id AND nl.object_type = 'post')";
 
 		return $clause;
 	}
@@ -583,7 +583,7 @@ class Frontend extends Handler {
 		}
 
 		// Add the language condition
-		$clause .= $wpdb->prepare( " AND $wpdb->nl_translations.language_id = %d", $language->id );
+		$clause .= $wpdb->prepare( " AND nl.language_id = %d", $language->id );
 
 		return $clause;
 	}
