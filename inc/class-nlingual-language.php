@@ -140,6 +140,15 @@ class Language extends Model {
 	 * @uses Model::__construct() to setup the values.
 	 *
 	 * @param array $values The property values.
+	 *		@option int    "id"          The ID of the language for the database.
+	 *		@option bool   "active"      The active status of the language.
+	 *		@option string "slug"        The slug of the language for URL use.
+	 *		@option string "system_name" The name of the language within the admin.
+	 *		@option string "native_name" The native name of the language.
+	 *		@option string "short_name"  A shorthand name for the language.
+	 *		@option string "locale_name" The local to use for this language (i.e. MO file).
+	 *		@option string "iso_code"    The ISO 639-1 code for the language.
+	 *		@option string "list_order"  The disired order of the language.
 	 */
 	public function __construct( $values ) {
 		// Setup the object with the provided values

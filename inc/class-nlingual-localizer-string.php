@@ -107,12 +107,15 @@ class Localizer_String extends Model {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @see Language::$properties for a list of allowed values.
-	 *
 	 * @uses Model::__construct() to setup the values.
 	 *
 	 * @param int   $id     The ID of the string.
 	 * @param array $values The property values.
+	 *		@option string "key"      The database key to store the string under.
+	 *		@option string "type"     The type of string.
+	 *		@option array  "screen"   The screen id or property/value pair.
+	 *		@option string "field"    The name of the field the string is tied to.
+	 *		@option string "field_id" The ID of the field the string is tied to.
 	 */
 	public function __construct( $id, $values ) {
 		$values['id'] = $id;
