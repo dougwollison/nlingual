@@ -224,6 +224,22 @@ class System extends Handler {
 			return;
 		}
 
+		/**
+		 * Short circuit the language assignment; setting the language manually.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param mixed    $pre_value The value to set for the query (NULL to proceed).
+		 * @param WP_Query $query     The query being modified.
+		 *
+		 * @return mixed The filtered $pre_value.
+		 */
+		$pre_value = apply_filters( 'nlingual_pre_set_queried_language', null, $query );
+		if ( ! is_null( $pre_value ) ) {
+			$query->set( $query_var, $pre_value );
+			return;
+		}
+
 		// If not the admin or some kind of posts feed, abort
 		if ( ! ( is_admin() || $query->is_home() || $query->is_archive() || $query->is_search() ) ) {
 			return;
@@ -324,7 +340,7 @@ class System extends Handler {
 		$all_languages = Registry::languages();
 
 		// Loop through each language specified and build the subclause
-		$subclause = array();
+		$subclauses = array();
 		foreach ( $languages as $language ) {
 			// Skip if blank
 			if ( $language === '' ) {
@@ -333,16 +349,19 @@ class System extends Handler {
 
 			// Check if the language specified is "None"
 			if ( $language === '0' ) {
-				$subclause[] = "$wpdb->nl_translations.language_id IS NULL";
+				$subclauses[] = "$wpdb->nl_translations.language_id IS NULL";
 			}
 			// Otherwise check if the language exists
 			elseif ( $language = $all_languages->get( $language ) ) {
-				$subclause[] = $wpdb->prepare( "$wpdb->nl_translations.language_id = %d", $language->id );
+				$subclauses[] = $wpdb->prepare( "$wpdb->nl_translations.language_id = %d", $language->id );
 			}
 		}
 
-		// Add the new clause
-		$clause .= " AND (" . implode( ' OR ', $subclause ) . ")";
+		// If any subclauses were made, add them
+		if ( $subclauses ) {
+			// Add the new clause
+			$clause .= " AND (" . implode( ' OR ', $subclauses ) . ")";
+		}
 
 		return $clause;
 	}
