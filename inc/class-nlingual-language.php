@@ -34,55 +34,55 @@ class Language extends Model {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access public
 	 *
 	 * @var int
 	 */
-	protected $id = '';
+	public $id = '';
 
 	/**
 	 * The active status of the language.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access public
 	 *
 	 * @var bool
 	 */
-	protected $active = '';
+	public $active = '';
 
 	/**
 	 * The slug of the language for URL use.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access public
 	 *
 	 * @var string
 	 */
-	protected $slug = '';
+	public $slug = '';
 
 	/**
 	 * The name of the language within the admin.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access public
 	 *
 	 * @var string
 	 */
-	protected $system_name = '';
+	public $system_name = '';
 
 	/**
 	 * The native name of the language.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access public
 	 *
 	 * @var string
 	 */
-	protected $native_name = '';
+	public $native_name = '';
 
 	/**
 	 * A shorthand name for the language.
@@ -91,40 +91,40 @@ class Language extends Model {
 	 *
 	 * @var string
 	 */
-	protected $short_name = '';
+	public $short_name = '';
 
 	/**
 	 * The local to use for this language (i.e. MO file).
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access public
 	 *
 	 * @var string
 	 */
-	protected $locale_name = '';
+	public $locale_name = '';
 
 	/**
 	 * The ISO 639-1 code for the language.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access public
 	 *
 	 * @var string
 	 */
-	protected $iso_code = '';
+	public $iso_code = '';
 
 	/**
 	 * The desired order of the language.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access public
 	 *
 	 * @var string
 	 */
-	protected $list_order = 0;
+	public $list_order = 0;
 
 	// =========================
 	// ! Methods

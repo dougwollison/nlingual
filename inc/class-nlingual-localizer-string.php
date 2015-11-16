@@ -35,66 +35,66 @@ class Localizer_String extends Model {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access public
 	 *
 	 * @var int
 	 */
-	protected $id;
+	public $id;
 
 	/**
 	 * The database key of the string.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access public
 	 *
 	 * @var string
 	 */
-	protected $key;
+	public $key;
 
 	/**
 	 * The type of string, for reference purposes.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access public
 	 *
 	 * @var string
 	 */
-	protected $type;
+	public $type;
 
 	/**
 	 * The screen the strings belong to (property/value pair to match).
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access public
 	 *
 	 * @var array
 	 */
-	protected $screen;
+	public $screen;
 
 	/**
 	 * The name of the field the string is for.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access public
 	 *
 	 * @var string
 	 */
-	protected $field;
+	public $field;
 
 	/**
 	 * The ID of the field the string is for.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @access protected
+	 * @access public
 	 *
 	 * @var string
 	 */
-	protected $field_id;
+	public $field_id;
 
 	// =========================
 	// ! Methods
