@@ -49,7 +49,7 @@ class Language extends Model {
 	 *
 	 * @var bool
 	 */
-	public $active = '';
+	public $active = false;
 
 	/**
 	 * The slug of the language for URL use.
