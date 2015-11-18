@@ -267,6 +267,9 @@ class Manager extends Handler {
 				}
 			}
 
+			// Sanitize the slug
+			$language['slug'] = sanitize_title( $language['slug'] );
+
 			// Default active to 0
 			$formats[] = '%d';
 			if ( isset( $language['active'] ) ) {
@@ -637,10 +640,10 @@ class Manager extends Handler {
 							<input type="text" name="nlingual_languages[%id%][locale_name]" value="%locale_name%" />
 						</td>
 						<td class="nl-language-iso_code">
-							<input type="text" name="nlingual_languages[%id%][iso_code]" value="%iso_code%" />
+							<input type="text" name="nlingual_languages[%id%][iso_code]" value="%iso_code%" maxlength="2" />
 						</td>
 						<td class="nl-language-slug">
-							<input type="text" name="nlingual_languages[%id%][slug]" value="%slug%" />
+							<input type="text" name="nlingual_languages[%id%][slug]" value="%slug%" maxlength="100" />
 						</td>
 						<td class="nl-language-active">
 							<input type="checkbox" name="nlingual_languages[%id%][active]" value="1" />
