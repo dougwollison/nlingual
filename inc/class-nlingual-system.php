@@ -124,8 +124,9 @@ class System extends Handler {
 	 * @param bool     $lock     Wether or not to lock the selection.
 	 */
 	public static function set_language( Language $language, $lock = false ) {
+		// If locked, fail
 		if ( defined( 'NL_LANGUAGE_LOCKED' ) ) {
-			return;
+			return false;
 		}
 
 		Registry::set( 'current_language', $language->id );
@@ -134,6 +135,8 @@ class System extends Handler {
 			// Lock the language from being changed again
 			define( 'NL_LANGUAGE_LOCKED', true );
 		}
+
+		return true;
 	}
 
 	// =========================
