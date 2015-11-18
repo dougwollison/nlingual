@@ -252,10 +252,8 @@ class Rewriter {
 			return $url_data;
 		}
 
-		// Shortcuts to the necessary parts
-		$host =& $url_data['host'];
-		$path =& $url_data['path'];
-		$language =& $url_data['language'];
+		$host = $url_data['host'];
+		$path = $url_data['path'];
 
 		// Try using the desired method
 		switch( Registry::get( 'redirection_method' ) ) {
@@ -263,10 +261,10 @@ class Rewriter {
 				// Check if a language slug is present, and if it's an existing language
 				if ( preg_match( '#^([a-z]{2})\.#i', $host, $matches ) ) {
 					// Update language with the matched
-					$language = Registry::languages()->get( $matches[1] );
+					$url_data['language'] = Registry::languages()->get( $matches[1] );
 
 					// Remove the language slug from $host
-					$host = substr( $host, 3 );
+					$url_data['host'] = substr( $host, 3 );
 				}
 				break;
 
@@ -286,11 +284,13 @@ class Rewriter {
 				// Check if a language slug is present, and if it's an existing language
 				if ( preg_match( '#^([a-z]{2})(/|$)#i', $path, $matches ) ) {
 					// Update language with the matched
-					$language = Registry::languages()->get( $matches[1] );
+					$url_data['language'] = Registry::languages()->get( $matches[1] );
 
 					// Remove the language slug from $path
-					$path = substr( $path, 2 );
+					$path = substr( $path, 3 );
 				}
+
+				$url_data['path'] = $home . $path;
 				break;
 		}
 
