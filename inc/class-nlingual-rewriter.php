@@ -210,9 +210,9 @@ class Rewriter {
 	 * @since 2.0.0
 	 *
 	 * @uses NL_UNLOCALIZED to get the unlocalized home URL.
+	 * @uses Registry::languages() to get the active registered languages.
 	 * @uses Rewriter::parse_url() to parse the URL data.
 	 * @uses Registry::get() to get the query var and redirection method options.
-	 * @uses Registry::languages() to validate and retrieve the parsed language.
 	 *
 	 * @param mixed  $url_data     The URL string or parsed array to process.
 	 * @param string $single_field Optional A specific field to return instead of the full array.
@@ -224,6 +224,9 @@ class Rewriter {
 
 		// Get the home URL (unlocalized)
 		$home = get_home_url( null, '', NL_UNLOCALIZED );
+
+		// Get the list of active languages
+		$active_languages = Registry::languages( 'active' );
 
 		// Copy to $old_url_data for storage
 		$old_url_data = $url_data;
@@ -260,7 +263,7 @@ class Rewriter {
 			case 'domain':
 				// Get the subdirectory if found, see if it matches a langauge
 				if ( preg_match( '#^([a-z\-]+)\.(.+)#i', $host, $matches ) ) {
-					if ( $language = Registry::languages()->get( $matches[1] ) ) {
+					if ( $language = $active_languages->get( $matches[1] ) ) {
 						// Update language with the matched
 						$url_data['language'] = $language;
 
@@ -284,7 +287,7 @@ class Rewriter {
 
 				// Get the subdirectory if found, see if it matches a langauge
 				if ( preg_match( '#^([a-z\-]+)(?:/(.*)|$)#i', $path, $matches ) ) {
-					if ( $language = Registry::languages()->get( $matches[1] ) ) {
+					if ( $language = $active_languages->get( $matches[1] ) ) {
 						// Update language with the matched
 						$url_data['language'] = $language;
 
@@ -602,7 +605,7 @@ class Rewriter {
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current language.
-	 * @uses Registry::languages() to loop through all languages registered.
+	 * @uses Registry::languages() to loop through all active registered languages.
 	 * @uses Rewriter::localize_here() to get each URL.
 	 *
 	 * @param bool   $skip_current Wether or not to skip the current language.
@@ -617,7 +620,7 @@ class Rewriter {
 		$links = array();
 
 		// Loop through each language
-		foreach ( Registry::languages() as $language ) {
+		foreach ( Registry::languages( 'active' ) as $language ) {
 			// Skip if this is the current language and it's not wanted
 			if ( $skip_current && $language->id == $current_language ) {
 				continue;

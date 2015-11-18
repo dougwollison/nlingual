@@ -314,7 +314,7 @@ class Backend extends Handler {
 			<?php
 			$count = Translator::language_posts_count( 0, $post_type, $post_status );
 			printf( '<option value="%d" %s>%s (%s)</option>', 0, $current == '0' ? 'selected' : '', __( 'No Language' ), $count );
-			foreach ( Registry::languages() as $language ) {
+			foreach ( Registry::languages( 'active' ) as $language ) {
 				$selected = $current == $language->id;
 				$count = Translator::language_posts_count( $language->id, $post_type, $post_status );
 				printf( '<option value="%d" %s>%s (%d)</option>', $language->id, $selected ? 'selected' : '', $language->system_name, $count );
@@ -768,7 +768,7 @@ class Backend extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::languages() to loop through all registered languages.
+	 * @uses Registry::languages() to loop through all active registered languages.
 	 */
 	public static function do_nav_menu_meta_box() {
 		global $nav_menu_selected_id;
@@ -777,7 +777,7 @@ class Backend extends Handler {
 			<p><?php _e( 'These links will go to the respective language versions of the current URL.' );?></p>
 			<div id="tabs-panel-nl_language_link-all" class="tabs-panel tabs-panel-active">
 				<ul id="pagechecklist-most-recent" class="categorychecklist form-no-clear">
-				<?php $i = -1; foreach ( Registry::languages() as $language ):?>
+				<?php $i = -1; foreach ( Registry::languages( 'active' ) as $language ):?>
 					<li>
 						<label class="menu-item-title">
 							<input type="checkbox" class="menu-item-checkbox" name="menu-item[<?php echo $i?>][menu-item-object-id]" value="-1">
