@@ -214,11 +214,12 @@ class Rewriter {
 	 * @uses Registry::get() to get the query var and redirection method options.
 	 * @uses Registry::languages() to validate and retrieve the parsed language.
 	 *
-	 * @param mixed $url_data The URL string or parsed array to process.
+	 * @param mixed  $url_data     The URL string or parsed array to process.
+	 * @param string $single_field Optional A specific field to return instead of the full array.
 	 *
-	 * @return array An array of the resulting language and true hostname/path.
+	 * @return array|string An array of the resulting language and true hostname/path, or the requested field.
 	 */
-	public static function process_url( $url_data = null ) {
+	public static function process_url( $url_data = null, $single_field = false ) {
 		$language = null;
 
 		// Get the home URL (unlocalized)
@@ -304,6 +305,11 @@ class Rewriter {
 		 * @return array The filtered $url_data array.
 		 */
 		$url_data = apply_filters( 'nlingual_process_url', $url_data, $old_url_data );
+
+		// Return specified field if desired
+		if ( $single_field ) {
+			return isset( $url_data[ $single_field ] ) ? $url_data[ $single_field ] : null;
+		}
 
 		return $url_data;
 	}
