@@ -382,21 +382,30 @@ class Localizer extends Handler {
 	 * 		@option string       "field_id"    The id of the HTML input to target (Defaults to input name).
 	 */
 	public static function register_metadata( $meta_type, $meta_key, $args = array() ) {
-		// Guess the page if not set
-		if ( is_null( $page ) ) {
+		// Guess the screen based on available information
+		if ( ! isset( $args['screen'] ) ) {
+			// For posts, check for post_type
 			if ( $meta_type == 'post' ) {
-				$page = $meta_type;
-			} elseif ( $meta_type == 'term' ) {
-				$page = 'edit-tags';
-			} else {
-				$page = "{$meta_type}-edit";
+				if ( isset( $args['post_type'] ) ) {
+					$args['screen'] = array( 'post_type', $args['post_type'] );
+				} else {
+					$args['screen'] = array( 'base', 'post' );
+				}
+			}
+			// For terms, check for taxonomy
+			elseif ( $meta_type == 'post' ) {
+				if ( isset( $args['taxonomy'] ) ) {
+					$args['screen'] = array( 'taxonomy', $args['taxonomy'] );
+				} else {
+					$args['screen'] = array( 'base', 'edit-tags' );
+				}
 			}
 		}
 
 		// Build the args for the string and register it
 		$args = wp_parse_args( $args, array(
 			'type'   => "{$meta_type}meta",
-			'screen' => array( 'base', $page ),
+			'screen' => array( 'base', "edit-{$meta_type}" ),
 			'field'  => $meta_key,
 		) );
 
