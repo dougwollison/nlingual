@@ -53,7 +53,7 @@ class Frontend extends Handler {
 	 */
 	public static function register_hooks() {
 		// Language Detection/Redirection
-		static::add_action( 'plugins_loaded', 'detect_requested_language', 10, 0 );
+		static::add_action( 'plugins_loaded', 'detect_language', 10, 0 );
 		static::add_filter( 'wp', 'maybe_redirect_language', 10, 0 );
 		static::add_filter( 'redirect_canonical', 'localize_canonical', 10, 2 );
 
@@ -93,46 +93,29 @@ class Frontend extends Handler {
 	// =========================
 
 	/**
-	 * Detect the language based on the request.
+	 * Detect the language based on the request or browser info.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Rewriter::process_url() to parse the current page URL.
+	 * @uses Registry::languages() to validate and retrieve a detected language.
 	 * @uses Registry::get() to get the query var option.
-	 * @uses Registry::languages() to validate and retrieve the detected language.
+	 * @uses Rewriter::process_url() to parse the current page URL.
 	 * @uses System::set_language() to tentatively apply the detected language.
 	 */
-	public static function detect_requested_language() {
-		// Override with result of url_process() if it works
-		$processed_url = Rewriter::process_url();
-		if ( $processed_url['language'] ) {
-			$language = $processed_url['language'];
+	public static function detect_language() {
+		// First, check if the language was specified by the GET or POST parameters
+		if ( ( $query_var = Registry::get( 'query_var' ) ) && isset( $_REQUEST[ $query_var ] ) ) {
+			// Even if the language specified is invalid, don't fallback from here.
+			$language = Registry::languages()->get( $_REQUEST[ $query_var ] );
+			$mode = 'REQUESTED';
 		}
-
-		// Override with $query_var if present
-		$query_var = Registry::get( 'query_var' );
-		if ( $query_var && isset( $_REQUEST[ $query_var ] )
-		&& ( $language = Registry::languages()->get( $_REQUEST[ $query_var ] ) ) ) {
-			$language = $language;
+		// Failing that, get the language from the url
+		elseif ( $language = Rewriter::process_url( null, 'language' ) ) {
+			$mode = 'REQUESTED';
 		}
-
-		// Log the requested language if found
-		if ( $language ) {
-			/**
-			 * Stores the language requested by the URL.
-			 *
-			 * @since 2.0.0
-			 *
-			 * @var bool|int
-			 */
-			define( 'NL_REQUESTED_LANGUAGE', $language->id );
-		}
-		// Otherwise, try the browser's accepted language
+		// Fallback to finding the first match in the accepted languages list
 		else {
-			$accepted_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-
-			// Split into the language list
-			$accepted_languages = explode( ',', $accepted_language );
+			$accepted_languages = explode( ',', $_SERVER['HTTP_ACCEPT_LANGUAGE'] );
 			// Loop through them and get the first match
 			foreach ( $accepted_languages as $language_tag ) {
 				// Remove the quality flag
@@ -140,23 +123,23 @@ class Frontend extends Handler {
 
 				// Stop at the first matched language found
 				if ( $language = Registry::languages()->match_tag( $language_tag ) ) {
-					/**
-					 * Stores the language detected from the browser.
-					 *
-					 * @since 2.0.0
-					 *
-					 * @var bool|int
-					 */
-					define( 'NL_DETECTED_LANGUAGE', $language->id );
-
-					// We're done here
 					break;
 				}
 			}
+			$mode = 'ACCEPTED';
 		}
 
-		// Set the language if it worked, but don't lock it in
 		if ( $language ) {
+			/**
+			 * Stores the language originally requested or accepted.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @var bool|int
+			 */
+			define( "NL_{$mode}_LANGUAGE", $language->id );
+
+			// Set the language, but don't lock it
 			System::set_language( $language );
 		}
 	}
