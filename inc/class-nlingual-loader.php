@@ -159,7 +159,7 @@ class Loader extends Handler {
 				native_name varchar(200) DEFAULT '' NOT NULL,
 				short_name varchar(200) DEFAULT '' NOT NULL,
 				locale_name varchar(100) DEFAULT '' NOT NULL,
-				iso_code varchar(2) DEFAULT '' NOT NULL,
+				iso_code char(2) DEFAULT '' NOT NULL,
 				slug varchar(100) DEFAULT '' NOT NULL,
 				list_order int(11) unsigned NOT NULL,
 				active tinyint(1) NOT NULL DEFAULT '1',
