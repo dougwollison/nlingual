@@ -258,13 +258,15 @@ class Rewriter {
 		// Try using the desired method
 		switch( Registry::get( 'redirection_method' ) ) {
 			case 'domain':
-				// Check if a language slug is present, and if it's an existing language
-				if ( preg_match( '#^([a-z]{2})\.#i', $host, $matches ) ) {
-					// Update language with the matched
-					$url_data['language'] = Registry::languages()->get( $matches[1] );
+				// Get the subdirectory if found, see if it matches a langauge
+				if ( preg_match( '#^([a-z\-]+)\.(.+)#i', $host, $matches ) ) {
+					if ( $language = Registry::languages()->get( $matches[1] ) ) {
+						// Update language with the matched
+						$url_data['language'] = $language;
 
-					// Remove the language slug from $host
-					$url_data['host'] = substr( $host, 3 );
+						// Replace $path with the remainder of the URL
+						$url_data['host'] = $matches[2];
+					}
 				}
 				break;
 
@@ -275,19 +277,20 @@ class Rewriter {
 				// Subtract the home path from the start of the path provided
 				$path = substr( $path, strlen( $home ) );
 
-				// If there's nothing left of $path (e.g. if $path == $home) just use $home
+				// If there's nothing left of $path (e.g. if $path == $home) abort
 				if ( ! $path ) {
-					$path = $home;
 					break;
 				}
 
-				// Check if a language slug is present, and if it's an existing language
-				if ( preg_match( '#^([a-z]{2})(/|$)#i', $path, $matches ) ) {
-					// Update language with the matched
-					$url_data['language'] = Registry::languages()->get( $matches[1] );
+				// Get the subdirectory if found, see if it matches a langauge
+				if ( preg_match( '#^([a-z\-]+)(?:/(.*)|$)#i', $path, $matches ) ) {
+					if ( $language = Registry::languages()->get( $matches[1] ) ) {
+						// Update language with the matched
+						$url_data['language'] = $language;
 
-					// Remove the language slug from $path
-					$path = substr( $path, 3 );
+						// Replace $path with the remainder of the URL
+						$path = $matches[2];
+					}
 				}
 
 				$url_data['path'] = $home . $path;
