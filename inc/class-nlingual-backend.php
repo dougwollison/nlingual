@@ -210,7 +210,6 @@ class Backend extends Handler {
 	 * @uses Registry::is_feature_localizable() to check for support.
 	 * @uses Registry::languages() to loop through all registered languages.
 	 * @uses Registry::is_location_localizable() to check for support.
-	 * @uses Registry::cache_set() to store the original global value.
 	 *
 	 * @param string $type   The type of location being localized (singular).
 	 * @param string $global The global variable name to be edited.
@@ -220,7 +219,7 @@ class Backend extends Handler {
 		$list =& $$global;
 
 		// Cache the old version of the menus for reference
-		Registry::cache_set( 'vars', $global, $list );
+		wp_cache_set( $global, $list, 'nlingual:vars' );
 
 		// Abort if not supported
 		if ( ! Registry::is_feature_localizable( "{$type}_locations", $list ) ) {

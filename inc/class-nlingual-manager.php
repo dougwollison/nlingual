@@ -424,7 +424,6 @@ class Manager extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::cache_get() to retrieve original nav menus and sidebars.
 	 * @uses Settings::add_fields() to define the controls on the page.
 	 */
 	protected static function setup_localizables_fields() {
@@ -489,7 +488,7 @@ class Manager extends Handler {
 		 */
 
 		// Get the original list
-		$nav_locations = Registry::cache_get( 'vars', '_wp_registered_nav_menus' );
+		$nav_locations = wp_cache_get( '_wp_registered_nav_menus', 'nlingual:vars' );
 
 		// Add if we have any
 		if ( $nav_locations ) {
@@ -506,7 +505,7 @@ class Manager extends Handler {
 		 */
 
 		// Get the original list and convert to appropriate format
-		$sidebars = Registry::cache_get( 'vars', 'wp_registered_sidebars' );
+		$sidebars = wp_cache_get( 'wp_registered_sidebars', 'nlingual:vars' );
 		foreach ( $sidebars as &$sidebar ) {
 			$sidebar = $sidebar['name'];
 		}

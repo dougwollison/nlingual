@@ -432,8 +432,6 @@ class Localizer extends Handler {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
-	 * @uses Registry::cache_get() to check if the localized value has already been fetched.
-	 * @uses Registry::cache_set() to store the result for future reuse.
 	 *
 	 * @param string $key         The string key to search for.
 	 * @param int    $language_id The language ID to match.
@@ -452,7 +450,7 @@ class Localizer extends Handler {
 		$cache_id = "$key/$object_id/$language_id";
 
 		// Check if it's cached, return if so
-		if ( $cached = Registry::cache_get( 'localized', $cache_id ) ) {
+		if ( $cached = wp_cache_get( $cache_id, 'nlingual:localized' ) ) {
 			return $cached;
 		}
 
@@ -465,7 +463,7 @@ class Localizer extends Handler {
 		", $key, $language_id, $object_id ) );
 
 		// Add it to the cache
-		Registry::cache_set( 'localized', $cache_id, $value );
+		wp_cache_set( $cache_id, $value, 'nlingual:localized' );
 
 		return $value;
 	}

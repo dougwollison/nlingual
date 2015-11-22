@@ -332,13 +332,11 @@ class Rewriter {
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current Language object if not passed.
-	 * @uses Registry::cache_get() to check if this URL has already been localized.
 	 * @uses Rewriter::delocalize_url() to clean the URL for relocalizing if desired.
 	 * @uses Rewriter::process_url() to process the URL into it's components.
 	 * @uses Registry::default_language() to get the default Language object for comparison.
 	 * @uses Registry::get() to get the skip_default_l10n, redirection_method and query_var options.
 	 * @uses Rewriter::build_url() to assemble the new URL from the modified components.
-	 * @uses Registry::cache_set() to store the result for future reuse.
 	 *
 	 * @param string   $url        The URL to parse.
 	 * @param Language $language   Optional. The desired language to localize to.
@@ -379,7 +377,7 @@ class Rewriter {
 
 		// Check if this URL has been taken care of before,
 		// return cached result
-		if ( $cached = Registry::cache_get( 'url', $cache_id ) ) {
+		if ( $cached = wp_cache_get( $cache_id, 'nlingual:url' ) ) {
 			return $cached;
 		}
 
@@ -440,7 +438,7 @@ class Rewriter {
 		$url = apply_filters( 'nlingual_localize_url', $url, $old_url, $language, $relocalize );
 
 		// Store the URL in the cache
-		Registry::cache_set( 'url', $cache_id, $url );
+		wp_cache_set( $cache_id, $url, 'nlingual:url' );
 
 		return $url;
 	}

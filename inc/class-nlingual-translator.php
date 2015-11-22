@@ -79,9 +79,7 @@ class Translator {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
-	 * @uses Registry::cache_get() to check if this object's language has already been determined.
 	 * @uses Registry::languages() to retrieve the Language object by ID.
-	 * @uses Registry::cache_set() to store the result for future reuse.
 	 *
 	 * @param string $type The type of object.
 	 * @param int    $id   The ID of the object.
@@ -94,7 +92,7 @@ class Translator {
 		$cache_id = "{$type}/{$id}";
 
 		// Check if it's cached, return if so
-		if ( $language = Registry::cache_get( 'language', $cache_id ) ) {
+		if ( $language = wp_cache_get( $cache_id, 'nlingual:language' ) ) {
 			return $language;
 		}
 
@@ -103,7 +101,7 @@ class Translator {
 		$language = Registry::languages()->get( $language_id );
 
 		// Add it to the cache
-		Registry::cache_set( 'language', $cache_id, $language );
+		wp_cache_set( $cache_id, $language, 'nlingual:language' );
 
 		return $language;
 	}
@@ -118,7 +116,6 @@ class Translator {
 	 * @uses Translator::delete_object_language() to allow for replacement.
 	 * @uses Utilities::_language() to ensure $language is a Language object.
 	 * @uses Translator::translation_group_id() to generate a new group ID.
-	 * @uses Registry::cache_set() to update the object's cached language result.
 	 *
 	 * @param string $type     The type of object.
 	 * @param int    $id       The ID of the object.
@@ -161,7 +158,7 @@ class Translator {
 		), array( '%d', '%s', '%d', '%d' ) );
 
 		// Add it to the cache
-		Registry::cache_delete( 'language', "{$type}/{$id}", $language );
+		wp_cache_set( "{$type}/{$id}", $language, 'nlingual:language' );
 
 		return true;
 	}
@@ -173,7 +170,6 @@ class Translator {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
-	 * @uses Registry::cache_delete() to clear the result from storage.
 	 *
 	 * @param string $type The type of object.
 	 * @param int    $id   The ID of the object.
@@ -190,7 +186,7 @@ class Translator {
 		) );
 
 		// Remove it from the cache
-		Registry::cache_delete( 'language', "{$type}/{$id}" );
+		wp_cache_delete( "{$type}/{$id}", 'nlingual:language' );
 
 		return true;
 	}
@@ -207,8 +203,6 @@ class Translator {
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @uses is_language() to validate the language and get the Language object.
-	 * @uses Registry::cache_get() to check if the translation has been found.
-	 * @uses Registry::cache_set() to store the result for future reuse.
 	 *
 	 * @param string $type        The type of object.
 	 * @param int    $id          The ID of the object.
@@ -227,7 +221,7 @@ class Translator {
 		$cache_id = "{$type}/{$id}/{$language->id}";
 
 		// Check if it's cached, fetch if not
-		if ( ! ( $translation = Registry::cache_get( 'translation', $cache_id ) ) ) {
+		if ( ! ( $translation = wp_cache_get( $cache_id, 'nlingual:translation' ) ) ) {
 			$query = "
 				SELECT
 					t2.object_id
@@ -246,7 +240,7 @@ class Translator {
 			$translation = $wpdb->get_var( $wpdb->prepare( $query, $type, $id, $language->id ) );
 
 			// Add it to the cache
-			Registry::cache_set( 'translation', $cache_id, $translation );
+			wp_cache_set( $cache_id, $translation, 'nlingual:translation' );
 		}
 
 		// If a translation is found, return it
@@ -265,8 +259,6 @@ class Translator {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
-	 * @uses Registry::cache_get() to check if the translations have been found.
-	 * @uses Registry::cache_set() to store the result for future reuse.
 	 *
 	 * @param string $type         The type of object.
 	 * @param int    $id           The ID of the object.
@@ -280,7 +272,7 @@ class Translator {
 		$cache_id = "{$type}/{$id}";
 
 		// Check if it's cached, fetch if not
-		if ( ! ( $translations = Registry::cache_get( 'translations', $cache_id ) ) ) {
+		if ( ! ( $translations = wp_cache_get( $cache_id, 'nlingual:translations' ) ) ) {
 			$query = "
 				SELECT
 					t2.language_id,
@@ -305,7 +297,7 @@ class Translator {
 			}
 
 			// Add it to the cache
-			Registry::cache_set( 'translations', $cache_id, $translations );
+			wp_cache_set( $cache_id, $translations, 'nlingual:translations' );
 		}
 
 		// Remove the target posts ID if desired
