@@ -29,17 +29,6 @@ class Registry {
 	// =========================
 
 	/**
-	 * Internal cache array.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var array
-	 */
-	public static $cache = array();
-
-	/**
 	 * Language switching log.
 	 *
 	 * @internal
