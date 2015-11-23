@@ -773,20 +773,20 @@ class Backend extends Handler {
 		global $nav_menu_selected_id;
 		?>
 		<div class="posttypediv" id="nl_language_link">
-			<p><?php _e( 'These links will go to the respective language versions of the current URL.' );?></p>
+			<p><?php _e( 'These links will go to the respective language versions of the current URL.' ); ?></p>
 			<div id="tabs-panel-nl_language_link-all" class="tabs-panel tabs-panel-active">
 				<ul id="pagechecklist-most-recent" class="categorychecklist form-no-clear">
-				<?php $i = -1; foreach ( Registry::languages( 'active' ) as $language ):?>
+				<?php $i = -1; foreach ( Registry::languages( 'active' ) as $language ) : ?>
 					<li>
 						<label class="menu-item-title">
-							<input type="checkbox" class="menu-item-checkbox" name="menu-item[<?php echo $i?>][menu-item-object-id]" value="-1">
-							<?php echo $language->system_name?>
+							<input type="checkbox" class="menu-item-checkbox" name="menu-item[<?php echo $i; ?>][menu-item-object-id]" value="-1">
+							<?php echo $language->system_name; ?>
 						</label>
-						<input type="hidden" class="menu-item-type" name="menu-item[<?php echo $i?>][menu-item-type]" value="nl_language_link">
-						<input type="hidden" class="menu-item-title" name="menu-item[<?php echo $i?>][menu-item-title]" value="<?php echo $language->native_name?>">
-						<input type="hidden" class="menu-item-url" name="menu-item[<?php echo $i?>][menu-item-object]" value="<?php echo $language->slug?>">
+						<input type="hidden" class="menu-item-type" name="menu-item[<?php echo $i; ?>][menu-item-type]" value="nl_language_link">
+						<input type="hidden" class="menu-item-title" name="menu-item[<?php echo $i; ?>][menu-item-title]" value="<?php echo $language->native_name; ?>">
+						<input type="hidden" class="menu-item-url" name="menu-item[<?php echo $i; ?>][menu-item-object]" value="<?php echo $language->slug; ?>">
 					</li>
-				<?php $i--; endforeach;?>
+				<?php $i--; endforeach; ?>
 				</ul>
 			</div>
 
