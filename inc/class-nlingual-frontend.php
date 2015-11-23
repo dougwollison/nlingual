@@ -210,8 +210,8 @@ class Frontend extends Handler {
 		 */
 		$redirect_url = apply_filters( 'nlingual_maybe_redirect_language', $redirect_url );
 
-		// Redirect (but don't allow a loop)
-		if ( $redirect_url && NL_ORIGINAL_URL != $redirect_url ) {
+		// Redirect,but don't allow a loop; make sure they're different (trailing slash agnostic)
+		if ( $redirect_url && untrailingslashit( NL_ORIGINAL_URL ) != untrailingslashit( $redirect_url ) ) {
 			wp_redirect( $redirect_url, 302 );
 			exit;
 		}
