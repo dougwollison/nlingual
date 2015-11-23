@@ -214,6 +214,7 @@ class System extends Handler {
 	 *
 	 * @uses Registry::get() to get the query_var, show_all_languages options.
 	 * @uses Registry::current_language() to get the current language.
+	 * @uses Translator::get_post_language() to check if the parent has a language set.
 	 * @uses is_backend() to check if the query is for wp-admin.
 	 *
 	 * @param WP_Query $wp_query The WP_Query instance.
