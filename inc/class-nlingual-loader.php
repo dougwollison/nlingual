@@ -161,7 +161,7 @@ class Loader extends Handler {
 				locale_name varchar(100) DEFAULT '' NOT NULL,
 				iso_code char(2) DEFAULT '' NOT NULL,
 				slug varchar(100) DEFAULT '' NOT NULL,
-				text_direction enum('ltr', 'rtl') DEFAULT 'ltr' NOT NULL,
+				direction enum('ltr', 'rtl') DEFAULT 'ltr' NOT NULL,
 				list_order int(11) unsigned NOT NULL,
 				active tinyint(1) NOT NULL DEFAULT '1',
 				PRIMARY KEY  (language_id),

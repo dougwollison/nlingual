@@ -278,6 +278,14 @@ class Manager extends Handler {
 				$entry['active'] = 0;
 			}
 
+			// Default text direction to ltr if not set or otherwise not rtl
+			$formats[] = '%s';
+			if ( ! isset( $language['direction'] ) || $language['direction'] != 'rtl' ) {
+				$entry['direction'] = 'ltr';
+			} else {
+				$entry['direction'] = 'rtl';
+			}
+
 			// Add list_order
 			$formats[] = '%d';
 			$entry['list_order'] = $i;
@@ -617,6 +625,7 @@ class Manager extends Handler {
 							<th scope="col" class="nl-language-locale_name"><?php _e( 'Locale' ); ?></th>
 							<th scope="col" class="nl-language-iso_code"><?php _e( 'ISO' ); ?></th>
 							<th scope="col" class="nl-language-slug"><?php _e( 'Slug' ); ?></th>
+							<th scope="col" class="nl-language-direction"><?php _e( 'Text Direction' ); ?></th>
 							<th scope="col" class="nl-language-active"><?php _e( 'Active?' ); ?></th>
 							<td class="nl-language-delete"><?php _e( 'Delete?' ); ?></td>
 						</tr>
@@ -643,6 +652,10 @@ class Manager extends Handler {
 						</td>
 						<td class="nl-language-slug">
 							<input type="text" name="nlingual_languages[%id%][slug]" value="%slug%" maxlength="100" />
+						</td>
+						<td class="nl-language-direction">
+							<label title="Left to Right"><input type="radio" name="nlingual_languages[%id%][direction]" value="ltr" />LTR</label>
+							<label title="Right to Left"><input type="radio" name="nlingual_languages[%id%][direction]" value="rtl" />RTL</label>
 						</td>
 						<td class="nl-language-active">
 							<input type="checkbox" name="nlingual_languages[%id%][active]" value="1" />

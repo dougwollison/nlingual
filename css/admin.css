@@ -222,6 +222,15 @@
   width: 100px; }
 #nlingual_languages .nl-language-locale_name {
   width: 60px; }
+#nlingual_languages .nl-language-direction {
+  width: 100px; }
+  #nlingual_languages .nl-language-direction label {
+    margin: 4px 4px 0 0;
+    display: inline-block;
+    vertical-align: middle;
+    *vertical-align: auto;
+    *zoom: 1;
+    *display: inline; }
 #nlingual_languages .nl-language-active,
 #nlingual_languages .nl-language-delete {
   width: 60px; }

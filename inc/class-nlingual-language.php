@@ -116,13 +116,24 @@ class Language extends Model {
 	public $iso_code = '';
 
 	/**
-	 * The desired order of the language.
+	 * The text direction of the language
 	 *
 	 * @since 2.0.0
 	 *
 	 * @access public
 	 *
 	 * @var string
+	 */
+	public $direction = 'ltr';
+
+	/**
+	 * The desired order of the language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @access public
+	 *
+	 * @var int
 	 */
 	public $list_order = 0;
 
@@ -148,7 +159,8 @@ class Language extends Model {
 	 *		@option string "short_name"  A shorthand name for the language.
 	 *		@option string "locale_name" The local to use for this language (i.e. MO file).
 	 *		@option string "iso_code"    The ISO 639-1 code for the language.
-	 *		@option string "list_order"  The disired order of the language.
+	 *		@option string "direction"   The text direction of the language (ltr or rtl).
+	 *		@option int    "list_order"  The disired order of the language.
 	 */
 	public function __construct( $values ) {
 		// Setup the object with the provided values
@@ -161,6 +173,11 @@ class Language extends Model {
 
 		// Ensure $id is integer
 		$this->id = intval( $this->id );
+
+		// Ensure $direction is ltr or rtl
+		if ( ! in_array( $this->direction, array( 'ltr', 'rtl' ) ) ) {
+			$this->direction = 'ltr';
+		}
 
 		// Ensure $active is boolean
 		$this->active = (bool) intval( $this->active );

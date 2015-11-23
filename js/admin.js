@@ -140,6 +140,9 @@ jQuery( function( $ ) {
 			// Parse the row into a new element
 			var $row = $( row );
 
+			// Check correct direction checkbox
+			$row.find( '.nl-language-direction input[value="' + data.direction + '"]' ).attr( 'checked', true );
+
 			// Check active checkbox if true
 			$row.find( '.nl-language-active input' ).attr( 'checked', data.active );
 
@@ -170,6 +173,7 @@ jQuery( function( $ ) {
 					short_name  : '',
 					iso_code    : '',
 					locale_name : '',
+					direction   : '',
 				};
 			}
 

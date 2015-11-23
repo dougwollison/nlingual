@@ -303,6 +303,14 @@
 	.nl-language-locale_name {
 		width: 60px;
 	}
+	.nl-language-direction {
+		width: 100px;
+
+		label {
+			margin: 4px 4px 0 0;
+			@include inline-block;
+		}
+	}
 	.nl-language-active,
 	.nl-language-delete {
 		width: 60px;
