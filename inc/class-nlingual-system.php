@@ -262,6 +262,11 @@ class System extends Handler {
 			}
 		}
 
+		// If the parent is specified, and has a language itself, don't bother
+		if ( ( $parent = $query->get( 'post_parent' ) ) && Translator::get_post_language( $parent ) ) {
+			return;
+		}
+
 		// If in the backend and the show_all_languages option is enabled, set filter for all active languages
 		if ( is_backend() && Registry::get( 'show_all_languages' ) ) {
 			$value = array_keys( Registry::languages( 'active' )->export() );
