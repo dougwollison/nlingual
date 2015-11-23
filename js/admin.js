@@ -374,21 +374,22 @@ jQuery( function( $ ) {
 	// =========================
 
 	// Update visible translation fields based on current language
-	$( '#nl_language' ).change( function() {
+	$( '.nl-language-input' ).change( function() {
 		var id = $( this ).val();
+		var $parent = $( this ).parents( '.nl-translations-manager' );
 
 		// Toggle visibility of the translations interface if language isn't set
-		$( '#nl_manage_translations' ).toggleClass( 'hidden', id === '0' );
+		$parent.find( '.nl-set-translations' ).toggleClass( 'hidden', id === '0' );
 
 		// Show all translation fields by default
-		$( '.nl-translation-field' ).show();
+		$parent.find( '.nl-translation-field' ).show();
 
 		// Hide the one for the current language
-		$( '#nl_translation_' + id ).hide();
+		$parent.find( '.nl-translation-' + id ).hide();
 	} ).change(); // Update on page load
 
 	// Handle creating new translation
-	$( '.nl-translation' ).change( function( e ) {
+	$( '.nl-translation-input' ).change( function( e ) {
 		var $input = $( this );
 		var value = $input.val();
 		var post_id = $( '#post_ID' ).val();
@@ -478,7 +479,7 @@ jQuery( function( $ ) {
 
 			// Update the language field
 			var post_language = $postRow.find( '.nl-language' ).val();
-			$( '#nl_language' ).val( post_language ).change();
+			$editRow.find( '.nl-language-input' ).val( post_language ).change();
 
 			// Update the translations fields
 			$editRow.find( '.nl-translation' ).each( function() {
