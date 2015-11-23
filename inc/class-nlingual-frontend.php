@@ -174,60 +174,26 @@ class Frontend extends Handler {
 			return;
 		}
 
-		// Get the current language and the queried object
-		$current_language = Registry::current_language();
-		$object = get_queried_object();
+		// Default the redirect langauge to the current one
+		$redirect_language = $current_language;
 
-		// If the front page, check if the URL is correct
-		if ( is_front_page() ) {
-			// If language is specified, or skip is enabled (but NOT both), do nothing
-			if ( defined( 'NL_REQUESTED_LANGUAGE' ) xor Registry::get( 'skip_default_l10n' ) ) {
+		// Check if the queried object is a post
+		if ( is_a( get_queried_object(), 'WP_Post' ) ) {
+			// Get the language of the post
+			$post_language = Translator::get_post_language( get_queried_object_id() );
+
+			// If the post has a language, and it doesn't match the current one,
+			// And the override is set, or otherwise the language wasn't specified,
+			// Redirect to the post's language
+			if ( $post_language && Registry::is_language( $post_language )
+			&& ( Registry::get( 'post_language_override', 0 ) || ! defined( 'NL_REQUESTED_LANGUAGE' ) ) ) {
+				$redirect_language = $post_language;
+			}
+		} else {
+			// If the language was already specified, or otherwise it's the default and skip is enabled, do nothing
+			if ( defined( 'NL_REQUESTED_LANGUAGE' ) xor ( Registry::is_default_language() && Registry::get( 'skip_default_l10n' ) ) ) {
 				return;
 			}
-
-			$redirect_language = $current_language;
-		}
-		// Some queried post
-		elseif ( is_a( $object, 'WP_Post' ) ) {
-			// Get the language of the queried object
-			$post_language = Translator::get_post_language( $object->ID );
-
-			// If the post has a language, check for a conflict, resolve as needed
-			if ( $post_language ) {
-				// If languages match, nothing needs to be done
-				if ( $current_language->id == $post_language->id ) {
-					return;
-				}
-
-				// Get the translation in the current language
-				$translation = Translator::get_post_translation( $object->ID, $current_language );
-
-				// Get the override
-				$override = Registry::get( 'post_language_override', 0 );
-
-				/**
-				 * Now to determine which language to redirect to...
-				 *
-				 * The current declared language IF:
-				 * - a translation exists for the current language AND
-				 * - the override is disabled
-				 *
-				 * The detected post's language IF:
-				 * - the override is enabled, OR
-				 * - it has no translation in the current language
-				 */
-				if ( $translation && ! $override ) {
-					$redirect_language = $current_language;
-				} else {
-					$redirect_language = $post_language;
-				}
-			} else {
-				$redirect_language = $current_language;
-			}
-		}
-		// Something else, but the language was requested (do nothing)
-		elseif ( defined( 'NL_REQUESTED_LANGUAGE' ) ) {
-			return;
 		}
 
 		// Get the new URL localized for the redirect language
