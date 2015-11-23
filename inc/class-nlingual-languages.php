@@ -178,13 +178,19 @@ class Languages implements \Iterator {
 	 * @since 2.0.0
 	 *
 	 * @param string $filter Optional. The property to filter by.
-	 * @param string $value  Optional. A specific value to filter by.
+	 * @param string $value  Optional. A specific value to filter by (defaults to TRUE).
 	 *
 	 * @return nLingual\Languages A new collection of languages
 	 */
-	public function filter( $filter = null, $value = true ) {
+	public function filter( $filter = null, $value = null ) {
+		// No filter? Return original
 		if ( is_null( $filter ) ) {
 			return $this;
+		}
+
+		// No value? Assume true
+		if ( is_null( $value ) ) {
+			$value = true;
 		}
 
 		$filtered = new static;
