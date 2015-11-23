@@ -84,8 +84,8 @@ class Frontend extends Handler {
 
 		// Locale & GetText Rewrites
 		static::add_action( 'wp', 'maybe_patch_wp_locale', 10, 0 );
-		//static::add_filter( 'gettext', 'translate', 10, 3 );
-		//static::add_filter( 'gettext_with_context', 'translate_with_context', 10, 4 );
+		static::add_filter( 'gettext', 'translate', 10, 3 );
+		static::add_filter( 'gettext_with_context', 'translate_with_context', 10, 4 );
 	}
 
 	// =========================
@@ -590,6 +590,11 @@ class Frontend extends Handler {
 	 * @return string The filtered translation.
 	 */
 	public static function translate_with_context( $translation, $text, $context, $domain ) {
+		// If text direction context, use language's assigned one
+		if ( $context == 'text direction' ) {
+			return Registry::current_language( 'direction' );
+		}
+
 		return $translation;
 	}
 }
