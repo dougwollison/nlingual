@@ -113,6 +113,17 @@ class Localizer extends Handler {
 	protected static $current_object_id = 0;
 
 	/**
+	 * Registry of objects whos localized data has been preloaded.
+	 *
+	 * @internal
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var array
+	 */
+	protected static $preloaded = array();
+
+	/**
 	 * Reference of which post fields are permitted for localization.
 	 *
 	 * @internal
@@ -203,14 +214,22 @@ class Localizer extends Handler {
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
-		// Saving localized strings
-		static::add_action( 'admin_init', 'save_localized_strings' );
+		// Backend-only hooks
+		if ( is_backend() ) {
+			// Saving localized strings
+			static::add_action( 'admin_init', 'save_localized_strings', 10, 0 );
 
-		// Setup the strings for the screen and add the Help tab
-		static::add_action( 'admin_head', 'setup_localized_strings' );
+			// Setup the strings for the screen and add the Help tab
+			static::add_action( 'admin_head', 'setup_localized_strings', 10, 0 );
 
-		// Do the call to the nlingualLocalizeFields utility
-		static::add_action( 'admin_footer', 'do_localized_strings' );
+			// Do the call to the nlingualLocalizeFields utility
+			static::add_action( 'admin_footer', 'do_localized_strings', 10, 0 );
+		}
+		// Frontend-only hooks
+		else {
+			// Setup preloading of all localized options
+			static::add_action( 'init', 'preload_localized_strings', 10, 0 );
+		}
 	}
 
 	// =========================
@@ -820,7 +839,7 @@ class Localizer extends Handler {
 	}
 
 	// =========================
-	// ! Callbacks
+	// ! Backend Hooks/Callbacks
 	// =========================
 
 	/**
@@ -997,6 +1016,29 @@ class Localizer extends Handler {
 		nlingualLocalizeFields(<?php echo json_encode( $data ); ?>);
 		</script>
 		<?php
+	}
+
+	// =========================
+	// ! Frontend Hooks/Callbacks
+	// =========================
+
+	/**
+	 * Preload the localized values in the current language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 */
+	public static function preload_localized_strings() {
+		global $wpdb;
+
+		$language = Registry::current_language();
+
+		$strings = $wpdb->get_results( "SELECT * FROM $wpdb->nl_localizerdata WHERE language_id = {$language->id}", ARRAY_A );
+		foreach ( $strings as $string ) {
+			$cache_id = "{$string['string_key']}/{$string['object_id']}/{$string['language_id']}";
+			wp_cache_set( $cache_id, $string['localized_value'], 'nlingual:localized' );
+		}
 	}
 
 	// =========================
