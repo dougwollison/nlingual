@@ -94,7 +94,7 @@ function is_language( &$language ) {
 function sanitize_tag( $tag, $_ = false ) {
 	$replace = $_ ? '_' : '';
 
-	$tag = preg_replace( '/[^A-Za-z0-9]+/', $replace, $tag );
+	$tag = strtolower( preg_replace( '/[^A-Za-z0-9]+/', $replace, $tag ) );
 
 	return $tag;
 }
