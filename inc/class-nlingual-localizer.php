@@ -69,6 +69,17 @@ class Localizer extends Handler {
 	protected static $strings_by_key = array();
 
 	/**
+	 * An index of strings by type.
+	 *
+	 * @internal
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var array
+	 */
+	protected static $strings_by_type = array();
+
+	/**
 	 * An index of strings by screen they are to appear on based on property.
 	 *
 	 * @internal
@@ -137,7 +148,7 @@ class Localizer extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $index The index to search in ("type" or "screen")
+	 * @param string $index The index to search in ("key", "type" or "screen")
 	 * @param string $value The index value to get entries for.
 	 *
 	 * @return array A list of strings for the specified index value.
@@ -239,6 +250,12 @@ class Localizer extends Handler {
 			static::$strings_by_key[ $string->key ] = array();
 		}
 		static::$strings_by_key[ $string->key ][] = $string;
+
+		// Add to the type index
+		if ( ! isset( static::$strings_by_type[ $string->type ] ) ) {
+			static::$strings_by_type[ $string->type ] = array();
+		}
+		static::$strings_by_type[ $string->type ][] = $string;
 
 		// Add to the screen index
 		list( $property, $match ) = $string->screen;
