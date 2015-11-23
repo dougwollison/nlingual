@@ -450,7 +450,8 @@ class Localizer extends Handler {
 		$cache_id = "$key/$object_id/$language_id";
 
 		// Check if it's cached, return if so
-		if ( $cached = wp_cache_get( $cache_id, 'nlingual:localized' ) ) {
+		$cached = wp_cache_get( $cache_id, 'nlingual:localized', false, $found );
+		if ( $found ) {
 			return $cached;
 		}
 

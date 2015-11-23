@@ -92,8 +92,9 @@ class Translator {
 		$cache_id = "{$type}/{$id}";
 
 		// Check if it's cached, return if so
-		if ( $language = wp_cache_get( $cache_id, 'nlingual:language' ) ) {
-			return $language;
+		$cached = wp_cache_get( $cache_id, 'nlingual:language', false, $found );
+		if ( $found ) {
+			return $cached;
 		}
 
 		// Query the translations table for the language of the object in question
@@ -221,7 +222,8 @@ class Translator {
 		$cache_id = "{$type}/{$id}/{$language->id}";
 
 		// Check if it's cached, fetch if not
-		if ( ! ( $translation = wp_cache_get( $cache_id, 'nlingual:translation' ) ) ) {
+		$translation = wp_cache_get( $cache_id, 'nlingual:translation', false, $found );
+		if ( ! $found ) {
 			$query = "
 				SELECT
 					t2.object_id
@@ -272,7 +274,8 @@ class Translator {
 		$cache_id = "{$type}/{$id}";
 
 		// Check if it's cached, fetch if not
-		if ( ! ( $translations = wp_cache_get( $cache_id, 'nlingual:translations' ) ) ) {
+		$translations = wp_cache_get( $cache_id, 'nlingual:translations', false, $found );
+		if ( ! $found ) {
 			$query = "
 				SELECT
 					t2.language_id,

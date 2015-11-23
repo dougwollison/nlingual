@@ -377,7 +377,8 @@ class Rewriter {
 
 		// Check if this URL has been taken care of before,
 		// return cached result
-		if ( $cached = wp_cache_get( $cache_id, 'nlingual:url' ) ) {
+		$cached = wp_cache_get( $cache_id, 'nlingual:url', false, $found );
+		if ( $found ) {
 			return $cached;
 		}
 
