@@ -9,7 +9,6 @@ Author URI: http://dougw.me
 Tags: multilingual, multi, language, admin, bilingual, switcher, translation, nlingual
 License: GPL2
 Text Domain: nLingual
-Domain Path: /lang
 */
 
 

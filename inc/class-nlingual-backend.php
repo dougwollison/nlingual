@@ -107,7 +107,7 @@ class Backend extends Handler {
 	 */
 	public static function ready() {
 		// Load the textdomain
-		load_plugin_textdomain( NL_TXTDMN, false, NL_DIR . '/language' );
+		load_plugin_textdomain( NL_TXTDMN, false, NL_DIR . '/lang' );
 
 		// Setup translation help tab for applicable post types
 		$post_types = Registry::get( 'post_types' );
