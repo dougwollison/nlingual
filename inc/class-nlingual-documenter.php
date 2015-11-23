@@ -126,6 +126,11 @@ class Documenter extends Handler {
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
+		// Don't do anything if not in the backend
+		if ( ! is_backend() ) {
+			return;
+		}
+
 		static::add_action( 'admin_head', 'setup_help_tabs', 10, 0 );
 	}
 

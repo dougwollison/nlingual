@@ -79,22 +79,13 @@ class System extends Handler {
 		// Register own hooks
 		static::register_hooks();
 
-		// Register admin or public hooks
-		if ( is_backend() ) {
-			Backend::register_hooks();
-			Manager::register_hooks();
-			Localizer::register_hooks();
-			Documenter::register_hooks();
-		} else {
-			Frontend::register_hooks();
-		}
-
-		// Register ajax-only hooks
-		if ( defined( 'DOING_AJAX' ) ) {
-			AJAX::register_hooks();
-		}
-
-		// Finally, setup the Liaison for supporting other plugins
+		// Register the hooks of the subsystems
+		Frontend::register_hooks();
+		Backend::register_hooks();
+		AJAX::register_hooks();
+		Manager::register_hooks();
+		Documenter::register_hooks();
+		Localizer::register_hooks();
 		Liaison::register_hooks();
 
 		// P.S. add backwards compatibilty stuff if needed

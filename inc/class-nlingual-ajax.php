@@ -48,6 +48,11 @@ class AJAX extends Handler {
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
+		// Don't do anything if not doing an AJAX request
+		if ( ! defined( 'DOING_AJAX' ) || DOING_AJAX !== true ) {
+			return;
+		}
+
 		// Translation creation
 		static::add_action( 'wp_ajax_nl_new_translation', 'new_translation' );
 	}

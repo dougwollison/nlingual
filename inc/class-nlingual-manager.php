@@ -48,6 +48,11 @@ class Manager extends Handler {
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
+		// Don't do anything if not in the backend
+		if ( ! is_backend() ) {
+			return;
+		}
+
 		// Settings & Pages
 		static::add_action( 'admin_init', 'register_settings' );
 		static::add_action( 'admin_menu', 'add_menu_pages' );

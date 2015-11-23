@@ -52,6 +52,11 @@ class Frontend extends Handler {
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
+		// Don't do anything if in the backend
+		if ( is_backend() ) {
+			return;
+		}
+
 		// Language Detection/Redirection
 		static::add_action( 'plugins_loaded', 'detect_language', 10, 0 );
 		static::add_filter( 'wp', 'maybe_redirect_language', 10, 0 );
