@@ -385,7 +385,7 @@ class Localizer extends Handler {
 			'key'    => "post_field:{$field_name}",
 			'type'   => 'post_field',
 			'screen' => array( 'post_type', $post_type ),
-			'field'  => $meta_key,
+			'field'  => $field_name,
 		) );
 
 		// Register the field as normal
@@ -738,6 +738,12 @@ class Localizer extends Handler {
 		// Abort if no post is specified
 		if ( ! $post ) return;
 
+		// Check if there are fields registered for this post's type, abort if not
+		$strings = static::get_strings_for_screen( array( 'post_type' => $post->post_type ) );
+		if ( ! $strings ) {
+			return;
+		}
+
 		// Get the current language
 		$language = Registry::current_language();
 
@@ -768,13 +774,21 @@ class Localizer extends Handler {
 		// Abort if no post is specified
 		if ( ! $post ) return;
 
-		// Get the current language
-		$language = Registry::current_language();
+		// Check if there are fields registered for this post's type, abort if not
+		$strings = static::get_strings_for_screen( array( 'post_type' => $post->post_type ) );
+		if ( ! $strings ) {
+			return;
+		}
 
-		// Loop through each localizable field and replace with localized values if found
-		foreach ( static::$localizable_post_fields as $field_name ) {
-			// Store this value as the version for the default language
-			static::save_string_value( "post_field:{$field_name}", $language->id, $post_id, $post->$field_name );
+		// Get the current language
+		$language = Registry::default_language();
+
+		// Loop through each string, save localized value if matching field is found
+		foreach ( $strings as $string ) {
+			if ( property_exists( $post, $string->field ) ) {
+				// Store this value as the version for the default language
+				static::save_string_value( $string->key, $language->id, $post_id, $post->{$string->field} );
+			}
 		}
 	}
 
@@ -829,7 +843,7 @@ class Localizer extends Handler {
 	public static function update_unlocalized_metadata( $meta_id, $object_id, $meta_key, $meta_value ) {
 		// Get the meta type based on the current filter name
 		$filter = current_filter();
-		$meta_type = preg_replace( '/^get_(.+?)_metadata$/', '$1', $filter );
+		$meta_type = preg_replace( '/^update_(.+?)_metadata$/', '$1', $filter );
 
 		// Get the default language
 		$language = Registry::default_language();
