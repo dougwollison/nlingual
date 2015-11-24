@@ -175,8 +175,9 @@ class Loader extends Handler {
 				language_id bigint(20) unsigned NOT NULL,
 				object_type varchar(20) DEFAULT 'post' NOT NULL,
 				object_id bigint(20) unsigned NOT NULL,
-				UNIQUE KEY object_type_id (object_id,object_type),
-				UNIQUE KEY group_language (group_id,language_id)
+				UNIQUE KEY translation (group_id,language_id,object_type,object_id)
+				KEY group_id (group_id)
+				KEY object_id (object_id)
 			) $charset_collate;";
 			dbDelta( $sql_translations );
 
@@ -186,7 +187,9 @@ class Loader extends Handler {
 				object_id bigint(20) unsigned NOT NULL,
 				string_key varchar(128) DEFAULT '' NOT NULL,
 				localized_value longtext NOT NULL,
-				UNIQUE KEY language_object_string (language_id,object_id,string_key)
+				UNIQUE KEY localizerdata (language_id,object_id,string_key)
+				KEY language_id (language_id)
+				KEY object_id (object_id)
 			) $charset_collate;";
 			dbDelta( $sql_strings );
 
