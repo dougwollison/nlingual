@@ -39,7 +39,7 @@ class Translator {
 	// =========================
 
 	/**
-	 * Utility; get a translation group ID for an object.
+	 * Get a new group ID from the database.
 	 *
 	 * @internal
 	 *
@@ -47,25 +47,116 @@ class Translator {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
-	 * @param string $type Optional. The type of object.
-	 * @param int    $id   Optional. The ID of the object.
-	 * @param bool   $inc  Optional. Get new group ID if not found? (default true)
+	 * @return int The new group ID.
+	 */
+	protected static function new_group_id() {
+		global $wpdb;
+
+		$group_id = $wpdb->get_var( "SELECT MAX(group_id) FROM $wpdb->nl_translations" );
+		$group_id = intval( $group_id ) + 1;
+
+		return $group_id;
+	}
+
+	/**
+	 * Get a translation group ID for an object.
+	 *
+	 * @internal
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @param string $type The type of object.
+	 * @param int    $id   The ID of the object.
 	 *
 	 * @return int The existing or new group ID.
 	 */
-	protected static function translation_group_id( $type = null, $id = null, $inc = true ) {
+	protected static function get_group_id( $type, $id ) {
 		global $wpdb;
 
-		// Attempt to retrieve the group ID for the object if present
-		$group_id = $wpdb->get_var( $wpdb->prepare( "SELECT group_id FROM $wpdb->nl_translations WHERE object_type = %s AND object_id = %d", $type, $id ) );
+		$cache_id = "{$type}/{$id}";
 
-		// Create a new one otherwise
-		if ( ! $group_id && $inc ) {
-			$group_id = $wpdb->get_var( "SELECT MAX(group_id) FROM $wpdb->nl_translations" );
-			$group_id = intval( $group_id ) + 1;
+		// Check if it's cached, return if so
+		$cached = wp_cache_get( $cache_id, 'nlingual:group_id', false, $found );
+		if ( $found ) {
+			return $cached;
 		}
 
+		// Attempt to retrieve the group ID for the object if present
+		$group_id = $wpdb->get_var( $wpdb->prepare( "SELECT group_id FROM $wpdb->nl_translations WHERE object_type = %s AND object_id = %d LIMIT 1", $type, $id ) );
+
+		// Add it to the cache
+		wp_cache_set( $cache_id, $group_id, 'nlingual:group_id' );
+
 		return $group_id;
+	}
+
+	/**
+	 * Get the translation group an object is in.
+	 *
+	 * @internal
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @uses Translator::get_group_id() to find the translation group id.
+	 *
+	 * @param string $type The type of object.
+	 * @param int    $id   The ID of the object.
+	 *
+	 * @return bool|array The list of entries in the group, with object_id and language_id indexes (false if not found).
+	 */
+	protected static function get_group( $type, $id ) {
+		global $wpdb;
+
+		$cache_id = "{$type}/{$id}";
+
+		// Check if the group id has already been determined
+		$group_id = wp_cache_get( $cache_id, 'nlingual:group_id', false, $group_found );
+		if ( $group_found && ! $group_id ) {
+			// If it was determined to have no group id, return false.
+			return false;
+		}
+
+		// Check if it's cached, return if so
+		$cached = wp_cache_get( $group_id, 'nlingual:group', false, $group_id_found );
+		if ( $group_id_found ) {
+			return $cached;
+		}
+
+		// Build the query based on available information
+		if ( $group_id_found ) {
+			// Group ID already known, query directly
+			$query = $wpdb->prepare( "SELECT * FROM $wpdb->nl_translations WHERE group_id = %d", $group_id );
+		} else {
+			// Group ID unknown, use nested query
+			$query = $wpdb->prepare( "SELECT * FROM $wpdb->nl_translations WHERE group_id = (SELECT group_id FROM $wpdb->nl_translations WHERE object_type = %s AND object_id = %d)", $type, $id );
+		}
+
+		// Get the results
+		if ( $result = $wpdb->get_results( $query, ARRAY_A ) ) {
+			// Get the group ID
+			$group_id = $result[0]['group_id'];
+
+			// Build the group index
+			$group = array();
+			foreach ( $result as $row ) {
+				$group['by_object'][ $row['object_id'] ] = $row['language_id'];
+				$group['by_language'][ $row['language_id'] ] = $row['object_id'];
+
+				// Also cache the group ID for each object in it
+				wp_cache_set( "{$row['object_type']}/{$row['object_id']}", $group_id, 'nlingual:group_id' );
+			}
+		} else {
+			$group = false;
+		}
+
+		// Cache the object's group ID and the group's data
+		wp_cache_set( $group_id, $group, 'nlingual:group' );
+
+		return $group;
 	}
 
 	// =========================
@@ -79,6 +170,7 @@ class Translator {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
+	 * @uses Translator::get_translation_gorup() to retrieve the object's translation group.
 	 * @uses Registry::languages() to retrieve the Language object by ID.
 	 *
 	 * @param string $type The type of object.
@@ -89,22 +181,15 @@ class Translator {
 	public static function get_object_language( $type, $id ) {
 		global $wpdb;
 
-		$cache_id = "{$type}/{$id}";
+		// Get the translation group for the object
+		$group = static::get_group( $type, $id );
 
-		// Check if it's cached, return if so
-		$cached = wp_cache_get( $cache_id, 'nlingual:language', false, $found );
-		if ( $found ) {
-			return $cached;
+		// If no translation group exists, return false
+		if ( ! $group ) {
+			return false;
 		}
 
-		// Query the translations table for the language of the object in question
-		$language_id = $wpdb->get_var( $wpdb->prepare( "SELECT language_id FROM $wpdb->nl_translations WHERE object_type = %s AND object_id = %d", $type, $id ) );
-		$language = Registry::languages()->get( $language_id );
-
-		// Add it to the cache
-		wp_cache_set( $cache_id, $language, 'nlingual:language' );
-
-		return $language;
+		return Registry::languages()->get( $group['by_object'][ $id ] );
 	}
 
 	/**
@@ -116,7 +201,8 @@ class Translator {
 	 *
 	 * @uses Translator::delete_object_language() to allow for replacement.
 	 * @uses Utilities::_language() to ensure $language is a Language object.
-	 * @uses Translator::translation_group_id() to generate a new group ID.
+	 * @uses Translator::get_group_id() to get the object's group ID.
+	 * @uses Translator::new_group_id() to generate a new group ID if needed.
 	 *
 	 * @param string $type     The type of object.
 	 * @param int    $id       The ID of the object.
@@ -137,17 +223,21 @@ class Translator {
 			return false; // Does not exist
 		}
 
-		// Get a group ID for the object
-		$group_id = static::translation_group_id( $type, $id );
+		// Get a group ID for the object, a new on if necessary
+		$group_id = static::get_group_id( $type, $id );
 
-		// Check if a counterpart for the language in this group exists
-		$language_exists = $wpdb->get_var( $wpdb->prepare( "
-			SELECT object_id FROM $wpdb->nl_translations
-			WHERE group_id = %d AND language_id = %
-		", $group_id, $language->id ) );
-		if ( $language_exists ) {
-			// Get a new group ID if so
-			$group_id = static::translation_group_id();
+		if ( $group_id ) {
+			// Check if a counterpart for the language in this group exists
+			$language_exists = $wpdb->get_var( $wpdb->prepare( "
+				SELECT object_id FROM $wpdb->nl_translations
+				WHERE group_id = %d AND language_id = %
+			", $group_id, $language->id ) );
+			if ( $language_exists ) {
+				// Get a new group ID if so
+				$group_id = static::new_group_id();
+			}
+		} else {
+			$group_id = static::new_group_id();
 		}
 
 		// Insert a new one
@@ -158,8 +248,8 @@ class Translator {
 			'language_id' => $language->id,
 		), array( '%d', '%s', '%d', '%d' ) );
 
-		// Add it to the cache
-		wp_cache_set( "{$type}/{$id}", $language, 'nlingual:language' );
+		// Update the cache of the group id
+		wp_cache_set( "{$type}/{$id}", $group_id, 'nlingual:translation_id' );
 
 		return true;
 	}
@@ -187,7 +277,7 @@ class Translator {
 		) );
 
 		// Remove it from the cache
-		wp_cache_delete( "{$type}/{$id}", 'nlingual:language' );
+		wp_cache_delete( "{$type}/{$id}", 'nlingual:translation_id' );
 
 		return true;
 	}
@@ -204,6 +294,7 @@ class Translator {
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @uses is_language() to validate the language and get the Language object.
+	 * @uses Translator::get_group() to get the object's translation group.
 	 *
 	 * @param string $type        The type of object.
 	 * @param int    $id          The ID of the object.
@@ -219,39 +310,15 @@ class Translator {
 			return false; // Does not exist
 		}
 
-		$cache_id = "{$type}/{$id}/{$language->id}";
+		// Get the translation group for the object
+		$group = static::get_group( $type, $id );
 
-		// Check if it's cached, fetch if not
-		$translation = wp_cache_get( $cache_id, 'nlingual:translation', false, $found );
-		if ( ! $found ) {
-			$query = "
-				SELECT
-					t2.object_id
-				FROM
-					$wpdb->nl_translations AS t1
-					LEFT JOIN
-						$wpdb->nl_translations AS t2
-						ON (t1.group_id = t2.group_id)
-				WHERE 1=1
-					AND t1.object_type = %s
-					AND t1.object_id = %d
-					AND t2.language_id = %d
-			";
-
-			// Get the results of the query
-			$translation = $wpdb->get_var( $wpdb->prepare( $query, $type, $id, $language->id ) );
-
-			// Add it to the cache
-			wp_cache_set( $cache_id, $translation, 'nlingual:translation' );
+		// If no translation group exists, return false
+		if ( ! $group ) {
+			return $return_self ? $id : false;
 		}
 
-		// If a translation is found, return it
-		if ( $translation ) {
-			return $translation;
-		}
-
-		// Otherwise, return the original ID or false, depending on $return_self
-		return $return_self ? $id : false;
+		return $group['by_language'][ $language->id ];
 	}
 
 	/**
@@ -261,6 +328,7 @@ class Translator {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
+	 * @uses Translator::get_group() to get the object's translation group.
 	 *
 	 * @param string $type         The type of object.
 	 * @param int    $id           The ID of the object.
@@ -271,37 +339,16 @@ class Translator {
 	public static function get_object_translations( $type, $id, $include_self = false ) {
 		global $wpdb;
 
-		$cache_id = "{$type}/{$id}";
+		// Get the translation group for the object
+		$group = static::get_group( $type, $id );
 
-		// Check if it's cached, fetch if not
-		$translations = wp_cache_get( $cache_id, 'nlingual:translations', false, $found );
-		if ( ! $found ) {
-			$query = "
-				SELECT
-					t2.language_id,
-					t2.object_id
-				FROM
-					$wpdb->nl_translations AS t1
-					LEFT JOIN
-						$wpdb->nl_translations AS t2
-						ON (t1.group_id = t2.group_id)
-				WHERE 1=1
-					AND t1.object_type = %s
-					AND t1.object_id = %d
-			";
-
-			// Get the results of the query
-			$results = $wpdb->get_results( $wpdb->prepare( $query, $type, $id ) );
-
-			// Loop through the results and build the language_id => object_id list
-			$translations = array();
-			foreach ( $results as $row ) {
-				$translations[ $row->language_id ] = $row->object_id;
-			}
-
-			// Add it to the cache
-			wp_cache_set( $cache_id, $translations, 'nlingual:translations' );
+		// If no translation group exists, return empty array
+		if ( ! $group ) {
+			return array();
 		}
+
+		// Use the by_language index as the translations list
+		$translations = $group['by_language'];
 
 		// Remove the target posts ID if desired
 		if ( ! $include_self ) {
@@ -321,7 +368,7 @@ class Translator {
 	 * @since 2.0.0
 	 *
 	 * @uses is_language() to validate the language and get the Language object.
-	 * @uses Translator::translation_group_id() to get the existing group ID.
+	 * @uses Translator::new_group_id() to get the existing group ID.
 	 * @uses Translator::get_object_language() to get the current language of the object.
 	 * @uses Translator::unlink_object_translation() if a translation is to be unset.
 	 *
@@ -337,15 +384,15 @@ class Translator {
 		global $wpdb;
 
 		// Get the group ID for this object
-		$group_id = static::translation_group_id( $type, $id, false );
-
-		// Also get the language for this object
-		$the_language = static::get_object_language( $type, $id );
+		$group_id = static::get_group_id( $type, $id );
 
 		// If none was found, abort
 		if ( ! $group_id ) {
 			return null;
 		}
+
+		// Also get the language for this object
+		$the_language = static::get_object_language( $type, $id );
 
 		// Start the query
 		$query = "REPLACE INTO $wpdb->nl_translations (group_id, object_type, object_id, language_id) VALUES ";
@@ -415,7 +462,7 @@ class Translator {
 	 * @since 2.0.0
 	 *
 	 * @uses is_language() to validate the language and get the Language object.
-	 * @uses Translator::translation_group_id() to get the group ID for the object
+	 * @uses Translator::new_group_id() to get the group ID for the object
 	 *                                     as well a new one for it's sister.
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
@@ -433,10 +480,15 @@ class Translator {
 		}
 
 		// Get the group ID for this object
-		$group_id = static::translation_group_id( $type, $id );
+		$group_id = static::get_group_id( $type, $id );
+
+		// If none was found, abort
+		if ( ! $group_id ) {
+			return null;
+		}
 
 		// Get a new group ID for the sister object
-		$new_group_id = static::translation_group_id();
+		$new_group_id = static::new_group_id();
 
 		// Update the group ID for the translation
 		$wpdb->update(
