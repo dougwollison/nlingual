@@ -217,8 +217,10 @@ class Frontend extends Handler {
 
 		// Redirect,but don't allow a loop; make sure they're different (trailing slash agnostic)
 		if ( $redirect_url && untrailingslashit( NL_ORIGINAL_URL ) != untrailingslashit( $redirect_url ) ) {
-			wp_redirect( $redirect_url, 302 );
-			exit;
+			// Exit if redirect was successful
+			if ( wp_redirect( $redirect_url, 302 ) ) {
+				exit;
+			}
 		}
 	}
 
