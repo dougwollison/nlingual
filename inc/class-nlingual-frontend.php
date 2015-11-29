@@ -210,8 +210,6 @@ class Frontend extends Handler {
 		 * @since 2.0.0
 		 *
 		 * @param string $redirect_url The URL localized for the determined language.
-		 *
-		 * @return string The filtered redirect URL.
 		 */
 		$redirect_url = apply_filters( 'nlingual_maybe_redirect_language', $redirect_url );
 

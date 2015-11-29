@@ -307,8 +307,6 @@ class Rewriter {
 		 *
 		 * @param array $url_data     The updated URL data.
 		 * @param array $old_url_data The original URL data.
-		 *
-		 * @return array The filtered $url_data array.
 		 */
 		$url_data = apply_filters( 'nlingual_process_url', $url_data, $old_url_data );
 
@@ -347,6 +345,20 @@ class Rewriter {
 	public static function localize_url( $url, Language $language = null, $relocalize = false ) {
 		// If localization is disabled, abort
 		if ( ! static::$do_localization ) {
+			return $url;
+		}
+
+		/**
+		 * Filter wether or not to localize the URL.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param bool     $bool       Whether or not to localize the URL. Default true.
+		 * @param string   $url        The URL to parse.
+		 * @param Language $language   The desired language to localize to.
+		 * @param bool     $relocalize Wether or not to relocalize the url if it already is.
+		 */
+		if ( ! apply_filters( 'nlingual_do_localize_url', true, $url, $language, $relocalize ) ) {
 			return $url;
 		}
 
@@ -551,8 +563,6 @@ class Rewriter {
 					 *
 					 * @param string $url      The URL to be filtered.
 					 * @param string $language The slug of the language to localize to.
-					 *
-					 * @return string The filtered URL.
 					 */
 					$url = apply_filters( 'nLingual_localize_here', $url, $language->slug );
 				}

@@ -226,8 +226,6 @@ class System extends Handler {
 		 *
 		 * @param mixed    $pre_value The value to set for the query (NULL to proceed).
 		 * @param WP_Query $query     The query being modified.
-		 *
-		 * @return mixed The filtered $pre_value.
 		 */
 		$pre_value = apply_filters( 'nlingual_pre_set_queried_language', null, $query );
 		if ( ! is_null( $pre_value ) ) {
