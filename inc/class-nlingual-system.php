@@ -65,10 +65,11 @@ class System extends Handler {
 	public static function setup() {
 		global $wpdb;
 
-		// Register the database tables (with backwards compatability for nL_ version)
+		// Register the database tables (with backwards compatability for their old nL_ version)
 		$wpdb->nl_languages = $wpdb->nL_languages = $wpdb->prefix . 'nl_languages';
 		$wpdb->nl_translations = $wpdb->nL_translations = $wpdb->prefix . 'nl_translations';
 		$wpdb->nl_localizerdata = $wpdb->prefix . 'nl_localizerdata';
+		$wpdb->nl_gettext = $wpdb->prefix . 'nl_gettext';
 
 		// Register the loader hooks
 		Loader::register_hooks();

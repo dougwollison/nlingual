@@ -182,7 +182,7 @@ class Loader extends Handler {
 			dbDelta( $sql_translations );
 
 			// The localizer data table
-			$sql_strings = "CREATE TABLE $wpdb->nl_localizerdata (
+			$sql_localizer = "CREATE TABLE $wpdb->nl_localizerdata (
 				language_id bigint(20) unsigned NOT NULL,
 				object_id bigint(20) unsigned NOT NULL,
 				string_key varchar(128) DEFAULT '' NOT NULL,
@@ -191,7 +191,21 @@ class Loader extends Handler {
 				KEY language_id (language_id)
 				KEY object_id (object_id)
 			) $charset_collate;";
-			dbDelta( $sql_strings );
+			dbDelta( $sql_localizer );
+
+			// The localizer data table
+			$sql_gettext = "CREATE TABLE $wpdb->nl_gettext (
+				string_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+				language_id bigint(20) NOT NULL,
+				string_key varchar(255) NOT NULL DEFAULT '',
+				string_context varchar(255) DEFAULT '',
+				string_translation text,
+				string_comments text,
+				PRIMARY KEY  (string_id),
+				KEY language_id (language_id),
+				KEY string_key (string_key)
+			) $charset_collate;";
+			dbDelta( $sql_gettext );
 
 			// Log the current database version
 			update_option( 'nlingual_database_version', NL_DB_VERSION );
