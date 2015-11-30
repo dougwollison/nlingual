@@ -143,8 +143,8 @@ class Translator {
 			// Build the group index
 			$group = array();
 			foreach ( $result as $row ) {
-				$group['by_object'][ $row['object_id'] ] = $row['language_id'];
-				$group['by_language'][ $row['language_id'] ] = $row['object_id'];
+				$group['language_by_object'][ $row['object_id'] ] = $row['language_id'];
+				$group['object_by_language'][ $row['language_id'] ] = $row['object_id'];
 
 				// Also cache the group ID for each object in it
 				wp_cache_set( "{$row['object_type']}/{$row['object_id']}", $group_id, 'nlingual:group_id' );
@@ -189,7 +189,7 @@ class Translator {
 			return false;
 		}
 
-		return Registry::languages()->get( $group['by_object'][ $id ] );
+		return Registry::languages()->get( $group['language_by_object'][ $id ] );
 	}
 
 	/**
@@ -318,7 +318,7 @@ class Translator {
 			return $return_self ? $id : false;
 		}
 
-		return $group['by_language'][ $language->id ];
+		return $group['object_by_language'][ $language->id ];
 	}
 
 	/**
@@ -348,7 +348,7 @@ class Translator {
 		}
 
 		// Use the by_language index as the translations list
-		$translations = $group['by_language'];
+		$translations = $group['object_by_language'];
 
 		// Remove the target posts ID if desired
 		if ( ! $include_self ) {
