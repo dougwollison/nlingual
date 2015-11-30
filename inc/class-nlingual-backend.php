@@ -633,7 +633,7 @@ class Backend extends Handler {
 
 					<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
 						<option value="0">&mdash; <?php _ex( 'None', 'no translation' ); ?> &mdash;</option>
-						<option value="new" class="nl-new-translation"><?php _ef( '&mdash; New %s %s &mdash;', $language->system_name, $post_type->labels->singular_name ); ?></option>
+						<option value="new" class="nl-new-translation">&mdash;<?php _ef( 'New %s %s', $language->system_name, $post_type->labels->singular_name ); ?>&mdash;</option>
 						<?php
 						// Print the options
 						foreach ( $post_options[ $language->id ] as $option ) {
