@@ -200,6 +200,7 @@ class Manager extends Handler {
 			'query_var'              => null,
 			'redirection_method'     => null,
 			'post_language_override' => 'intval',
+			'redirection_permanent'  => 'intval',
 		), 'options' );
 
 		static::setup_options_fields();
@@ -391,12 +392,6 @@ class Manager extends Handler {
 				'help'  => __( 'Run localization on the date format defined under General Settings. Useful if any languages you use require custom date formats.' ),
 				'type'  => 'checkbox',
 			),
-			'skip_default_l10n' => array(
-				'title' => __( 'Skip Localization for Default Language?' ),
-				'help'  => __( 'URLs for the default language will be unmodified.' ) .
-					'<br /> <span class="nl-previews">' . _f( 'Preview: %s', $url_previews ) . '</span>',
-				'type'  => 'checkbox',
-			),
 			'patch_wp_locale' => array(
 				'title' => __( 'Patch <code>WP_Locale</code>?' ),
 				'help'  => __( 'Replaced the Date/Time localization system with one using your Theme’s translation files instead (front-end only).' ),
@@ -405,7 +400,7 @@ class Manager extends Handler {
 		), 'options' );
 
 		// The request/redirection setting fields
-		add_settings_section( 'redirection', __( 'Request Handling' ), null, 'nlingual-options' );
+		add_settings_section( 'redirection', __( 'Request and Redirection Handling' ), null, 'nlingual-options' );
 		Settings::add_fields( array(
 			'query_var' => array(
 				'title' => __( 'Query Variable' ),
@@ -423,10 +418,21 @@ class Manager extends Handler {
 					'domain' => __( 'Subdomain' ),
 				),
 			),
+			'skip_default_l10n' => array(
+				'title' => __( 'Skip Localization for Default Language?' ),
+				'help'  => __( 'URLs for the default language will be unmodified.' ) .
+					'<br /> <span class="nl-previews">' . _f( 'Preview: %s', $url_previews ) . '</span>',
+				'type'  => 'checkbox',
+			),
 			'post_language_override' => array(
 				'title' => __( 'Post Language Override' ),
 				'help'  => __( 'Should the language of the requested post take precedence in the event of a language mismatch?' ) .
 					'<br /> <span class="nl-previews">' . _f( 'Example: %s', $override_previews ) . '</span>',
+				'type'  => 'checkbox',
+			),
+			'redirection_permanent' => array(
+				'title' => __( 'Permanently Redirect URLs?' ),
+				'help'  => __( 'Use "permanent" (HTTP 301) instead of "temporary" (HTTP 302) redirects?' ),
 				'type'  => 'checkbox',
 			),
 		), 'options', 'redirection' );

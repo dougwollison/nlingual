@@ -49,7 +49,7 @@ class Documenter extends Handler {
 		'options' => array(
 			'tabs' => array(
 				'overview' => 'Overview',
-				'requests' => 'Request Handling',
+				'requests' => 'Request and Redirection Handling',
 			),
 			'sidebar' => true,
 		),

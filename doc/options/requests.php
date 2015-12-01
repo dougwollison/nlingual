@@ -11,3 +11,5 @@
 </ol>
 
 <p><?php _e( 'If the language cannot be determined by any of the above means, the language specified as the default will be used.' ); ?></p>
+
+<p><?php _e( 'By default, any redirects will be performed as "temporary" (HTTP 302). You can set these to to be "permanent" (HTTP 301) instead. <em>This is often better for SEO, but changes to the settings after the fact or conflicts caused by other plugins/themes could result in hard-to-undo errors.</em>' );?></p>

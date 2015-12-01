@@ -117,6 +117,17 @@ class Registry {
 	protected static $post_language_override;
 
 	/**
+	 * The permanent redirection option.
+	 *
+	 * @internal
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var bool
+	 */
+	protected static $redirection_permanent;
+
+	/**
 	 * The backwards compatibility option.
 	 *
 	 * @internal
@@ -592,6 +603,7 @@ class Registry {
 		static::$localize_date          = (bool) get_option( 'nlingual_localize_date', 0 );
 		static::$skip_default_l10n      = (bool) get_option( 'nlingual_skip_default_l10n', 0 );
 		static::$post_language_override = (bool) get_option( 'nlingual_post_language_override', 0 );
+		static::$redirection_permanent  = (bool) get_option( 'nlingual_redirection_permanent', 0 );
 		static::$patch_wp_locale        = (bool) get_option( 'nlingual_patch_wp_locale', 0 );
 		static::$backwards_compatible   = (bool) get_option( 'nlingual_backwards_compatible', 0 );
 		static::$query_var              = get_option( 'nlingual_query_var', 'nl_language' );
