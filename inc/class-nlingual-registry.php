@@ -158,7 +158,7 @@ class Registry {
 	 *
 	 * @var string
 	 */
-	protected static $redirection_method;
+	protected static $url_rewrite_method;
 
 	/**
 	 * The supported post types.
@@ -574,9 +574,12 @@ class Registry {
 	 * @see Registry::$show_all_languages
 	 * @see Registry::$localize_date
 	 * @see Registry::$skip_default_l10n
-	 * @see Registry::$query_var
-	 * @see Registry::$redirection_method
 	 * @see Registry::$post_language_override
+	 * @see Registry::$redirection_permanent
+	 * @see Registry::$patch_wp_locale
+	 * @see Registry::$backwards_compatible
+	 * @see Registry::$query_var
+	 * @see Registry::$url_rewrite_method
 	 * @see Registry::$post_types
 	 * @see Registry::$taxonomies
 	 * @see Registry::$localizables
@@ -607,7 +610,7 @@ class Registry {
 		static::$patch_wp_locale        = (bool) get_option( 'nlingual_patch_wp_locale', 0 );
 		static::$backwards_compatible   = (bool) get_option( 'nlingual_backwards_compatible', 0 );
 		static::$query_var              = get_option( 'nlingual_query_var', 'nl_language' );
-		static::$redirection_method     = get_option( 'nlingual_redirection_method', 'get' );
+		static::$url_rewrite_method     = get_option( 'nlingual_url_rewrite_method', 'get' );
 
 		// Load complex options
 		static::$post_types   = get_option( 'nlingual_post_types', array() );

@@ -198,7 +198,7 @@ class Manager extends Handler {
 			'patch_wp_locale'        => 'intval',
 			'backwards_compatible'   => 'intval',
 			'query_var'              => null,
-			'redirection_method'     => null,
+			'url_rewrite_method'     => null,
 			'post_language_override' => 'intval',
 			'redirection_permanent'  => 'intval',
 		), 'options' );
@@ -407,7 +407,7 @@ class Manager extends Handler {
 				'help'  => __( 'The variable name to use for when requesting/filtering by language (recommended: "language")' ),
 				'type'  => 'input',
 			),
-			'redirection_method' => array(
+			'url_rewrite_method' => array(
 				'title' => __( 'URL Scheme' ),
 				'help'  => __( 'What style should be used for the translated URLs?' ) .
 					'<br /> <span class="nl-previews">' . _f( 'Preview: %s', $redirect_previews ) . '</span>',

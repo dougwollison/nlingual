@@ -228,7 +228,7 @@ class Migrator {
 		// Convert the redirection method
 		if ( isset( $options['method'] ) ) {
 			$method = strtolower( str_replace( 'NL_REDIRECT_USING_', '', $method ) );
-			update_option( 'nlingual_redirection_method', $method );
+			update_option( 'nlingual_url_rewrite_method', $method );
 		}
 
 		// Automatically set options that weren't present in old version

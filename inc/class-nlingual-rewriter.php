@@ -259,7 +259,7 @@ class Rewriter {
 		$path = $url_data['path'];
 
 		// Try using the desired method
-		switch( Registry::get( 'redirection_method' ) ) {
+		switch( Registry::get( 'url_rewrite_method' ) ) {
 			case 'domain':
 				// Get the subdirectory if found, see if it matches a language
 				if ( preg_match( '#^([a-z\-]+)\.(.+)#i', $host, $matches ) ) {
@@ -333,7 +333,7 @@ class Rewriter {
 	 * @uses Rewriter::delocalize_url() to clean the URL for relocalizing if desired.
 	 * @uses Rewriter::process_url() to process the URL into it's components.
 	 * @uses Registry::default_language() to get the default Language object for comparison.
-	 * @uses Registry::get() to get the skip_default_l10n, redirection_method and query_var options.
+	 * @uses Registry::get() to get the skip_default_l10n, url_rewrite_method and query_var options.
 	 * @uses Rewriter::build_url() to assemble the new URL from the modified components.
 	 *
 	 * @param string   $url        The URL to parse.
@@ -411,7 +411,7 @@ class Rewriter {
 			if ( is_null( $url_data['language'] )
 			&& ! preg_match( '#^wp-([\w-]+.php|(admin|content|includes)/)#', $url_data['path'] )
 			&& ( $language !== Registry::default_language() || ! Registry::get( 'skip_default_l10n' ) ) ) {
-				switch ( Registry::get( 'redirection_method' ) ) {
+				switch ( Registry::get( 'url_rewrite_method' ) ) {
 					case 'domain':
 						// Prepend hostname with language slug
 						$url_data['host'] = "{$language->slug}.{$url_data['host']}";
