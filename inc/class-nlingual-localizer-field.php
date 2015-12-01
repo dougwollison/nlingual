@@ -1,6 +1,6 @@
 <?php
 /**
- * nLingual String Model
+ * nLingual Field Model
  *
  * @package nLingual
  * @subpackage Structures
@@ -11,10 +11,10 @@
 namespace nLingual;
 
 /**
- * The String Model
+ * The Field Model
  *
  * Provides a predictable interface for accessing
- * properties of strings that have been registered
+ * properties of fields that have been registered
  * by the Localizer.
  *
  * @package nLingual
@@ -25,13 +25,13 @@ namespace nLingual;
  * @since 2.0.0
  */
 
-class Localizer_String extends Model {
+class Localizer_Field extends Model {
 	// =========================
 	// ! Properties
 	// =========================
 
 	/**
-	 * The unique ID of the string.
+	 * The unique ID of the field.
 	 *
 	 * @since 2.0.0
 	 *
@@ -42,7 +42,7 @@ class Localizer_String extends Model {
 	public $id;
 
 	/**
-	 * The database key of the string.
+	 * The database key of the field.
 	 *
 	 * @since 2.0.0
 	 *
@@ -53,7 +53,7 @@ class Localizer_String extends Model {
 	public $key;
 
 	/**
-	 * The type of string, for reference purposes.
+	 * The type of field, for reference purposes.
 	 *
 	 * @since 2.0.0
 	 *
@@ -64,7 +64,7 @@ class Localizer_String extends Model {
 	public $type;
 
 	/**
-	 * The screen the strings belong to (property/value pair to match).
+	 * The screen the fields belong to (property/value pair to match).
 	 *
 	 * @since 2.0.0
 	 *
@@ -75,7 +75,7 @@ class Localizer_String extends Model {
 	public $screen;
 
 	/**
-	 * The name of the field the string is for.
+	 * The name of the field the field is for.
 	 *
 	 * @since 2.0.0
 	 *
@@ -86,7 +86,7 @@ class Localizer_String extends Model {
 	public $field;
 
 	/**
-	 * The ID of the field the string is for.
+	 * The ID of the field the field is for.
 	 *
 	 * @since 2.0.0
 	 *
@@ -109,13 +109,13 @@ class Localizer_String extends Model {
 	 *
 	 * @uses Model::__construct() to setup the values.
 	 *
-	 * @param int   $id     The ID of the string.
+	 * @param int   $id     The ID of the field.
 	 * @param array $values The property values.
-	 *		@option string "key"      The database key to store the string under.
-	 *		@option string "type"     The type of string.
+	 *		@option string "key"      The database key to store the field under.
+	 *		@option string "type"     The type of field.
 	 *		@option array  "screen"   The screen id or property/value pair.
-	 *		@option string "field"    The name of the field the string is tied to.
-	 *		@option string "field_id" The ID of the field the string is tied to.
+	 *		@option string "field"    The name of the field the field is tied to.
+	 *		@option string "field_id" The ID of the field the field is tied to.
 	 */
 	public function __construct( $id, $values ) {
 		$values['id'] = $id;

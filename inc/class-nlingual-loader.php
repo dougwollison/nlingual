@@ -181,13 +181,13 @@ class Loader extends Handler {
 			) $charset_collate;";
 			dbDelta( $sql_translations );
 
-			// The localizer data table
-			$sql_localizer = "CREATE TABLE $wpdb->nl_localizerdata (
+			// The localizer fields table
+			$sql_localizer = "CREATE TABLE $wpdb->nl_localizer_fields (
 				language_id bigint(20) unsigned NOT NULL,
 				object_id bigint(20) unsigned NOT NULL,
-				string_key varchar(128) DEFAULT '' NOT NULL,
+				field_key varchar(128) DEFAULT '' NOT NULL,
 				localized_value longtext NOT NULL,
-				UNIQUE KEY localizerdata (language_id,object_id,string_key)
+				UNIQUE KEY localizerdata (language_id,object_id,field_key)
 				KEY language_id (language_id)
 				KEY object_id (object_id)
 			) $charset_collate;";

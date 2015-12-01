@@ -68,7 +68,7 @@ class System extends Handler {
 		// Register the database tables (with backwards compatability for their old nL_ version)
 		$wpdb->nl_languages = $wpdb->nL_languages = $wpdb->prefix . 'nl_languages';
 		$wpdb->nl_translations = $wpdb->nL_translations = $wpdb->prefix . 'nl_translations';
-		$wpdb->nl_localizerdata = $wpdb->prefix . 'nl_localizerdata';
+		$wpdb->nl_localizer_fields = $wpdb->prefix . 'nl_localizer_fields';
 		$wpdb->nl_gettext = $wpdb->prefix . 'nl_gettext';
 
 		// Register the loader hooks
@@ -163,10 +163,10 @@ class System extends Handler {
 	 */
 	public static function ready() {
 		// Register the blogname and blogdescription for localization
-		Localizer::register_option( 'blogname', 'options-general', array(
+		Localizer::register_option_field( 'blogname', 'options-general', array(
 			'title'  => 'Site Title'
 		) );
-		Localizer::register_option( 'blogdescription', 'options-general', array(
+		Localizer::register_option_field( 'blogdescription', 'options-general', array(
 			'title'  => 'Tagline'
 		) );
 
