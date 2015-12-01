@@ -261,7 +261,7 @@ class Rewriter {
 		// Try using the desired method
 		switch( Registry::get( 'redirection_method' ) ) {
 			case 'domain':
-				// Get the subdirectory if found, see if it matches a langauge
+				// Get the subdirectory if found, see if it matches a language
 				if ( preg_match( '#^([a-z\-]+)\.(.+)#i', $host, $matches ) ) {
 					if ( $language = $active_languages->get( $matches[1] ) ) {
 						// Update language with the matched
@@ -285,7 +285,7 @@ class Rewriter {
 					break;
 				}
 
-				// Get the subdirectory if found, see if it matches a langauge
+				// Get the subdirectory if found, see if it matches a language
 				if ( preg_match( '#^([a-z\-]+)(?:/(.*)|$)#i', $path, $matches ) ) {
 					if ( $language = $active_languages->get( $matches[1] ) ) {
 						// Update language with the matched

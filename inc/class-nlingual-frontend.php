@@ -179,7 +179,7 @@ class Frontend extends Handler {
 			return;
 		}
 
-		// Default the redirect langauge to the current one
+		// Default the redirect language to the current one
 		$redirect_language = $current_language;
 
 		// Check if the queried object is a post

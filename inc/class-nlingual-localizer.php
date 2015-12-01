@@ -14,8 +14,8 @@ namespace nLingual;
  * The Localizer System
  *
  * An API for registering fields whose values require
- * localization, adding LocalizeThis tools to their
- * them in the admin and filtering their frontend output.
+ * localization, adding LocalizeThis tools to them
+ * in the admin and filtering their frontend output.
  *
  * @package nLingual
  * @subpackage Tools

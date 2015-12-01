@@ -700,6 +700,11 @@ class Manager extends Handler {
 	 */
 	public static function settings_page_gettext() {
 		global $plugin_page, $l10n;
+
+		echo '<pre>';
+		print_r($l10n);
+		echo '</pre>';
+		return;
 		?>
 		<div class="wrap">
 			<h2><?php echo get_admin_page_title(); ?></h2>
@@ -714,7 +719,7 @@ class Manager extends Handler {
 	/**
 	 * Output for the cloning options section.
 	 *
-	 * @sicne 2.0.0
+	 * @since 2.0.0
 	 */
 	public static function settings_section_cloning() {
 		?>

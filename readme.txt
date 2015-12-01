@@ -7,7 +7,7 @@ Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A simple but flexible multilingual system. Features custom langauge management, post data synchronization and theme/plugin development utilities.
+A simple but flexible multilingual system. Features custom language management, post data synchronization and theme/plugin development utilities.
 
 == Description ==
 
@@ -78,7 +78,7 @@ The nLingual class is a static class with a host of functions for getting and ma
 
 1. Upload the contents of `nLingual.tar.gz` to your `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go into the plugin settings page under Settings > Langauges to configure your options and registered languages
+3. Go into the plugin settings page under Settings > Languages to configure your options and registered languages
 4. Start assigning languages to posts and linking translations.
 
 == Changelog ==
