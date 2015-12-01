@@ -95,10 +95,13 @@ class Loader extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @todo Set default language to the current one of the install.
+	 *
 	 * @uses Loader::plugin_security_check() to check for activation nonce.
 	 * @uses Migrator::is_upgrading() to check if upgrading from nLingual 1.
 	 * @uses Migrator::convert_tables() to convert database structure.
 	 * @uses Migrator::convert_options() to convert plugin/blog options.
+	 * @uses inc/presets.php To get the details for the default first language.
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 */
@@ -121,6 +124,8 @@ class Loader extends Handler {
 		add_option( 'nlingual_post_language_override', 0 );
 		add_option( 'nlingual_post_types', array() );
 		add_option( 'nlingual_taxonomies', array() );
+
+		// Default rules/lists: empty must-have entries
 		add_option( 'nlingual_sync_rules', array(
 			'post_types' => array(),
 		)  );
@@ -131,6 +136,10 @@ class Loader extends Handler {
 			'nav_menu_locations' => array(),
 			'sidebar_locations' => array(),
 		) );
+
+		// Default languages: English
+		$presets = require( NL_DIR . '/inc/presets-languages.php' );
+		add_option( 'nlingual_languages', new Languages( array( $presets['en'] ) ) );
 
 		// Get database version and upgrade if needed.
 		$db_version = get_option( 'nlingual_database_version', '1.0' );
