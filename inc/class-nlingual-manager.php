@@ -124,6 +124,16 @@ class Manager extends Handler {
 			'dashicons-translation' // icon
 		);
 
+		// Languages manager
+		$languages_page_hook = add_submenu_page(
+			'nlingual-options', // parent
+			__( 'Manage Languages' ), // page title
+			_x( 'Languages', 'menu title' ), // menu title
+			'manage_options', // capability
+			'nlingual-languages', // slug
+			array( static::$name, 'settings_page_languages' ) // callback
+		);
+
 		// Localizable Objects manager
 		$localizables_page_hook = add_submenu_page(
 			'nlingual-options', // parent
@@ -144,14 +154,14 @@ class Manager extends Handler {
 			array( static::$name, 'settings_page' ) // callback
 		);
 
-		// Languages manager
-		$languages_page_hook = add_submenu_page(
+		// GetText manager
+		$gettext_page_hook = add_submenu_page(
 			'nlingual-options', // parent
-			__( 'Manage Languages' ), // page title
-			_x( 'Languages', 'menu title' ), // menu title
+			__( 'GetText Manager' ), // page title
+			_x( 'GetText', 'menu title' ), // menu title
 			'manage_options', // capability
-			'nlingual-languages', // slug
-			array( static::$name, 'settings_page_languages' ) // callback
+			'nlingual-gettext', // slug
+			array( static::$name, 'settings_page_gettext' ) // callback
 		);
 
 		// Setup the help tabs for each page
@@ -160,6 +170,7 @@ class Manager extends Handler {
 			$localizables_page_hook => 'localizables',
 			$sync_page_hook		    => 'sync',
 			$languages_page_hook    => 'languages',
+			$gettext_page_hook      => 'gettext',
 		) );
 	}
 
@@ -674,6 +685,26 @@ class Manager extends Handler {
 					<?php $presets = require( NL_DIR . '/inc/presets-languages.php' ); ?>
 					var NL_PRESETS = <?php echo json_encode( $presets );?>
 				</script>
+				<?php submit_button(); ?>
+			</form>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Output for the gettext management page.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global $plugin_page The slug of the current admin page.
+	 */
+	public static function settings_page_gettext() {
+		global $plugin_page, $l10n;
+		?>
+		<div class="wrap">
+			<h2><?php echo get_admin_page_title(); ?></h2>
+			<?php settings_errors( $plugin_page ); ?>
+			<form method="post" action="options.php" id="<?php echo $plugin_page; ?>-form">
 				<?php submit_button(); ?>
 			</form>
 		</div>
