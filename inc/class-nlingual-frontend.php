@@ -89,8 +89,7 @@ class Frontend extends Handler {
 
 		// Locale & GetText Rewrites
 		static::add_action( 'wp', 'maybe_patch_wp_locale', 10, 0 );
-		static::add_filter( 'gettext', 'translate', 10, 3 );
-		static::add_filter( 'gettext_with_context', 'translate_with_context', 10, 4 );
+		static::add_filter( 'gettext_with_context', 'handle_text_direction', 10, 4 );
 	}
 
 	// =========================
@@ -571,33 +570,17 @@ class Frontend extends Handler {
 	}
 
 	/**
-	 * Filter the text translation.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param string $translation The translated text.
-	 * @param string $text        The original text.
-	 * @param string $domain      The text domain to translate for.
-	 *
-	 * @return string The filtered translation.
-	 */
-	public static function translate( $translation, $text, $domain ) {
-		return $translation;
-	}
-
-	/**
-	 * Filter the text translation with regard to a context.
+	 * Filters the translated form of "ltr" based on current language.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @param string $translation The translated text.
 	 * @param string $text        The original text.
 	 * @param string $context     The unique context for this text.
-	 * @param string $domain      The text domain to translate for.
 	 *
-	 * @return string The filtered translation.
+	 * @return string The filtered value.
 	 */
-	public static function translate_with_context( $translation, $text, $context, $domain ) {
+	public static function handle_text_direction( $translation, $text, $context ) {
 		// If text direction context, use language's assigned one
 		if ( $context == 'text direction' ) {
 			return Registry::current_language( 'direction' );
