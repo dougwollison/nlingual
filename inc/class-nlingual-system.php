@@ -69,7 +69,6 @@ class System extends Handler {
 		$wpdb->nl_languages = $wpdb->nL_languages = $wpdb->prefix . 'nl_languages';
 		$wpdb->nl_translations = $wpdb->nL_translations = $wpdb->prefix . 'nl_translations';
 		$wpdb->nl_localizer_fields = $wpdb->prefix . 'nl_localizer_fields';
-		$wpdb->nl_gettext = $wpdb->prefix . 'nl_gettext';
 
 		// Register the loader hooks
 		Loader::register_hooks();

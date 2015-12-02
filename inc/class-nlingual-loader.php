@@ -203,23 +203,6 @@ class Loader extends Handler {
 			) $charset_collate;";
 			dbDelta( $sql_localizer );
 
-			// The localizer data table
-			$sql_gettext = "CREATE TABLE $wpdb->nl_gettext (
-				string_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-				language_id bigint(20) NOT NULL,
-				string_hash varchar(32) NOT NULL,
-				string_domain varchar(100) NOT NULL DEFAULT '',
-				string_context varchar(100) DEFAULT '',
-				string_original text NOT NULL,
-				string_translation text,
-				string_comments text,
-				PRIMARY KEY  (string_id),
-				UNIQUE KEY string (language_id,string_hash,string_domain,string_context),
-				KEY language_id (language_id),
-				KEY string_hash (string_hash)
-			) $charset_collate;";
-			dbDelta( $sql_gettext );
-
 			// Log the current database version
 			update_option( 'nlingual_database_version', NL_DB_VERSION );
 
