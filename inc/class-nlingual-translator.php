@@ -101,8 +101,6 @@ class Translator {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
-	 * @uses Translator::get_group_id() to find the translation group id.
-	 *
 	 * @param string $type The type of object.
 	 * @param int    $id   The ID of the object.
 	 *
@@ -114,16 +112,18 @@ class Translator {
 		$cache_id = "{$type}/{$id}";
 
 		// Check if the group id has already been determined
-		$group_id = wp_cache_get( $cache_id, 'nlingual:group_id', false, $group_found );
-		if ( $group_found && ! $group_id ) {
+		$group_id = wp_cache_get( $cache_id, 'nlingual:group_id', false, $group_id_found );
+		if ( $group_id_found && ! $group_id ) {
 			// If it was determined to have no group id, return false.
 			return false;
 		}
 
-		// Check if it's cached, return if so
-		$cached = wp_cache_get( $group_id, 'nlingual:group', false, $group_id_found );
-		if ( $group_id_found ) {
-			return $cached;
+		// If there was a group ID, check if it's cached, return if so
+		if ( $group_id ) {
+			$cached = wp_cache_get( $group_id, 'nlingual:group', false, $group_found );
+			if ( $group_found ) {
+				return $cached;
+			}
 		}
 
 		// Build the query based on available information
