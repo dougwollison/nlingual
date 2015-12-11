@@ -25,8 +25,6 @@ namespace nLingual;
  */
 
 class Liaison extends Handler {
-	use Shared_Filters;
-
 	// =========================
 	// ! Properties
 	// =========================
@@ -62,6 +60,8 @@ class Liaison extends Handler {
 	 * Check if QuickStart is active, setup necessary helpers.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Frontend::current_language_post() on the qs_helper_get_index filter.
 	 */
 	public static function add_quickstart_helpers() {
 		// Abort if QuickStart isn't present
@@ -72,7 +72,7 @@ class Liaison extends Handler {
 		// Custom index page feature adjustments
 		if ( current_theme_supports( 'quickstart-index_page' ) ) {
 			// Replace the retrieved index page's ID with it's translation counterpart
-			static::add_filter( 'qs_helper_get_index', 'current_language_post', 10, 1 );
+			Frontend::add_filter( 'qs_helper_get_index', 'current_language_post', 10, 1 );
 		}
 
 		// Order manager feature adjustments
@@ -86,6 +86,10 @@ class Liaison extends Handler {
 	 * Set queried language to default (and un-assigned) for certain QuickStart queries.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Registry::is_post_type_supported() to check for post type support.
+	 * @uses Registry::get_rules() to check for menu_order synchronizing.
+	 * @uses Registry::default_language() to get the default language slug.
 	 *
 	 * @param mixed    $pre_value The value to use instead of the determined one.
 	 * @param WP_Query $query     The query being modified.
