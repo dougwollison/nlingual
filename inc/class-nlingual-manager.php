@@ -268,9 +268,9 @@ class Manager extends Handler {
 						'error'
 					);
 					break;
-				} else {
-					$entry[ $field ] = $language[ $field ];
 				}
+
+				$entry[ $field ] = $language[ $field ];
 			}
 
 			// Sanitize the slug
@@ -278,17 +278,15 @@ class Manager extends Handler {
 
 			// Default active to 0
 			$formats[] = '%d';
+			$entry['active'] = 0;
 			if ( isset( $language['active'] ) ) {
 				$entry['active'] = $language['active'];
-			} else {
-				$entry['active'] = 0;
 			}
 
-			// Default text direction to ltr if not set or otherwise not rtl
+			// Default text direction to ltr if not set or otherwise not ltr
 			$formats[] = '%s';
-			if ( ! isset( $language['direction'] ) || $language['direction'] != 'rtl' ) {
-				$entry['direction'] = 'ltr';
-			} else {
+			$entry['direction'] = 'ltr';
+			if ( isset( $language['direction'] ) && $language['direction'] != 'ltr' ) {
 				$entry['direction'] = 'rtl';
 			}
 
@@ -447,8 +445,6 @@ class Manager extends Handler {
 	 */
 	protected static function setup_localizables_fields() {
 		add_settings_section( 'default', null, null, 'nlingual-localizables' );
-
-		$settings = array();
 
 		/**
 		 * Post Types

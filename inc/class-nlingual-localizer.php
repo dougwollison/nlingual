@@ -169,9 +169,9 @@ class Localizer extends Handler {
 
 		if ( isset( $list[ $value ] ) ) {
 			return $list[ $value ];
-		} else {
-			return array();
 		}
+
+		return array();
 	}
 
 	/**
@@ -383,18 +383,22 @@ class Localizer extends Handler {
 		if ( ! isset( $args['screen'] ) ) {
 			// For posts, check for post_type
 			if ( $meta_type == 'post' ) {
+				// Default to general post base
+				$args['screen'] = array( 'base', 'post' );
+
+				// Specify post type if provided
 				if ( isset( $args['post_type'] ) ) {
 					$args['screen'] = array( 'post_type', $args['post_type'] );
-				} else {
-					$args['screen'] = array( 'base', 'post' );
 				}
 			}
 			// For terms, check for taxonomy
 			elseif ( $meta_type == 'post' ) {
+				// Default to general edit-tags base
+				$args['screen'] = array( 'base', 'edit-tags' );
+
+				// Specify taxonomy if provided
 				if ( isset( $args['taxonomy'] ) ) {
 					$args['screen'] = array( 'taxonomy', $args['taxonomy'] );
-				} else {
-					$args['screen'] = array( 'base', 'edit-tags' );
 				}
 			}
 		}
@@ -431,7 +435,6 @@ class Localizer extends Handler {
 	public static function register_taxonomy( $taxonomy ) {
 		// Register the name and description fields as normal
 		$page = "edit-{$taxonomy}";
-		$type = "term_{$taxonomy}";
 
 		static::register_field( "term.{$taxonomy}:term_name", array(
 			'key'      => "term_name",
@@ -730,11 +733,10 @@ class Localizer extends Handler {
 	 * @param null|array|field $pre_value The value that should be returned (single or array)
 	 * @param int               $object_id The object's ID.
 	 * @param string            $meta_key  The metadata key to retrieve data for.
-	 * @param bool              $single    Return a single value or array of values?
 	 *
 	 * @return field The localized version of the value.
 	 */
-	public static function handle_localized_metadata_field( $pre_value, $object_id, $meta_key, $single ) {
+	public static function handle_localized_metadata_field( $pre_value, $object_id, $meta_key ) {
 		// Get the meta type based on the current filter name
 		$filter = current_filter();
 		$meta_type = preg_replace( '/^get_(.+?)_metadata$/', '$1', $filter );
@@ -890,6 +892,10 @@ class Localizer extends Handler {
 			'edit-tags.php' => 'tag_ID',
 			'profile.php'   => 'user_id',
 		);
+
+		// Default to 0 since it's not for an object
+		$object_id = 0;
+
 		// If this screen is for an object, get the ID
 		if ( isset( $object_id_keys[ $pagenow ] ) ) {
 			$object_id_key = $object_id_keys[ $pagenow ];
@@ -900,9 +906,6 @@ class Localizer extends Handler {
 			}
 
 			$object_id = $_REQUEST[ $object_id_key ];
-		} else {
-			// Default to 0 since it's not for an object
-			$object_id = 0;
 		}
 
 		// Get the fields and nonces
@@ -969,6 +972,10 @@ class Localizer extends Handler {
 			'edit-tags' => 'tag_ID',
 			'user-edit' => 'user_id',
 		);
+
+		// Default to 0 since it's not for an object
+		$object_id = 0;
+
 		// If this screen is for an object, get the ID
 		if ( isset( $object_id_keys[ $screen->base ] ) ) {
 			$object_id_key = $object_id_keys[ $screen->base ];
@@ -979,9 +986,6 @@ class Localizer extends Handler {
 			}
 
 			$object_id = $_REQUEST[ $object_id_key ];
-		} else {
-			// Default to 0 since it's not for an object
-			$object_id = 0;
 		}
 
 		// Now get the fields registered to this screen (by id or base)

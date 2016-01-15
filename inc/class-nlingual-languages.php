@@ -216,12 +216,12 @@ class Languages implements \Iterator {
 	public function get( $value, $field = null ) {
 		// Guess $field based on nature of $language if not provided
 		if ( is_null( $field ) ) {
+			// Slug by default
+			$field = 'slug';
+
 			if ( is_numeric( $value ) ) {
-				// Language ID
+				// Language ID if numeric
 				$field = 'id';
-			} else {
-				// Slug
-				$field = 'slug';
 			}
 		}
 

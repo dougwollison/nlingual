@@ -576,11 +576,7 @@ class Rewriter {
 		$url_data = static::parse_url( $url, array( 'args' => array() ) );
 
 		// Merge the args with the $_GET variables
-		if ( ! isset( $url_data['args'] ) ) {
-			$url_data['args'] = $_GET;
-		} else {
-			$url_data['args'] = wp_parse_args( $url_data['args'], $_GET );
-		}
+		$url_data['args'] = wp_parse_args( $url_data['args'], $_GET );
 
 		// Check if paged and add entry to $url_data
 		if ( is_paged() ) {

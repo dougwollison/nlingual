@@ -146,13 +146,13 @@ class Settings {
 			// See if we need to go deeper
 			if ( $map ) {
 				return static::extract_value( $array[ $key ], $map );
-			} else {
-				return $array[ $key ];
 			}
-		} else {
-			// Nothing found.
-			return null;
+
+			return $array[ $key ];
 		}
+
+		// Nothing found.
+		return null;
 	}
 
 	/**

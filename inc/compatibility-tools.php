@@ -111,9 +111,6 @@ function nl_compatibility_convert_terms_process() {
 	// Start a list of taxonomies that needed localization
 	$taxonomies = array();
 
-	// Get the list of languages, ordered by list order
-	$languages = nLingual\Registry::languages();
-
 	// Loop through each term name, convert and store
 	foreach ( $terms as $term ) {
 		// add taxonomy to list

@@ -257,14 +257,12 @@ class System extends Handler {
 			return;
 		}
 
+		// Assume current language; build the list (1 value; the current language)
+		$value = array( Registry::current_language()->slug );
+
 		// If in the backend and the show_all_languages option is enabled, set filter for all active languages
 		if ( is_backend() && Registry::get( 'show_all_languages' ) ) {
 			$value = array_keys( Registry::languages( 'active' )->export() );
-		}
-		// Otherwise, assume current language
-		else {
-			// Build the language list (1 value; the current language)
-			$value = array( Registry::current_language()->slug );
 		}
 
 		// If in the backend, also add 0 to retreive language-less posts too

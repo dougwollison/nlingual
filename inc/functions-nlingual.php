@@ -31,10 +31,10 @@ function is_backend() {
 	if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 		// AJAX request, check if the referrer is from wp-admin
 		return strpos( $_SERVER['HTTP_REFERER'], admin_url() ) === 0;
-	} else {
-		// Check if in the admin or otherwise the login/register page
-		return is_admin() || in_array( $pagenow, array( 'wp-login.php', 'wp-register.php' ) );
 	}
+
+	// Check if in the admin or otherwise the login/register page
+	return is_admin() || in_array( $pagenow, array( 'wp-login.php', 'wp-register.php' ) );
 }
 
 /**
@@ -70,13 +70,7 @@ function backwards_compatible() {
  * @return bool If the language was successfully converted.
  */
 function is_language( &$language ) {
-	if ( is_a( $language, __NAMESPACE__ . '\Language' ) ) {
-		return true;
-	} else {
-		$language = Registry::languages()->get( $language );
-	}
-
-	return (bool) $language;
+	return Registry::languages()->find( $language ) !== false;
 }
 
 /**

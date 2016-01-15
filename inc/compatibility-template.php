@@ -217,10 +217,9 @@ function nl_split_langs( $text, $language = null, $separator = null, $force = fa
 	$separator = preg_quote( $separator, '/' );
 	$parts = preg_split( "/\s*$separator\s*/", $text );
 
+	$text = $parts[0];
 	if ( isset( $parts[ $index ] ) ) {
 		$text = $parts[ $index ];
-	} else {
-		$text = $parts[0];
 	}
 
 	return $text;

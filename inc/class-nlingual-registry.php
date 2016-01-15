@@ -283,9 +283,9 @@ class Registry {
 		$language = static::$languages->get( $language_id );
 		if ( is_null( $field ) ) {
 			return $language;
-		} else {
-			return $language->$field;
 		}
+
+		return $language->$field;
 	}
 
 	/**
@@ -400,10 +400,9 @@ class Registry {
 			if ( isset( $rules[ $section ] ) ) {
 				$rules = $rules[ $section ];
 			}
+
 			// Abort and return empty array
-			else {
-				return array();
-			}
+			return array();
 		}
 
 		return $rules;

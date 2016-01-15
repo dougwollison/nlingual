@@ -61,7 +61,7 @@ class Frontend extends Handler {
 		static::add_filter( 'redirect_canonical', 'localize_canonical', 10, 2 );
 
 		// URL Rewriting
-		static::add_filter( 'home_url', 'localize_home_url', 10, 4 );
+		static::add_filter( 'home_url', 'localize_home_url', 10, 3 );
 		static::add_filter( 'page_link', 'localize_page_link', 10, 2 );
 
 		// The Mod rewriting
@@ -70,7 +70,7 @@ class Frontend extends Handler {
 		static::add_filter( 'wp_nav_menu_objects', 'handle_language_links', 10, 1 );
 
 		// General fitlering
-		static::add_filter( 'locale', 'rewrite_locale', 10, 1 );
+		static::add_filter( 'locale', 'rewrite_locale', 10, 0 );
 		static::add_filter( 'body_class', 'add_body_classes', 10, 1 );
 		static::add_filter( 'option_page_on_front', 'current_language_post', 10, 1 );
 		static::add_filter( 'option_page_for_posts', 'current_language_post', 10, 1 );
@@ -153,8 +153,6 @@ class Frontend extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global WP_Query $wp_query The main WP_Query instance.
-	 *
 	 * @uses NL_REQUESTED_LANGUAGE to check if the language was specifically requested.
 	 * @uses NL_ORIGINAL_URL to compare the redirect URL with the original, to prevent loops.
 	 * @uses Registry::current_language() to get the current language object.
@@ -164,8 +162,6 @@ class Frontend extends Handler {
 	 * @uses Rewriter::localize_here() to generate the localized URL for the language.
 	 */
 	public static function maybe_redirect_language() {
-		global $wp_query;
-
 		// Don't do anything on non-HEAD/GET request
 		if ( isset( $_SERVER['REQUEST_METHOD'] ) && ! in_array( strtoupper( $_SERVER['REQUEST_METHOD'] ), array( 'GET', 'HEAD' ) ) ) {
 			return;
@@ -177,7 +173,7 @@ class Frontend extends Handler {
 		}
 
 		// Default the redirect language to the current one
-		$redirect_language = $current_language;
+		$redirect_language = Registry::current_language();
 
 		// Check if the queried object is a post
 		if ( is_a( get_queried_object(), 'WP_Post' ) ) {
@@ -191,11 +187,10 @@ class Frontend extends Handler {
 			&& ( Registry::get( 'post_language_override', 0 ) || ! defined( 'NL_REQUESTED_LANGUAGE' ) ) ) {
 				$redirect_language = $post_language;
 			}
-		} else {
-			// If the language was already specified, or otherwise it's the default and skip is enabled, do nothing
-			if ( defined( 'NL_REQUESTED_LANGUAGE' ) xor ( Registry::is_default_language() && Registry::get( 'skip_default_l10n' ) ) ) {
-				return;
-			}
+		}
+		// If the language was already specified, or otherwise it's the default and skip is enabled, do nothing
+		elseif ( defined( 'NL_REQUESTED_LANGUAGE' ) xor ( Registry::is_default_language() && Registry::get( 'skip_default_l10n' ) ) ) {
+			return;
 		}
 
 		// Get the new URL localized for the redirect language
@@ -258,11 +253,10 @@ class Frontend extends Handler {
 	 * @param string      $url     The complete home URL including scheme and path.
 	 * @param string      $path    Path relative to the home URL.
 	 * @param string|null $scheme  Scheme to give the home URL context.
-	 * @param int|null    $blog_id Blog ID, or null for the current blog.
 	 *
 	 * @return string The localized home URL.
 	 */
-	public static function localize_home_url( $url, $path, $scheme, $blog_id ) {
+	public static function localize_home_url( $url, $path, $scheme ) {
 		// Check if we shouldn't actually localize this
 		// (will be indicated by custom $scheme value)
 		if ( $scheme == NL_UNLOCALIZED ) {
@@ -424,11 +418,9 @@ class Frontend extends Handler {
 	 *
 	 * @uses Registry::current_language() to get the current language.
 	 *
-	 * @param string $locale The locale to replace.
-	 *
 	 * @return string The replaced locale.
 	 */
-	public static function rewrite_locale( $locale ) {
+	public static function rewrite_locale() {
 		// Return the current language's locale_name
 		return Registry::current_language( 'locale_name' );
 	}

@@ -219,12 +219,8 @@ class Loader extends Handler {
 	 * @since 2.0.0
 	 *
 	 * @uses Loader::plugin_security_check() to check for deactivation nonce.
-	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
 	 */
 	public static function plugin_deactivate() {
-		global $wpdb;
-
 		if ( ! static::plugin_security_check( 'deactivate' ) ) {
 			return;
 		}

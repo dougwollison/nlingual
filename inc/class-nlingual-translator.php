@@ -136,6 +136,7 @@ class Translator {
 		}
 
 		// Get the results
+		$group = false;
 		if ( $result = $wpdb->get_results( $query, ARRAY_A ) ) {
 			// Get the group ID
 			$group_id = $result[0]['group_id'];
@@ -149,8 +150,6 @@ class Translator {
 				// Also cache the group ID for each object in it
 				wp_cache_set( "{$row['object_type']}/{$row['object_id']}", $group_id, 'nlingual:group_id' );
 			}
-		} else {
-			$group = false;
 		}
 
 		// Cache the object's group ID and the group's data
@@ -168,8 +167,6 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
-	 *
 	 * @uses Translator::get_translation_gorup() to retrieve the object's translation group.
 	 * @uses Registry::languages() to retrieve the Language object by ID.
 	 *
@@ -179,8 +176,6 @@ class Translator {
 	 * @return bool|Language The language of the object (false if not found).
 	 */
 	public static function get_object_language( $type, $id ) {
-		global $wpdb;
-
 		// Get the translation group for the object
 		$group = static::get_group( $type, $id );
 
@@ -232,6 +227,7 @@ class Translator {
 				SELECT object_id FROM $wpdb->nl_translations
 				WHERE group_id = %d AND language_id = %
 			", $group_id, $language->id ) );
+
 			if ( $language_exists ) {
 				// Get a new group ID if so
 				$group_id = static::new_group_id();
@@ -291,8 +287,6 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
-	 *
 	 * @uses is_language() to validate the language and get the Language object.
 	 * @uses Translator::get_group() to get the object's translation group.
 	 *
@@ -303,8 +297,6 @@ class Translator {
 	 * @return bool|int The id of the translation.
 	 */
 	public static function get_object_translation( $type, $id, $language, $return_self = false ) {
-		global $wpdb;
-
 		// Ensure $language is a Language
 		if ( ! is_language( $language ) ) {
 			return false; // Does not exist
@@ -326,8 +318,6 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
-	 *
 	 * @uses Translator::get_group() to get the object's translation group.
 	 *
 	 * @param string $type         The type of object.
@@ -337,8 +327,6 @@ class Translator {
 	 * @return array An associative array of objects in language_id => object_id format.
 	 */
 	public static function get_object_translations( $type, $id, $include_self = false ) {
-		global $wpdb;
-
 		// Get the translation group for the object
 		$group = static::get_group( $type, $id );
 

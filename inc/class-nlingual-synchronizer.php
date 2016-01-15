@@ -176,8 +176,6 @@ class Synchronizer {
 	 * @return WP_Post|false The cloned post or false on failure.
 	 */
 	public static function clone_post( $post, $language, $title = null, $_title_is_default = false ) {
-		global $wpdb;
-
 		// Validate $post if an ID
 		if ( ! is_a( $post, 'WP_Post' ) ) {
 			$post = get_post( $post );

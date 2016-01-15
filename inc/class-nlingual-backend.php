@@ -133,7 +133,7 @@ class Backend extends Handler {
 	 *
 	 * @param array $plugin The information about the plugin and the update.
 	 */
-	public static function update_notice( $plugin, $r ) {
+	public static function update_notice( $plugin ) {
 		// Get the version number that the update is for
 		$version = $plugin['new_version'];
 
@@ -182,9 +182,6 @@ class Backend extends Handler {
 	 * @since 2.0.0
 	 */
 	public static function enqueue_assets(){
-		// Get the current screen
-		$screen = get_current_screen();
-
 		// Admin styling
 		wp_enqueue_style( 'nlingual-admin', plugins_url( 'css/admin.css', NL_SELF ), '2.0.0', 'screen' );
 
@@ -373,10 +370,10 @@ class Backend extends Handler {
 			echo '<input type="hidden" class="nl-language" value="0" />';
 			_e( 'None', 'no language' );
 			return;
-		} else {
-			printf( '<input type="hidden" class="nl-language" value="%d" />', $language->id );
-			printf( '<strong>%s</strong>', $language->system_name );
 		}
+
+		printf( '<input type="hidden" class="nl-language" value="%d" />', $language->id );
+		printf( '<strong>%s</strong>', $language->system_name );
 
 		// Now print out the translations
 		$translations = Translator::get_post_translations( $post_id );
@@ -670,15 +667,11 @@ class Backend extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
-	 *
 	 * @uses Translator::set_object_language() to assign/update the post's language.
 	 *
 	 * @param int $post_id The ID of the post being saved.
 	 */
 	public static function save_post_language( $post_id ) {
-		global $wpdb;
-
 		// Abort if doing auto save or it's a revision
 		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || wp_is_post_revision( $post_id ) ) {
 			return;
@@ -713,8 +706,6 @@ class Backend extends Handler {
 	 * @param int $post_id The ID of the post being saved.
 	 */
 	public static function save_post_translations( $post_id ) {
-		global $wpdb;
-
 		// Abort if doing auto save or it's a revision
 		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || wp_is_post_revision( $post_id ) ) {
 			return;
