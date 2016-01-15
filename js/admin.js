@@ -1,4 +1,4 @@
-/* globals console, alert, prompt, _, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n, NL_LANGUAGES, NL_DEFAULT_LANGUAGE, NL_PRESETS */
+/* globals alert, prompt, _, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n, NL_LANGUAGES, NL_DEFAULT_LANGUAGE, NL_PRESETS */
 var NL_LOCALIZABLE_FIELDS = {};
 
 // Register a field to be localized
@@ -234,7 +234,7 @@ jQuery( function( $ ) {
 
 	// Setup the base localizer
 	var $localizer = $('<span class="nl-localizer"></span>').html(function(){
-		var html = '<span class="nl-localizer-toggle" title="' + nlingualL10n.LocalizeThis + '"></span>', language;
+		var html = '<span class="nl-localizer-toggle" title="' + nlingualL10n.LocalizeThis + '"></span>';
 		_.each( NL_LANGUAGES, function( language ) {
 			html += '<span class="nl-localizer-option" title="' + nlingualL10n.LocalizeFor.replace( '%s', language.system_name ) + '" data-nl_language="' + language.id + '"><i class="nl-option-text">' + language.system_name + '</i></span>';
 		} );
@@ -357,7 +357,6 @@ jQuery( function( $ ) {
 
 	$( 'body' ).on( 'input nl:localizer:update', '.nl-localizable-input', function ( event, extra ) {
 		// Skip if this was a change event triggered by the update above
-		console.log(event.type);
 		if ( event.type === 'input' && extra === nlLocalizerSkipUpdate ) {
 			return;
 		}
@@ -497,7 +496,7 @@ jQuery( function( $ ) {
 	// Extend inlineEditTax if available
 	if ( typeof inlineEditTax === 'object' ) {
 		var wpInlineEditTax_edit = inlineEditTax.edit;
-		inlineEditTax.edit = function( id ) {
+		inlineEditTax.edit = function( /* id */ ) {
 			// Start by calling the original for default behaviour
 			wpInlineEditTax_edit.apply( this, arguments );
 		};
