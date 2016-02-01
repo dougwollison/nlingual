@@ -29,6 +29,17 @@ class Registry {
 	// =========================
 
 	/**
+	 * The loaded status flag.
+	 *
+	 * @internal
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var bool
+	 */
+	protected static $__loaded = false;
+
+	/**
 	 * Language switching log.
 	 *
 	 * @internal
@@ -569,6 +580,7 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @see Registry::$__loaded
 	 * @see Registry::$default_language
 	 * @see Registry::$show_all_languages
 	 * @see Registry::$localize_date
@@ -593,8 +605,7 @@ class Registry {
 	public static function load( $reload = false ) {
 		global $wpdb;
 
-		static $loaded = false;
-		if ( $loaded && ! $reload ) {
+		if ( static::$__loaded && ! $reload ) {
 			// Already did this
 			return;
 		}
@@ -623,6 +634,6 @@ class Registry {
 		static::$languages = new Languages( $data );
 
 		// Flag that we've loaded everything
-		$loaded = true;
+		static::$__loaded = true;
 	}
 }
