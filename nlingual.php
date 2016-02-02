@@ -35,15 +35,6 @@ define( 'NL_SELF', __FILE__ );
 define( 'NL_DIR', __DIR__ );
 
 /**
- * Shortcut for the TextDomain.
- *
- * @since 2.0.0
- *
- * @var string
- */
-define( 'NL_TXTDMN', 'nLingual' );
-
-/**
  * Identifies the current database version.
  *
  * @since 2.0.0

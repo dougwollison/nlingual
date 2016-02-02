@@ -108,42 +108,42 @@ function sanitize_tag( $tag, $_ = false ) {
  * @see __()
  */
 function __( $string ) {
-	return \__( $string, NL_TXTDMN );
+	return \__( $string, 'nlingual' );
 }
 
 /**
  * @see _e()
  */
 function _e( $string ) {
-	return \_e( $string, NL_TXTDMN );
+	return \_e( $string, 'nlingual' );
 }
 
 /**
  * @see _n()
  */
 function _n( $single, $plural, $number ) {
-	return \_n( $single, $plural, $number, NL_TXTDMN );
+	return \_n( $single, $plural, $number, 'nlingual' );
 }
 
 /**
  * @see _x()
  */
 function _x( $string, $context ) {
-	return \_x( $string, NL_TXTDMN );
+	return \_x( $string, 'nlingual' );
 }
 
 /**
  * @see _ex()
  */
 function _ex( $string, $context ) {
-	\_ex( $string, NL_TXTDMN );
+	\_ex( $string, 'nlingual' );
 }
 
 /**
  * @see _nx()
  */
 function _nx( $single, $plural, $number, $context ) {
-	return \_nx( $single, $plural, $number, $context, NL_TXTDMN );
+	return \_nx( $single, $plural, $number, $context, 'nlingual' );
 }
 
 /**
@@ -151,7 +151,7 @@ function _nx( $single, $plural, $number, $context ) {
  */
 function _f() {
 	$args = func_get_args();
-	array_splice( $args, 1, 0, NL_TXTDMN );
+	array_splice( $args, 1, 0, 'nlingual' );
 	return call_user_func_array( '\_f', $args );
 }
 
@@ -160,7 +160,7 @@ function _f() {
  */
 function _ef() {
 	$args = func_get_args();
-	array_splice( $args, 1, 0, NL_TXTDMN );
+	array_splice( $args, 1, 0, 'nlingual' );
 	return call_user_func_array( '\_ef', $args );
 }
 
@@ -169,7 +169,7 @@ function _ef() {
  */
 function _fx() {
 	$args = func_get_args();
-	array_splice( $args, 2, 0, NL_TXTDMN );
+	array_splice( $args, 2, 0, 'nlingual' );
 	return call_user_func_array( '\_fx', $args );
 }
 
@@ -178,7 +178,7 @@ function _fx() {
  */
 function _efx() {
 	$args = func_get_args();
-	array_splice( $args, 2, 0, NL_TXTDMN );
+	array_splice( $args, 2, 0, 'nlingual' );
 	return call_user_func_array( '\_efx', $args );
 }
 
@@ -186,14 +186,14 @@ function _efx() {
  * @see _a()
  */
 function _a( $array ) {
-	return \_a( $array, NL_TXTDMN );
+	return \_a( $array, 'nlingual' );
 }
 
 /**
  * @see _ax()
  */
 function _ax( $array, $context ) {
-	return \_a( $array, $context, NL_TXTDMN );
+	return \_a( $array, $context, 'nlingual' );
 }
 
 // =========================

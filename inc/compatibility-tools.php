@@ -47,7 +47,7 @@ function nl_compatibility_convert_terms_notice() {
 	}
 
 	// Print the message with the upgrade link
-	$message = __( 'It looks like some of your terms use the old language splitting method. <a href="%s">Click here</a> to convert them to the new localized format.', NL_TXTDMN );
+	$message = __( 'It looks like some of your terms use the old language splitting method. <a href="%s">Click here</a> to convert them to the new localized format.', 'nlingual' );
 	$nonce = wp_create_nonce( 'convert-localized-terms' );
 	$link = admin_url( 'admin.php?nlingual-action=convert-terms&_nlnonce=' . $nonce );
 	$message = sprintf( $message, $link );
@@ -88,7 +88,7 @@ function nl_compatibility_convert_terms_process() {
 
 	// Fail if no separator is present
 	if ( ! $separator ) {
-		wp_die( _e( 'No language separator found, unable to convert terms.', NL_TXTDMN ) );
+		wp_die( _e( 'No language separator found, unable to convert terms.', 'nlingual' ) );
 	}
 
 	// Escape % and _ characters in separator for MySQL use
@@ -105,7 +105,7 @@ function nl_compatibility_convert_terms_process() {
 
 	// Fail if nothing is found
 	if ( ! $terms ) {
-		wp_die( _e( 'No terms found needing conversion.', NL_TXTDMN ) );
+		wp_die( _e( 'No terms found needing conversion.', 'nlingual' ) );
 	}
 
 	// Start a list of taxonomies that needed localization
@@ -153,7 +153,7 @@ if ( isset( $_GET['notice'] ) && $_GET['notice'] == 'nl-terms-converted' ) :
 	function nl_compatibility_convert_terms_success() {
 		?>
 		<div class="updated">
-			<p><?php _e( 'All terms found have been successfully converted, and their taxonomies have been enabled for localization.', NL_TXTDMN ); ?></p>
+			<p><?php _e( 'All terms found have been successfully converted, and their taxonomies have been enabled for localization.', 'nlingual' ); ?></p>
 		</div>
 		<?php
 	}

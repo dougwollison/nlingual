@@ -138,7 +138,7 @@ class Manager extends Handler {
 		$localizables_page_hook = add_submenu_page(
 			'nlingual-options', // parent
 			__( 'Manage Localizable Objects' ), // page title
-			__( 'Localizables',  NL_TXTDMN ), // menu title
+			__( 'Localizables',  'nlingual' ), // menu title
 			'manage_options', // capability
 			'nlingual-localizables', // slug
 			array( static::$name, 'settings_page' ) // callback
