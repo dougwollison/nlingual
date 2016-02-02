@@ -26,19 +26,6 @@ namespace nLingual;
 
 class Loader extends Handler {
 	// =========================
-	// ! Properties
-	// =========================
-
-	/**
-	 * The name of the class.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var string
-	 */
-	protected static $name;
-
-	// =========================
 	// ! Hook Registration
 	// =========================
 
@@ -53,9 +40,9 @@ class Loader extends Handler {
 	 * @uses Loader::plugin_uninstall() as the uninstall hook.
 	 */
 	public static function register_hooks() {
-		register_activation_hook( NL_SELF, array( static::$name, 'plugin_activate' ) );
-		register_deactivation_hook( NL_SELF, array( static::$name, 'plugin_deactivate' ) );
-		register_uninstall_hook( NL_SELF, array( static::$name, 'plugin_uninstall' ) );
+		register_activation_hook( NL_SELF, array( get_called_class(), 'plugin_activate' ) );
+		register_deactivation_hook( NL_SELF, array( get_called_class(), 'plugin_deactivate' ) );
+		register_uninstall_hook( NL_SELF, array( get_called_class(), 'plugin_uninstall' ) );
 	}
 
 	// =========================

@@ -25,19 +25,6 @@ namespace nLingual;
  */
 
 class Documenter extends Handler {
-	// =========================
-	// ! Properties
-	// =========================
-
-	/**
-	 * The name of the class.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var string
-	 */
-	protected static $name;
-
 	/**
 	 * A directory of all help tabs available.
 	 *

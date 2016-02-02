@@ -56,13 +56,7 @@ function find( $type, $name ) {
  * @param string $class The name of the class being requested.
  */
 function find_class( $class ) {
-	// Make sure the file exists before loading it
-	if ( find( 'class', $class ) ){
-		// Initialize it if it's a Handler-based class
-		if ( is_subclass_of( $class, 'nLingual\\Handler' ) ) {
-			call_user_func( array( $class, 'init' ) );
-		}
-	}
+	find( 'class', $class );
 }
 
 /**

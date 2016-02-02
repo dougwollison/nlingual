@@ -27,19 +27,6 @@ namespace nLingual;
 
 class Backend extends Handler {
 	// =========================
-	// ! Properties
-	// =========================
-
-	/**
-	 * The name of the class.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var string
-	 */
-	protected static $name;
-
-	// =========================
 	// ! Hook Registration
 	// =========================
 
@@ -544,7 +531,7 @@ class Backend extends Handler {
 			add_meta_box(
 				'nlingual_translations', // id
 				__( 'Language & Translations' ), // title
-				array( static::$name, 'post_meta_box' ), // callback
+				array( get_called_class(), 'post_meta_box' ), // callback
 				$post_type, // screen
 				'side', // context
 				'default' // priority

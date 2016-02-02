@@ -30,17 +30,6 @@ namespace nLingual;
 
 abstract class Handler {
 	/**
-	 * Initialize the class (setting the $name property)
-	 *
-	 * @internal Should be called by the autoloader.
-	 *
-	 * @since 2.0.0
-	 */
-	public static function init() {
-		static::$name = get_called_class();
-	}
-
-	/**
 	 * Add an internal method to a filter hook.
 	 *
 	 * @api
@@ -55,7 +44,7 @@ abstract class Handler {
 	 * @param int    $accepted_args Optional. The number of arguments the callback accepts.
 	 */
 	final public static function add_filter( $tag, $method, $priority = 10, $accepted_args = 1 ) {
-		add_filter( $tag, array( static::$name, $method ), $priority, $accepted_args );
+		add_filter( $tag, array( get_called_class(), $method ), $priority, $accepted_args );
 	}
 
 	/**
@@ -79,7 +68,7 @@ abstract class Handler {
 	 * @param int    $priority Optional. The priority to use for this particular callback.
 	 */
 	final public static function remove_filter( $tag, $method, $priority = 10 ) {
-		remove_filter( $tag, array( static::$name, $method ), $priority );
+		remove_filter( $tag, array( get_called_class(), $method ), $priority );
 	}
 
 	/**
@@ -102,7 +91,7 @@ abstract class Handler {
 	 * @param string $method The name of the called class' method to add/check for.
 	 */
 	final public static function maybe_add_filter( $tag, $method ) {
-		if ( ! has_filter( $tag, array( static::$name, $method ) ) ) {
+		if ( ! has_filter( $tag, array( get_called_class(), $method ) ) ) {
 			call_user_func_array( 'self::add_filter', func_get_args() );
 		}
 	}

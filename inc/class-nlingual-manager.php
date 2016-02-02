@@ -26,19 +26,6 @@ namespace nLingual;
 
 class Manager extends Handler {
 	// =========================
-	// ! Properties
-	// =========================
-
-	/**
-	 * The name of the class.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var string
-	 */
-	protected static $name;
-
-	// =========================
 	// ! Hook Registration
 	// =========================
 
@@ -120,7 +107,7 @@ class Manager extends Handler {
 			_x( 'Translation', 'menu title' ), // menu title
 			'manage_options', // capability
 			'nlingual-options', // slug
-			array( static::$name, 'settings_page' ), // callback
+			array( get_called_class(), 'settings_page' ), // callback
 			'dashicons-translation' // icon
 		);
 
@@ -131,7 +118,7 @@ class Manager extends Handler {
 			_x( 'Languages', 'menu title' ), // menu title
 			'manage_options', // capability
 			'nlingual-languages', // slug
-			array( static::$name, 'settings_page_languages' ) // callback
+			array( get_called_class(), 'settings_page_languages' ) // callback
 		);
 
 		// Localizable Objects manager
@@ -141,7 +128,7 @@ class Manager extends Handler {
 			__( 'Localizables',  'nlingual' ), // menu title
 			'manage_options', // capability
 			'nlingual-localizables', // slug
-			array( static::$name, 'settings_page' ) // callback
+			array( get_called_class(), 'settings_page' ) // callback
 		);
 
 		// Sync/Clone Rules manager
@@ -151,7 +138,7 @@ class Manager extends Handler {
 			__( 'Sync Options' ), // menu title
 			'manage_options', // capability
 			'nlingual-sync', // slug
-			array( static::$name, 'settings_page' ) // callback
+			array( get_called_class(), 'settings_page' ) // callback
 		);
 
 		// Setup the help tabs for each page
@@ -205,8 +192,8 @@ class Manager extends Handler {
 
 		// Sync Options
 		Settings::register( array(
-			'sync_rules'  => array( static::$name, 'sanitize_rules' ),
-			'clone_rules' => array( static::$name, 'sanitize_rules' ),
+			'sync_rules'  => array( get_called_class(), 'sanitize_rules' ),
+			'clone_rules' => array( get_called_class(), 'sanitize_rules' ),
 		), 'sync' );
 
 		static::setup_sync_fields();
@@ -570,7 +557,7 @@ class Manager extends Handler {
 		Settings::add_fields( $sync_fields, 'sync' );
 
 		// The post cloning setting fields
-		add_settings_section( 'cloning', __( 'New Translations' ), array( static::$name, 'settings_section_cloning' ), 'nlingual-sync' );
+		add_settings_section( 'cloning', __( 'New Translations' ), array( get_called_class(), 'settings_section_cloning' ), 'nlingual-sync' );
 		Settings::add_fields( $clone_fields, 'sync', 'cloning' );
 	}
 

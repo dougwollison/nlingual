@@ -27,19 +27,6 @@ namespace nLingual;
 
 class System extends Handler {
 	// =========================
-	// ! Properties
-	// =========================
-
-	/**
-	 * The name of the class.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var string
-	 */
-	protected static $name;
-
-	// =========================
 	// ! Master Setup Method
 	// =========================
 
