@@ -660,7 +660,7 @@ class Manager extends Handler {
 					</tr>
 				</script>
 				<script>
-					<?php $presets = require( NL_DIR . '/inc/presets-languages.php' ); ?>
+					<?php $presets = require( NL_PLUGIN_DIR . '/inc/presets-languages.php' ); ?>
 					var NL_PRESETS = <?php echo json_encode( $presets );?>
 				</script>
 				<?php submit_button(); ?>

@@ -34,15 +34,15 @@ class Loader extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses NL_SELF to identify the plugin file.
+	 * @uses NL_PLUGIN_FILE to identify the plugin file.
 	 * @uses Loader::plugin_activate() as the activation hook.
 	 * @uses Loader::plugin_deactivate() as the deactivation hook.
 	 * @uses Loader::plugin_uninstall() as the uninstall hook.
 	 */
 	public static function register_hooks() {
-		register_activation_hook( NL_SELF, array( get_called_class(), 'plugin_activate' ) );
-		register_deactivation_hook( NL_SELF, array( get_called_class(), 'plugin_deactivate' ) );
-		register_uninstall_hook( NL_SELF, array( get_called_class(), 'plugin_uninstall' ) );
+		register_activation_hook( NL_PLUGIN_FILE, array( get_called_class(), 'plugin_activate' ) );
+		register_deactivation_hook( NL_PLUGIN_FILE, array( get_called_class(), 'plugin_deactivate' ) );
+		register_uninstall_hook( NL_PLUGIN_FILE, array( get_called_class(), 'plugin_uninstall' ) );
 	}
 
 	// =========================
@@ -125,7 +125,7 @@ class Loader extends Handler {
 		) );
 
 		// Default languages: English
-		$presets = require( NL_DIR . '/inc/presets-languages.php' );
+		$presets = require( NL_PLUGIN_DIR . '/inc/presets-languages.php' );
 		add_option( 'nlingual_languages', new Languages( array( $presets['en'] ) ) );
 
 		// Get database version and upgrade if needed.

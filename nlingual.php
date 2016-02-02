@@ -23,7 +23,7 @@ Text Domain: nLingual
  *
  * @var string
  */
-define( 'NL_SELF', __FILE__ );
+define( 'NL_PLUGIN_FILE', __FILE__ );
 
 /**
  * Reference to the plugin directory.
@@ -32,7 +32,7 @@ define( 'NL_SELF', __FILE__ );
  *
  * @var string
  */
-define( 'NL_DIR', __DIR__ );
+define( 'NL_PLUGIN_DIR', dirname( NL_PLUGIN_FILE ) );
 
 /**
  * Identifies the current database version.
@@ -65,10 +65,10 @@ define( 'NL_UNLOCALIZED', 'NL_UNLOCALIZED' );
 // ! Includes
 // =========================
 
-require( NL_DIR . '/inc/autoloader.php' );
-require( NL_DIR . '/inc/functions-nlingual.php' );
-require( NL_DIR . '/inc/functions-gettext.php' );
-require( NL_DIR . '/inc/functions-alias.php' );
+require( NL_PLUGIN_DIR . '/inc/autoloader.php' );
+require( NL_PLUGIN_DIR . '/inc/functions-nlingual.php' );
+require( NL_PLUGIN_DIR . '/inc/functions-gettext.php' );
+require( NL_PLUGIN_DIR . '/inc/functions-alias.php' );
 
 // =========================
 // ! Setup

@@ -47,7 +47,7 @@ class Backend extends Handler {
 		static::add_action( 'plugins_loaded', 'ready' );
 
 		// Plugin information
-		static::add_action( 'in_plugin_update_message-' . plugin_basename( NL_SELF ), 'update_notice' );
+		static::add_action( 'in_plugin_update_message-' . plugin_basename( NL_PLUGIN_FILE ), 'update_notice' );
 
 		// Post Changes
 		static::add_filter( 'deleted_post', 'deleted_post' );
@@ -99,7 +99,7 @@ class Backend extends Handler {
 	 */
 	public static function ready() {
 		// Load the textdomain
-		load_plugin_textdomain( 'nlingual', false, NL_DIR . '/lang' );
+		load_plugin_textdomain( 'nlingual', false, NL_PLUGIN_DIR . '/lang' );
 
 		// Setup translation help tab for applicable post types
 		$post_types = Registry::get( 'post_types' );
@@ -170,10 +170,10 @@ class Backend extends Handler {
 	 */
 	public static function enqueue_assets(){
 		// Admin styling
-		wp_enqueue_style( 'nlingual-admin', plugins_url( 'css/admin.css', NL_SELF ), '2.0.0', 'screen' );
+		wp_enqueue_style( 'nlingual-admin', plugins_url( 'css/admin.css', NL_PLUGIN_FILE ), '2.0.0', 'screen' );
 
 		// Admin javascript
-		wp_enqueue_script( 'nlingual-admin-js', plugins_url( 'js/admin.js', NL_SELF ), array( 'underscore', 'jquery-ui-sortable' ), '2.0.0' );
+		wp_enqueue_script( 'nlingual-admin-js', plugins_url( 'js/admin.js', NL_PLUGIN_FILE ), array( 'underscore', 'jquery-ui-sortable' ), '2.0.0' );
 
 		// Localize the javascript
 		wp_localize_script( 'nlingual-admin-js', 'nlingualL10n', array(
