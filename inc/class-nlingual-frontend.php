@@ -437,6 +437,28 @@ class Frontend extends Handler {
 	}
 
 	/**
+	 * Replace a post ID with it's translation for the default language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @api
+	 *
+	 * @uses Registry::default_language() to get the default language.
+	 * @uses Translator::get_object_translation() to get the translated post ID.
+	 *
+	 * @param int|string $post_id The post ID to be replaced.
+	 *
+	 * @return int The ID of the translation.
+	 */
+	public static function default_language_post( $post_id ) {
+		$default_language = Registry::default_language();
+
+		$post_id = Translator::get_post_translation( $post_id, $default_language, false );
+
+		return $post_id;
+	}
+
+	/**
 	 * Replace a post ID with it's translation for the current language.
 	 *
 	 * @since 2.0.0

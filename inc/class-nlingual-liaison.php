@@ -14,7 +14,8 @@ namespace nLingual;
  * The Liaison System
  *
  * Hooks into select 3rd party systems to provide
- * better compatability with them.
+ * better compatability with them, namely other plugins
+ * by Doug Wollison.
  *
  * @package nLingual
  * @subpackage Handlers
@@ -37,6 +38,9 @@ class Liaison extends Handler {
 	public static function register_hooks() {
 		// QuickStart compatability
 		static::add_action( 'after_setup_theme', 'add_quickstart_helpers', 10 );
+
+		// IndexPages compatability
+		static::add_action( 'after_setup_theme', 'add_indexpages_helpers', 10 );
 	}
 
 	// =========================
@@ -104,5 +108,29 @@ class Liaison extends Handler {
 		$pre_value = array( Registry::default_language()->slug, '0' );
 
 		return $pre_value;
+	}
+
+	// =========================
+	// ! IndexPages Helpers
+	// =========================
+
+	/**
+	 * Check if IndexPages is active, setup necessary helpers.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Frontend::current_language_post() on the qs_helper_get_index filter.
+	 */
+	public static function add_indexpages_helpers() {
+		// Abort if IndexPages isn't present
+		if ( ! class_exists( 'IndexPages\System' ) ) {
+			return;
+		}
+
+		// Replace the retrieved index page's ID with it's current language counterpart
+		Frontend::add_filter( 'indexpages_get_index_page', 'current_language_post', 10, 1 );
+
+		// Replace the retrieved index page's ID with it's default language counterpart
+		Frontend::add_filter( 'indexpages_is_index_page', 'default_language_post', 10, 1 );
 	}
 }
