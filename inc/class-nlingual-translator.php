@@ -39,23 +39,32 @@ class Translator {
 	// =========================
 
 	/**
-	 * Flush the cache for the relevant group and object.
+	 * Flush the cache for the relevant group and object, optionally updating the group.
 	 *
 	 * @internal
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param int $group Optional The ID of the group (will get using type/id if not provided).
-	 * @param int $type  The type of the object to flush from the cache.
-	 * @param int $id    The ID of the object to flush from the cache.
+	 * @param int $type      The type of the object to flush from the cache.
+	 * @param int $id        The ID of the object to flush from the cache.
+	 * @param int $group     Optional The ID of the group (will get using type/id if not provided).
+	 * @param int $new_group Optional The ID of the new group.
 	 */
-	protected static function flush_cache( $type, $id, $group = null ) {
+	protected static function flush_cache( $type, $id, $group = null, $new_group ) {
+		// Get the group if not provided
 		if ( is_null( $group ) ) {
 			$group = static::get_group( $type, $id );
 		}
 
+		// Delete the cached group data
 		wp_cache_delete( $group, 'nlingual:group' );
-		wp_cache_delete( "$type/$id", 'nlingual:group_id' );
+
+		// If a new group is provided, update it, otherwise delete it
+		if ( ! is_null( $new_group ) ) {
+			wp_cache_set( "{$type}/{$id}", $new_group, 'nlingual:group_id' );
+		} else {
+			wp_cache_delete( "$type/$id", 'nlingual:group_id' );
+		}
 	}
 
 	/**
@@ -167,12 +176,12 @@ class Translator {
 				$group['language_by_object'][ $row['object_id'] ] = $row['language_id'];
 				$group['object_by_language'][ $row['language_id'] ] = $row['object_id'];
 
-				// Also cache the group ID for each object in it
+				// Cache the group ID for each object
 				wp_cache_set( "{$row['object_type']}/{$row['object_id']}", $group_id, 'nlingual:group_id' );
 			}
 		}
 
-		// Cache the object's group ID and the group's data
+		// Cache the group's data
 		wp_cache_set( $group_id, $group, 'nlingual:group' );
 
 		return $group;
@@ -250,10 +259,10 @@ class Translator {
 
 			if ( $language_exists ) {
 				// Get a new group ID if so
-				$group_id = static::new_group_id();
+				$new_group_id = static::new_group_id();
 			}
 		} else {
-			$group_id = static::new_group_id();
+			$new_group_id = static::new_group_id();
 		}
 
 		// Insert a new one
@@ -265,8 +274,7 @@ class Translator {
 		), array( '%d', '%s', '%d', '%d' ) );
 
 		// Flush and update the relevant cache
-		static::flush_cache( $group_id, $type, $id );
-		wp_cache_set( "{$type}/{$id}", $group_id, 'nlingual:group_id' );
+		static::flush_cache( $type, $id, $group_id, $new_group_id );
 
 		return true;
 	}
@@ -522,8 +530,7 @@ class Translator {
 		);
 
 		// Flush and update the relevant cache
-		static::flush_cache( $type, $id, $group_id );
-		wp_cache_set( "{$type}/{$id}", $new_group_id, 'nlingual:group_id' );
+		static::flush_cache( $type, $id, $group_id, $new_group_id );
 
 		return true;
 	}
