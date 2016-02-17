@@ -260,6 +260,8 @@ class Translator {
 			if ( $language_exists ) {
 				// Get a new group ID if so
 				$new_group_id = static::new_group_id();
+			} else {
+				$new_group_id = $group_id;
 			}
 		} else {
 			$new_group_id = static::new_group_id();
@@ -267,7 +269,7 @@ class Translator {
 
 		// Insert a new one
 		$wpdb->replace( $wpdb->nl_translations, array(
-			'group_id'    => $group_id,
+			'group_id'    => $new_group_id,
 			'object_type' => $type,
 			'object_id'   => $id,
 			'language_id' => $language->id,
