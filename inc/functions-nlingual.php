@@ -69,8 +69,14 @@ function backwards_compatible() {
  *
  * @return bool If the language was successfully converted.
  */
-function is_language( &$language ) {
-	return Registry::languages()->find( $language ) !== false;
+function validate_language( &$language ) {
+	// If it's already an object, return true
+	if ( is_a( $language, __NAMESPACE__ . '\Language' ) ) {
+		return true;
+	}
+
+	$language = Registry::languages()->get( $language );
+	return $language !== false;
 }
 
 /**

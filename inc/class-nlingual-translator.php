@@ -39,6 +39,26 @@ class Translator {
 	// =========================
 
 	/**
+	 * Flush the cache for the relevant group and object.
+	 *
+	 * @internal
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param int $group Optional The ID of the group (will get using type/id if not provided).
+	 * @param int $type  The type of the object to flush from the cache.
+	 * @param int $id    The ID of the object to flush from the cache.
+	 */
+	protected static function flush_cache( $type, $id, $group = null ) {
+		if ( is_null( $group ) ) {
+			$group = static::get_group( $type, $id );
+		}
+
+		wp_cache_delete( $group, 'nlingual:group' );
+		wp_cache_delete( "$type/$id", 'nlingual:group_id' );
+	}
+
+	/**
 	 * Get a new group ID from the database.
 	 *
 	 * @internal
@@ -214,7 +234,7 @@ class Translator {
 		}
 
 		// Ensure $language is a Language
-		if ( ! is_language( $language ) ) {
+		if ( ! validate_language( $language ) ) {
 			return false; // Does not exist
 		}
 
@@ -244,8 +264,9 @@ class Translator {
 			'language_id' => $language->id,
 		), array( '%d', '%s', '%d', '%d' ) );
 
-		// Update the cache of the group id
-		wp_cache_set( "{$type}/{$id}", $group_id, 'nlingual:translation_id' );
+		// Flush and update the relevant cache
+		static::flush_cache( $group_id, $type, $id );
+		wp_cache_set( "{$type}/{$id}", $group_id, 'nlingual:group_id' );
 
 		return true;
 	}
@@ -272,8 +293,8 @@ class Translator {
 			'object_id'   => $id,
 		) );
 
-		// Remove it from the cache
-		wp_cache_delete( "{$type}/{$id}", 'nlingual:translation_id' );
+		// Flush the relevant cache
+		static::flush_cache( $type, $id );
 
 		return true;
 	}
@@ -287,7 +308,7 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses is_language() to validate the language and get the Language object.
+	 * @uses validate_language() to validate the language and get the Language object.
 	 * @uses Translator::get_group() to get the object's translation group.
 	 *
 	 * @param string $type        The type of object.
@@ -298,7 +319,7 @@ class Translator {
 	 */
 	public static function get_object_translation( $type, $id, $language, $return_self = false ) {
 		// Ensure $language is a Language
-		if ( ! is_language( $language ) ) {
+		if ( ! validate_language( $language ) ) {
 			return false; // Does not exist
 		}
 
@@ -355,10 +376,10 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses is_language() to validate the language and get the Language object.
+	 * @uses validate_language() to validate the language and get the Language object.
 	 * @uses Translator::new_group_id() to get the existing group ID.
 	 * @uses Translator::get_object_language() to get the current language of the object.
-	 * @uses Translator::unlink_object_translation() if a translation is to be unset.
+	 * @uses Translator::delete_object_translation() if a translation is to be unset.
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
@@ -387,31 +408,37 @@ class Translator {
 
 		// Go through the $objects and handle accordingly
 		$values = array();
-		foreach ( $objects as $object_language => $object_id ) {
+		foreach ( $objects as $language => $object_id ) {
 			// Ensure $language is a Language
-			if ( ! is_language( $object_language ) ) {
+			if ( ! validate_language( $language ) ) {
 				return false; // Does not exist
 			}
 
 			// Skip if we're trying assign a translation for the object's language
-			if ( $object_language->id == $the_language->id ) {
+			if ( $language->id == $the_language->id ) {
 				continue;
 			}
 
 			// If $object_id isn't valid, assume we want to unlink it
-			if ( $object_id <= 0 ) {
-				static::unlink_object_translation( $type, $id, $object_language );
+			if ( intval( $object_id ) <= 0 ) {
+				static::delete_object_translation( $type, $id, $language );
 			} else {
 				// Build the row data for the query
-				$values[] = $wpdb->prepare( "(%d, %s, %d, %d)", $group_id, $type, $object_id, $object_language->id );
+				$values[] = $wpdb->prepare( "(%d, %s, %d, %d)", $group_id, $type, $object_id, $language->id );
 			}
 		}
 
-		// Add the values to the query
-		$query .= implode( ',', $values );
+		// Check if we have values to update
+		if ( $values ) {
+			// Add the values to the query
+			$query .= implode( ',', $values );
 
-		// Run the query
-		$wpdb->query( $query );
+			// Run the query
+			$wpdb->query( $query );
+		}
+
+		// Flush the relevant cache
+		static::flush_cache( $type, $id, $group_id );
 
 		return true;
 	}
@@ -421,7 +448,7 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses is_language() to validate the language and get the Language object.
+	 * @uses validate_language() to validate the language and get the Language object.
 	 * @uses Translator::set_object_translations() to handle the details.
 	 *
 	 * @param string $type     The type of the objects.
@@ -433,7 +460,7 @@ class Translator {
 	 */
 	public static function set_object_translation( $type, $id, $language, $object ) {
 		// Ensure $language is a Language
-		if ( ! is_language( $language ) ) {
+		if ( ! validate_language( $language ) ) {
 			return false; // Does not exist
 		}
 
@@ -449,7 +476,7 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses is_language() to validate the language and get the Language object.
+	 * @uses validate_language() to validate the language and get the Language object.
 	 * @uses Translator::new_group_id() to get the group ID for the object
 	 *                                     as well a new one for it's sister.
 	 *
@@ -458,12 +485,14 @@ class Translator {
 	 * @param string $type     The type of object.
 	 * @param int    $id       The ID of the object.
 	 * @param mixed  $language The language to remove the association for.
+	 *
+	 * @return bool Wether or not a deletion was performed (false = invalid language, null = nothing to delete).
 	 */
 	public static function delete_object_translation( $type, $id, $language ) {
 		global $wpdb;
 
 		// Ensure $language is a Language
-		if ( ! is_language( $language ) ) {
+		if ( ! validate_language( $language ) ) {
 			return false; // Does not exist
 		}
 
@@ -492,6 +521,10 @@ class Translator {
 			array( '%d', '%d' )
 		);
 
+		// Flush and update the relevant cache
+		static::flush_cache( $type, $id, $group_id );
+		wp_cache_set( "{$type}/{$id}", $new_group_id, 'nlingual:group_id' );
+
 		return true;
 	}
 
@@ -504,7 +537,7 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses is_language() to validate the language and get the Language object.
+	 * @uses validate_language() to validate the language and get the Language object.
 	 * @uses Translator::get_object_translation() to get the post's translation.
 	 *
 	 * @param int   $post_id  The ID of the post.
@@ -514,7 +547,7 @@ class Translator {
 	 */
 	public static function get_permalink( $post_id, $language = null ) {
 		// Ensure $language is a Language
-		if ( ! is_language( $language ) ) {
+		if ( ! validate_language( $language ) ) {
 			// Doesn't exit; resort to original permalink
 			return get_permalink( $post_id );
 		}
