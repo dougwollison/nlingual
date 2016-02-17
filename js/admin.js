@@ -485,10 +485,10 @@ jQuery( function( $ ) {
 			$editRow.find( '.nl-language-input' ).val( post_language ).change();
 
 			// Update the translations fields
-			$editRow.find( '.nl-translation' ).each( function() {
+			$editRow.find( '.nl-translation-field' ).each( function() {
 				var id = $( this ).data( 'nl_language' );
 				var translation = $postRow.find( '.nl-translation-' + id ).val();
-				$( this ).find( 'select' ).val( translation || -1 );
+				$( this ).find( 'select' ).val( translation || 0 );
 			} );
 		};
 	}
