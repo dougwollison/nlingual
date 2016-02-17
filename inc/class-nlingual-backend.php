@@ -408,54 +408,48 @@ class Backend extends Handler {
 		// Get the languages list
 		$languages = Registry::languages();
 		?>
-		<div class="nl-translations-manager clear">
-			<fieldset class="nl-set-language inline-edit-col-left">
-				<div class="inline-edit-col">
-					<label>
-						<span class="title"><?php _e( 'Language' );?></span>
-						<select name="nlingual_language" class="nl-input nl-language-input">
-							<option value="0">&mdash; <?php _ex( 'None', 'no language' ); ?> &mdash;</option>
-							<?php
-							// Print the options
-							foreach ( $languages as $language ) {
-								printf( '<option value="%s">%s</option>', $language->id, $language->system_name );
-							}
-							?>
-						</select>
-					</label>
-				</div>
-			</fieldset>
+		<fieldset class="inline-edit-col-right nl-translations-manager">
+			<div class="inline-edit-col nl-set-language">
+				<label>
+					<span class="title"><?php _e( 'Language' );?></span>
+					<select name="nlingual_language" class="nl-input nl-language-input">
+						<option value="0">&mdash; <?php _ex( 'None', 'no language' ); ?> &mdash;</option>
+						<?php
+						// Print the options
+						foreach ( $languages as $language ) {
+							printf( '<option value="%s">%s</option>', $language->id, $language->system_name );
+						}
+						?>
+					</select>
+				</label>
+			</div>
+			<div class="inline-edit-col nl-set-translations">
+				<?php foreach ( $languages as $language ) : ?>
+				<label class="nl-translation-field nl-translation-<?php echo $language->id; ?>"  data-nl_language="<?php echo $language->id; ?>">
+					<span class="title"><?php _ef( '%s Translation', $language->system_name );?></span>
+					<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
+						<option value="0">&mdash; <?php _ex( 'None', 'no translation' ); ?> &mdash;</option>
+						<?php
+						// Get all posts in this language
+						$posts = $wpdb->get_results( $wpdb->prepare( "
+							SELECT p.ID, p.post_title
+							FROM $wpdb->nl_translations AS t
+							LEFT JOIN $wpdb->posts AS p ON (t.object_id = p.ID)
+							WHERE t.object_type = 'post'
+							AND t.language_id = %d
+							AND p.post_type = %s
+						", $language->id, $post_type ) );
 
-			<fieldset class="nl-set-translations inline-edit-col-right" style="margin: 0;">
-				<div class="inline-edit-col">
-					<h4>Translations</h4>
-					<?php foreach ( $languages as $language ) : ?>
-					<label class="nl-translation-field nl-translation-<?php echo $language->id; ?>"  data-nl_language="<?php echo $language->id; ?>">
-						<span class="title"><?php echo $language->system_name;?></span>
-						<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
-							<option value="0">&mdash; <?php _ex( 'None', 'no translation' ); ?> &mdash;</option>
-							<?php
-							// Get all posts in this language
-							$posts = $wpdb->get_results( $wpdb->prepare( "
-								SELECT p.ID, p.post_title
-								FROM $wpdb->nl_translations AS t
-								LEFT JOIN $wpdb->posts AS p ON (t.object_id = p.ID)
-								WHERE t.object_type = 'post'
-								AND t.language_id = %d
-								AND p.post_type = %s
-							", $language->id, $post_type ) );
-
-							// Print the options
-							foreach ( $posts as $option ) {
-								printf( '<option value="%s">%s</option>', $option->ID, $option->post_title );
-							}
-							?>
-						</select>
-					</label>
-					<?php endforeach; ?>
-				</div>
-			</fieldset>
-		</div>
+						// Print the options
+						foreach ( $posts as $option ) {
+							printf( '<option value="%s">%s</option>', $option->ID, $option->post_title );
+						}
+						?>
+					</select>
+				</label>
+				<?php endforeach; ?>
+			</div>
+		</fieldset>
 		<?php
 
 		// Nonce field for save validation
