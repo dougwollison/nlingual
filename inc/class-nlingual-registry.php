@@ -304,7 +304,7 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Utilities::_language() to ensure $language is a Language object.
+	 * @uses validate_language() to ensure $language is a Language object.
 	 * @uses Registry::$current_language to get/update the current language.
 	 * @uses Registry::$previous_languages to log the current language.
 	 *
@@ -312,7 +312,7 @@ class Registry {
 	 */
 	public static function switch_language( $language ) {
 		// Ensure $language is a Language
-		if ( ! is_language( $language ) ) {
+		if ( ! validate_language( $language ) ) {
 			return false; // Does not exist
 		}
 
@@ -434,7 +434,7 @@ class Registry {
 	 */
 	public static function is_language( $language ) {
 		// Ensure $language is a Language
-		if ( ! is_language( $language ) ) {
+		if ( ! validate_language( $language ) ) {
 			return false; // Does not exist
 		}
 

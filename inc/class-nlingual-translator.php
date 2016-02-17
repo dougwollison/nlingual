@@ -224,7 +224,7 @@ class Translator {
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @uses Translator::delete_object_language() to allow for replacement.
-	 * @uses Utilities::_language() to ensure $language is a Language object.
+	 * @uses validate_language() to ensure $language is a Language object.
 	 * @uses Translator::get_group_id() to get the object's group ID.
 	 * @uses Translator::new_group_id() to generate a new group ID if needed.
 	 *
