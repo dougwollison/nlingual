@@ -76,7 +76,7 @@ class Exception extends \Exception {
 		    	break;
 
 		    case NL_ERR_MISSING_LANGUAGE:
-		    	// First mention the source
+		    	// First, mention the source
 		    	$message .= " via " . static::get_step_function( $trace[0] );
 
 		    	// The trigger would be the next step in the trace, unless it's via a magic method
@@ -90,6 +90,7 @@ class Exception extends \Exception {
 		    	break;
 
 		    default:
+		    	// Include everything
 		    	$message .= "\nStack trace:\n" . $this->getTraceAsString();
 	    }
 
