@@ -50,6 +50,7 @@ class Frontend extends Handler {
 		// URL Rewriting
 		static::add_filter( 'home_url', 'localize_home_url', 10, 3 );
 		static::add_filter( 'page_link', 'localize_page_link', 10, 2 );
+		static::add_filter( 'user_trailingslashit', 'fix_trailingshash', 10, 1 );
 
 		// The Mod rewriting
 		static::add_filter( 'theme_mod_nav_menu_locations', 'localize_nav_menu_locations', 10, 1 );
@@ -278,6 +279,27 @@ class Frontend extends Handler {
 		}
 
 		return $permalink;
+	}
+
+	/**
+	 * Fix the trailing slash on a URL.
+	 *
+	 * Makes sure that the trailing slash before the query string if present.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $string The URL being filtered.
+	 *
+	 * @return string The filtered URL.
+	 */
+	public static function fix_trailingshash( $url ) {
+		// First, check if a query string is present
+		if ( strpos( $url, '?' ) !== false ) {
+			// Assuming the query string doesn't follow a slash already, move it to be after the slash
+			$url = preg_replace( '#(?!/)(\?.*?)/$#', '/$1', $url );
+		}
+
+		return $url;
 	}
 
 	// =========================
