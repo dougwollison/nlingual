@@ -50,7 +50,7 @@ class Translator {
 	 * @param int $group     Optional The ID of the group (will get using type/id if not provided).
 	 * @param int $new_group Optional The ID of the new group.
 	 */
-	protected static function flush_cache( $type, $id, $group = null, $new_group ) {
+	protected static function flush_cache( $type, $id, $group = null, $new_group = null ) {
 		// Get the group if not provided
 		if ( is_null( $group ) ) {
 			$group = static::get_group( $type, $id );
@@ -244,7 +244,8 @@ class Translator {
 
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
-			return false; // Does not exist
+			// Throw exception if not found
+			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_MISSING_LANGUAGE );
 		}
 
 		// Get a group ID for the object, a new on if necessary
@@ -254,7 +255,7 @@ class Translator {
 			// Check if a counterpart for the language in this group exists
 			$language_exists = $wpdb->get_var( $wpdb->prepare( "
 				SELECT object_id FROM $wpdb->nl_translations
-				WHERE group_id = %d AND language_id = %
+				WHERE group_id = %d AND language_id = %d
 			", $group_id, $language->id ) );
 
 			if ( $language_exists ) {
@@ -330,7 +331,8 @@ class Translator {
 	public static function get_object_translation( $type, $id, $language, $return_self = false ) {
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
-			return false; // Does not exist
+			// Throw exception if not found
+			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_MISSING_LANGUAGE );
 		}
 
 		// Get the translation group for the object
@@ -421,7 +423,8 @@ class Translator {
 		foreach ( $objects as $language => $object_id ) {
 			// Ensure $language is a Language
 			if ( ! validate_language( $language ) ) {
-				return false; // Does not exist
+				// Throw exception if not found
+				throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_MISSING_LANGUAGE );
 			}
 
 			// Skip if we're trying assign a translation for the object's language
@@ -471,7 +474,8 @@ class Translator {
 	public static function set_object_translation( $type, $id, $language, $object ) {
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
-			return false; // Does not exist
+			// Throw exception if not found
+			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_MISSING_LANGUAGE );
 		}
 
 		// Alias to set_object_translations method
@@ -503,7 +507,8 @@ class Translator {
 
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
-			return false; // Does not exist
+			// Throw exception if not found
+			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_MISSING_LANGUAGE );
 		}
 
 		// Get the group ID for this object

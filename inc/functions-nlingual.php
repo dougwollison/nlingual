@@ -65,22 +65,34 @@ function backwards_compatible() {
  *
  * @uses Registry::languages() to validate and retrieve the passed language.
  *
- * @param mixed &$language The language to be converted.
+ * @param mixed &$language        The language to be converted.
+ * @param bool   $default_current Optional. Default to the current language if null.
  *
  * @return bool If the language was successfully converted.
  */
-function validate_language( &$language ) {
+function validate_language( &$language, $default_current ) {
+	// If null, return false unless default_current is desired
+	if ( is_null( $language ) ) {
+		if ( $default_current ) {
+			$language = Registry::current_language();
+			return true;
+		}
+		return false;
+	}
+
 	// If it's already an object, return true
 	if ( is_a( $language, __NAMESPACE__ . '\Language' ) ) {
 		return true;
 	}
 
+	// Find the language, replace it if so
 	$found = Registry::languages()->get( $language );
 	if ( $found !== false ) {
 		$language = $found;
 		return true;
 	}
 
+	// No match, fail
 	return false;
 }
 
