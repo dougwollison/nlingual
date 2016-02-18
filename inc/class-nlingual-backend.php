@@ -129,7 +129,7 @@ class Backend extends Handler {
 		$notice = get_transient( $transient );
 		if ( $notice === false ) {
 			// Hasn't been saved, fetch it from the SVN repo
-			$notice = file_get_contents( "http://plugins.svn.wordpress.org/nlingual/assets/notice-{$version}.txt" ) ?: '';
+			$notice = @file_get_contents( "http://plugins.svn.wordpress.org/nlingual/assets/notice-{$version}.txt" ) ?: '';
 
 			// Save the notice
 			set_transient( $transient, $notice, YEAR_IN_SECONDS );
