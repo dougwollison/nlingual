@@ -410,10 +410,10 @@ class Registry {
 			// Drill down if found
 			if ( isset( $rules[ $section ] ) ) {
 				$rules = $rules[ $section ];
+			} else {
+				// Abort and return empty array
+				return array();
 			}
-
-			// Abort and return empty array
-			return array();
 		}
 
 		return $rules;
