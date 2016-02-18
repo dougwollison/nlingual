@@ -666,9 +666,11 @@ class Backend extends Handler {
 			cheatin();
 		}
 
-		// Assign the post to the language, fail if there's an error.
-		if ( ! Translator::set_post_language( $post_id, $_REQUEST['nlingual_language'] ) ) {
-			wp_die( __( 'That language does not exist.' ) );
+		// Assign the post to the language, fail if there's an error
+		try {
+			Translator::set_post_language( $post_id, $_REQUEST['nlingual_language'] );
+		} catch ( Exception $e ) {
+			wp_die( __( 'Error assigning language: the selected language does not exist.' ) );
 		}
 	}
 
@@ -700,8 +702,10 @@ class Backend extends Handler {
 		}
 
 		// Assign the translations, fail if there's an error
-		if ( false === Translator::set_post_translations( $post_id, $_REQUEST['nlingual_translation'] ) ) {
-			wp_die( __( 'Error saving translations; one or more languages do not exist.' ) );
+		try {
+			Translator::set_post_translations( $post_id, $_REQUEST['nlingual_translation'] );
+		} catch ( Exception $e ) {
+			wp_die( __( 'Error assigning translations: one or more languages do not exist.' ) );
 		}
 	}
 

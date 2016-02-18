@@ -36,6 +36,27 @@ class Exception extends \Exception {
         parent::__construct( $message, $code, $previous );
     }
 
+    /**
+	 * Return the full name of the function from a backtrace step.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $step A step in the backtrace.
+	 *
+	 * @return string The full name of the function.
+	 */
+	public static function get_step_function( $step ) {
+		$function = '';
+
+		if ( isset( $step['class'] ) ) {
+			$function .= $step['class'] . $step['type'];
+		}
+
+		$function .=  $step['function'];
+
+		return $function;
+	}
+
 	/**
 	 * Ouput a string representation of the exception.
 	 *
@@ -52,6 +73,20 @@ class Exception extends \Exception {
 	    switch ( $this->code ) {
 		    case NL_ERR_UNSUPPORTED_METHOD:
 		    	$message .= " in {$trace[1]['file']} on line {$trace[1]['line']}";
+		    	break;
+
+		    case NL_ERR_MISSING_LANGUAGE:
+		    	// First mention the source
+		    	$message .= " via " . static::get_step_function( $trace[0] );
+
+		    	// The trigger would be the next step in the trace, unless it's via a magic method
+		    	if ( $trace[1]['function'] == 'call_user_func_array' && $trace[2]['function'] == '__callStatic' ) {
+			    	// Identify the function that called it and where it was called
+			    	$message .= " by " . static::get_step_function( $trace[4] ) . " in {$trace[3]['file']} on line {$trace[3]['line']}";
+		    	} else {
+			    	// Identify where it was called
+			    	$message .= " in {$trace[1]['file']} on line {$trace[1]['line']}";
+		    	}
 		    	break;
 
 		    default:
