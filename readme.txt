@@ -2,8 +2,8 @@
 Contributors: dougwollison
 Tags: multilingual, multi, language, admin, bilingual, switcher, translation, nlingual
 Requires at least: 3.5
-Tested up to: 4.1.1
-Stable tag: 1.3.0
+Tested up to: 4.4.2
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,9 @@ The nLingual class is a static class with a host of functions for getting and ma
 == Changelog ==
 
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
+
+= 1.3.1 =
+Minor restructuring, prepping for 2.0 release.
 
 = 1.3.0 =
 Minor improvements, mostly restructuring to match WordPress standards better; also fixed issues with QuickStart compatibility hooks.
