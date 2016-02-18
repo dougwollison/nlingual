@@ -1090,12 +1090,15 @@ class Localizer extends Handler {
 			array_unshift( $args, $index );
 			return call_user_func_array( array( get_called_class(), 'get_fields_by' ), $args );
 		}
+
 		// Check if it's a register_metadata alias
 		if ( preg_match( '/^register_(\w+)_meta_field$/', $name, $matches ) ) {
 			$meta_type = $matches[1];
 			array_unshift( $args, $meta_type );
 			return call_user_func_array( array( get_called_class(), 'register_metadata_field' ), $args );
 		}
-		return false;
+
+		// Not a valid method alias, throw exception
+		throw new Exception( sprintf( 'Call to unrecognized method alias %s::%s()', __CLASS__, $name ), NL_ERR_UNSUPPORTED_METHOD );
 	}
 }

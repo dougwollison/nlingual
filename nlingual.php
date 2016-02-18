@@ -52,19 +52,11 @@ define( 'NL_DB_VERSION', '2.0.0' );
  */
 define( 'NL_ORIGINAL_URL', ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
 
-/**
- * Flag the URL as needing to be unlocalized.
- *
- * @since 2.0.0
- *
- * @var string
- */
-define( 'NL_UNLOCALIZED', 'NL_UNLOCALIZED' );
-
 // =========================
 // ! Includes
 // =========================
 
+require( NL_PLUGIN_DIR . '/inc/flags.php' );
 require( NL_PLUGIN_DIR . '/inc/autoloader.php' );
 require( NL_PLUGIN_DIR . '/inc/functions-nlingual.php' );
 require( NL_PLUGIN_DIR . '/inc/functions-gettext.php' );

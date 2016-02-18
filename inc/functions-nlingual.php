@@ -75,8 +75,13 @@ function validate_language( &$language ) {
 		return true;
 	}
 
-	$language = Registry::languages()->get( $language );
-	return $language !== false;
+	$found = Registry::languages()->get( $language );
+	if ( $found !== false ) {
+		$language = $found;
+		return true;
+	}
+
+	return false;
 }
 
 /**
