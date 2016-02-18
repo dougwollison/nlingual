@@ -93,13 +93,13 @@ class Migrator {
 		// Split
 		$values = preg_split( "/\s*$separator_regex\s*/", $value );
 
-		// Get the language IDs
-		$language_ids = $wpdb->get_col( "SELECT language_id FROM $wpdb->nl_languages ORDER BY list_order ASC" );
+		// Get the languages
+		$languages = Registry::languages();
 
 		// Loop through each value found and store it.
 		foreach ( $values as $i => $val ) {
-			// Break if empty or no corresponding language is found
-			if ( ! isset( $language_ids[ $i ] ) ) {
+			// Get the language at the matching index, Break if not found
+			if ( ! $language = $languages->nth( $i ) ) {
 				break;
 			}
 
@@ -109,7 +109,7 @@ class Migrator {
 			}
 
 			// Save the value (ignoring string registration status)
-			Localizer::save_string_value( $string_key, $language_ids[ $i ], $object_id, $val, false );
+			Localizer::save_field_value( $string_key, $language->id, $object_id, $val, false );
 		}
 
 		// Return the first value as the unlocalized one
