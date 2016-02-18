@@ -1,9 +1,9 @@
 === nLingual ===
 Contributors: dougwollison
 Tags: multilingual, multi, language, admin, bilingual, switcher, translation, nlingual
-Requires at least: 3.5
+Requires at least: 4.0
 Tested up to: 4.4.2
-Stable tag: 1.3.1
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,9 @@ The nLingual class is a static class with a host of functions for getting and ma
 == Changelog ==
 
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
+
+= 2.0.0 =
+Complete and utter overhaul. Improved API, UI, UX, AWES, and OME.
 
 = 1.3.1 =
 Minor restructuring, prepping for 2.0 release.
