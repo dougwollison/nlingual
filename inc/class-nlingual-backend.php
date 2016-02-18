@@ -44,26 +44,26 @@ class Backend extends Handler {
 		}
 
 		// Post-setup stuff
-		static::add_action( 'plugins_loaded', 'ready' );
+		static::add_action( 'plugins_loaded', 'ready', 10, 0 );
 
 		// Plugin information
-		static::add_action( 'in_plugin_update_message-' . plugin_basename( NL_PLUGIN_FILE ), 'update_notice' );
+		static::add_action( 'in_plugin_update_message-' . plugin_basename( NL_PLUGIN_FILE ), 'update_notice', 10, 1 );
 
 		// Post Changes
-		static::add_filter( 'deleted_post', 'deleted_post' );
+		static::add_filter( 'deleted_post', 'deleted_post', 10, 1 );
 
 		// Script/Style Enqueues
-		static::add_action( 'admin_enqueue_scripts', 'enqueue_assets' );
+		static::add_action( 'admin_enqueue_scripts', 'enqueue_assets', 10, 0 );
 
 		// Theme Setup Actions
-		static::add_action( 'after_setup_theme', 'register_localized_nav_menus', 999 );
-		static::add_action( 'widgets_init', 'register_localized_sidebars', 999 );
+		static::add_action( 'after_setup_theme', 'register_localized_nav_menus', 999, 0 );
+		static::add_action( 'widgets_init', 'register_localized_sidebars', 999, 0 );
 
 		// Posts Screen Interfaces
-		static::add_action( 'restrict_manage_posts', 'add_language_filter' );
+		static::add_action( 'restrict_manage_posts', 'add_language_filter', 10, 0 );
 		$post_types = Registry::get( 'post_types' );
 		foreach ( $post_types as $post_type ) {
-			static::add_filter( "manage_{$post_type}_posts_columns", 'add_language_column', 15 );
+			static::add_filter( "manage_{$post_type}_posts_columns", 'add_language_column', 15, 1 );
 			static::add_action( "manage_{$post_type}_posts_custom_column", 'do_language_column', 10, 2 );
 		}
 
@@ -72,18 +72,18 @@ class Backend extends Handler {
 		static::add_action( 'bulk_edit_custom_box', 'bulk_edit_post_language', 10, 2 );
 
 		// Post Editor Interfaces
-		static::add_action( 'add_meta_boxes', 'add_post_meta_box' );
+		static::add_action( 'add_meta_boxes', 'add_post_meta_box', 10, 1 );
 
 		// Save hooks
-		static::add_action( 'save_post', 'save_post_language' );
-		static::add_action( 'save_post', 'save_post_translations' );
-		static::add_action( 'save_post', 'synchronize_posts' );
+		static::add_action( 'save_post', 'save_post_language', 10, 1 );
+		static::add_action( 'save_post', 'save_post_translations', 10, 1 );
+		static::add_action( 'save_post', 'synchronize_posts', 10, 1 );
 
 		// Menu Editor Meta Box
-		static::add_action( 'admin_head', 'add_nav_menu_meta_box' );
+		static::add_action( 'admin_head', 'add_nav_menu_meta_box', 10, 0 );
 
 		// JavaScript Variables
-		static::add_action( 'admin_footer', 'print_javascript_vars' );
+		static::add_action( 'admin_footer', 'print_javascript_vars', 10, 0 );
 	}
 
 	// =========================

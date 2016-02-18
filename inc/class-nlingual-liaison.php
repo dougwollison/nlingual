@@ -37,10 +37,10 @@ class Liaison extends Handler {
 	 */
 	public static function register_hooks() {
 		// QuickStart compatability
-		static::add_action( 'after_setup_theme', 'add_quickstart_helpers', 10 );
+		static::add_action( 'after_setup_theme', 'add_quickstart_helpers', 10, 0 );
 
 		// IndexPages compatability
-		static::add_action( 'after_setup_theme', 'add_indexpages_helpers', 10 );
+		static::add_action( 'after_setup_theme', 'add_indexpages_helpers', 10, 0 );
 	}
 
 	// =========================

@@ -117,10 +117,10 @@ class System extends Handler {
 	 */
 	public static function register_hooks() {
 		// Post-setup stuff
-		static::add_action( 'plugins_loaded', 'ready' );
+		static::add_action( 'plugins_loaded', 'ready', 10, 0 );
 
 		// Query Manipulation
-		static::add_action( 'parse_query', 'maybe_set_queried_language' );
+		static::add_action( 'parse_query', 'maybe_set_queried_language', 10, 1 );
 		static::add_filter( 'posts_join_request', 'add_post_translations_join_clause', 10, 2 );
 		static::add_filter( 'posts_where_request', 'add_post_translations_where_clause', 10, 2 );
 		static::add_filter( 'get_pages', 'filter_pages', 10, 2 );
