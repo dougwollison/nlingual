@@ -121,6 +121,83 @@ class Migrator {
 	// =========================
 
 	/**
+	 * Install/Upgrade the database tables, converting them if needed.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Migrator::is_upgrading() to check if upgrading from nLingual 1.
+	 * @uses Migrator::convert_tables() to convert database structure.
+	 * @uses Migrator::convert_options() to convert plugin/blog options.
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 */
+	public static function upgrade() {
+		global $wpdb;
+
+		// Test if we're upgrading from nLingual 1, convert tables/options and flag
+		if ( Migrator::is_upgrading() ) {
+			static::convert_tables();
+			static::convert_options();
+
+			// Flag as having been upgraded and needing backwards compatability
+			add_option( 'nlingual_upgraded', 1 );
+			update_option( 'nlingual_backwards_compatible', 1 );
+
+			// Reload the registry
+			Registry::load( true );
+		}
+
+		// Load dbDelta utility
+		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
+		$charset_collate = $wpdb->get_charset_collate();
+
+		// Just install/update the languages table as normal
+		$sql_languages = "CREATE TABLE $wpdb->nl_languages (
+			language_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			system_name varchar(200) DEFAULT '' NOT NULL,
+			native_name varchar(200) DEFAULT '' NOT NULL,
+			short_name varchar(200) DEFAULT '' NOT NULL,
+			locale_name varchar(100) DEFAULT '' NOT NULL,
+			iso_code char(2) DEFAULT '' NOT NULL,
+			slug varchar(100) DEFAULT '' NOT NULL,
+			direction enum('ltr', 'rtl') DEFAULT 'ltr' NOT NULL,
+			list_order int(11) unsigned NOT NULL,
+			active tinyint(1) NOT NULL DEFAULT '1',
+			PRIMARY KEY  (language_id),
+			UNIQUE KEY slug (slug)
+		) $charset_collate;";
+		dbDelta( $sql_languages );
+
+		// Just install/update the translations table as normal
+		$sql_translations = "CREATE TABLE $wpdb->nl_translations (
+			group_id bigint(20) unsigned NOT NULL,
+			language_id bigint(20) unsigned NOT NULL,
+			object_type varchar(20) DEFAULT 'post' NOT NULL,
+			object_id bigint(20) unsigned NOT NULL,
+			UNIQUE KEY translation (group_id,language_id,object_type,object_id),
+			KEY group_id (group_id),
+			KEY object_id (object_id)
+		) $charset_collate;";
+		dbDelta( $sql_translations );
+
+		// The localizer fields table
+		$sql_localizer = "CREATE TABLE $wpdb->nl_localizer_fields (
+			language_id bigint(20) unsigned NOT NULL,
+			object_id bigint(20) unsigned NOT NULL,
+			field_key varchar(128) DEFAULT '' NOT NULL,
+			localized_value longtext NOT NULL,
+			UNIQUE KEY localizerdata (language_id,object_id,field_key),
+			KEY language_id (language_id),
+			KEY object_id (object_id)
+		) $charset_collate;";
+		dbDelta( $sql_localizer );
+
+		// Log the current database version
+		update_option( 'nlingual_database_version', NL_DB_VERSION );
+	}
+
+	/**
 	 * Upgrade database structure from < 2.0.0.
 	 *
 	 * Converts old languages and translations tables to new formats.
@@ -287,25 +364,17 @@ class Migrator {
 		// Update the assigned menus
 		set_theme_mod( 'nav_menu_locations', $new_menus );
 
-		/**
-		 * Convert site name/description if using language splitting
-		 */
-
 		// Get the blog name and description values
 		$name = get_option( 'blogname' );
 		$description = get_option( 'blogdescription' );
 
-		// Convert the name and description, get the unlocalized versions
+		// Convert the name and description (if using language splitting), get the unlocalized versions
 		$unlocalized_name = static::convert_split_string( $name, 'option:blogname' );
 		$unlocalized_description = static::convert_split_string( $description, 'option:blogdescription' );
 
 		// Update values
 		update_option( 'blogname', $unlocalized_name );
 		update_option( 'blogdescription', $unlocalized_description );
-
-		/**
-		 * Flag as having converted the options.
-		 */
 
 		// Flag as having been upgraded
 		update_option( '_nlingual_options_converted', 1 );

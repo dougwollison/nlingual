@@ -78,23 +78,18 @@ class Loader extends Handler {
 	// =========================
 
 	/**
-	 * Create database tables and add default options.
+	 * Create the default options.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @todo Set default language to the current one of the install.
-	 *
 	 * @uses Loader::plugin_security_check() to check for activation nonce.
-	 * @uses Migrator::is_upgrading() to check if upgrading from nLingual 1.
-	 * @uses Migrator::convert_tables() to convert database structure.
-	 * @uses Migrator::convert_options() to convert plugin/blog options.
 	 * @uses inc/presets.php To get the details for the default first language.
+	 *
+	 * @todo Set default language to the current one of the install.
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 */
 	public static function plugin_activate() {
-		global $wpdb;
-
 		if ( ! static::plugin_security_check( 'activate' ) ) {
 			return;
 		}
@@ -109,6 +104,7 @@ class Loader extends Handler {
 		add_option( 'nlingual_redirection_permanent', 0 );
 		add_option( 'nlingual_patch_wp_locale', 0 );
 		add_option( 'nlingual_post_language_override', 0 );
+		add_option( 'nlingual_backwards_compatible', 1 );
 		add_option( 'nlingual_post_types', array() );
 		add_option( 'nlingual_taxonomies', array() );
 
@@ -127,77 +123,6 @@ class Loader extends Handler {
 		// Default languages: English
 		$presets = require( NL_PLUGIN_DIR . '/inc/presets-languages.php' );
 		add_option( 'nlingual_languages', new Languages( array( $presets['en'] ) ) );
-
-		// Get database version and upgrade if needed.
-		$db_version = get_option( 'nlingual_database_version', '1.0' );
-		$charset_collate = $wpdb->get_charset_collate();
-
-		// Test if we're upgrading from nLingual 1, by checking for the old options array
-		$upgrade_from_v1 = Migrator::is_upgrading();
-
-		// Load dbDelta utility
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-
-		// Install/update the tables
-		if ( version_compare( $db_version, NL_DB_VERSION, '<' ) ) {
-			// [Upgrading] convert the database tables and flag as having been upgraded
-			if ( $upgrade_from_v1 ) {
-				Migrator::convert_tables();
-
-				// Flag as having been upgraded and needing backwards compatability
-				add_option( 'nlingual_upgraded', 1 );
-				add_option( 'nlingual_backwards_compatible', 1 );
-			}
-
-			// Just install/update the languages table as normal
-			$sql_languages = "CREATE TABLE $wpdb->nl_languages (
-				language_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-				system_name varchar(200) DEFAULT '' NOT NULL,
-				native_name varchar(200) DEFAULT '' NOT NULL,
-				short_name varchar(200) DEFAULT '' NOT NULL,
-				locale_name varchar(100) DEFAULT '' NOT NULL,
-				iso_code char(2) DEFAULT '' NOT NULL,
-				slug varchar(100) DEFAULT '' NOT NULL,
-				direction enum('ltr', 'rtl') DEFAULT 'ltr' NOT NULL,
-				list_order int(11) unsigned NOT NULL,
-				active tinyint(1) NOT NULL DEFAULT '1',
-				PRIMARY KEY  (language_id),
-				UNIQUE KEY slug (slug)
-			) $charset_collate;";
-			dbDelta( $sql_languages );
-
-			// Just install/update the translations table as normal
-			$sql_translations = "CREATE TABLE $wpdb->nl_translations (
-				group_id bigint(20) unsigned NOT NULL,
-				language_id bigint(20) unsigned NOT NULL,
-				object_type varchar(20) DEFAULT 'post' NOT NULL,
-				object_id bigint(20) unsigned NOT NULL,
-				UNIQUE KEY translation (group_id,language_id,object_type,object_id)
-				KEY group_id (group_id)
-				KEY object_id (object_id)
-			) $charset_collate;";
-			dbDelta( $sql_translations );
-
-			// The localizer fields table
-			$sql_localizer = "CREATE TABLE $wpdb->nl_localizer_fields (
-				language_id bigint(20) unsigned NOT NULL,
-				object_id bigint(20) unsigned NOT NULL,
-				field_key varchar(128) DEFAULT '' NOT NULL,
-				localized_value longtext NOT NULL,
-				UNIQUE KEY localizerdata (language_id,object_id,field_key)
-				KEY language_id (language_id)
-				KEY object_id (object_id)
-			) $charset_collate;";
-			dbDelta( $sql_localizer );
-
-			// Log the current database version
-			update_option( 'nlingual_database_version', NL_DB_VERSION );
-
-			// [Upgrading] Now that the tables are setup, convert the options
-			if ( $upgrade_from_v1 ) {
-				Migrator::convert_options();
-			}
-		}
 	}
 
 	/**

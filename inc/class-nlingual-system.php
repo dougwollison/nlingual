@@ -74,17 +74,6 @@ class System extends Handler {
 		Documenter::register_hooks();
 		Localizer::register_hooks();
 		Liaison::register_hooks();
-
-		// P.S. add backwards compatibilty stuff if needed
-		if ( backwards_compatible() ) {
-			require( __DIR__ . '/compatibility-template.php' );
-
-			if ( is_backend() ) {
-				require( __DIR__ . '/compatibility-tools.php' );
-			} else {
-				require( __DIR__ . '/compatibility-hooks.php' );
-			}
-		}
 	}
 
 	// =========================
@@ -139,15 +128,32 @@ class System extends Handler {
 	}
 
 	/**
-	 * Register options/taxonomies for localization.
+	 * Perform upgrade and back-compat checks, automatic localizable fields, and textdomain loading.
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Migrator::upgrade() to upgrade the system if needed.
 	 * @uses Registry::get() to retrieve a list of enabled taxonomies.
 	 * @uses Localizer::register_option() to register the site title and tagline for localization.
 	 * @uses Localizer::register_taxonomy() to register the enabled taxonomies for localization.
 	 */
 	public static function ready() {
+		// First, check if an upgrade is needed (on activation or update)
+		if ( version_compare( get_option( 'nlingual_database_version', '1.0.0' ), NL_DB_VERSION, '<' ) ) {
+			Migrator::upgrade();
+		}
+
+		// Load backwards compatibilty stuff if needed
+		if ( backwards_compatible() ) {
+			require( __DIR__ . '/compatibility-template.php' );
+
+			if ( is_backend() ) {
+				require( __DIR__ . '/compatibility-tools.php' );
+			} else {
+				require( __DIR__ . '/compatibility-hooks.php' );
+			}
+		}
+
 		// Register the blogname and blogdescription for localization
 		Localizer::register_option_field( 'blogname', 'options-general', array(
 			'title'  => 'Site Title'
