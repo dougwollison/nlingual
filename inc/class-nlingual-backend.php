@@ -77,6 +77,7 @@ class Backend extends Handler {
 		// Save hooks
 		static::add_action( 'save_post', 'save_post_language' );
 		static::add_action( 'save_post', 'save_post_translations' );
+		static::add_action( 'save_post', 'synchronize_posts' );
 
 		// Menu Editor Meta Box
 		static::add_action( 'admin_head', 'add_nav_menu_meta_box' );
@@ -641,10 +642,7 @@ class Backend extends Handler {
 	// =========================
 
 	/**
-	 * Save settings from the translations meta box.
-	 *
-	 * Handles language assignment, translation linking,
-	 * and any enabled synchronizing with sister posts.
+	 * Save language settings from the translations meta box.
 	 *
 	 * @since 2.0.0
 	 *
@@ -675,14 +673,11 @@ class Backend extends Handler {
 	}
 
 	/**
-	 * Save settings from the translations meta box.
-	 *
-	 * Handles translation linking, and any enabled synchronizing with sister posts.
+	 * Save translation assignments from the translations meta box.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @uses Translator::set_object_translations() to assign the translations to the post.
-	 * @uses Synchronizer::sync_post_with_sister() to handle post synchronizing.
 	 *
 	 * @param int $post_id The ID of the post being saved.
 	 */
@@ -708,11 +703,27 @@ class Backend extends Handler {
 		if ( false === Translator::set_post_translations( $post_id, $_REQUEST['nlingual_translation'] ) ) {
 			wp_die( __( 'Error saving translations; one or more languages do not exist.' ) );
 		}
+	}
 
-		// Unhook this and the save language filter to prevent
+	/**
+	 * Handle any synchronization with sister posts.
+	 *
+	 * @since 2.0.0
+	 * @uses Synchronizer::sync_post_with_sister() to handle post synchronizing.
+	 *
+	 * @param int $post_id The ID of the post being saved.
+	 */
+	public static function synchronize_posts( $post_id ) {
+		// Abort if doing auto save or it's a revision
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || wp_is_post_revision( $post_id ) ) {
+			return;
+		}
+
+		// Unhook this and the language/translation saving hooks to prevent
 		// infinite loop and uncessary language assignemnt
 		static::remove_action( 'save_post', 'save_post_language' );
 		static::remove_action( 'save_post', 'save_post_translations' );
+		static::remove_action( 'save_post', 'synchronize_posts' );
 
 		// Now synchronize the post's translations
 		Synchronizer::sync_post_with_sisters( $post_id );
@@ -720,6 +731,7 @@ class Backend extends Handler {
 		// Rehook now that we're done
 		static::add_action( 'save_post', 'save_post_language' );
 		static::add_action( 'save_post', 'save_post_translations' );
+		static::add_action( 'save_post', 'synchronize_posts' );
 	}
 
 	// =========================
