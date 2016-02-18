@@ -120,7 +120,6 @@ class System extends Handler {
 		static::add_action( 'plugins_loaded', 'ready' );
 
 		// Query Manipulation
-		static::add_filter( 'query_vars', 'add_language_var' );
 		static::add_action( 'parse_query', 'maybe_set_queried_language' );
 		static::add_filter( 'posts_join_request', 'add_post_translations_join_clause', 10, 2 );
 		static::add_filter( 'posts_where_request', 'add_post_translations_where_clause', 10, 2 );
@@ -172,24 +171,6 @@ class System extends Handler {
 	// =========================
 	// ! Query Filters
 	// =========================
-
-	/**
-	 * Register the language query var.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Registry::get() to get the query var option.
-	 *
-	 * @param array $vars The whitelist of query vars.
-	 *
-	 * @return array The updated whitelist.
-	 */
-	public static function add_language_var( array $vars ) {
-		if ( $query_var = Registry::get( 'query_var' ) ) {
-			$vars[] = $query_var;
-		}
-		return $vars;
-	}
 
 	/**
 	 * Set the queried language to the current one if applicable
