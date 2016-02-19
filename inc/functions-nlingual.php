@@ -70,7 +70,7 @@ function backwards_compatible() {
  *
  * @return bool If the language was successfully converted.
  */
-function validate_language( &$language, $default_current ) {
+function validate_language( &$language, $default_current = false ) {
 	// If null, return false unless default_current is desired
 	if ( is_null( $language ) ) {
 		if ( $default_current ) {
