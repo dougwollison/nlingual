@@ -75,7 +75,12 @@ class Backend extends Handler {
 		// Post Editor Interfaces
 		static::add_action( 'add_meta_boxes', 'add_post_meta_box', 10, 1 );
 
-		// Save hooks
+		// Admin Notices
+		static::add_action( 'admin_notices', 'synchronizer_notice', 10, 0 );
+		static::add_action( 'admin_notices', 'trashed_sisters_notice', 10, 0 );
+		static::add_action( 'admin_notices', 'deleted_sisters_notice', 10, 0 );
+
+		// Saving Post Data
 		static::add_action( 'save_post', 'save_post_language', 10, 1 );
 		static::add_action( 'save_post', 'save_post_translations', 10, 1 );
 		static::add_action( 'save_post', 'synchronize_posts', 10, 1 );
@@ -711,6 +716,43 @@ class Backend extends Handler {
 
 		// Nonce fields for save validation
 		wp_nonce_field( 'nlingual_post', '_nl_nonce', false );
+	}
+
+	// =========================
+	// ! Admin Notices
+	// =========================
+
+	/**
+	 * Print notice about any sister posts being synchronized.
+	 *
+	 * Will be vague on bulk updates but more explicit on individual updates.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function synchronizer_notice() {
+
+	}
+
+	/**
+	 * Print notice about any sister posts being trashed.
+	 *
+	 * Will be vague on bulk updates but more explicit on individual updates.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function trashed_sisters_notice() {
+
+	}
+
+	/**
+	 * Print notice about any sister posts being deleted.
+	 *
+	 * Will be vague on bulk updates but more explicit on individual updates.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function deleted_sisters_notice() {
+
 	}
 
 	// =========================
