@@ -70,6 +70,7 @@ class Migrator {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
+	 * @uses Registry::languages() to get the languages.
 	 * @uses Localizer::save_string_value() to save the localized values of the string.
 	 *
 	 * @param string $value      The value to convert.
@@ -139,12 +140,10 @@ class Migrator {
 			static::convert_tables();
 			static::convert_options();
 
-			// Flag as having been upgraded and needing backwards compatability
+			// Flag as having been upgraded
 			add_option( 'nlingual_upgraded', 1 );
-			update_option( 'nlingual_backwards_compatible', 1 );
-
-			// Reload the registry
-			Registry::load( true );
+			// Also auto-enable backwards compatibility
+			Registry::set( 'backwards_compatible', 1, 'save' );
 		}
 
 		// Load dbDelta utility
@@ -226,7 +225,7 @@ class Migrator {
 		$wpdb->query("ALTER TABLE {$wpdb->prefix}nL_languages RENAME TO {$wpdb->prefix}nl_languages2");
 		$wpdb->query("ALTER TABLE {$wpdb->prefix}nl_languages2 RENAME TO $wpdb->nl_languages");
 		// Rename lang_id to language_id, keeping it at the beginning
-		$wpdb->query("ALTER TABLE $wpdb->nl_languages CHANGE `lang_id` `language_id` bigint(20) unsigned NOT NULL FIRST");
+		$wpdb->query("ALTER TABLE $wpdb->nl_languages CHANGE `lang_id` `language_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT FIRST");
 		// Rename mo to locale_name, placing it after short_name
 		$wpdb->query("ALTER TABLE $wpdb->nl_languages CHANGE `mo` `locale_name` varchar(10) DEFAULT '' NOT NULL AFTER `short_name`");
 		// Rename iso to iso_code, placing it after locale_name
@@ -360,6 +359,13 @@ class Migrator {
 		$localizables = array();
 		$localizables['nav_menu_locations'] = $menu_locations;
 		update_option( 'nlingual_localizables', $localizables );
+
+		/**
+		 * Final cleanup
+		 */
+
+		// Reload the registry
+		Registry::load( true );
 
 		// Update the assigned menus
 		set_theme_mod( 'nav_menu_locations', $new_menus );
