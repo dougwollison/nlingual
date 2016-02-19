@@ -167,14 +167,17 @@ class Manager extends Handler {
 	public static function register_settings() {
 		// Translation Options
 		Settings::register( array(
+			// General settings
 			'default_language'       => 'intval',
 			'localize_date'          => 'intval',
 			'skip_default_l10n'      => 'intval',
 			'patch_wp_locale'        => 'intval',
 			'backwards_compatible'   => 'intval',
+			// Content management settings
 			'show_all_languages'     => 'intval',
 			'trash_sister_posts'     => 'intval',
 			'delete_sister_posts'    => 'intval',
+			// Request/redirection settings
 			'query_var'              => null,
 			'url_rewrite_method'     => null,
 			'post_language_override' => 'intval',
@@ -370,6 +373,7 @@ class Manager extends Handler {
 			),
 		), 'options' );
 
+		// The content management setting fields
 		add_settings_section( 'management', __( 'Translated Content Management' ), null, 'nlingual-options' );
 		Settings::add_fields( array(
 			'show_all_languages' => array(
