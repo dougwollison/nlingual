@@ -257,7 +257,7 @@ class Registry {
 
 		// Fetch the new value if desired
 		if ( $force ) {
-			static::$$option = get_option( "nlingual_{$option}" );
+			static::$$option = get_option( "nlingual_{$option}", $default );
 		}
 
 		if ( static::$$option === null ) {
