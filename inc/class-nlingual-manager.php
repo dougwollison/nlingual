@@ -356,11 +356,6 @@ class Manager extends Handler {
 				'type'  => 'select',
 				'data'  => Registry::languages()->pluck( 'system_name' ),
 			),
-			'show_all_languages' => array(
-				'title' => __( 'Show All Languages?' ),
-				'help'  => __( 'Should objects of all languages be listed by default in the admin?' ),
-				'type'  => 'checkbox',
-			),
 			'localize_date' => array(
 				'title' => __( 'Localize date format?' ),
 				'help'  => __( 'Run localization on the date format defined under General Settings. Useful if any languages you use require custom date formats.' ),
@@ -372,6 +367,25 @@ class Manager extends Handler {
 				'type'  => 'checkbox',
 			),
 		), 'options' );
+
+		add_settings_section( 'management', __( 'Translated Content Management' ), null, 'nlingual-options' );
+		Settings::add_fields( array(
+			'show_all_languages' => array(
+				'title' => __( 'Show All Languages?' ),
+				'help'  => __( 'Should objects of all languages be listed by default in the admin?' ),
+				'type'  => 'checkbox',
+			),
+			'trash_sister_posts' => array(
+				'title' => __( 'Trash Sister Translations?' ),
+				'help'  => __( 'When moving an object to the trash, should its sister translations be trashed along with it?' ),
+				'type'  => 'checkbox',
+			),
+			'delete_sister_posts' => array(
+				'title' => __( 'Delete Sister Translations?' ),
+				'help'  => __( 'When deleting an object, should its sister translations be deleted along with it?' ),
+				'type'  => 'checkbox',
+			),
+		), 'options', 'management' );
 
 		// The request/redirection setting fields
 		add_settings_section( 'redirection', __( 'Request and Redirection Handling' ), null, 'nlingual-options' );
