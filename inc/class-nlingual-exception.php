@@ -71,11 +71,9 @@ class Exception extends \Exception {
 	    // Append the relevant stack trace info based on error code
 	    $trace = $this->getTrace();
 	    switch ( $this->code ) {
-		    case NL_ERR_UNSUPPORTED_METHOD:
-		    	$message .= " in {$trace[1]['file']} on line {$trace[1]['line']}";
-		    	break;
-
-		    case NL_ERR_MISSING_LANGUAGE:
+		    case NL_ERR_FORBIDDEN:
+		    case NL_ERR_NOTFOUND:
+		    case NL_ERR_UNSUPPORTED:
 		    	// First, mention the source
 		    	$message .= " via " . static::get_step_function( $trace[0] );
 

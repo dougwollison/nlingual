@@ -28,19 +28,28 @@ define( 'NL_UNLOCALIZED', 'NL_UNLOCALIZED' );
 // =========================
 
 /**
- * Error code for missing language.
+ * Error code for a forbidden action.
  *
  * @since 2.0.0
  *
  * @var string
  */
-define( 'NL_ERR_MISSING_LANGUAGE', 404 );
+define( 'NL_ERR_FORBIDDEN', 403 );
 
 /**
- * Error code for an unrecognized method alias.
+ * Error code for missing thing.
  *
  * @since 2.0.0
  *
  * @var string
  */
-define( 'NL_ERR_UNSUPPORTED_METHOD', 405 );
+define( 'NL_ERR_MISSING', 404 );
+
+/**
+ * Error code for an unsupported action.
+ *
+ * @since 2.0.0
+ *
+ * @var string
+ */
+define( 'NL_ERR_UNSUPPORTED', 405 );
