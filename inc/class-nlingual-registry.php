@@ -185,6 +185,8 @@ class Registry {
 	/**
 	 * The supported taxonomies.
 	 *
+	 * @internal
+	 *
 	 * @since 2.0.0
 	 *
 	 * @var array
@@ -193,6 +195,8 @@ class Registry {
 
 	/**
 	 * The list of localizable features.
+	 *
+	 * @internal
 	 *
 	 * @since 2.0.0
 	 *
@@ -203,6 +207,8 @@ class Registry {
 	/**
 	 * The synchronization rules.
 	 *
+	 * @internal
+	 *
 	 * @since 2.0.0
 	 *
 	 * @var array
@@ -212,6 +218,8 @@ class Registry {
 	/**
 	 * The cloning rules.
 	 *
+	 * @internal
+	 *
 	 * @since 2.0.0
 	 *
 	 * @var array
@@ -220,6 +228,8 @@ class Registry {
 
 	/**
 	 * The language directory.
+	 *
+	 * @internal
 	 *
 	 * @since 2.0.0
 	 *
