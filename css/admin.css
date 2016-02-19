@@ -162,6 +162,8 @@
     opacity: 0.5; }
 #nlingual_languages th {
   white-space: nowrap; }
+  #nlingual_languages th.nl-language-list_order {
+    font: 0/0 a; }
 #nlingual_languages input[type="text"] {
   font-family: 'Helvetica Neue', sans-serif;
   display: block;
@@ -169,6 +171,7 @@
   height: 27px; }
 #nlingual_languages input[type="checkbox"] {
   margin: 6px 0; }
+#nlingual_languages .nl-language-list_order,
 #nlingual_languages .nl-language-slug,
 #nlingual_languages .nl-language-locale_name,
 #nlingual_languages .nl-language-iso_code,
@@ -180,6 +183,12 @@
 #nlingual_languages .nl-language-slug input {
   font-family: 'Courier New', monospace;
   text-align: center; }
+#nlingual_languages .nl-language-list_order {
+  width: 30px;
+  padding: 0; }
+  #nlingual_languages .nl-language-list_order .handle {
+    cursor: pointer;
+    padding: 12px 10px; }
 #nlingual_languages .nl-language-iso_code {
   width: 30px; }
 #nlingual_languages .nl-language-slug,
