@@ -56,6 +56,7 @@ class Backend extends Handler {
 
 		// Script/Style Enqueues
 		static::add_action( 'admin_enqueue_scripts', 'enqueue_assets', 10, 0 );
+		static::add_action( 'admin_print_scripts', 'fix_open_sans', 10, 0 );
 
 		// Theme Setup Actions
 		static::add_action( 'after_setup_theme', 'register_localized_nav_menus', 999, 0 );
@@ -222,7 +223,7 @@ class Backend extends Handler {
 	 *
 	 * @since 2.0.0
 	 */
-	public static function enqueue_assets(){
+	public static function enqueue_assets() {
 		// Admin styling
 		wp_enqueue_style( 'nlingual-admin', plugins_url( 'css/admin.css', NL_PLUGIN_FILE ), '2.0.0', 'screen' );
 
@@ -239,6 +240,28 @@ class Backend extends Handler {
 			'LocalizeThis'                => __( 'Localize This' ),
 			'LocalizeFor'                 => __( 'Localize for %s' ),
 		) );
+	}
+
+	/**
+	 * Patch the use of Open Sans for better character display.
+	 *
+	 * Replaces the relevant font stacks to include Tahoma, so that
+	 * character sets like Arabic display (and nicely) in Chrome.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function fix_open_sans() {
+		if ( wp_style_is( 'open-sans', 'enqueued' ) ) {
+			?>
+			<style id="nlingual-open-sans-fix" type="text/css" media="all">
+				body,
+				#wpadminbar,
+				#wpadminbar * {
+					font-family: 'Open Sans', Helvetica, Tahoma, Arial, sans-serif;
+				}
+			</style>
+			<?php
+		}
 	}
 
 	// =========================
