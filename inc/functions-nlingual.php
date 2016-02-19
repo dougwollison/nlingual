@@ -37,21 +37,6 @@ function is_backend() {
 	return is_admin() || in_array( $pagenow, array( 'wp-login.php', 'wp-register.php' ) );
 }
 
-/**
- * Check if backwards compatability is needed.
- *
- * @internal
- *
- * @since 2.0.0
- *
- * @uses Registry::get() to get the backwards_compatible option.
- *
- * @return bool Wether or not backwards compatibility is needed.
- */
-function backwards_compatible() {
-	return Registry::get( 'backwards_compatible' );
-}
-
 // =========================
 // ! Sanitizing Tools
 // =========================
