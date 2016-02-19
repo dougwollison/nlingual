@@ -285,7 +285,7 @@ class Registry {
 	 *
 	 * @return mixed The property value.
 	 */
-	public static function get( $option, $default = null, $force = true ) {
+	public static function get( $option, $default = null, $force = false ) {
 		// Throw "unsupported" error if trying to set an unsupported property
 		if ( ! property_exists( get_called_class(), $option ) ) {
 			throw new Exception( "Registry::$option is not supported", NL_ERR_UNSUPPORTED );
