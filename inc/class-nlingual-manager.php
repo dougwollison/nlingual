@@ -377,7 +377,7 @@ class Manager extends Handler {
 			),
 			'trash_sister_posts' => array(
 				'title' => __( 'Trash Sister Translations?' ),
-				'help'  => __( 'When moving an object to the trash, should its sister translations be trashed along with it?' ),
+				'help'  => __( 'When moving an object to the trash, should its sister translations be trashed along with it? (Will also apply when "untrashing" them)' ),
 				'type'  => 'checkbox',
 			),
 			'delete_sister_posts' => array(
