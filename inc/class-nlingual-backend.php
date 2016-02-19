@@ -92,11 +92,11 @@ class Backend extends Handler {
 	// =========================
 
 	/**
-	 * Load the text domain, setup documentation for relevant screens.
+	 * Load the text domain, setup documentation for relevant screens, and prep sync/clone rules.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::get() to retrieve a list of supported post types.
+	 * @uses Registry::get() to retrieve a the post types list, and the sync/clone rules.
 	 * @uses Documenter::register_help_tab() to register help tabs for each post type.
 	 */
 	public static function ready() {
@@ -109,6 +109,34 @@ class Backend extends Handler {
 			Documenter::register_help_tab( $post_type, 'post-translation' );
 			Documenter::register_help_tab( "edit-$post_type", 'posts-translation' );
 		}
+
+		// Default sync rules to "none" and clone rules to "all" for each post type
+		$sync_rules = Registry::get( 'sync_rules' );
+		if ( ! isset( $clone_rules['post_type'] ) ) {
+			$clone_rules['post_type'] = array();
+		}
+		$clone_rules = Registry::get( 'clone_rules' );
+		if ( ! isset( $sync_rules['post_type'] ) ) {
+			$clone_rules['post_type'] = array();
+		}
+		foreach ( static::get( 'post_types' ) as $post_type ) {
+			if ( ! isset( $sync_rules['post_type'][ $post_type ] ) ) {
+				$sync_rules['post_type'][ $post_type ] = array(
+					'post_fields' => array(),
+					'post_terms'  => array(),
+					'post_meta'   => '',
+				);
+			}
+			if ( ! isset( $clone_rules['post_type'][ $post_type ] ) ) {
+				$clone_rules['post_type'][ $post_type ] = array(
+					'post_fields' => true,
+					'post_terms'  => true,
+					'post_meta'   => true,
+				);
+			}
+		}
+		Registry::set( 'sync_rules', $sync_rules );
+		Registry::set( 'clone_rules', $clone_rules );
 	}
 
 	// =========================
