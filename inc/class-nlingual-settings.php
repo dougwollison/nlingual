@@ -394,11 +394,16 @@ class Settings {
 			$tax = $tax->labels->name;
 		}
 
-		// Convert metadata value
+		// Convert TRUE values
+		if ( $value['post_fields'] === true ) {
+			$value['post_fields'] = array_keys( $post_fields );
+		}
+		if ( $value['post_terms'] === true ) {
+			$value['post_terms'] = array_keys( $post_taxs );
+		}
 		if ( $value['post_meta'] === true ) {
 			$value['post_meta'] = '*';
 		}
-
 		?>
 		<div class="nl-field-section">
 			<button type="button" class="button nl-section-toggle hide-if-no-js" data-alt="<?php _e( 'Close Settings' ); ?>"><?php _e( 'Open Settings' ); ?></button>
