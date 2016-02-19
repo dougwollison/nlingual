@@ -168,11 +168,13 @@ class Manager extends Handler {
 		// Translation Options
 		Settings::register( array(
 			'default_language'       => 'intval',
-			'show_all_languages'     => 'intval',
 			'localize_date'          => 'intval',
 			'skip_default_l10n'      => 'intval',
 			'patch_wp_locale'        => 'intval',
 			'backwards_compatible'   => 'intval',
+			'show_all_languages'     => 'intval',
+			'trash_sister_posts'     => 'intval',
+			'delete_sister_posts'    => 'intval',
 			'query_var'              => null,
 			'url_rewrite_method'     => null,
 			'post_language_override' => 'intval',
