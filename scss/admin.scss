@@ -209,6 +209,10 @@
 
 	th {
 		white-space: nowrap;
+
+		&.nl-language-list_order {
+			font: 0/0 a;
+		}
 	}
 
 	input[type="text"] {
@@ -221,6 +225,7 @@
 		margin: 6px 0;
 	}
 
+	.nl-language-list_order,
 	.nl-language-slug,
 	.nl-language-locale_name,
 	.nl-language-iso_code,
@@ -238,6 +243,15 @@
 		}
 	}
 
+	.nl-language-list_order {
+		width: 30px;
+		padding: 0;
+
+		.handle {
+			cursor: pointer;
+			padding: 12px 10px;
+		}
+	}
 	.nl-language-iso_code {
 		width: 30px;
 	}

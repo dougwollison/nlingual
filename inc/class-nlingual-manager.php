@@ -613,6 +613,7 @@ class Manager extends Handler {
 				<table id="nlingual_languages" class="wp-list-table widefat fixed striped">
 					<thead>
 						<tr>
+							<th scope="col" class="nl-language-list_order"><?php _e( 'List Order' ); ?></th>
 							<th scope="col" class="nl-language-system_name"><?php _e( 'System Name' ); ?></th>
 							<th scope="col" class="nl-language-native_name"><?php _e( 'Native Name' ); ?></th>
 							<th scope="col" class="nl-language-short_name"><?php _e( 'Short Name' ); ?></th>
@@ -629,6 +630,9 @@ class Manager extends Handler {
 				</table>
 				<script type="text/template" id="nl_language_row">
 					<tr>
+						<td class="nl-language-list_order">
+							<i class="handle dashicons dashicons-sort"></i>
+						</td>
 						<td class="nl-language-system_name">
 							<input type="text" name="nlingual_languages[%id%][system_name]" value="%system_name%" />
 						</td>

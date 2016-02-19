@@ -119,11 +119,23 @@ jQuery( function( $ ) {
 	// =========================
 
 	$( '#nlingual_languages' ).each( function() {
+		// Elements
+		var $manager = $( this );
+		var $preset = $( '#nl_language_preset' );
+		var $list = $( '#nl_language_list' );
+		var $addBtn = $( '#nl_language_add' );
+
 		var languageRowTemplate = $( '#nl_language_row' ).text();
 		var languageRowIndex = -1;
 
+		// Setup sortability
+		$list.sortable( {
+			items: 'tr',
+			containment: 'parent',
+			handle: '.handle',
+		} );
+
 		// Load preset selector
-		var $preset = $( '#nl_language_preset' );
 		for ( var preset in NL_PRESETS ) {
 			$preset.append( '<option value="' + preset + '">' + NL_PRESETS[ preset ].system_name + '</option>' );
 		}
@@ -147,14 +159,14 @@ jQuery( function( $ ) {
 			$row.find( '.nl-language-active input' ).attr( 'checked', data.active );
 
 			// Add the row to the table
-			$( '#nl_language_list' ).append( $row );
+			$list.append( $row ).sortable( 'refresh' );
 		}
 
 		// Load table with current languages
 		_.each( NL_LANGUAGES, buildLangRow );
 
 		// Add button functionality
-		$( '#nl_language_add' ).click( function() {
+		$addBtn.click( function() {
 			var data, preset;
 
 			// Check if preset was selected
@@ -188,7 +200,7 @@ jQuery( function( $ ) {
 		} );
 
 		// Delete button functionality
-		$( this ).on( 'change', '.nl-language-delete input', function() {
+		$manager.on( 'change', '.nl-language-delete input', function() {
 			// Get the parent row
 			var $row = $( this ).parents( 'tr' ).first();
 			// Toggle delete class and inputs
@@ -197,7 +209,7 @@ jQuery( function( $ ) {
 		} );
 
 		// Auto-fill locale_name, iso_code and slug
-		$( this ).on( 'change', '.nl-language-system_name input', function() {
+		$manager.on( 'change', '.nl-language-system_name input', function() {
 			// Get the parent row
 			var $row = $( this ).parents( 'tr' ).first();
 
