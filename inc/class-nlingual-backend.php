@@ -801,17 +801,17 @@ class Backend extends Handler {
 
 		// Unhook this and the language/translation saving hooks to prevent
 		// infinite loop and uncessary language assignemnt
-		static::remove_action( 'save_post', 'save_post_language' );
-		static::remove_action( 'save_post', 'save_post_translations' );
-		static::remove_action( 'save_post', 'synchronize_posts' );
+		static::remove_action( 'save_post', __FUNCTION__, 10 );
+		static::remove_action( 'save_post', 'save_post_language', 10 );
+		static::remove_action( 'save_post', 'save_post_translations', 10 );
 
 		// Now synchronize the post's translations
 		Synchronizer::sync_post_with_sisters( $post_id );
 
 		// Rehook now that we're done
-		static::add_action( 'save_post', 'save_post_language' );
-		static::add_action( 'save_post', 'save_post_translations' );
-		static::add_action( 'save_post', 'synchronize_posts' );
+		static::add_action( 'save_post', __FUNCTION__, 10, 1 );
+		static::add_action( 'save_post', 'save_post_language', 10, 1 );
+		static::add_action( 'save_post', 'save_post_translations', 10, 1 );
 	}
 
 	// =========================
