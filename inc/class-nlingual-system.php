@@ -127,7 +127,7 @@ class System extends Handler {
 	}
 
 	/**
-	 * Perform upgrade and back-compat checks, automatic localizable fields, and textdomain loading.
+	 * Perform upgrade and back-compat checks, and automatic localizable fields.
 	 *
 	 * @since 2.0.0
 	 *
