@@ -95,7 +95,6 @@ class Loader extends Handler {
 		}
 
 		// Default options
-		add_option( 'nlingual_default_language', 1 );
 		add_option( 'nlingual_show_all_languages', 1 );
 		add_option( 'nlingual_localize_date', 0 );
 		add_option( 'nlingual_skip_default_l10n', 0 );
@@ -105,6 +104,7 @@ class Loader extends Handler {
 		add_option( 'nlingual_patch_wp_locale', 0 );
 		add_option( 'nlingual_post_language_override', 0 );
 		add_option( 'nlingual_backwards_compatible', 1 );
+		add_option( 'nlingual_default_language', 1 );
 		add_option( 'nlingual_post_types', array() );
 		add_option( 'nlingual_taxonomies', array() );
 
