@@ -90,6 +90,8 @@ class Registry {
 		'post_language_override' => false,
 		'redirection_permanent'  => false,
 		'patch_wp_locale'        => false,
+		'trash_sister_posts'     => false,
+		'delete_sister_posts'    => false,
 		'backwards_compatible'   => false,
 		'default_language'       => 0,
 		'query_var'              => 'nl_language',
@@ -157,6 +159,28 @@ class Registry {
 	 * @var bool
 	 */
 	protected static $patch_wp_locale;
+
+	/**
+	 * The TRASH sister posts option.
+	 *
+	 * @internal
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var bool
+	 */
+	protected static $trash_sister_posts;
+
+	/**
+	 * The DELETE sister posts option.
+	 *
+	 * @internal
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var bool
+	 */
+	protected static $delete_sister_posts;
 
 	/**
 	 * The post language override option.
