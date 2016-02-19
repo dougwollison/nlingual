@@ -232,33 +232,68 @@ class Registry {
 	// =========================
 
 	/**
-	 * Retrieve a property value.
+	 * Retrieve a option value.
+	 *
+	 * Will redirect to Registry::languages() if applicable.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $property The property name.
-	 * @param mixed  $default  Optional. The default value to return.
+	 * @param string $option  The option name.
+	 * @param mixed  $default Optional. The default value to return.
+	 * @param bool   $force   Optional. Re-fetch from the database.
 	 *
 	 * @return mixed The property value.
 	 */
-	public static function get( $property, $default = null ) {
-		if ( property_exists( get_called_class(), $property ) ) {
-			return static::$$property;
+	public static function get( $option, $default = null, $force = true ) {
+		// Throw error if trying to set an unsupported property
+		if ( ! property_exists( get_called_class(), $option ) ) {
+			throw new Exception( "Registry option not supported: $option", NL_ERR_UNSUPPORTED );
 		}
-		return $default;
+
+		// If trying to access $languages, redirect to languages()
+		if ( $option == 'languages' ) {
+			return static::languages();
+		}
+
+		// Fetch the new value if desired
+		if ( $force ) {
+			static::$$option = get_option( "nlingual_{$option}" );
+		}
+
+		if ( static::$$option === null ) {
+			return $default;
+		} else {
+			return static::$$option;
+		}
 	}
 
 	/**
-	 * Override a property value.
+	 * Override a option value.
+	 *
+	 * Will not work for $languages, that has it's own method.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $property The property name.
-	 * @param mixed  $value    The value to assign.
+	 * @param string $option The option name.
+	 * @param mixed  $value  The value to assign.
+	 * @param bool   $save   Optional. Save the change to the database.
 	 */
-	public static function set( $property, $value = null ) {
-		if ( property_exists( get_called_class(), $property ) ) {
-			static::$$property = $value;
+	public static function set( $option, $value = null, $save = false ) {
+		// Throw error if trying to set an unsupported property
+		if ( ! property_exists( get_called_class(), $option ) ) {
+			throw new Exception( "Registry option not supported: $option", NL_ERR_UNSUPPORTED );
+		}
+
+		// Throw error if trying to replace $languages
+		if ( $option == 'languages' ) {
+			throw new Exception( "You cannot replace the Registry's language collection.", NL_ERR_FORBIDDEN );
+		}
+
+		static::$$option = $value;
+
+		// Save the new value if desired
+		if ( $save ) {
+			update_option( "nlingual_{$option}", $value );
 		}
 	}
 
