@@ -53,7 +53,7 @@ abstract class Model {
 	 *
 	 * @return array An associative array of properites/values.
 	 */
-	public function export() {
+	public function dump() {
 		return get_object_vars( $this );
 	}
 }

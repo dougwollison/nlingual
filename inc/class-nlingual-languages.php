@@ -162,7 +162,7 @@ class Languages implements \Iterator {
 			}
 
 			return $a->$field > $b->$field ? 1 : -1;
-		});
+		} );
 
 		// If not in ascending order, reverse the array
 		if ( $order != 'asc' ) {
@@ -366,16 +366,40 @@ class Languages implements \Iterator {
 	 *
 	 * @uses Language::export() on each Language object.
 	 *
-	 * @param string $field Optional. A specific field to get
-	 *                      instead of the whole language object.
+	 * @param bool   $numeric Optional. Return just the values, no keys.
 	 *
-	 * @return array A numeric array of the languages.
+	 * @return array An array of the languages.
 	 */
-	public function export( $field = null ) {
+	public function dump( $numeric = false ) {
 		$data = array();
 
-		foreach ( $this->items as $language ) {
-			$data[ $language->id ] = $field ? $language->$field : $language->export();
+		foreach ( $this as $language ) {
+			$data[ $language->id ] = $language->dump();
+		}
+
+		if ( $numeric ) {
+			$data = array_values( $data );
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Get an keyed array of a single property for each language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $val_field The field to fetch from each entry.
+	 * @param bool   $key_field  Optional. The value to use for the key (defaults to id, false for numeric).
+	 *
+	 * @return array An array of the the selected language properties.
+	 */
+	public function pluck( $val_field, $key_field = 'id' ) {
+		$data = array();
+
+		foreach ( $this as $i => $language ) {
+			$key = $key_field ? $language->$key_field : $i;
+			$data[ $key ] = $language->$val_field;
 		}
 
 		return $data;
