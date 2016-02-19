@@ -135,15 +135,9 @@ class Migrator {
 	public static function upgrade() {
 		global $wpdb;
 
-		// Test if we're upgrading from nLingual 1, convert tables/options and flag
+		// If upgrading from nLingual 1, convert tables before updating them
 		if ( Migrator::is_upgrading() ) {
 			static::convert_tables();
-			static::convert_options();
-
-			// Flag as having been upgraded
-			add_option( 'nlingual_upgraded', 1 );
-			// Also auto-enable backwards compatibility
-			Registry::set( 'backwards_compatible', 1, 'save' );
 		}
 
 		// Load dbDelta utility
@@ -191,6 +185,16 @@ class Migrator {
 			KEY object_id (object_id)
 		) $charset_collate;";
 		dbDelta( $sql_localizer );
+
+		// If upgrading from nLingual 1, convert options
+		if ( Migrator::is_upgrading() ) {
+			static::convert_options();
+
+			// Flag as having been upgraded
+			add_option( 'nlingual_upgraded', 1 );
+			// Also auto-enable backwards compatibility
+			Registry::set( 'backwards_compatible', 1, 'save' );
+		}
 
 		// Log the current database version
 		update_option( 'nlingual_database_version', NL_DB_VERSION );
@@ -328,6 +332,9 @@ class Migrator {
 
 		// Save the new sync rules
 		update_option( 'nlingual_sync_rules', $new_sync_rules );
+
+		// Save empty new clone rules
+		update_option( 'nlingual_clone_rules', array() );
 
 		/**
 		 * Convert Navigation Menu Locations
