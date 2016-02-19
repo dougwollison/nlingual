@@ -611,7 +611,6 @@ class Registry {
 		}
 
 		// Load simple options
-		static::$default_language       = (bool) get_option( 'nlingual_default_language', 0 );
 		static::$show_all_languages     = (bool) get_option( 'nlingual_show_all_languages', 1 );
 		static::$localize_date          = (bool) get_option( 'nlingual_localize_date', 0 );
 		static::$skip_default_l10n      = (bool) get_option( 'nlingual_skip_default_l10n', 0 );
@@ -619,6 +618,7 @@ class Registry {
 		static::$redirection_permanent  = (bool) get_option( 'nlingual_redirection_permanent', 0 );
 		static::$patch_wp_locale        = (bool) get_option( 'nlingual_patch_wp_locale', 0 );
 		static::$backwards_compatible   = (bool) get_option( 'nlingual_backwards_compatible', 0 );
+		static::$default_language       = get_option( 'nlingual_default_language', 0 );
 		static::$query_var              = get_option( 'nlingual_query_var', 'nl_language' );
 		static::$url_rewrite_method     = get_option( 'nlingual_url_rewrite_method', 'get' );
 
