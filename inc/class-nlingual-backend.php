@@ -59,7 +59,8 @@ class Backend extends Handler {
 		static::add_action( 'after_setup_theme', 'register_localized_nav_menus', 999, 0 );
 		static::add_action( 'widgets_init', 'register_localized_sidebars', 999, 0 );
 
-		// Posts Screen Interfaces
+		// Posts Screen Interface
+		static::add_filter( 'query_vars', 'add_language_var' );
 		static::add_action( 'restrict_manage_posts', 'add_language_filter', 10, 0 );
 		$post_types = Registry::get( 'post_types' );
 		foreach ( $post_types as $post_type ) {
@@ -273,6 +274,24 @@ class Backend extends Handler {
 	// =========================
 
 	/**
+	 * Register the language query var.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::get() to get the query var option.
+	 *
+	 * @param array $vars The whitelist of query vars.
+	 *
+	 * @return array The updated whitelist.
+	 */
+	public static function add_language_var( array $vars ) {
+		if ( $query_var = Registry::get( 'query_var' ) ) {
+			$vars[] = $query_var;
+		}
+		return $vars;
+	}
+
+	/**
 	 * Add <select> for filtering posts by language.
 	 *
 	 * @since 2.0.0
@@ -297,16 +316,19 @@ class Backend extends Handler {
 		// Get the query var and it's current value
 		$query_var = Registry::get( 'query_var' );
 		$current = $wp_query->get( $query_var );
+
+		// If current is an array, use the first one
+		$current = reset( $current );
 		?>
 		<select name="<?php echo $query_var; ?>" class="postform">
 			<option value="-1"><?php _e( 'All Languages' ); ?></option>
 			<?php
 			$count = Translator::language_posts_count( 0, $post_type, $post_status );
-			printf( '<option value="%d" %s>%s (%s)</option>', 0, $current == '0' ? 'selected' : '', __( 'No Language' ), $count );
+			printf( '<option value="%s" %s>%s (%s)</option>', 0, $current == '0' ? 'selected' : '', __( 'No Language' ), $count );
 			foreach ( Registry::languages( 'active' ) as $language ) {
-				$selected = $current == $language->id;
+				$selected = $current == $language->slug;
 				$count = Translator::language_posts_count( $language->id, $post_type, $post_status );
-				printf( '<option value="%d" %s>%s (%d)</option>', $language->id, $selected ? 'selected' : '', $language->system_name, $count );
+				printf( '<option value="%s" %s>%s (%d)</option>', $language->slug, $selected ? 'selected' : '', $language->system_name, $count );
 			}
 			?>
 		</select>
