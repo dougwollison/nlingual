@@ -14,7 +14,7 @@ namespace nLingual;
  * The Liaison System
  *
  * Hooks into select 3rd party systems to provide
- * better compatability with them, namely other plugins
+ * better compatibility with them, namely other plugins
  * by Doug Wollison.
  *
  * @package nLingual
@@ -36,10 +36,10 @@ class Liaison extends Handler {
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
-		// QuickStart compatability
+		// QuickStart compatibility
 		static::add_action( 'after_setup_theme', 'add_quickstart_helpers', 10, 0 );
 
-		// IndexPages compatability
+		// IndexPages compatibility
 		static::add_action( 'after_setup_theme', 'add_indexpages_helpers', 10, 0 );
 	}
 

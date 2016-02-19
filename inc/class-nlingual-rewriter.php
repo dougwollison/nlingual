@@ -555,7 +555,7 @@ class Rewriter {
 			else {
 				$url = static::localize_url( NL_ORIGINAL_URL, null, true );
 
-				// Check if backwards compatability is needed
+				// Check if backwards compatibility is needed
 				if ( Registry::get( 'backwards_compatible' ) ) {
 					/**
 					 * Filter the localized original URL.

@@ -411,11 +411,11 @@ class Manager extends Handler {
 			),
 		), 'options', 'redirection' );
 
-		// If this is an upgraded install, offer the backwards compatability option
+		// If this is an upgraded install, offer the backwards compatibility option
 		if ( get_option( 'nlingual_upgraded' ) ) {
 			Settings::add_fields( array(
 				'backwards_compatible' => array(
-					'title' => __( 'Backwards Compatability' ),
+					'title' => __( 'Backwards Compatibility' ),
 					'help'  => __( 'Include support for old template functions, and features like language splitting.' ),
 					'type'  => 'checkbox',
 				),

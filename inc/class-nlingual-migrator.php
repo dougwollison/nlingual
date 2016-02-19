@@ -19,7 +19,7 @@ namespace nLingual;
  * @package nLingual
  * @subpackage Tools
  *
- * @internal used by the Autoloader and the Backwards_Compatabilty functions.
+ * @internal used by the Autoloader and the Backwards_Compatibilty functions.
  *
  * @since 2.0.0
  */

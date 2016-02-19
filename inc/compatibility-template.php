@@ -180,7 +180,7 @@ function nl_print_lang_links( $prefix = '', $sep = ' ', $skip_current = false ) 
 }
 
 /**
- * Backwards compatability support for the old split-language method.
+ * Backwards compatibility support for the old split-language method.
  *
  * @since 2.0.0
  *

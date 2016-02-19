@@ -104,7 +104,7 @@ Coding improvements and language table adjustments (props vianney).
 Bug fix with languages table creation (props vianney)
 
 = 1.2.1 =
-Bug fixes and ACF compatability improvements.
+Bug fixes and ACF compatibility improvements.
 
 = 1.2.0 =
 Admin-only feature, numerous bug fixes, doc updates; a lot of stuff.
