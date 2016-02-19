@@ -455,18 +455,17 @@ class Registry {
 	/**
 	 * Get the sync or cloning rules for a specific object.
 	 *
-	 * @internal
-	 *
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to retrive the appropriate rules array.
 	 *
 	 * @param string $rule_type   The type of rules to retrieve ('sync' or 'clone').
-	 * @param string $sections... Optional A list of indexes drilling down into the value.
+	 * @param string $sections... Optional A list of indexes drilling down into the array.
 	 *
 	 * @return array The array of rules, empty if not found.
 	 */
 	public static function get_rules( $rule_type ) {
+		// Get the rules
 		$rules = Registry::get( $rule_type . '_rules' );
 
 		// Fail if no rules found
@@ -485,8 +484,8 @@ class Registry {
 
 		// Loop through the sections list
 		foreach ( $sections as $section ) {
-			// Drill down if found
-			if ( isset( $rules[ $section ] ) ) {
+			// Drill down if an array is found
+			if ( isset( $rules[ $section ] ) && is_array( $current[ $section ] ) ) {
 				$rules = $rules[ $section ];
 			} else {
 				// Abort and return empty array
