@@ -28,6 +28,8 @@ class Registry {
 	// ! Properties
 	// =========================
 
+	// ! - Internal
+
 	/**
 	 * The loaded status flag.
 	 *
@@ -60,6 +62,46 @@ class Registry {
 	 * @var int
 	 */
 	protected static $current_language;
+
+	/**
+	 * The language directory.
+	 *
+	 * @internal
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var Languages
+	 */
+	protected static $languages;
+
+	/**
+	 * The whitelist of accessible options.
+	 *
+	 * @internal
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var array
+	 */
+	protected static $options_whitelist = array(
+		'show_all_languages'     => true,
+		'localize_date'          => false,
+		'skip_default_l10n'      => false,
+		'post_language_override' => false,
+		'redirection_permanent'  => false,
+		'patch_wp_locale'        => false,
+		'backwards_compatible'   => false,
+		'default_language'       => 0,
+		'query_var'              => 'nl_language',
+		'url_rewrite_method'     => 'get',
+		'post_types'             => array(),
+		'taxonomies'             => array(),
+		'localizables'           => array(),
+		'sync_rules'             => array(),
+		'clone_rules'            => array(),
+	);
+
+	// ! - System Options
 
 	/**
 	 * The default language id.
@@ -226,17 +268,6 @@ class Registry {
 	 */
 	protected static $clone_rules = array();
 
-	/**
-	 * The language directory.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var Languages
-	 */
-	protected static $languages;
-
 	// =========================
 	// ! Property Accessing
 	// =========================
@@ -255,14 +286,14 @@ class Registry {
 	 * @return mixed The property value.
 	 */
 	public static function get( $option, $default = null, $force = true ) {
-		// Throw error if trying to set an unsupported property
+		// Throw "unsupported" error if trying to set an unsupported property
 		if ( ! property_exists( get_called_class(), $option ) ) {
-			throw new Exception( "Registry option not supported: $option", NL_ERR_UNSUPPORTED );
+			throw new Exception( "Registry::$option is not supported", NL_ERR_UNSUPPORTED );
 		}
 
-		// If trying to access $languages, redirect to languages()
-		if ( $option == 'languages' ) {
-			return static::languages();
+		// Throw "forbidden" error if trying to replace one of the special properties
+		if ( ! in_array( $option, static::$options_whitelist ) ) {
+			throw new Exception( "You cannot overwrite Registry::$option", NL_ERR_FORBIDDEN );
 		}
 
 		// Fetch the new value if desired
@@ -289,14 +320,14 @@ class Registry {
 	 * @param bool   $save   Optional. Save the change to the database.
 	 */
 	public static function set( $option, $value = null, $save = false ) {
-		// Throw error if trying to set an unsupported property
+		// Throw "unsupported" error if trying to set an unsupported property
 		if ( ! property_exists( get_called_class(), $option ) ) {
-			throw new Exception( "Registry option not supported: $option", NL_ERR_UNSUPPORTED );
+			throw new Exception( "Registry::$option is not supported", NL_ERR_UNSUPPORTED );
 		}
 
-		// Throw error if trying to replace $languages
-		if ( $option == 'languages' ) {
-			throw new Exception( "You cannot replace the Registry's language collection.", NL_ERR_FORBIDDEN );
+		// Throw "forbidden" error if trying to replace one of the special properties
+		if ( ! in_array( $option, static::$options_whitelist ) ) {
+			throw new Exception( "You cannot overwrite Registry::$option", NL_ERR_FORBIDDEN );
 		}
 
 		static::$$option = $value;
@@ -374,13 +405,14 @@ class Registry {
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::$previous_languages to get the previous language.
+	 * @uses Registry::get() to get the default language id.
 	 * @uses Registry::$current_language to update the current language.
 	 */
 	public static function restore_language() {
 		$last_language = array_pop( static::$previous_languages );
 		if ( ! $last_language ) {
 			// No previous language, go with default
-			$last_language = static::$default_language;
+			$last_language = static::get( 'default_language' );
 		}
 
 		// Replace $current_language with last language
@@ -394,12 +426,12 @@ class Registry {
 	 *
 	 * @see Registry::get_language() for details.
 	 *
-	 * @uses Registry::$default_language
+	 * @uses Registry::get() to get the default language id.
 	 *
 	 * @param string $field Optional. The field to get from the language.
 	 */
 	public static function default_language( $field = null ) {
-		$language_id = static::$default_language;
+		$language_id = static::get( 'default_language' );
 		return static::get_language( $language_id, $field );
 	}
 
@@ -411,11 +443,12 @@ class Registry {
 	 * @see Registry::get_language() for details.
 	 *
 	 * @uses Registry::$current_language
+	 * @uses Registry::get() to get the default language id.
 	 *
 	 * @param string $field Optional. The field to get from the language.
 	 */
 	public static function current_language( $field = null ) {
-		$language_id = static::$current_language ?: static::$default_language;
+		$language_id = static::$current_language ?: static::get( 'default_language' );
 		return static::get_language( $language_id, $field );
 	}
 
@@ -507,7 +540,7 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::$localizables to get the localizables settings.
+	 * @uses Registry::get() to get the localizables settings.
 	 * @uses Registry::languages() to get the registered languages.
 	 *
 	 * @param string $item The name of the localizable to check support for.
@@ -515,7 +548,7 @@ class Registry {
 	 */
 	public static function is_feature_localizable( $item, $list ) {
 		// Check if this feature is enabled
-		$localizables = static::$localizables;
+		$localizables = static::get( 'localizables' );
 		if ( ! isset( $localizables[ $item ] ) || ! $localizables[ $item ] ) {
 			return false;
 		}
@@ -536,7 +569,7 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::$localizables to get the localizables settings.
+	 * @uses Registry::get() to get the localizables settings.
 	 *
 	 * @param string $type     The type of location to check for.
 	 * @param string $location The ID of the location to check.
@@ -548,7 +581,7 @@ class Registry {
 		$type .= '_locations';
 
 		// Check if type is present in localizables list
-		$localizables = static::$localizables;
+		$localizables = static::get( 'localizables' );
 		if ( ! isset( $localizables[ $type ] ) ) {
 			return false;
 		}
@@ -575,7 +608,7 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::$post_types to get the post_types list.
+	 * @uses Registry::get() to get the post_types list.
 	 *
 	 * @param string|array $post_types The post type(s) to check.
 	 *
@@ -585,7 +618,7 @@ class Registry {
 		$post_types = (array) $post_types; // Covnert to array
 
 		// Get the supported post types list
-		$supported = static::$post_types;
+		$supported = static::get( 'post_types' );
 
 		return (bool) array_intersect( $supported, $post_types );
 	}
@@ -599,7 +632,7 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::$taxonomies to get the taxonomies list.
+	 * @uses Registry::get() to get the taxonomies list.
 	 *
 	 * @param string|array $taxonomies The taxonomy(ies) to check.
 	 *
@@ -609,7 +642,7 @@ class Registry {
 		$taxonomies = (array) $taxonomies; // Covnert to array
 
 		// Get the supported post types list
-		$supported = static::$taxonomies;
+		$supported = static::get( 'taxonomies' );
 
 		return (bool) array_intersect( $supported, $taxonomies );
 	}
@@ -626,22 +659,8 @@ class Registry {
 	 * @since 2.0.0
 	 *
 	 * @see Registry::$__loaded
-	 * @see Registry::$default_language
-	 * @see Registry::$show_all_languages
-	 * @see Registry::$localize_date
-	 * @see Registry::$skip_default_l10n
-	 * @see Registry::$post_language_override
-	 * @see Registry::$redirection_permanent
-	 * @see Registry::$patch_wp_locale
-	 * @see Registry::$backwards_compatible
-	 * @see Registry::$query_var
-	 * @see Registry::$url_rewrite_method
-	 * @see Registry::$post_types
-	 * @see Registry::$taxonomies
-	 * @see Registry::$localizables
-	 * @see Registry::$sync_rules
-	 * @see Registry::$clone_rules
-	 * @see Registry::$languages
+	 * @see Registry::$options_whitelist
+	 * @see Registry::set() to actually set the value.
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
@@ -655,26 +674,19 @@ class Registry {
 			return;
 		}
 
-		// Load simple options
-		static::$show_all_languages     = (bool) get_option( 'nlingual_show_all_languages', 1 );
-		static::$localize_date          = (bool) get_option( 'nlingual_localize_date', 0 );
-		static::$skip_default_l10n      = (bool) get_option( 'nlingual_skip_default_l10n', 0 );
-		static::$post_language_override = (bool) get_option( 'nlingual_post_language_override', 0 );
-		static::$redirection_permanent  = (bool) get_option( 'nlingual_redirection_permanent', 0 );
-		static::$patch_wp_locale        = (bool) get_option( 'nlingual_patch_wp_locale', 0 );
-		static::$backwards_compatible   = (bool) get_option( 'nlingual_backwards_compatible', 0 );
-		static::$default_language       = get_option( 'nlingual_default_language', 0 );
-		static::$query_var              = get_option( 'nlingual_query_var', 'nl_language' );
-		static::$url_rewrite_method     = get_option( 'nlingual_url_rewrite_method', 'get' );
+		// Load the options
+		foreach ( static::$options_whitelist as $option => $default ) {
+			$value = get_option( "nlingual_{$option}", $default );
 
-		// Load complex options
-		static::$post_types   = get_option( 'nlingual_post_types', array() );
-		static::$taxonomies   = get_option( 'nlingual_taxonomies', array() );
-		static::$localizables = get_option( 'nlingual_localizables', array() );
-		static::$sync_rules   = get_option( 'nlingual_sync_rules', array() );
-		static::$clone_rules  = get_option( 'nlingual_clone_rules', array() );
+			// If the default was boolean, convert value to boolean
+			if ( is_bool( $default ) ) {
+				$value = (bool) $value;
+			}
 
-		// Load stuff from database
+			static::set( $option, $value );
+		}
+
+		// Load the languages
 		$data = $wpdb->get_results( "SELECT * FROM $wpdb->nl_languages ORDER BY list_order ASC", ARRAY_A );
 		static::$languages = new Languages( $data );
 
