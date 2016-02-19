@@ -174,7 +174,7 @@ class Backend extends Handler {
 		wp_enqueue_style( 'nlingual-admin', plugins_url( 'css/admin.css', NL_PLUGIN_FILE ), '2.0.0', 'screen' );
 
 		// Admin javascript
-		wp_enqueue_script( 'nlingual-admin-js', plugins_url( 'js/admin.js', NL_PLUGIN_FILE ), array( 'underscore', 'jquery-ui-sortable' ), '2.0.0' );
+		wp_enqueue_script( 'nlingual-admin-js', plugins_url( 'js/admin.js', NL_PLUGIN_FILE ), array( 'backbone', 'jquery-ui-sortable' ), '2.0.0' );
 
 		// Localize the javascript
 		wp_localize_script( 'nlingual-admin-js', 'nlingualL10n', array(
@@ -818,7 +818,7 @@ class Backend extends Handler {
 				var admin_url = '<?php echo admin_url(); ?>';
 			}
 			var NL_DEFAULT_LANGUAGE = <?php echo Registry::get( 'default_language' ); ?>;
-			var NL_LANGUAGES = <?php echo json_encode( Registry::languages()->export() ); ?>;
+			var NL_LANGUAGES = new nLingual.Languages( <?php echo json_encode( Registry::languages()->dump( 'numeric' ) ); ?> );
 		</script>
 		<?php
 	}

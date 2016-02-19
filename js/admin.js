@@ -1,23 +1,57 @@
-/* globals alert, prompt, _, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n, NL_LANGUAGES, NL_DEFAULT_LANGUAGE, NL_PRESETS */
+/* globals alert, prompt, _, Backbone, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n, nLingual, NL_LANGUAGES, NL_DEFAULT_LANGUAGE, NL_PRESETS */
 var NL_LOCALIZABLE_FIELDS = {};
 
-// Register a field to be localized
-window.nlingualLocalizeField = function( field, id, values, nonce ) {
-	NL_LOCALIZABLE_FIELDS[ field ] = {
-		id     : id,
-		values : values,
-		nonce  : nonce
-	};
-};
+// =========================
+// ! API Stuff
+// =========================
 
-// Register multiple fields to be localized
-window.nlingualLocalizeFields = function( fields ) {
-	for ( var i in fields ) {
-		window.nlingualLocalizeField.apply( this, fields[i] );
-	}
-};
+( function() {
+	var nLingual = window.nLingual = {};
+
+	// Register a field to be localized
+	var localizeField = nLingual.localizeField = function( field, id, values, nonce ) {
+		NL_LOCALIZABLE_FIELDS[ field ] = {
+			id     : id,
+			values : values,
+			nonce  : nonce
+		};
+	};
+
+	// Register multiple fields to be localized
+	var localizeFields = nLingual.localizeFields = function( fields ) {
+		for ( var i in fields ) {
+			localizeField.apply( this, fields[i] );
+		}
+	};
+
+	// Language model
+	var Language = nLingual.Language = Backbone.Model.extend( {
+		defaults: {
+			system_name : '',
+			native_name : '',
+			short_name  : '',
+			iso_code    : '',
+			slug        : '',
+			locale_name : '',
+			direction   : '',
+			active      : true,
+		}
+	} );
+
+	// Languages collection
+	var Languages = nLingual.Languages = Backbone.Collection.extend( {
+		model: Language
+	} );
+} )();
+
+// =========================
+// ! jQuery Stuff
+// =========================
 
 jQuery( function( $ ) {
+	// Backbone aliases
+	var Language = nLingual.Language;
+
 	// =========================
 	// ! Setings Pages
 	// =========================
@@ -56,8 +90,9 @@ jQuery( function( $ ) {
 
 		// Get the default language slug, defaulting to "en"
 		language = $( '#nlingual_default_language' ).val();
-		if ( language && typeof NL_LANGUAGES[ language ] === 'object' ) {
-			slug = NL_LANGUAGES[ language ].slug || 'en';
+		language = NL_LANGUAGES.get( language );
+		if ( language ) {
+			slug = language.get( 'slug' ) || 'en';
 		}
 
 		// Get the query var, defaulting to "nl_language"
@@ -141,60 +176,53 @@ jQuery( function( $ ) {
 		}
 
 		// Row builder utility
-		function buildLangRow( data ) {
+		function buildLangRow( language ) {
 			var row = languageRowTemplate, regex;
 			// Loop through properties and replace
-			for ( var prop in data ) {
+			for ( var prop in language.attributes ) {
 				regex = new RegExp( '%' + prop + '%', 'g' );
-				row = row.replace( regex, data[ prop ] );
+				row = row.replace( regex, language.get( prop ) );
 			}
 
 			// Parse the row into a new element
 			var $row = $( row );
 
 			// Check correct direction checkbox
-			$row.find( '.nl-language-direction input[value="' + data.direction + '"]' ).attr( 'checked', true );
+			$row.find( '.nl-language-direction input[value="' + language.get( 'direction' ) + '"]' ).attr( 'checked', true );
 
 			// Check active checkbox if true
-			$row.find( '.nl-language-active input' ).attr( 'checked', data.active );
+			$row.find( '.nl-language-active input' ).attr( 'checked', language.get( 'active' ) );
 
 			// Add the row to the table
 			$list.append( $row ).sortable( 'refresh' );
 		}
 
 		// Load table with current languages
-		_.each( NL_LANGUAGES, buildLangRow );
+		NL_LANGUAGES.each( buildLangRow );
 
 		// Add button functionality
 		$addBtn.click( function() {
-			var data, preset;
+			var language, preset;
 
 			// Check if preset was selected
 			if ( $preset.val() ) {
 				preset = $preset.val();
-				data = NL_PRESETS[ preset ];
-				data.iso_code = preset;
+				language = new Language( NL_PRESETS[ preset ] );
+				language.set( 'iso_code', preset );
 
 				// Reset preset selector
 				$preset.val( null );
 			} else {
 				// Blank
-				data = {
-					system_name : '',
-					native_name : '',
-					short_name  : '',
-					iso_code    : '',
-					locale_name : '',
-					direction   : '',
-				};
+				language = new Language();
 			}
 
 			// Default values
-			data.id     = languageRowIndex;
-			data.slug   = data.iso_code;
-			data.active = true;
+			language.id = languageRowIndex;
+			language.set( 'slug', language.get( 'iso_code' ) );
+			language.set( 'active', true );
 
-			buildLangRow( data );
+			buildLangRow( language );
 
 			languageRowIndex--;
 		} );
@@ -247,8 +275,8 @@ jQuery( function( $ ) {
 	// Setup the base localizer
 	var $localizer = $('<span class="nl-localizer"></span>').html(function(){
 		var html = '<span class="nl-localizer-toggle" title="' + nlingualL10n.LocalizeThis + '"></span>';
-		_.each( NL_LANGUAGES, function( language ) {
-			html += '<span class="nl-localizer-option" title="' + nlingualL10n.LocalizeFor.replace( '%s', language.system_name ) + '" data-nl_language="' + language.id + '"><i class="nl-option-text">' + language.system_name + '</i></span>';
+		NL_LANGUAGES.each( function( language ) {
+			html += '<span class="nl-localizer-option" title="' + nlingualL10n.LocalizeFor.replace( '%s', language.get( 'system_name' ) ) + '" data-nl_language="' + language.id + '"><i class="nl-option-text">' + language.get( 'system_name' ) + '</i></span>';
 		} );
 		return html;
 	});
@@ -295,7 +323,7 @@ jQuery( function( $ ) {
 		$control.data( '$nl_localized_' + NL_DEFAULT_LANGUAGE, $unlocalized );
 
 		// Add hidden storage inputs
-		_.each( NL_LANGUAGES, function( language ) {
+		NL_LANGUAGES.each( function( language ) {
 			// Skip the default language
 			if ( NL_DEFAULT_LANGUAGE === language.id ) {
 				return;
@@ -414,7 +442,7 @@ jQuery( function( $ ) {
 			// Ask for a title for the translation
 			var title = $( '#title' ).val();
 			var placeholder = nlingualL10n.TranslationTitlePlaceholder
-				.replace( /%s/, NL_LANGUAGES[ language_id ].system_name )
+				.replace( /%s/, NL_LANGUAGES.get( language_id ).get( 'system_name' ) )
 				.replace( /%s/, title );
 			var translation_title = prompt( nlingualL10n.TranslationTitle, placeholder );
 

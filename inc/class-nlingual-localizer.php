@@ -221,7 +221,7 @@ class Localizer extends Handler {
 			// Setup the fields for the screen and add the Help tab
 			static::add_action( 'admin_head', 'setup_localized_fields', 10, 0 );
 
-			// Do the call to the nlingualLocalizeFields utility
+			// Do the call to the nLingual.localizeFields utility
 			static::add_action( 'admin_footer', 'do_localized_fields', 10, 0 );
 		}
 		// Frontend-only hooks
@@ -1038,7 +1038,7 @@ class Localizer extends Handler {
 
 		?>
 		<script>
-		nlingualLocalizeFields(<?php echo json_encode( $data ); ?>);
+		nLingual.localizeFields(<?php echo json_encode( $data ); ?>);
 		</script>
 		<?php
 	}
