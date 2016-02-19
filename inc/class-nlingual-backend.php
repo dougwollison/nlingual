@@ -44,7 +44,9 @@ class Backend extends Handler {
 		}
 
 		// Post-setup stuff
-		static::add_action( 'plugins_loaded', 'ready', 10, 0 );
+		static::add_action( 'plugins_loaded', 'load_textdomain', 10, 0 );
+		static::add_action( 'plugins_loaded', 'setup_documentation', 10, 0 );
+		static::add_action( 'plugins_loaded', 'prepare_rules', 10, 0 );
 
 		// Plugin information
 		static::add_action( 'in_plugin_update_message-' . plugin_basename( NL_PLUGIN_FILE ), 'update_notice', 10, 1 );
@@ -92,33 +94,53 @@ class Backend extends Handler {
 	// =========================
 
 	/**
-	 * Load the text domain, setup documentation for relevant screens, and prep sync/clone rules.
+	 * Load the text domain.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function load_textdomain() {
+		// Load the textdomain
+		load_plugin_textdomain( 'nlingual', false, NL_PLUGIN_DIR . '/lang' );
+	}
+
+	/**
+	 * Setup documentation for relevant screens.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::get() to retrieve a the post types list, and the sync/clone rules.
+	 * @uses Registry::get() to retrieve a the post types list.
 	 * @uses Documenter::register_help_tab() to register help tabs for each post type.
 	 */
-	public static function ready() {
-		// Load the textdomain
-		load_plugin_textdomain( 'nlingual', false, NL_PLUGIN_DIR . '/lang' );
-
+	public static function setup_documentation() {
 		// Setup translation help tab for applicable post types
 		$post_types = Registry::get( 'post_types' );
 		foreach ( $post_types as $post_type ) {
 			Documenter::register_help_tab( $post_type, 'post-translation' );
 			Documenter::register_help_tab( "edit-$post_type", 'posts-translation' );
 		}
+	}
 
-		// Default sync rules to "none" and clone rules to "all" for each post type
+	/**
+	 * Prepare the sync/clone rules.
+	 *
+	 * Defaults sync rules to "none" and clone rules to "all" for each post type.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::get() to retrieve a the sync/clone rules.
+	 */
+	public static function prepare_rules() {
+		// Get the sync and clone rules, making sure post_type array is present for both
 		$sync_rules = Registry::get( 'sync_rules' );
-		if ( ! isset( $clone_rules['post_type'] ) ) {
-			$clone_rules['post_type'] = array();
+		if ( ! isset( $sync_rules['post_type'] ) || ! is_array( $sync_rules['post_type'] ) ) {
+			$sync_rules['post_type'] = array();
 		}
 		$clone_rules = Registry::get( 'clone_rules' );
-		if ( ! isset( $sync_rules['post_type'] ) ) {
+		if ( ! isset( $clone_rules['post_type'] ) || ! is_array( $clone_rules['post_type'] ) ) {
 			$clone_rules['post_type'] = array();
 		}
+
+		// Loop through post types, set default rules if not already present
 		foreach ( static::get( 'post_types' ) as $post_type ) {
 			if ( ! isset( $sync_rules['post_type'][ $post_type ] ) ) {
 				$sync_rules['post_type'][ $post_type ] = array(
@@ -135,6 +157,8 @@ class Backend extends Handler {
 				);
 			}
 		}
+
+		// Save to the registry
 		Registry::set( 'sync_rules', $sync_rules );
 		Registry::set( 'clone_rules', $clone_rules );
 	}

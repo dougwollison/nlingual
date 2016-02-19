@@ -47,7 +47,6 @@ class System extends Handler {
 	 * @uses Frontend::register_hooks() to setup frontend functionality.
 	 * @uses Liaison::register_hooks() to setup plugin cross-compatability.
 	 * @uses is_backend() to check if the query is for wp-admin.
-	 * @uses backwards_compatible() to check if backwards compatability is enabled.
 	 */
 	public static function setup() {
 		global $wpdb;
@@ -117,7 +116,9 @@ class System extends Handler {
 	 */
 	public static function register_hooks() {
 		// Post-setup stuff
-		static::add_action( 'plugins_loaded', 'ready', 10, 0 );
+		static::add_action( 'plugins_loaded', 'upgrade_check', 10, 0 );
+		static::add_action( 'plugins_loaded', 'backwards_compatibilty_check', 10, 0 );
+		static::add_action( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
 
 		// Query Manipulation
 		static::add_action( 'parse_query', 'maybe_set_queried_language', 10, 1 );
@@ -127,23 +128,27 @@ class System extends Handler {
 	}
 
 	/**
-	 * Perform upgrade and back-compat checks, and automatic localizable fields.
+	 * Perform upgrade check.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @uses Migrator::upgrade() to upgrade the system if needed.
-	 * @uses Registry::get() to retrieve a list of enabled taxonomies.
-	 * @uses Localizer::register_option() to register the site title and tagline for localization.
-	 * @uses Localizer::register_taxonomy() to register the enabled taxonomies for localization.
 	 */
-	public static function ready() {
+	public static function upgrade_check() {
 		// First, check if an upgrade is needed (on activation or update)
 		if ( version_compare( get_option( 'nlingual_database_version', '1.0.0' ), NL_DB_VERSION, '<' ) ) {
 			Migrator::upgrade();
 		}
+	}
 
-		// Load backwards compatibilty stuff if needed
-		if ( backwards_compatible() ) {
+	/**
+	 * Perform backwards compatibility check, loading appropriate files if needed.
+	 *
+	 * @since 2.0.0
+	 * @uses Registry::get() to check for backwards compatibilty.
+	 */
+	public static function backwards_compatibilty_check() {
+		if ( Registry::get( 'backwards_compatible' ) ) {
 			require( __DIR__ . '/compatibility-template.php' );
 
 			if ( is_backend() ) {
@@ -152,7 +157,18 @@ class System extends Handler {
 				require( __DIR__ . '/compatibility-hooks.php' );
 			}
 		}
+	}
 
+	/**
+	 * Setup default localizable fields like title/tagline and supported taxonomies.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::get() to retrieve a list of enabled taxonomies.
+	 * @uses Localizer::register_option() to register the site title and tagline for localization.
+	 * @uses Localizer::register_taxonomy() to register the enabled taxonomies for localization.
+	 */
+	public static function setup_localizable_fields() {
 		// Register the blogname and blogdescription for localization
 		Localizer::register_option_field( 'blogname', 'options-general', array(
 			'title'  => 'Site Title'
