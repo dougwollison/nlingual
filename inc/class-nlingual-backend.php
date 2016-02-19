@@ -51,9 +51,6 @@ class Backend extends Handler {
 		// Plugin information
 		static::add_action( 'in_plugin_update_message-' . plugin_basename( NL_PLUGIN_FILE ), 'update_notice', 10, 1 );
 
-		// Post Changes
-		static::add_filter( 'deleted_post', 'deleted_post', 10, 1 );
-
 		// Script/Style Enqueues
 		static::add_action( 'admin_enqueue_scripts', 'enqueue_assets', 10, 0 );
 		static::add_action( 'admin_print_scripts', 'fix_open_sans', 10, 0 );
@@ -194,24 +191,6 @@ class Backend extends Handler {
 		if ( $notice ) {
 			echo apply_filters( 'the_content', $notice );
 		}
-	}
-
-	// =========================
-	// ! Post Changes
-	// =========================
-
-	/**
-	 * Delete the language for a post being deleted.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Translator::delete_post_language() to handle the deletion.
-	 *
-	 * @param int $post_id The ID of the post that was deleted.
-	 */
-	public static function deleted_post( $post_id ) {
-		// Delete the language
-		Translator::delete_post_language( $post_id );
 	}
 
 	// =========================

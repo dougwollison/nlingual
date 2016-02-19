@@ -120,6 +120,9 @@ class System extends Handler {
 		static::add_action( 'plugins_loaded', 'backwards_compatibilty_check', 10, 0 );
 		static::add_action( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
 
+		// Post Changes
+		static::add_filter( 'deleted_post', 'deleted_post', 10, 1 );
+
 		// Query Manipulation
 		static::add_action( 'parse_query', 'maybe_set_queried_language', 10, 1 );
 		static::add_filter( 'posts_join_request', 'add_post_translations_join_clause', 10, 2 );
@@ -182,6 +185,24 @@ class System extends Handler {
 		foreach ( $taxonomies as $taxonomy ) {
 			Localizer::register_taxonomy( $taxonomy );
 		}
+	}
+
+	// =========================
+	// ! Post Changes
+	// =========================
+
+	/**
+	 * Delete the language for a post being deleted.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Translator::delete_post_language() to handle the deletion.
+	 *
+	 * @param int $post_id The ID of the post that was deleted.
+	 */
+	public static function deleted_post( $post_id ) {
+		// Delete the language
+		Translator::delete_post_language( $post_id );
 	}
 
 	// =========================
