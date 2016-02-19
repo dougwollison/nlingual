@@ -245,7 +245,7 @@ class Translator {
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			// Throw exception if not found
-			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_MISSING_LANGUAGE );
+			throw new Exception( 'The language specified does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
 		}
 
 		// Get a group ID for the object, a new on if necessary
@@ -332,7 +332,7 @@ class Translator {
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			// Throw exception if not found
-			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_MISSING_LANGUAGE );
+			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
 		}
 
 		// Get the translation group for the object
@@ -424,7 +424,7 @@ class Translator {
 			// Ensure $language is a Language
 			if ( ! validate_language( $language ) ) {
 				// Throw exception if not found
-				throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_MISSING_LANGUAGE );
+				throw new Exception( 'The language specified does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
 			}
 
 			// Skip if we're trying assign a translation for the object's language
@@ -475,7 +475,7 @@ class Translator {
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			// Throw exception if not found
-			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_MISSING_LANGUAGE );
+			throw new Exception( 'The language specified does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
 		}
 
 		// Alias to set_object_translations method
@@ -508,7 +508,7 @@ class Translator {
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			// Throw exception if not found
-			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_MISSING_LANGUAGE );
+			throw new Exception( 'The language specified does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
 		}
 
 		// Get the group ID for this object
