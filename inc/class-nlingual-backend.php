@@ -159,8 +159,8 @@ class Backend extends Handler {
 		}
 
 		// Save to the registry
-		Registry::set( 'sync_rules', $sync_rules );
-		Registry::set( 'clone_rules', $clone_rules );
+		Registry::set( 'sync_rules', $sync_rules, 'save' );
+		Registry::set( 'clone_rules', $clone_rules, 'save' );
 	}
 
 	// =========================
