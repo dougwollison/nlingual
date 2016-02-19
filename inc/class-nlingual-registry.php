@@ -509,7 +509,7 @@ class Registry {
 		// Loop through the sections list
 		foreach ( $sections as $section ) {
 			// Drill down if an array is found
-			if ( isset( $rules[ $section ] ) && is_array( $current[ $section ] ) ) {
+			if ( isset( $rules[ $section ] ) && is_array( $rules[ $section ] ) ) {
 				$rules = $rules[ $section ];
 			} else {
 				// Abort and return empty array
