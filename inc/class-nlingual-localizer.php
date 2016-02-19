@@ -1033,12 +1033,17 @@ class Localizer extends Handler {
 			$nonce = wp_create_nonce( "nlingual_localize_{$field->key}" );
 
 			// Create the row
-			$data[] = array( $field->field, $field->field_id, $values, $nonce );
+			$data[] = array(
+				'field'    => $field->field,
+				'field_id' => $field->field_id,
+				'values'   => $values,
+				'nonce'    => $nonce,
+			);
 		}
 
 		?>
 		<script>
-		nLingual.localizeFields(<?php echo json_encode( $data ); ?>);
+		nLingual.LocalizableFields.add(<?php echo json_encode( $data ); ?>);
 		</script>
 		<?php
 	}
