@@ -292,7 +292,8 @@ class Migrator {
 		$renamed_options = array(
 			'admin_only'        => 'nlingual_backend_only',
 			'default_lang'      => 'nlingual_default_language',
-			'delete_sisters'    => 'nlingual_delete_sisters',
+			'delete_sisters'    => 'nlingual_delete_sister_posts',
+			'delete_sisters'    => 'nlingual_trash_sister_posts',
 			'get_var'           => 'nlingual_query_var',
 			'l10n_dateformat'   => 'nlingual_localize_date',
 			'post_types'        => 'nlingual_post_types',

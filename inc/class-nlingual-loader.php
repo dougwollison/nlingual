@@ -101,7 +101,9 @@ class Loader extends Handler {
 		add_option( 'nlingual_redirection_permanent', 0 );
 		add_option( 'nlingual_patch_wp_locale', 0 );
 		add_option( 'nlingual_post_language_override', 0 );
-		add_option( 'nlingual_backwards_compatible', 1 );
+		add_option( 'nlingual_backwards_compatible', 0 );
+		add_option( 'nlingual_trash_sister_posts', 0 );
+		add_option( 'nlingual_delete_sister_posts', 0 );
 		add_option( 'nlingual_default_language', 1 );
 		add_option( 'nlingual_query_var', 'nl_language' );
 		add_option( 'nlingual_url_rewrite_method', 'get' );
