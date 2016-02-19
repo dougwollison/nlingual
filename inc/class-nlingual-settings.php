@@ -76,6 +76,7 @@ class Settings {
 		$class = sanitize_key( $field );
 		$args = array(
 			'class'     => "nl-settings-field nl-settings-{$page}-field nlingual_{$class}-field",
+			'option'    => $field,
 			'name'      => "nlingual_{$field}",
 			'label'     => $options['label'],
 			'help'      => $options['help'],
@@ -175,7 +176,7 @@ class Settings {
 		}
 
 		// Get the value
-		$value = get_option( $name );
+		$value = Registry::get( $name );
 
 		// Process the value via the map if necessary
 		if ( $map ) {
@@ -206,7 +207,7 @@ class Settings {
 	public static function build_field( $args, $value = null ) {
 		// Get the value for the field if not provided
 		if ( is_null( $value ) ) {
-			$value = static::get_value( $args['name'] );
+			$value = static::get_value( $args['option'] );
 		}
 
 		switch ( $args['type'] ) {
