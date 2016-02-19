@@ -141,7 +141,7 @@ class Backend extends Handler {
 		}
 
 		// Loop through post types, set default rules if not already present
-		foreach ( static::get( 'post_types' ) as $post_type ) {
+		foreach ( Registry::get( 'post_types' ) as $post_type ) {
 			if ( ! isset( $sync_rules['post_type'][ $post_type ] ) ) {
 				$sync_rules['post_type'][ $post_type ] = array(
 					'post_fields' => array(),
