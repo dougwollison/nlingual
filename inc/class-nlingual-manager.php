@@ -354,7 +354,7 @@ class Manager extends Handler {
 				'title' => __( 'Default Language' ),
 				'help'  => null,
 				'type'  => 'select',
-				'data'  => Registry::languages()->export( 'system_name' ),
+				'data'  => Registry::languages()->pluck( 'system_name' ),
 			),
 			'show_all_languages' => array(
 				'title' => __( 'Show All Languages?' ),

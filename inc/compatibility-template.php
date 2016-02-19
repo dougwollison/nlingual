@@ -94,7 +94,7 @@ function nl_associated_posts( $id, $include_self = false ) {
  *
  * @uses Registry::current_language() to get the current language ID if needed.
  * @uses Languages->get() to get the language specified.
- * @uses Language->export() to get the language in array form.
+ * @uses Language->dump() to get the language in array form.
  *
  * @param bool|mixed $field    The name of the field, TRUE to get the whole language as an array.
  * @param int|string $language The id or slug of the language to retrieve. NULL for current.
@@ -108,7 +108,7 @@ function nl_get_lang( $field = null, $language = null ) {
 
 	// Handle fetching of the entire language as an array
 	if ( $field === true ) {
-		$result = Registry::languages()->get( $language )->export();
+		$result = Registry::languages()->get( $language )->dump();
 		// Fill fields for old names
 		$result['lang_id'] =& $result['id'];
 		$result['iso']     =& $result['iso_code'];

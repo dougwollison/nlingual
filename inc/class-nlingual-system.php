@@ -236,7 +236,7 @@ class System extends Handler {
 
 		// If in the backend and the show_all_languages option is enabled, set filter for all active languages
 		if ( is_backend() && Registry::get( 'show_all_languages' ) ) {
-			$value = array_keys( Registry::languages( 'active' )->export() );
+			$value = Registry::languages( 'active' )->pluck( 'id', false );
 		}
 
 		// If in the backend, also add 0 to retreive language-less posts too
