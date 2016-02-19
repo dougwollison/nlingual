@@ -485,13 +485,14 @@ class Rewriter {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @uses Registry::get() to check for backwards compatibility.
 	 * @uses Registry::current_language() to get the current Language object.
-	 * @uses Translator::get_post_translation() to get the page/post's translation.
 	 * @uses Registry::switch_language() to switch to the specified language.
 	 * @uses Registry::restore_language() to switch back to the previous language.
 	 * @uses Rewriter::localize_url() to localize the current URI as-is.
 	 * @uses Rewriter::process_url() to localize the original URL of the page.
 	 * @uses Rewriter::build_url() to build the localized URL from it's components.
+	 * @uses Translator::get_post_translation() to get the page/post's translation.
 	 *
 	 * @param Language $language The language to localize the current page for.
 	 *
@@ -555,7 +556,7 @@ class Rewriter {
 				$url = static::localize_url( NL_ORIGINAL_URL, null, true );
 
 				// Check if backwards compatability is needed
-				if ( backwards_compatible() ) {
+				if ( Registry::get( 'backwards_compatible' ) ) {
 					/**
 					 * Filter the localized original URL.
 					 *
