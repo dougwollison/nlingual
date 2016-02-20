@@ -9,7 +9,7 @@
  */
 
 use nLingual\Registry as Registry;
-use nLingual\Migrator as Migrator;
+use nLingual\Installer as Installer;
 
 // =========================
 // ! Localizable Term Conversion
