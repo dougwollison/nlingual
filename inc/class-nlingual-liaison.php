@@ -62,7 +62,7 @@ class Liaison extends Handler {
 		require( NL_PLUGIN_DIR . '/inc/functions-compatibility.php' );
 
 		// Old split-language string support
-		static::add_filter( 'the_title', 'maybe_split_langs_for_post', 10, 2 );
+		static::add_filter( 'the_title', 'maybe_split_langs_for_title', 10, 2 );
 		if ( ! get_option( '_nlingual_options_converted' ) ) {
 			// Somehow the options were not converted (not taking chances),
 			// hook nl_split_langs into blogname and blogdescription
@@ -95,7 +95,7 @@ class Liaison extends Handler {
 	 *
 	 * @return string The filtered option value.
 	 */
-	public static function maybe_split_langs_for_option( $title, WP_Post $post = null ) {
+	public static function maybe_split_langs_for_title( $title, WP_Post $post = null ) {
 		// If a post was specified (should have been),
 		// don't bother if it doesn't support translation
 		if ( Registry::is_post_type_supported( $post->post_type ) ) {
