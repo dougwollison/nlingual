@@ -518,40 +518,73 @@ class Registry {
 	}
 
 	// =========================
-	// ! Property Testinging
+	// ! Language Testing Tools
 	// =========================
 
 	/**
-	 * Check if the current language is the specified one.
+	 * Compare two languages.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::current_language() to get the current language.
+	 * @param mixed $language1 The language to compare with.
+	 * @param mixed $language2 The language to compare against.
 	 *
-	 * @param mixed $language The language to test for (by id, slug or object).
+	 * @return bool The result of the comparision.
 	 */
-	public static function is_language( $language ) {
-		// Ensure $language is a Language
-		if ( ! validate_language( $language ) ) {
+	public static function compare_languages( $language1, $language2 ) {
+		// Ensure $language1 is a Language
+		if ( ! validate_language( $language1 ) ) {
+			return false; // Does not exist
+		}
+		// Ensure $language2 is a Language
+		if ( ! validate_language( $language2 ) ) {
 			return false; // Does not exist
 		}
 
 		// Test if the IDs match
-		$result = static::current_language()->id == $language->id;
-
-		return $result;
+		return $language1->id == $language2->id;
 	}
 
 	/**
-	 * Alias of is_language(), check if it's the default language.
+	 * Alias of compare_languages(), comparing against the default language.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @see Registry::is_language() for details.
+	 * @param mixed $language The language to compare.
+	 *
+	 * @return bool The result of compare_languages().
 	 */
-	public static function is_default_language() {
-		return static::is_language( static::default_language() );
+	public static function is_default_language( $language ) {
+		return static::compare_languages( $language, static::default_language() );
 	}
+
+	/**
+	 * Alias of compare_languages(), comparing against the current language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param mixed $language The language to compare.
+	 *
+	 * @return bool The result of compare_languages().
+	 */
+	public static function is_current_language( $language ) {
+		return static::compare_languages( $language, static::current_language() );
+	}
+
+	/**
+	 * Alias of compare_languages(), comparing the current and default languages
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return bool The result of compare_languages().
+	 */
+	public static function in_default_language() {
+		return static::compare_languages( static::current_language(), static::default_language() );
+	}
+
+	// =========================
+	// ! Other Testing Tools
+	// =========================
 
 	/**
 	 * Check if localizable feature is supported.
