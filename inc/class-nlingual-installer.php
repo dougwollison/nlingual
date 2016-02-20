@@ -493,7 +493,7 @@ class Installer extends Handler {
 		// Grab the language entries, run them through the framework, and save them
 		$languages = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}nL_languages ORDER BY list_order ASC" );
 		$languages = new Languages( $languages );
-		update_option( 'nlingual_languages', $languages );
+		update_option( 'nlingual_languages', $languages->dump() );
 
 		// Now, drop the languages table
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nL_languages" );

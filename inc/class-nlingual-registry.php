@@ -586,7 +586,8 @@ class Registry {
 		}
 
 		// Load the languages
-		static::$languages = get_option( 'nlingual_languages', new Languages() );
+		$languages = get_option( 'nlingual_languages', array() );
+		static::$languages = new Languages( $languages );
 
 		// Flag that we've loaded everything
 		static::$__loaded = true;
