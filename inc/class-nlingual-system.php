@@ -121,10 +121,10 @@ class System extends Handler {
 		static::add_action( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
 
 		// Post Changes
-		static::add_filter( 'deleted_post', 'delete_post_language', 10, 1 );
 		static::add_filter( 'trashed_post', 'trash_sister_posts', 10, 1 );
 		static::add_filter( 'untrashed_post', 'untrash_sister_posts', 10, 1 );
 		static::add_filter( 'deleted_post', 'delete_sister_posts', 10, 1 );
+		static::add_filter( 'deleted_post', 'delete_post_language', 11, 1 );
 
 		// Query Manipulation
 		static::add_action( 'parse_query', 'maybe_set_queried_language', 10, 1 );
