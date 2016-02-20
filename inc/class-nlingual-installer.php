@@ -1,9 +1,9 @@
 <?php
 /**
- * nLingual Migrator API
+ * nLingual Plugin Installer
  *
  * @package nLingual
- * @subpackage Tools
+ * @subpackage Handlers
  *
  * @since 2.0.0
  */
@@ -11,23 +11,71 @@
 namespace nLingual;
 
 /**
- * The Migration System
+ * The Plugin Installer
  *
- * Provides internal-use tools for converting from
- * the old nLingual 1.* system.
+ * Registers activate/deactivate/uninstall hooks, and handle
+ * any necessary upgrading from an existing install.
  *
  * @package nLingual
- * @subpackage Tools
+ * @subpackage Handlers
  *
- * @internal used by the Autoloader and the Backwards_Compatibilty functions.
+ * @internal Used by the System.
  *
  * @since 2.0.0
  */
 
-class Migrator {
+class Installer extends Handler {
 	// =========================
-	// ! Utilities
+	// ! Hook Registration
 	// =========================
+
+	/**
+	 * Register the plugin hooks
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses NL_PLUGIN_FILE to identify the plugin file.
+	 * @uses Installer::plugin_activate() as the activation hook.
+	 * @uses Installer::plugin_deactivate() as the deactivation hook.
+	 * @uses Installer::plugin_uninstall() as the uninstall hook.
+	 */
+	public static function register_hooks() {
+		// Plugin hooks
+		register_activation_hook( NL_PLUGIN_FILE, array( __CLASS__, 'plugin_activate' ) );
+		register_deactivation_hook( NL_PLUGIN_FILE, array( __CLASS__, 'plugin_deactivate' ) );
+		register_uninstall_hook( NL_PLUGIN_FILE, array( __CLASS__, 'plugin_uninstall' ) );
+
+		// Upgrade logic
+		static::add_action( 'plugins_loaded', 'upgrade', 10, 0 );
+	}
+
+	// =========================
+	// ! Internal Utilities
+	// =========================
+
+	/**
+	 * Security check logic.
+	 *
+	 * @since 2.0.0
+	 */
+	protected static function plugin_security_check( $check_referer = null ) {
+		// Make sure they have permisson
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+			return false;
+		}
+
+		if ( $check_referer ) {
+			$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+			check_admin_referer( "{$check_referer}-plugin_{$plugin}" );
+		} else {
+			// Check if this is the intended file for uninstalling
+			if ( __FILE__ != WP_UNINSTALL_PLUGIN ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 
 	/**
 	 * Test if the site previously used nLingual 1.
@@ -38,7 +86,7 @@ class Migrator {
 	 *
 	 * @return bool Wether or not we're upgrading.
 	 */
-	public static function is_upgrading() {
+	protected static function is_upgrading() {
 		$old_options = get_option( 'nLingual-options' );
 		return is_array( $old_options );
 	}
@@ -53,7 +101,7 @@ class Migrator {
 	 *
 	 * @return mixed The value of the option.
 	 */
-	public static function get_old_option( $option, $default = null ) {
+	protected static function get_old_option( $option, $default = null ) {
 		$value = get_option( $option, $default );
 
 		// Store under __old prefix and delete original
@@ -63,8 +111,14 @@ class Migrator {
 		return $value;
 	}
 
+	// =========================
+	// ! Public Utilities
+	// =========================
+
 	/**
 	 * Convert a split-language string for use with the Localization API.
+	 *
+	 * @internal Used by Installer::convert_options() and the terms converter.
 	 *
 	 * @since 2.0.0
 	 *
@@ -118,27 +172,109 @@ class Migrator {
 	}
 
 	// =========================
-	// ! Main Methods
+	// ! Plugin Hooks
 	// =========================
 
 	/**
-	 * Install/Upgrade the database tables, converting them if needed.
+	 * Create the default options.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Migrator::is_upgrading() to check if upgrading from nLingual 1.
-	 * @uses Migrator::convert_tables() to convert database structure.
-	 * @uses Migrator::convert_options() to convert plugin/blog options.
+	 * @uses Installer::plugin_security_check() to check for activation nonce.
+	 * @uses Installer::upgrade() to check for and perform a system upgrade.
+	 * @uses Installer::install() to proceed with regular installation otherwise.
+	 *
+	 * @todo Set default language to the current one of the install.
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 */
-	public static function upgrade() {
+	public static function plugin_activate() {
+		if ( ! static::plugin_security_check( 'activate' ) ) {
+			return;
+		}
+
+		// Attempt to upgrade, in case we're activating after an plugin update
+		if ( ! static::upgrade() ) {
+			// Otherwise just install the options/tables
+			static::install();
+		}
+	}
+
+	/**
+	 * Empty deactivation hook for now.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Installer::plugin_security_check() to check for deactivation nonce.
+	 */
+	public static function plugin_deactivate() {
+		if ( ! static::plugin_security_check( 'deactivate' ) ) {
+			return;
+		}
+
+		// To be written
+	}
+
+	/**
+	 * Delete database tables and any options.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Installer::plugin_security_check() to check for WP_UNINSTALL_PLUGIN.
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 */
+	public static function plugin_uninstall() {
 		global $wpdb;
 
-		// If upgrading from nLingual 1, convert tables before updating them
-		if ( Migrator::is_upgrading() ) {
-			static::convert_tables();
+		if ( ! static::plugin_security_check() ) {
+			return;
 		}
+
+		// Delete the object and string translation tables
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_languages" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_translations" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_localizations" );
+
+		// And delete the options
+		$wpdb->query( "DELETE FORM $wpdb->options WHERE option_name like 'nlingual\_%'" );
+	}
+
+	// =========================
+	// ! Install Logic
+	// =========================
+
+	/**
+	 * Install tables the tables.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function install() {
+		// Default options
+		add_option( 'nlingual_show_all_languages', 1 );
+		add_option( 'nlingual_localize_date', 0 );
+		add_option( 'nlingual_skip_default_l10n', 0 );
+		add_option( 'nlingual_redirection_permanent', 0 );
+		add_option( 'nlingual_patch_wp_locale', 0 );
+		add_option( 'nlingual_post_language_override', 0 );
+		add_option( 'nlingual_backwards_compatible', 0 );
+		add_option( 'nlingual_trash_sister_posts', 0 );
+		add_option( 'nlingual_delete_sister_posts', 0 );
+		add_option( 'nlingual_default_language', 1 );
+		add_option( 'nlingual_query_var', 'nl_language' );
+		add_option( 'nlingual_url_rewrite_method', 'get' );
+		add_option( 'nlingual_post_types', array() );
+		add_option( 'nlingual_taxonomies', array() );
+		add_option( 'nlingual_localizables', array(
+			'nav_menu_locations' => array(),
+			'sidebar_locations' => array(),
+		) );
+		add_option( 'nlingual_sync_rules', array(
+			'post_types' => array(),
+		)  );
+		add_option( 'nlingual_clone_rules', array(
+			'post_types' => array(),
+		) );
 
 		// Load dbDelta utility
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
@@ -185,19 +321,57 @@ class Migrator {
 			KEY object_id (object_id)
 		) $charset_collate;";
 		dbDelta( $sql_localizer );
+	}
+
+	// =========================
+	// ! Upgrade Logic
+	// =========================
+
+	/**
+	 * Install/Upgrade the database tables, converting them if needed.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Installer::is_upgrading() to check if upgrading from nLingual 1.
+	 * @uses Installer::convert_tables() to convert tables to 2.0.0 standards.
+	 * @uses Installer::install_tables() to install/upgrade database tables.
+	 * @uses Installer::convert_options() to convert relevant plugin and blog options.
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @return bool Wether or not an upgrade was performed.
+	 */
+	public static function upgrade() {
+		global $wpdb;
+
+		// Abort if the site was previously using nLingual 2 or higher
+		if ( version_compare( get_option( 'nlingual_database_version', '1.0.0' ), NL_DB_VERSION, '>=' ) ) {
+			return false;
+		}
+
+		// If upgrading from nLingual 1, convert tables before updating them
+		if ( static::is_upgrading() ) {
+			static::convert_tables();
+		}
+
+		// Perform regular install
+		static::install();
 
 		// If upgrading from nLingual 1, convert options
-		if ( Migrator::is_upgrading() ) {
+		if ( static::is_upgrading() ) {
 			static::convert_options();
 
 			// Flag as having been upgraded
 			add_option( 'nlingual_upgraded', 1 );
+
 			// Also auto-enable backwards compatibility
 			Registry::set( 'backwards_compatible', 1, 'save' );
 		}
 
 		// Log the current database version
 		update_option( 'nlingual_database_version', NL_DB_VERSION );
+
+		return true;
 	}
 
 	/**
@@ -209,10 +383,10 @@ class Migrator {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 */
-	public static function convert_tables() {
+	protected static function convert_tables() {
 		global $wpdb;
 
-		// Abort if already flagged as upgraded
+		// Abort if already flagged as converted
 		if ( get_option( '_nlingual_tables_converted' ) ) {
 			return;
 		}
@@ -270,13 +444,13 @@ class Migrator {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
-	 * @uses Migrator::get_old_option() to fetch/archive general/sync options.
-	 * @uses Migrator::convert_split_string() to convert blog name/description.
+	 * @uses Installer::get_old_option() to fetch/archive general/sync options.
+	 * @uses Installer::convert_split_string() to convert blog name/description.
 	 */
-	public static function convert_options() {
+	protected static function convert_options() {
 		global $wpdb;
 
-		// Abort if already flagged as upgraded
+		// Abort if already flagged as converted
 		if ( get_option( '_nlingual_options_converted' ) ) {
 			return;
 		}
@@ -363,7 +537,10 @@ class Migrator {
 			$new_menus[ $location ] = $menu;
 		}
 
-		// Update the nav menu locations for localizables
+		// Update the assigned menus
+		set_theme_mod( 'nav_menu_locations', $new_menus );
+
+		// Add the nav menu locations to the localizables list
 		$localizables = array();
 		$localizables['nav_menu_locations'] = $menu_locations;
 		update_option( 'nlingual_localizables', $localizables );
@@ -374,9 +551,6 @@ class Migrator {
 
 		// Reload the registry
 		Registry::load( true );
-
-		// Update the assigned menus
-		set_theme_mod( 'nav_menu_locations', $new_menus );
 
 		// Get the blog name and description values
 		$name = get_option( 'blogname' );

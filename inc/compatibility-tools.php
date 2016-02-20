@@ -69,6 +69,8 @@ add_action( 'admin_notices', 'nl_compatibility_convert_terms_notice' );
  * @since 2.0.0
  *
  * @global wpdb $wpdb The database abstraction class instance.
+ *
+ * @uses Installer::convert_split_string() to handle split term names/descriptions.
  */
 function nl_compatibility_convert_terms_process() {
 	global $wpdb;
@@ -116,8 +118,8 @@ function nl_compatibility_convert_terms_process() {
 		// add taxonomy to list
 		$taxonomies[] = $term->taxonomy;
 
-		$unlocalized_name = Migrator::convert_split_string( $term->name, 'term_name', $term->term_id );
-		$unlocalized_description = Migrator::convert_split_string( $term->description, 'term_description', $term->term_id );
+		$unlocalized_name = Installer::convert_split_string( $term->name, 'term_name', $term->term_id );
+		$unlocalized_description = Installer::convert_split_string( $term->description, 'term_description', $term->term_id );
 
 		// Update the values in the database with unlocalized versions
 		$wpdb->update( $wpdb->terms, array(

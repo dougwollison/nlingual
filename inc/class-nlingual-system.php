@@ -56,8 +56,8 @@ class System extends Handler {
 		$wpdb->nl_translations = $wpdb->nL_translations = $wpdb->prefix . 'nl_translations';
 		$wpdb->nl_localizations = $wpdb->prefix . 'nl_localizations';
 
-		// Register the loader hooks
-		Loader::register_hooks();
+		// Register the Installer stuff
+		Installer::register_hooks();
 
 		// Setup the registry
 		Registry::load();
@@ -116,7 +116,6 @@ class System extends Handler {
 	 */
 	public static function register_hooks() {
 		// Post-setup stuff
-		static::add_action( 'plugins_loaded', 'upgrade_check', 10, 0 );
 		static::add_action( 'plugins_loaded', 'backwards_compatibilty_check', 10, 0 );
 		static::add_action( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
 
@@ -131,20 +130,6 @@ class System extends Handler {
 		static::add_filter( 'posts_join_request', 'add_post_translations_join_clause', 10, 2 );
 		static::add_filter( 'posts_where_request', 'add_post_translations_where_clause', 10, 2 );
 		static::add_filter( 'get_pages', 'filter_pages', 10, 2 );
-	}
-
-	/**
-	 * Perform upgrade check.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Migrator::upgrade() to upgrade the system if needed.
-	 */
-	public static function upgrade_check() {
-		// First, check if an upgrade is needed (on activation or update)
-		if ( version_compare( get_option( 'nlingual_database_version', '1.0.0' ), NL_DB_VERSION, '<' ) ) {
-			Migrator::upgrade();
-		}
 	}
 
 	/**
