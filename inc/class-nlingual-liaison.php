@@ -122,7 +122,7 @@ class Liaison extends Handler {
 		// Only apply the old filter if there are hooks registered to it.
 		if ( has_filter( 'nLingual_process_url' ) ) {
 			/**
-			 * Filter the new localized URL.
+			 * Filter the processed URL data.
 			 *
 			 * @deprecated Use "nlingual_process_url" instead (case-sensitive).
 			 *
@@ -151,7 +151,7 @@ class Liaison extends Handler {
 		// Only apply the old filter if there are hooks registered to it.
 		if ( has_filter( 'nLingual_localize_url' ) ) {
 			/**
-			 * Filter the $url_data array.
+			 * Filter the localized URL.
 			 *
 			 * @deprecated Use "nlingual_localize_url" instead (case-sensitive).
 			 *
@@ -184,7 +184,7 @@ class Liaison extends Handler {
 			$url_data = Rewriter::parse_url( $url );
 
 			/**
-			 * Filter the $url_data array.
+			 * Filter the $url_data of the localized current URL.
 			 *
 			 * @deprecated Use "nlingual_localize_here" instead (case-sensitive).
 			 *
