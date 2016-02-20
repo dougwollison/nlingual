@@ -70,6 +70,12 @@ class Liaison extends Handler {
 			add_filter( 'option_blogdescription', 'nl_split_langs', 10, 1 );
 		}
 
+		// Redirects for old filters, running them at the very end
+		static::add_filter( 'nlingual_process_url', 'redirect_old_process_url_hook', PHP_INT_MAX, 2 );
+		static::add_filter( 'nlingual_localize_url', 'redirect_old_localize_url_hook', PHP_INT_MAX, 4 );
+		static::add_filter( 'nlingual_localize_url', 'redirect_old_localize_here_hook', PHP_INT_MAX, 4 );
+		static::add_filter( 'nlingual_localize_here', 'redirect_old_localize_here_array_hook', PHP_INT_MAX, 3 );
+
 		// Localizable terms migration utility
 		static::add_action( 'admin_notices', 'compatibility_convert_terms_notice', 10, 0 );
 		static::add_action( 'admin_init', 'compatibility_convert_terms_process', 10, 0 );
@@ -102,6 +108,131 @@ class Liaison extends Handler {
 	// =========================
 	// ! - Filter Redirects
 	// =========================
+
+	/**
+	 * Run filters assigned to deprecated nLingual_process_url hook.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $url_data     The updated URL data.
+	 * @param array $old_url_data The original URL data.
+	 *
+	 * @return array The filtered URL data.
+	 */
+	public static function redirect_old_process_url_hook( $url_data, $old_url_data ) {
+		// Only apply the old filter if there are hooks registered to it.
+		if ( has_filter( 'nLingual_process_url' ) ) {
+			/**
+			 * Filter the new localized URL.
+			 *
+			 * @deprecated Use "nlingual_process_url" instead (case-sensitive).
+			 *
+			 * @param array $url_data     The updated URL data.
+			 * @param array $old_url_data The original URL data.
+			 */
+			$url_data = apply_filters( 'nLingual_process_url', $url_data, $old_url_data );
+		}
+
+		return $url_data;
+	}
+
+	/**
+	 * Run filters assigned to deprecated nLingual_localize_url hook.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string   $url        The new localized URL.
+	 * @param string   $old_url    The original URL passed to this function.
+	 * @param Langauge $language   The language requested.
+	 * @param bool     $relocalize Whether or not to forcibly relocalize the URL.
+	 *
+	 * @return string The filtered URL.
+	 */
+	public static function redirect_old_localize_url_hook( $url, $old_url, Language $language, $relocalize ) {
+		// Only apply the old filter if there are hooks registered to it.
+		if ( has_filter( 'nLingual_localize_url' ) ) {
+			/**
+			 * Filter the $url_data array.
+			 *
+			 * @deprecated Use "nlingual_localize_url" instead (case-sensitive).
+			 *
+			 * @param string  $new_url    The new localized URL.
+			 * @param string  $old_url    The original URL passed to this function.
+			 * @param string  $lang       The slug of the language requested.
+			 * @param bool    $relocalize Whether or not to forcibly relocalize the URL.
+			 */
+			$url = apply_filters( 'nLingual_localize_url', $url, $old_url, $language->slug, $relocalize );
+		}
+
+		return $url;
+	}
+
+	/**
+	 * Run filters assigned to deprecated nLingual_localize_here hook.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string   $url        The new localized URL.
+	 * @param string   $old_url    The original URL passed to this function.
+	 * @param Langauge $language   The language requested.
+	 * @param bool     $relocalize Whether or not to forcibly relocalize the URL.
+	 *
+	 * @return string The filtered URL.
+	 */
+	public static function redirect_old_localize_here_hook( $url, $old_url, Language $language, $relocalize ) {
+		// Only apply the old filter if there are hooks registered to it,
+		// And it appears to have been applied to the original URL
+		if ( has_filter( 'nLingual_localize_here' )
+		&& $old_url === NL_ORIGINAL_URL
+		&& is_current_language( $language )
+		&& $relocalize === true ) {
+			/**
+			 * Filter the $url_data array.
+			 *
+			 * @deprecated Use "nlingual_localize_url" or "nlingual_localize_here" instead (case-sensitive).
+			 *
+			 * @param string $url  The new localized URL.
+			 * @param string $lang The slug of the language requested.
+			 */
+			$url = apply_filters( 'nLingual_localize_here', $url, $language->slug );
+		}
+
+		return $url;
+	}
+
+	/**
+	 * Run filters assigned to deprecated nLingual_localize_here_array hook.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string   $url      The new URL.
+	 * @param array    $url_data The parsed URL data.
+	 * @param Language $language The desired language to localize for.
+	 *
+	 * @return string The filtered URL.
+	 */
+	public static function redirect_old_localize_here_array_hook( $url, $old_url, Language $language ) {
+		// Only apply the old filter if there are hooks registered to it.
+		if ( has_filter( 'nLingual_localize_here_array' ) ) {
+			// Conver to data array
+			$url_data = Rewriter::parse_url( $url );
+
+			/**
+			 * Filter the $url_data array.
+			 *
+			 * @deprecated Use "nlingual_localize_here" instead (case-sensitive).
+			 *
+			 * @param array  $url_data The new localized URL.
+			 * @param string $lang     The slug of the language requested.
+			 */
+			$url_data = apply_filters( 'nLingual_localize_here_array', $url_data, $language->slug );
+
+			// Build the filtered URL
+			$url = Rewriter::build_url( $url_data );
+		}
+
+		return $url;
+	}
 
 	// =========================
 	// ! - Terms Migration
