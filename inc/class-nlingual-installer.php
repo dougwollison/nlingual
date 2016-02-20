@@ -323,7 +323,9 @@ class Installer extends Handler {
 			add_option( 'nlingual_upgraded', 1 );
 
 			// Also auto-enable backwards compatibility
-			Registry::set( 'backwards_compatible', 1, 'save' );
+			Registry::set( 'backwards_compatible', 1 );
+			// Save the change
+			Registry::save();
 		}
 
 		// Log the current database version
