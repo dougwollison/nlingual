@@ -321,13 +321,14 @@ class Translator {
 	 *
 	 * @param string $type        The type of object.
 	 * @param int    $id          The ID of the object.
+	 * @param mixed  $language    Optional. The language to retrieve for (defaults to current).
 	 * @param bool   $return_self Optional. Return $id if nothing is found (default false).
 	 *
 	 * @return bool|int The id of the translation.
 	 */
-	public static function get_object_translation( $type, $id, $language, $return_self = false ) {
-		// Ensure $language is a Language
-		if ( ! validate_language( $language ) ) {
+	public static function get_object_translation( $type, $id, $language = null, $return_self = false ) {
+		// Ensure $language is a Language, defaulting to current
+		if ( ! validate_language( $language, true ) ) {
 			// Throw exception if not found
 			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
 		}
@@ -577,13 +578,13 @@ class Translator {
 	 * @uses Translator::get_object_translation() to get the post's translation.
 	 *
 	 * @param int   $post_id  The ID of the post.
-	 * @param mixed $language Optional. The desired language.
+	 * @param mixed $language Optional. The desired language (defaults to current).
 	 *
 	 * @return string The translation's permalink.
 	 */
 	public static function get_permalink( $post_id, $language = null ) {
-		// Ensure $language is a Language
-		if ( ! validate_language( $language ) ) {
+		// Ensure $language is a Language, defaulting to current
+		if ( ! validate_language( $language, true ) ) {
 			// Doesn't exit; resort to original permalink
 			return get_permalink( $post_id );
 		}
