@@ -377,7 +377,7 @@ class Installer extends Handler {
 		// Just in case, mark them down as being at least up to 2.0.0
 		update_option( 'nlingual_database_version', '2.0.0' );
 
-		// Flag as having been upgraded
+		// Flag as having been converted
 		update_option( '_nlingual_tables_converted', 1 );
 	}
 
@@ -397,6 +397,16 @@ class Installer extends Handler {
 		// Abort if already flagged as converted
 		if ( get_option( '_nlingual_options_converted' ) ) {
 			return;
+		}
+
+		/**
+		 * Convert Languages
+		 */
+
+		// Grab the language entries, run them through the framework, and save them
+		$entries = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}nL_languages ORDER BY list_order ASC", ARRAY_A );
+		foreach ( $entries as $entry ) {
+			Registry::languages()->add( $entry );
 		}
 
 		/**
@@ -463,7 +473,7 @@ class Installer extends Handler {
 			if ( preg_match( '/(.+?)--(\w{2})$/', $location, $matches ) ) {
 				list( , $location, $slug ) = $matches;
 				// Find a language matching the slug
-				if ( $language_id = $wpdb->get_var( "SELECT language_id FROM {$wpdb->prefix}nL_languages WHERE slug = '$slug'" ) ) {
+				if ( $language_id = $languages->get( $slug ) ) {
 					// Add the location to the list of localizable ones
 					$menu_locations[] = $location;
 
@@ -487,23 +497,8 @@ class Installer extends Handler {
 		Registry::save();
 
 		/**
-		 * Convert Languages
-		 */
-
-		// Grab the language entries, run them through the framework, and save them
-		$languages = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}nL_languages ORDER BY list_order ASC" );
-		$languages = new Languages( $languages );
-		update_option( 'nlingual_languages', $languages->dump() );
-
-		// Now, drop the languages table
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nL_languages" );
-
-		/**
 		 * Final cleanup
 		 */
-
-		// Reload the registry
-		Registry::load( true );
 
 		// Get the blog name and description values
 		$name = get_option( 'blogname' );
@@ -517,7 +512,10 @@ class Installer extends Handler {
 		update_option( 'blogname', $unlocalized_name );
 		update_option( 'blogdescription', $unlocalized_description );
 
-		// Flag as having been upgraded
+		// Now, drop the languages table
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nL_languages" );
+
+		// Flag as having been converted
 		update_option( '_nlingual_options_converted', 1 );
 	}
 }
