@@ -224,3 +224,26 @@ function nl_split_langs( $text, $language = null, $separator = null, $force = fa
 
 	return $text;
 }
+
+// =========================
+// ! Old Hooks
+// =========================
+
+/**
+ * Get the translation of the post in the current language.
+ *
+ * @since 2.0.0
+ *
+ * @api
+ *
+ * @param int $id The post ID.
+ *
+ * @return int The translation ID if found/applicable.
+ */
+function nLingual_get_curlang_version( $id ) {
+	// Only filter if not in the admin
+	if ( ! is_admin() ) {
+		$id = nL_get_translation( $id );
+	}
+	return $id;
+}
