@@ -35,7 +35,7 @@ class Language extends Model {
 	 *
 	 * @var int
 	 */
-	public $id = '';
+	public $id = 0;
 
 	/**
 	 * The active status of the language.
