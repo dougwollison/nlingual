@@ -329,7 +329,7 @@ class Rewriter {
 	 * @uses Registry::current_language() to get the current Language object if not passed.
 	 * @uses Rewriter::delocalize_url() to clean the URL for relocalizing if desired.
 	 * @uses Rewriter::process_url() to process the URL into it's components.
-	 * @uses Registry::is_default_language() to check if the language provided is the default.
+	 * @uses Registry::is_language_default() to check if the language provided is the default.
 	 * @uses Registry::get() to get the skip_default_l10n, url_rewrite_method and query_var options.
 	 * @uses Rewriter::build_url() to assemble the new URL from the modified components.
 	 *
@@ -408,7 +408,7 @@ class Rewriter {
 			// Go ahead and localize the URL
 			if ( is_null( $url_data['language'] )
 			&& ! preg_match( '#^wp-([\w-]+.php|(admin|content|includes)/)#', $url_data['path'] )
-			&& ( ! Registry::is_default_language( $language ) || ! Registry::get( 'skip_default_l10n' ) ) ) {
+			&& ( ! Registry::is_language_default( $language ) || ! Registry::get( 'skip_default_l10n' ) ) ) {
 				switch ( Registry::get( 'url_rewrite_method' ) ) {
 					case 'domain':
 						// Prepend hostname with language slug
