@@ -183,9 +183,10 @@ class Frontend extends Handler {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param string $redirect_url The URL localized for the determined language.
+		 * @param string   $redirect_url      The URL localized for the determined language.
+		 * @param Language $redirect_language The Language the URL was localized for.
 		 */
-		$redirect_url = apply_filters( 'nlingual_maybe_redirect_language', $redirect_url );
+		$redirect_url = apply_filters( 'nlingual_maybe_redirect_language', $redirect_url, $redirect_language );
 
 		// Determine the status code to use
 		$status = Registry::get( 'redirection_permanent' ) ? 301 : 302;
