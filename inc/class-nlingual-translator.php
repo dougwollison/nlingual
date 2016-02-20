@@ -381,6 +381,31 @@ class Translator {
 	}
 
 	/**
+	 * Simply check wether or not an object has translations.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Translator::get_group() to get the object's translation group.
+	 *
+	 * @param string $type The type of object.
+	 * @param int    $id   The ID of the object.
+	 *
+	 * @return bool Wether or not the object has translations assigned.
+	 */
+	public static function does_object_have_translations( $type, $id ) {
+		// Get the translation group for the object
+		$group = static::get_group( $type, $id );
+
+		// If no translation group exists, return false
+		if ( ! $group ) {
+			return false;
+		}
+
+		// Return wether or not there are multiple objects in the group
+		return count( $group['object_by_language'] ) > 1;
+	}
+
+	/**
 	 * Set the translations for an object in 1 or more languages.
 	 *
 	 * Will fail if the primary isn't already in the database or if
