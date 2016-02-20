@@ -69,7 +69,8 @@ class Installer extends Handler {
 			check_admin_referer( "{$check_referer}-plugin_{$plugin}" );
 		} else {
 			// Check if this is the intended plugin for uninstalling
-			if ( NL_PLUGIN_FILE != WP_UNINSTALL_PLUGIN ) {
+			if ( ! isset( $_REQUEST['checked'] )
+			|| ! in_array( plugin_basename( NL_PLUGIN_FILE ), $_REQUEST['checked'] ) ) {
 				return false;
 			}
 		}
@@ -237,7 +238,7 @@ class Installer extends Handler {
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_localizations" );
 
 		// And delete the options
-		$wpdb->query( "DELETE FORM $wpdb->options WHERE option_name like 'nlingual\_%'" );
+		$wpdb->query( "DELETE FROM $wpdb->options WHERE option_name like 'nlingual\_%'" );
 	}
 
 	// =========================
