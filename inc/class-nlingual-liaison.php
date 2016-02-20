@@ -17,9 +17,6 @@ namespace nLingual;
  * better compatibility with them, namely other plugins
  * by Doug Wollison.
  *
- * @package nLingual
- * @subpackage Handlers
- *
  * @internal Used by the System.
  *
  * @since 2.0.0

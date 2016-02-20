@@ -1,6 +1,6 @@
 <?php
 /**
- * nLingual Theme Local Patch
+ * nLingual Theme Locale Patch
  *
  * @package nLingual
  * @subpackage Patches
@@ -13,9 +13,6 @@ namespace nLingual;
  *
  * Intended to replace the $wp_locale object so that the
  * theme's own text domain is used in localizing these strings.
- *
- * @package nLingual
- * @subpackage Patches
  *
  * @api
  *

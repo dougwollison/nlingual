@@ -1,9 +1,9 @@
 <?php
 /**
- * nLingual Options Registry
+ * nLingual Registry API
  *
  * @package nLingual
- * @subpackage Helpers
+ * @subpackage Tools
  *
  * @since 2.0.0
  */
@@ -11,12 +11,9 @@
 namespace nLingual;
 
 /**
- * The Options Registry
+ * The Registry
  *
  * Stores all the configuration options for the system.
- *
- * @package nLingual
- * @subpackage Helpers
  *
  * @api
  *

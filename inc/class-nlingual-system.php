@@ -11,14 +11,10 @@
 namespace nLingual;
 
 /**
- * Main System Class
+ * The Main System
  *
  * Sets up the database table aliases, the Registry,
- * and all the Handler classes. Also loads the backwards
- * compatability system assets if needed.
- *
- * @package nLingual
- * @subpackage Helpers
+ * and all the Handler classes.
  *
  * @api
  *

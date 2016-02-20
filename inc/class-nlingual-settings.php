@@ -16,9 +16,6 @@ namespace nLingual;
  * Internal-use utility kit for printing out
  * the option fields for the Manager.
  *
- * @package nLingual
- * @subpackage Helpers
- *
  * @internal Used by the Manager.
  *
  * @since 2.0.0

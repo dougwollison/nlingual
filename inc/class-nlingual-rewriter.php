@@ -1,6 +1,6 @@
 <?php
 /**
- * nLingual URL Rewriter
+ * nLingual URL Rewriting API
  *
  * @package nLingual
  * @subpackage Tools
@@ -14,9 +14,6 @@ namespace nLingual;
  * The Rewriter System
  *
  * A toolkit for converting URLs to their localized versions.
- *
- * @package nLingual
- * @subpackage Tools
  *
  * @api
  *

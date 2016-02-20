@@ -1,6 +1,6 @@
 <?php
 /**
- * nLingual AJAX Handler
+ * nLingual AJAX Functionality
  *
  * @package nLingual
  * @subpackage Handlers
@@ -15,9 +15,6 @@ namespace nLingual;
  *
  * Add necessary wp_ajax_* hooks to fullfill any
  * custom AJAX requests.
- *
- * @package nLingual
- * @subpackage Handlers
  *
  * @internal Used by the System.
  *

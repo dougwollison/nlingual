@@ -1,6 +1,6 @@
 <?php
 /**
- * nLingual Synchronization API
+ * nLingual Synchronization Tool
  *
  * @package nLingual
  * @subpackage Helpers
@@ -13,13 +13,10 @@
 namespace nLingual;
 
 /**
- * The Synchronizer API
+ * The Synchronizer System
  *
  * Internal-use utility kit for handling post
  * synchronization and cloning.
- *
- * @package nLingual
- * @subpackage Helpers
  *
  * @internal Used by the Backend.
  *

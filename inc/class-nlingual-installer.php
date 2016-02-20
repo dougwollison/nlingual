@@ -1,6 +1,6 @@
 <?php
 /**
- * nLingual Plugin Installer
+ * nLingual Installation Functionality
  *
  * @package nLingual
  * @subpackage Handlers
@@ -15,9 +15,6 @@ namespace nLingual;
  *
  * Registers activate/deactivate/uninstall hooks, and handle
  * any necessary upgrading from an existing install.
- *
- * @package nLingual
- * @subpackage Handlers
  *
  * @internal Used by the System.
  *

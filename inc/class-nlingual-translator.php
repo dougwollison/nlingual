@@ -11,13 +11,10 @@
 namespace nLingual;
 
 /**
- * The Translator API
+ * The Translator System
  *
  * A toolkit for accessing and managing the language
  * and translations of objects.
- *
- * @package nLingual
- * @subpackage Tools
  *
  * @api
  *

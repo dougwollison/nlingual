@@ -1,6 +1,6 @@
 <?php
 /**
- * nLingual Manager Funtionality
+ * nLingual Management Funtionality
  *
  * @package nLingual
  * @subpackage Handlers
@@ -11,13 +11,10 @@
 namespace nLingual;
 
 /**
- * The Management System
+ * The Manager System
  *
  * Hooks into the backend to add the interfaces for
  * managing the configuration of nLingual.
- *
- * @package nLingual
- * @subpackage Handlers
  *
  * @internal Used by the System.
  *

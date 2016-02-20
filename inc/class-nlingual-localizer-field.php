@@ -11,14 +11,11 @@
 namespace nLingual;
 
 /**
- * The Field Model
+ * The Localizer Field Model
  *
  * Provides a predictable interface for accessing
  * properties of fields that have been registered
  * by the Localizer.
- *
- * @package nLingual
- * @subpackage Structures
  *
  * @api
  *

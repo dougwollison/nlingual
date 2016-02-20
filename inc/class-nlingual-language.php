@@ -16,9 +16,6 @@ namespace nLingual;
  * Provides a predictable interface for accessing
  * properties of Languages stored in the database.
  *
- * @package nLingual
- * @subpackage Structures
- *
  * @api
  *
  * @since 2.0.0

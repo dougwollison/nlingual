@@ -17,9 +17,6 @@ namespace nLingual;
  * localization, adding LocalizeThis tools to them
  * in the admin and filtering their frontend output.
  *
- * @package nLingual
- * @subpackage Tools
- *
  * @api
  *
  * @since 2.0.0

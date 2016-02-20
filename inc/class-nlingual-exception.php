@@ -3,6 +3,7 @@
  * nLingual Exception
  *
  * @package nLingual
+ * @subpackage Helpers
  *
  * @since 2.0.0
  */
@@ -10,12 +11,10 @@
 namespace nLingual;
 
 /**
- * Custom Exception Class
+ * The Exceptional Exception
  *
  * Used in the event of a serious error within
  * the nLingual system.
- *
- * @package nLingual
  *
  * @api
  *

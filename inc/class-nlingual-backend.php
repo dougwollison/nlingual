@@ -11,14 +11,11 @@
 namespace nLingual;
 
 /**
- * The Backend Functionality
+ * The Backend System
  *
  * Hooks into various backend systems to load
  * custom assets, modify the interface, and
  * add language management to relevent screens.
- *
- * @package nLingual
- * @subpackage Handlers
  *
  * @internal Used by the System.
  *

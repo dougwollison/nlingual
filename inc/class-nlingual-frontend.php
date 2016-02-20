@@ -18,9 +18,6 @@ namespace nLingual;
  * various forms of data including URLs, options, and
  * queries.
  *
- * @package nLingual
- * @subpackage Handlers
- *
  * @internal Used by the System.
  *
  * @since 2.0.0

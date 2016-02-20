@@ -1,6 +1,6 @@
 <?php
 /**
- * nLingual Documenter
+ * nLingual Documentation Utility
  *
  * @package nLingual
  * @subpackage Helpers
@@ -11,13 +11,10 @@
 namespace nLingual;
 
 /**
- * The Documentation System
+ * The Documenter System
  *
  * Handles printing out the help screen tabs/sidebar for
  * documenting different parts of the admin interface.
- *
- * @package nLingual
- * @subpackage Helpers
  *
  * @internal Used by the Manager and Localizer.
  *

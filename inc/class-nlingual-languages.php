@@ -11,14 +11,11 @@
 namespace nLingual;
 
 /**
- * The Languages Collection
+ * The Languages Iterator
  *
  * An array-like system for storing multiple Language objects.
  * Works like an array within `foreach` loops, and includes
  * methods for sorting, filtering, and searching for languages.
- *
- * @package nLingual
- * @subpackage Structures
  *
  * @api
  *
