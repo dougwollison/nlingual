@@ -255,7 +255,7 @@ class Liaison extends Handler {
 		}
 
 		// Check if ANY term names contain the separator
-		$separator = $wpdb->esc_like( $separator );
+		$separator = $wpdb->esc_like( $old_options['separator'] );
 		$terms = $wpdb->get_results( $wpdb->prepare( "SELECT term_id, name FROM $wpdb->terms WHERE name LIKE %s", "%$separator%" ) );
 
 		// Abort if no terms are found
@@ -299,16 +299,14 @@ class Liaison extends Handler {
 			nLingual\cheatin();
 		}
 
-		// Get the old separator
-		$separator = get_option( 'nlingual-old_separator' );
-
-		// Fail if no separator is present
-		if ( ! $separator ) {
+		// Get the old options, check for a separator, abort if none found
+		$old_options = get_option( '__old-nLingual-options', array() );
+		if ( ! isset( $old_options['separator'] ) || ! $old_options['separator'] ) {
 			wp_die( _e( 'No language separator found, unable to convert terms.' ) );
 		}
 
 		// Escape % and _ characters in separator for MySQL use
-		$separator_mysql = str_replace( array( '%', '_' ), array( '\\%', '\\_' ), $separator );
+		$separator_mysql = str_replace( array( '%', '_' ), array( '\\%', '\\_' ), $old_options['separator'] );
 
 		// Get all terms that need to be converted
 		$terms = $wpdb->get_results( "
