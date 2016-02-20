@@ -84,19 +84,15 @@ class Liaison extends Handler {
 	public static function compatibility_convert_terms_notice() {
 		global $wpdb;
 
-		// Get the old options, check for a separator
+		// Get the old options, check for a separator, abort if none found
 		$old_options = get_option( '__old-nLingual-options', array() );
-
-		// Abort if no separator is present
 		if ( ! isset( $old_options['separator'] ) || ! $old_options['separator'] ) {
 			return;
 		}
 
-		// Escape % and _ characters in separator
-		$separator = str_replace( array( '%', '_' ), array( '\\%', '\\_' ), $separator );
-
 		// Check if ANY term names contain the separator
-		$terms = $wpdb->get_results( "SELECT term_id, name FROM $wpdb->terms WHERE name LIKE '%$separator%'" );
+		$separator = $wpdb->esc_like( $separator );
+		$terms = $wpdb->get_results( $wpdb->prepare( "SELECT term_id, name FROM $wpdb->terms WHERE name LIKE %s", "%$separator%" ) );
 
 		// Abort if no terms are found
 		if ( ! $terms ) {

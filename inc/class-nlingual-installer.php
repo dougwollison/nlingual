@@ -134,14 +134,14 @@ class Installer extends Handler {
 	public static function convert_split_string( $value, $string_key, $object_id = 0 ) {
 		global $wpdb;
 
-		// If no separator can be found, send back value
-		$separator = get_option( 'nlingual-old_separator' );
-		if ( ! $separator ) {
+		// Get the old options, check for a separator, abort if none found
+		$old_options = get_option( '__old-nLingual-options', array() );
+		if ( ! isset( $old_options['separator'] ) || ! $old_options['separator'] ) {
 			return $value;
 		}
 
 		// Prep the separator for regex use
-		$separator_regex = preg_quote( $separator, '/' );
+		$separator_regex = preg_quote( $old_options['separator'], '/' );
 
 		// Split
 		$values = preg_split( "/\s*$separator_regex\s*/", $value );
@@ -344,7 +344,7 @@ class Installer extends Handler {
 
 		// Abort if the site was previously using nLingual 2 or higher
 		if ( version_compare( get_option( 'nlingual_database_version', '1.0.0' ), NL_DB_VERSION, '>=' ) ) {
-			return false;
+			//return false;
 		}
 
 		// If upgrading from nLingual 1, convert tables before updating them
