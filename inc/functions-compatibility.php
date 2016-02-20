@@ -31,17 +31,17 @@ function nl_current_lang() {
 }
 
 /**
- * @see Registry::is_language()
+ * @see Registry::is_current_language()
  */
 function nl_is_lang( $language ) {
-	return Registry::is_language( $language );
+	return Registry::is_current_language( $language );
 }
 
 /**
- * @see Registry::is_default_language()
+ * @see Registry::in_default_language()
  */
 function nl_is_default() {
-	return Registry::is_default_language();
+	return Registry::in_default_language();
 }
 
 /**

@@ -165,13 +165,13 @@ class Frontend extends Handler {
 			// If the post has a language, and it doesn't match the current one,
 			// And the override is set, or otherwise the language wasn't specified,
 			// Redirect to the post's language
-			if ( $post_language && Registry::is_language( $post_language )
+			if ( $post_language && Registry::is_current_language( $post_language )
 			&& ( Registry::get( 'post_language_override', 0 ) || ! defined( 'NL_REQUESTED_LANGUAGE' ) ) ) {
 				$redirect_language = $post_language;
 			}
 		}
 		// If the language was already specified, or otherwise it's the default and skip is enabled, do nothing
-		elseif ( defined( 'NL_REQUESTED_LANGUAGE' ) xor ( Registry::is_default_language() && Registry::get( 'skip_default_l10n' ) ) ) {
+		elseif ( defined( 'NL_REQUESTED_LANGUAGE' ) xor ( Registry::in_default_language() && Registry::get( 'skip_default_l10n' ) ) ) {
 			return;
 		}
 
