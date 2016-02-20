@@ -470,7 +470,6 @@ class Installer extends Handler {
 			'l10n_dateformat'   => 'nlingual_localize_date',
 			'post_types'        => 'nlingual_post_types',
 			'skip_default_l10n' => 'nlingual_skip_default_l10n',
-			'separator'         => 'nlingual-old_separator',
 		);
 		foreach ( $renamed_options as $oldname => $newname ) {
 			if ( isset( $options[ $oldname ] ) ) {
