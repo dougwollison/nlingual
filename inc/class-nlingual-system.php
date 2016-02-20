@@ -112,7 +112,6 @@ class System extends Handler {
 	 */
 	public static function register_hooks() {
 		// Post-setup stuff
-		static::add_action( 'plugins_loaded', 'backwards_compatibilty_check', 10, 0 );
 		static::add_action( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
 
 		// Post Changes
@@ -126,24 +125,6 @@ class System extends Handler {
 		static::add_filter( 'posts_join_request', 'add_post_translations_join_clause', 10, 2 );
 		static::add_filter( 'posts_where_request', 'add_post_translations_where_clause', 10, 2 );
 		static::add_filter( 'get_pages', 'filter_pages', 10, 2 );
-	}
-
-	/**
-	 * Perform backwards compatibility check, loading appropriate files if needed.
-	 *
-	 * @since 2.0.0
-	 * @uses Registry::get() to check for backwards compatibilty.
-	 */
-	public static function backwards_compatibilty_check() {
-		if ( Registry::get( 'backwards_compatible' ) ) {
-			require( __DIR__ . '/compatibility-template.php' );
-
-			if ( is_backend() ) {
-				require( __DIR__ . '/compatibility-tools.php' );
-			} else {
-				require( __DIR__ . '/compatibility-hooks.php' );
-			}
-		}
 	}
 
 	/**
