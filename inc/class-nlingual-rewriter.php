@@ -551,19 +551,6 @@ class Rewriter {
 			// Give up and just get the orginally requested URL, relocalized
 			else {
 				$url = static::localize_url( NL_ORIGINAL_URL, null, true );
-
-				// Check if backwards compatibility is needed
-				if ( Registry::get( 'backwards_compatible' ) ) {
-					/**
-					 * Filter the localized original URL.
-					 *
-					 * @since 2.0.0
-					 *
-					 * @param string $url      The URL to be filtered.
-					 * @param string $language The slug of the language to localize to.
-					 */
-					$url = apply_filters( 'nLingual_localize_here', $url, $language->slug );
-				}
 			}
 
 			// Switch back to the current language
