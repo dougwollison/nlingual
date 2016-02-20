@@ -329,20 +329,26 @@ class Rewriter {
 	 * @uses Registry::current_language() to get the current Language object if not passed.
 	 * @uses Rewriter::delocalize_url() to clean the URL for relocalizing if desired.
 	 * @uses Rewriter::process_url() to process the URL into it's components.
-	 * @uses Registry::default_language() to get the default Language object for comparison.
+	 * @uses Registry::is_default_language() to check if the language provided is the default.
 	 * @uses Registry::get() to get the skip_default_l10n, url_rewrite_method and query_var options.
 	 * @uses Rewriter::build_url() to assemble the new URL from the modified components.
 	 *
-	 * @param string   $url        The URL to parse.
-	 * @param Language $language   Optional. The desired language to localize to.
-	 * @param bool     $relocalize Optional. Wether or not to relocalize the url if it already is.
+	 * @param string $url        The URL to parse.
+	 * @param mixed  $language   Optional. The desired language to localize to.
+	 * @param bool   $relocalize Optional. Wether or not to relocalize the url if it already is.
 	 *
 	 * @return string The new localized URL.
 	 */
-	public static function localize_url( $url, Language $language = null, $relocalize = false ) {
+	public static function localize_url( $url, $language = null, $relocalize = false ) {
 		// If localization is disabled, abort
 		if ( ! static::$do_localization ) {
 			return $url;
+		}
+
+		// Ensure $language is a Language, defaulting to current
+		if ( ! validate_language( $language, true ) ) {
+			// Throw exception if not found
+			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
 		}
 
 		/**
@@ -376,11 +382,6 @@ class Rewriter {
 		// Copy the URL
 		$old_url = $url;
 
-		// Default to the current language
-		if ( ! $language ) {
-			$language = Registry::current_language();
-		}
-
 		// Create an identifier for the url for caching
 		$cache_id = "$url({$language->id})";
 
@@ -407,7 +408,7 @@ class Rewriter {
 			// Go ahead and localize the URL
 			if ( is_null( $url_data['language'] )
 			&& ! preg_match( '#^wp-([\w-]+.php|(admin|content|includes)/)#', $url_data['path'] )
-			&& ( $language !== Registry::default_language() || ! Registry::get( 'skip_default_l10n' ) ) ) {
+			&& ( ! Registry::is_default_language( $language ) || ! Registry::get( 'skip_default_l10n' ) ) ) {
 				switch ( Registry::get( 'url_rewrite_method' ) ) {
 					case 'domain':
 						// Prepend hostname with language slug
@@ -440,10 +441,10 @@ class Rewriter {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param string  $url        The new localized URL.
-		 * @param string  $old_url    The original URL passed to this function.
-		 * @param string  $language       The slug of the language requested.
-		 * @param bool    $relocalize Whether or not to forcibly relocalize the URL.
+		 * @param string   $url        The new localized URL.
+		 * @param string   $old_url    The original URL passed to this function.
+		 * @param Language $language       The slug of the language requested.
+		 * @param bool     $relocalize Whether or not to forcibly relocalize the URL.
 		 */
 		$url = apply_filters( 'nlingual_localize_url', $url, $old_url, $language, $relocalize );
 
@@ -491,14 +492,15 @@ class Rewriter {
 	 * @uses Rewriter::build_url() to build the localized URL from it's components.
 	 * @uses Translator::get_post_translation() to get the page/post's translation.
 	 *
-	 * @param Language $language The language to localize the current page for.
+	 * @param mixed $language The language to localize the current page for.
 	 *
 	 * @return string The localized URL.
 	 */
-	public static function localize_here( Language $language = null ) {
-		// Default to the current language
-		if ( ! $language ) {
-			$language = Registry::current_language();
+	public static function localize_here( $language = null ) {
+		// Ensure $language is a Language, defaulting to current
+		if ( ! validate_language( $language, true ) ) {
+			// Throw exception if not found
+			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
 		}
 
 		// First, check if it's the queried object is a post
