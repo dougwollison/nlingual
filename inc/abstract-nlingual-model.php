@@ -29,11 +29,24 @@ abstract class Model {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Model::$properties
+	 * @uses Model::update() to actually set the property values.
 	 *
 	 * @param array $values The property values.
 	 */
 	public function __construct( $values ) {
+		$this->update( $values );
+	}
+
+	/**
+	 * Update the model with the provided values.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Model::$properties.
+	 *
+	 * @param array $values The values to update.
+	 */
+	public function update( $values ) {
 		// Set all values provided
 		foreach ( $values as $key => $value ) {
 			if ( property_exists( $this, $key ) ) {
