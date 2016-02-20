@@ -697,36 +697,37 @@ class Translator {
 	 */
 	public static function __callStatic( $name, $args ) {
 		// Check if $name matches an existing method with $type instead of object
-		if ( preg_match( '/^(get|set|delete)_(\w+?)_(language|translations?)$/', $name, $matches ) ) {
+		if ( preg_match( '/^(get|set|delete|does)_(\w+?)_((?:have_)?(?:language|translations?))$/', $name, $matches ) ) {
 			// Get the parts
 			list(, $action, $type, $meta ) = $matches;
 
 			// Build target method name
 			$method = $action . '_object_' . $meta;
 
-			// If it exists, call it and return the result
-			$class = get_called_class();
-			if ( method_exists( $class, $method ) ) {
-				// Add the $type argument
-				array_unshift( $args, $type );
-
-				// If the second argument ($id in all cases) is an object, get the ID appropriately if possible.
-				$id = $args[1];
-				if ( is_object( $id ) ) {
-					switch ( $type ) {
-						case 'post' :
-						case 'user' :
-							$id = $id->ID;
-							break;
-						case 'term' :
-							$id = $id->term_id;
-							break;
-					}
-					$args[1] = $id;
-				}
-
-				return call_user_func_array( array( $class, $method ), $args );
+			// If the method does not exist, throw an error
+			if ( ! method_exists( __CLASS__, $method ) ) {
+				throw new Exception( sprintf( 'Call to unrecognized method alias %s::%s()', __CLASS__, $name ), NL_ERR_UNSUPPORTED );
 			}
+
+			// Add the $type argument
+			array_unshift( $args, $type );
+
+			// If the second argument ($id in all cases) is an object, get the ID appropriately if possible.
+			$id = $args[1];
+			if ( is_object( $id ) ) {
+				switch ( $type ) {
+					case 'post' :
+					case 'user' :
+						$id = $id->ID;
+						break;
+					case 'term' :
+						$id = $id->term_id;
+						break;
+				}
+				$args[1] = $id;
+			}
+
+			return call_user_func_array( array( __CLASS__, $method ), $args );
 		}
 
 		return null;
