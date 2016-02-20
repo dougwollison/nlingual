@@ -76,9 +76,8 @@ class Backend extends Handler {
 		static::add_action( 'add_meta_boxes', 'add_post_meta_box', 10, 1 );
 
 		// Admin Notices
-		static::add_action( 'admin_notices', 'synchronizer_notice', 10, 0 );
-		static::add_action( 'admin_notices', 'trashed_sisters_notice', 10, 0 );
-		static::add_action( 'admin_notices', 'deleted_sisters_notice', 10, 0 );
+		static::add_action( 'edit_form_top', 'synchronization_notice', 10, 1 );
+		static::add_filter( 'bulk_post_updated_messages', 'bulk_updated_sisters_messages', 20, 1 );
 
 		// Saving Post Data
 		static::add_action( 'save_post', 'save_post_language', 10, 1 );
@@ -723,36 +722,82 @@ class Backend extends Handler {
 	// =========================
 
 	/**
-	 * Print notice about any sister posts being synchronized.
-	 *
-	 * Will be vague on bulk updates but more explicit on individual updates.
+	 * Print notice about sister posts being synchronized during update.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @param \WP_Post $post The current post being edited.
 	 */
-	public static function synchronizer_notice() {
+	public static function synchronization_notice( \WP_Post $post ) {
+		// page or "post"?
+		if ( $post->post_type == 'page' ) {
+			$message = __( 'The translations of this page have been updated accordingly.' );
+		} else {
+			$message = __( 'The translations of this post have been updated accordingly.' );
+		}
 
+		// Check that...
+		if (
+			// The post was updated in some manner
+			isset( $_GET['message'] ) && in_array( $_GET['message'], array( 1, 4, 6, 8, 9, 10 ) )
+			// And the post type supports translation
+			&& Registry::is_post_type_supported( $post->post_type )
+			// And the post type has syncronization rules specified
+			&& Registry::get_rules( 'sync', 'post_type', $post->post_type )
+			// And the post has sister translations
+			&& Translator::does_post_have_translations( $post->ID )
+		) : ?>
+		<div class="notice notice-info is-dimissable">
+			<p><?php echo $message; ?></p>
+		</div>
+		<?php endif;
 	}
 
 	/**
-	 * Print notice about any sister posts being trashed.
-	 *
-	 * Will be vague on bulk updates but more explicit on individual updates.
+	 * Print notice about any sister posts being updated/trashed/deleted.
 	 *
 	 * @since 2.0.0
-	 */
-	public static function trashed_sisters_notice() {
-
-	}
-
-	/**
-	 * Print notice about any sister posts being deleted.
 	 *
-	 * Will be vague on bulk updates but more explicit on individual updates.
+	 * @param array $bulk_messages Arrays of messages per post type.
+	 * @param array $bulk_counts   Array of item counts for each message.
 	 *
-	 * @since 2.0.0
+	 * @return array The filtered message arrays.
 	 */
-	public static function deleted_sisters_notice() {
+	public static function bulk_updated_sisters_messages( $bulk_notices, $bulk_counts ) {
+		// Get the current screen
+		$screen = get_current_screen();
 
+		// Get the IDs of the updated posts
+		$ids = isset( $_REQUEST['ids'] ) ? $_REQUEST['ids'] : array();
+
+		// Abort if current post type is not supported
+		if ( ! Registry::is_post_type_supported( $screen->post_type ) ) {
+			return $bulk_notices;
+		}
+
+		// Create the addendums
+		$updated_addendum   = __( 'Any associated translations have been synchronized accordingly.' );
+		$deleted_addendum   = __( 'Any associated translations have also been deleted.' );
+		$trashed_addendum   = __( 'Any associated translations have also been moved.' );
+		$untrashed_addendum = __( 'Any associated translations have also been restored.' );
+
+		// Add addendums to every set of messages
+		foreach ( $bulk_notices as &$notices ) {
+			if ( Registry::get_rules( 'sync', 'post_type', $screen->post_type ) ) {
+				$notices['updated'] .= ' ' . $updated_addendum;
+			}
+
+			if ( Registry::get( 'delete_sister_posts' ) ) {
+				$notices['deleted'] .= ' ' . $deleted_addendum;
+			}
+
+			if ( Registry::get( 'trash_sister_posts' ) ) {
+				$notices['trashed'] .= ' ' . $trashed_addendum;
+				$notices['untrashed'] .= ' ' . $untrashed_addendum;
+			}
+		}
+
+		return $bulk_notices;
 	}
 
 	// =========================
