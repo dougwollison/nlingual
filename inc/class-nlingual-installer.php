@@ -68,8 +68,8 @@ class Installer extends Handler {
 			$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
 			check_admin_referer( "{$check_referer}-plugin_{$plugin}" );
 		} else {
-			// Check if this is the intended file for uninstalling
-			if ( __FILE__ != WP_UNINSTALL_PLUGIN ) {
+			// Check if this is the intended plugin for uninstalling
+			if ( NL_PLUGIN_FILE != WP_UNINSTALL_PLUGIN ) {
 				return false;
 			}
 		}
