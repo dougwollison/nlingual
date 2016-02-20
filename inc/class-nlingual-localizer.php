@@ -470,7 +470,6 @@ class Localizer extends Handler {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
-	 *
 	 * @param string $key         The field key to search for.
 	 * @param int    $language_id The language ID to match.
 	 * @param int    $object_id   The object ID if relevent (otherwise 0).
@@ -495,7 +494,7 @@ class Localizer extends Handler {
 
 		$value = $wpdb->get_var( $wpdb->prepare( "
 			SELECT localized_value
-			FROM $wpdb->nl_localizer_fields
+			FROM $wpdb->nl_localizations
 			WHERE field_key = %s
 			AND language_id = %d
 			AND object_id = %d
@@ -533,7 +532,7 @@ class Localizer extends Handler {
 
 		$results = $wpdb->get_results( $wpdb->prepare( "
 			SELECT language_id, localized_value
-			FROM $wpdb->nl_localizer_fields
+			FROM $wpdb->nl_localizations
 			WHERE field_key = %s
 			AND object_id = %d
 		", $key, $object_id ) );
@@ -576,7 +575,7 @@ class Localizer extends Handler {
 			return;
 		}
 
-		return $wpdb->replace( $wpdb->nl_localizer_fields, array(
+		return $wpdb->replace( $wpdb->nl_localizations, array(
 			'language_id'     => $language_id,
 			'object_id'       => $object_id,
 			'field_key'      => $key,
@@ -1064,7 +1063,7 @@ class Localizer extends Handler {
 
 		$language = Registry::current_language();
 
-		$fields = $wpdb->get_results( "SELECT * FROM $wpdb->nl_localizer_fields WHERE language_id = {$language->id}", ARRAY_A );
+		$fields = $wpdb->get_results( "SELECT * FROM $wpdb->nl_localizations WHERE language_id = {$language->id}", ARRAY_A );
 		foreach ( $fields as $field ) {
 			$cache_id = "{$field['field_key']}/{$field['object_id']}/{$field['language_id']}";
 			wp_cache_set( $cache_id, $field['localized_value'], 'nlingual:localized' );

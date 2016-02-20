@@ -151,7 +151,7 @@ class Loader extends Handler {
 		// Delete the object and string translation tables
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_languages" );
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_translations" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_localizerdata" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_localizations" );
 
 		// And delete the options
 		$wpdb->query( "DELETE FORM $wpdb->options WHERE option_name like 'nlingual\_%'" );

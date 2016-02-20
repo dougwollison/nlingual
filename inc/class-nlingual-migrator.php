@@ -175,7 +175,7 @@ class Migrator {
 		dbDelta( $sql_translations );
 
 		// The localizer fields table
-		$sql_localizer = "CREATE TABLE $wpdb->nl_localizer_fields (
+		$sql_localizer = "CREATE TABLE $wpdb->nl_localizations (
 			language_id bigint(20) unsigned NOT NULL,
 			object_id bigint(20) unsigned NOT NULL,
 			field_key varchar(128) DEFAULT '' NOT NULL,
