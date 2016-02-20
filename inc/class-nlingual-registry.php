@@ -72,7 +72,18 @@ class Registry {
 	protected static $languages;
 
 	/**
-	 * The whitelist of accessible options.
+	 * The options storage array
+	 *
+	 * @internal
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var array
+	 */
+	protected static $options = array();
+
+	/**
+	 * The options whitelist/defaults.
 	 *
 	 * @internal
 	 *
@@ -81,213 +92,41 @@ class Registry {
 	 * @var array
 	 */
 	protected static $options_whitelist = array(
+		// The show all languages for objects option.
 		'show_all_languages'     => true,
+		// The localize date format string option.
 		'localize_date'          => false,
+		// The skip default language localizing option.
 		'skip_default_l10n'      => false,
-		'post_language_override' => false,
+		// The post language override option.
+		'post_language_override' => true,
+		// The permanent redirection option.
 		'redirection_permanent'  => false,
-		'patch_wp_locale'        => false,
+		// The patch WP_Locale option.
+		'patch_wp_locale'        => true,
+		// The TRASH sister posts option.
 		'trash_sister_posts'     => false,
+		// The DELETE sister posts option.
 		'delete_sister_posts'    => false,
+		// The backwards compatibility option.
 		'backwards_compatible'   => false,
+		// The default language id.
 		'default_language'       => 0,
+		// The language query var.
 		'query_var'              => 'nl_language',
+		// The URL redirection method.
 		'url_rewrite_method'     => 'get',
+		// The supported post types.
 		'post_types'             => array(),
+		// The supported taxonomies.
 		'taxonomies'             => array(),
+		// The list of localizable features.
 		'localizables'           => array(),
+		// The synchronization rules.
 		'sync_rules'             => array(),
+		// The cloning rules.
 		'clone_rules'            => array(),
 	);
-
-	// ! - System Options
-
-	/**
-	 * The default language id.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var int
-	 */
-	protected static $default_language;
-
-	/**
-	 * The show all languages for objects option.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var bool
-	 */
-	protected static $show_all_languages;
-
-	/**
-	 * The localize date format string option.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var bool
-	 */
-	protected static $localize_date;
-
-	/**
-	 * The skip default language localizing option.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var bool
-	 */
-	protected static $skip_default_l10n;
-
-	/**
-	 * The patch WP_Locale option.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var bool
-	 */
-	protected static $patch_wp_locale;
-
-	/**
-	 * The TRASH sister posts option.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var bool
-	 */
-	protected static $trash_sister_posts;
-
-	/**
-	 * The DELETE sister posts option.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var bool
-	 */
-	protected static $delete_sister_posts;
-
-	/**
-	 * The post language override option.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var bool
-	 */
-	protected static $post_language_override;
-
-	/**
-	 * The permanent redirection option.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var bool
-	 */
-	protected static $redirection_permanent;
-
-	/**
-	 * The backwards compatibility option.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var bool
-	 */
-	protected static $backwards_compatible;
-
-	/**
-	 * The language query var.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var string
-	 */
-	protected static $query_var;
-
-	/**
-	 * The URL redirection method.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var string
-	 */
-	protected static $url_rewrite_method;
-
-	/**
-	 * The supported post types.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var array
-	 */
-	protected static $post_types = array();
-
-	/**
-	 * The supported taxonomies.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var array
-	 */
-	protected static $taxonomies = array();
-
-	/**
-	 * The list of localizable features.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var array
-	 */
-	protected static $localizables = array();
-
-	/**
-	 * The synchronization rules.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var array
-	 */
-	protected static $sync_rules = array();
-
-	/**
-	 * The cloning rules.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var array
-	 */
-	protected static $clone_rules = array();
 
 	// =========================
 	// ! Property Accessing
@@ -302,31 +141,21 @@ class Registry {
 	 *
 	 * @param string $option  The option name.
 	 * @param mixed  $default Optional. The default value to return.
-	 * @param bool   $force   Optional. Re-fetch from the database.
 	 *
 	 * @return mixed The property value.
 	 */
-	public static function get( $option, $default = null, $force = false ) {
-		// Throw "unsupported" error if trying to set an unsupported property
-		if ( ! property_exists( get_called_class(), $option ) ) {
-			throw new Exception( "Registry::$option is not supported", NL_ERR_UNSUPPORTED );
-		}
-
-		// Throw "forbidden" error if trying to replace one of the special properties
+	public static function get( $option, $default = null ) {
+		// Throw "unsupported" error if trying to set an unsupported option
 		if ( ! in_array( $option, static::$options_whitelist ) ) {
-			throw new Exception( "You cannot overwrite Registry::$option", NL_ERR_FORBIDDEN );
+			throw new Exception( "The option '{$option}' is not supported", NL_ERR_UNSUPPORTED );
 		}
 
-		// Fetch the new value if desired
-		if ( $force ) {
-			static::$$option = get_option( "nlingual_{$option}", $default );
+		// Check if it's set, return it's value.
+		if ( isset( static::$options[ $option ] ) ) {
+			return static::$options[ $option ];
 		}
 
-		if ( static::$$option === null ) {
-			return $default;
-		} else {
-			return static::$$option;
-		}
+		return $default;
 	}
 
 	/**
@@ -338,25 +167,14 @@ class Registry {
 	 *
 	 * @param string $option The option name.
 	 * @param mixed  $value  The value to assign.
-	 * @param bool   $save   Optional. Save the change to the database.
 	 */
-	public static function set( $option, $value = null, $save = false ) {
-		// Throw "unsupported" error if trying to set an unsupported property
-		if ( ! property_exists( get_called_class(), $option ) ) {
-			throw new Exception( "Registry::$option is not supported", NL_ERR_UNSUPPORTED );
-		}
-
-		// Throw "forbidden" error if trying to replace one of the special properties
+	public static function set( $option, $value = null ) {
+		// Throw "unsupported" error if trying to set an unsupported option
 		if ( ! in_array( $option, static::$options_whitelist ) ) {
-			throw new Exception( "You cannot overwrite Registry::$option", NL_ERR_FORBIDDEN );
+			throw new Exception( "The option '{$option}' is not supported", NL_ERR_UNSUPPORTED );
 		}
 
-		static::$$option = $value;
-
-		// Save the new value if desired
-		if ( $save ) {
-			update_option( "nlingual_{$option}", $value );
-		}
+		static::$options[ $option ] = $value;
 	}
 
 	/**
@@ -394,6 +212,36 @@ class Registry {
 		}
 
 		return $language->$field;
+	}
+
+	/**
+	 * Set the current language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param mixed $language The desired language.
+	 * @param bool  $lock     Wether or not to lock the selection.
+	 */
+	public static function set_language( $language, $lock = false ) {
+		// Ensure $language is a Language
+		if ( ! validate_language( $language ) ) {
+			// Throw exception if not found
+			throw new Exception( 'The language specified does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
+		}
+
+		// If locked, fail
+		if ( defined( 'NL_LANGUAGE_LOCKED' ) ) {
+			return false;
+		}
+
+		Registry::set( 'current_language', $language->id );
+
+		if ( $lock ) {
+			// Lock the language from being changed again
+			define( 'NL_LANGUAGE_LOCKED', true );
+		}
+
+		return true;
 	}
 
 	/**
@@ -554,7 +402,7 @@ class Registry {
 	 *
 	 * @return bool The result of compare_languages().
 	 */
-	public static function is_default_language( $language ) {
+	public static function is_language_default( $language ) {
 		return static::compare_languages( $language, static::default_language() );
 	}
 
@@ -567,7 +415,7 @@ class Registry {
 	 *
 	 * @return bool The result of compare_languages().
 	 */
-	public static function is_current_language( $language ) {
+	public static function is_language_current( $language ) {
 		return static::compare_languages( $language, static::current_language() );
 	}
 
@@ -707,29 +555,27 @@ class Registry {
 	/**
 	 * Load the relevant options.
 	 *
-	 * @internal
-	 *
 	 * @since 2.0.0
 	 *
-	 * @see Registry::$__loaded
-	 * @see Registry::$options_whitelist
+	 * @see Registry::$__loaded to prevent unnecessary reloading.
+	 * @see Registry::$options_whitelist to filter the found options.
 	 * @see Registry::set() to actually set the value.
-	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @param bool $reload Should we reload the options?
 	 */
 	public static function load( $reload = false ) {
-		global $wpdb;
-
 		if ( static::$__loaded && ! $reload ) {
 			// Already did this
 			return;
 		}
 
 		// Load the options
+		$options = get_option( 'nlingual_options' );
 		foreach ( static::$options_whitelist as $option => $default ) {
-			$value = get_option( "nlingual_{$option}", $default );
+			$value = $default;
+			if ( isset( $options[ $option ] ) ) {
+				$value = $options[ $option ];
+			}
 
 			// If the default was boolean, convert value to boolean
 			if ( is_bool( $default ) ) {
@@ -740,10 +586,22 @@ class Registry {
 		}
 
 		// Load the languages
-		$data = $wpdb->get_results( "SELECT * FROM $wpdb->nl_languages ORDER BY list_order ASC", ARRAY_A );
-		static::$languages = new Languages( $data );
+		static::$languages = get_option( 'nlingual_languages', new Languages() );
 
 		// Flag that we've loaded everything
 		static::$__loaded = true;
+	}
+
+	/**
+	 * Save the options and languages to the database.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function save() {
+		// Save the options
+		update_option( 'nlingual_options', static::$options );
+
+		// Save the languages
+		update_option( 'nlingual_languages', static::$languages->dump() );
 	}
 }

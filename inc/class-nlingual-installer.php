@@ -230,7 +230,6 @@ class Installer extends Handler {
 		}
 
 		// Delete the object and string translation tables
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_languages" );
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_translations" );
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_localizations" );
 
@@ -248,53 +247,14 @@ class Installer extends Handler {
 	 * @since 2.0.0
 	 */
 	public static function install() {
-		// Default options
-		add_option( 'nlingual_show_all_languages', 1 );
-		add_option( 'nlingual_localize_date', 0 );
-		add_option( 'nlingual_skip_default_l10n', 0 );
-		add_option( 'nlingual_redirection_permanent', 0 );
-		add_option( 'nlingual_patch_wp_locale', 0 );
-		add_option( 'nlingual_post_language_override', 0 );
-		add_option( 'nlingual_backwards_compatible', 0 );
-		add_option( 'nlingual_trash_sister_posts', 0 );
-		add_option( 'nlingual_delete_sister_posts', 0 );
-		add_option( 'nlingual_default_language', 1 );
-		add_option( 'nlingual_query_var', 'nl_language' );
-		add_option( 'nlingual_url_rewrite_method', 'get' );
-		add_option( 'nlingual_post_types', array() );
-		add_option( 'nlingual_taxonomies', array() );
-		add_option( 'nlingual_localizables', array(
-			'nav_menu_locations' => array(),
-			'sidebar_locations' => array(),
-		) );
-		add_option( 'nlingual_sync_rules', array(
-			'post_types' => array(),
-		)  );
-		add_option( 'nlingual_clone_rules', array(
-			'post_types' => array(),
-		) );
+		// Default option(s)
+		add_option( 'nlingual_options', array() );
+		add_option( 'nlingual_languages', array() );
 
 		// Load dbDelta utility
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
 		$charset_collate = $wpdb->get_charset_collate();
-
-		// Just install/update the languages table as normal
-		$sql_languages = "CREATE TABLE $wpdb->nl_languages (
-			language_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-			system_name varchar(200) DEFAULT '' NOT NULL,
-			native_name varchar(200) DEFAULT '' NOT NULL,
-			short_name varchar(200) DEFAULT '' NOT NULL,
-			locale_name varchar(100) DEFAULT '' NOT NULL,
-			iso_code char(2) DEFAULT '' NOT NULL,
-			slug varchar(100) DEFAULT '' NOT NULL,
-			direction enum('ltr', 'rtl') DEFAULT 'ltr' NOT NULL,
-			list_order int(11) unsigned NOT NULL,
-			active tinyint(1) NOT NULL DEFAULT '1',
-			PRIMARY KEY  (language_id),
-			UNIQUE KEY slug (slug)
-		) $charset_collate;";
-		dbDelta( $sql_languages );
 
 		// Just install/update the translations table as normal
 		$sql_translations = "CREATE TABLE $wpdb->nl_translations (
@@ -375,7 +335,7 @@ class Installer extends Handler {
 	/**
 	 * Upgrade database structure from < 2.0.0.
 	 *
-	 * Converts old languages and translations tables to new formats.
+	 * Converts old translations tables to new formats.
 	 *
 	 * @since 2.0.0
 	 *
@@ -394,20 +354,6 @@ class Installer extends Handler {
 		if ( ! empty( $wpdb->collate ) ) {
 			$collate = "COLLATE $wpdb->collate";
 		}
-
-		// We need to alter the languages table to the new format
-
-		// Rename to lowercase
-		$wpdb->query("ALTER TABLE {$wpdb->prefix}nL_languages RENAME TO {$wpdb->prefix}nl_languages2");
-		$wpdb->query("ALTER TABLE {$wpdb->prefix}nl_languages2 RENAME TO $wpdb->nl_languages");
-		// Rename lang_id to language_id, keeping it at the beginning
-		$wpdb->query("ALTER TABLE $wpdb->nl_languages CHANGE `lang_id` `language_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT FIRST");
-		// Rename mo to locale_name, placing it after short_name
-		$wpdb->query("ALTER TABLE $wpdb->nl_languages CHANGE `mo` `locale_name` varchar(10) DEFAULT '' NOT NULL AFTER `short_name`");
-		// Rename iso to iso_code, placing it after locale_name
-		$wpdb->query("ALTER TABLE $wpdb->nl_languages CHANGE `iso` `iso_code` varchar(2) DEFAULT '' NOT NULL AFTER `locale_name`");
-		// Relocate slug to after iso_code
-		$wpdb->query("ALTER TABLE $wpdb->nl_languages MODIFY `slug` varchar(10) DEFAULT '' NOT NULL AFTER `iso_code`");
 
 		// We need to alter the translations table to the new format
 
@@ -462,37 +408,32 @@ class Installer extends Handler {
 
 		// Reassign to new options
 		$renamed_options = array(
-			'admin_only'        => 'nlingual_backend_only',
-			'default_lang'      => 'nlingual_default_language',
-			'delete_sisters'    => 'nlingual_delete_sister_posts',
-			'delete_sisters'    => 'nlingual_trash_sister_posts',
-			'get_var'           => 'nlingual_query_var',
-			'l10n_dateformat'   => 'nlingual_localize_date',
-			'post_types'        => 'nlingual_post_types',
-			'skip_default_l10n' => 'nlingual_skip_default_l10n',
+			'default_lang'      => 'default_language',
+			'delete_sisters'    => 'delete_sister_posts',
+			'delete_sisters'    => 'trash_sister_posts',
+			'get_var'           => 'query_var',
+			'l10n_dateformat'   => 'localize_date',
+			'post_types'        => 'post_types',
+			'skip_default_l10n' => 'skip_default_l10n',
 		);
 		foreach ( $renamed_options as $oldname => $newname ) {
 			if ( isset( $options[ $oldname ] ) ) {
-				update_option( $newname, $options[ $oldname ] );
+				Registry::set( $newname, $options[ $oldname ] );
 			}
 		}
 
 		// Convert the redirection method
 		if ( isset( $options['method'] ) ) {
 			$method = strtolower( str_replace( 'NL_REDIRECT_USING_', '', $options['method'] ) );
-			update_option( 'nlingual_url_rewrite_method', $method );
+			Registry::set( 'url_rewrite_method', $method );
 		}
-
-		// Automatically set options that weren't present in old version
-		update_option( 'nlingual_post_language_override', 1 );
-		update_option( 'nlingual_patch_wp_locale', 1 );
 
 		/**
 		 * Convert Sync Rules
 		 */
 
 		// Get the old nLingual-sync_rules
-		$old_sync_rules = static::get_old_option( 'nLingual-sync_rules', array() );
+		$old_sync_rules = get_option( 'nLingual-sync_rules' );
 		$new_sync_rules = array( 'post_type' => array() );
 		foreach ( $old_sync_rules as $post_type => $rules ) {
 			$new_sync_rules['post_type'][ $post_type ] = array(
@@ -503,10 +444,10 @@ class Installer extends Handler {
 		}
 
 		// Save the new sync rules
-		update_option( 'nlingual_sync_rules', $new_sync_rules );
+		Registry::set( 'sync_rules', $new_sync_rules );
 
 		// Save empty new clone rules
-		update_option( 'nlingual_clone_rules', array() );
+		Registry::set( 'clone_rules', array() );
 
 		/**
 		 * Convert Navigation Menu Locations
@@ -540,7 +481,22 @@ class Installer extends Handler {
 		// Add the nav menu locations to the localizables list
 		$localizables = array();
 		$localizables['nav_menu_locations'] = $menu_locations;
-		update_option( 'nlingual_localizables', $localizables );
+		Registry::set( 'localizables', $localizables );
+
+		// Save changes
+		Registry::save();
+
+		/**
+		 * Convert Languages
+		 */
+
+		// Grab the language entries, run them through the framework, and save them
+		$languages = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}nL_languages ORDER BY list_order ASC" );
+		$languages = new Languages( $languages );
+		update_option( 'nlingual_languages', $languages );
+
+		// Now, drop the languages table
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nL_languages" );
 
 		/**
 		 * Final cleanup

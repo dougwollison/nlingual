@@ -48,7 +48,6 @@ class System extends Handler {
 		global $wpdb;
 
 		// Register the database tables (with backwards compatibility for their old nL_ version)
-		$wpdb->nl_languages = $wpdb->nL_languages = $wpdb->prefix . 'nl_languages';
 		$wpdb->nl_translations = $wpdb->nL_translations = $wpdb->prefix . 'nl_translations';
 		$wpdb->nl_localizations = $wpdb->prefix . 'nl_localizations';
 
@@ -69,36 +68,6 @@ class System extends Handler {
 		Documenter::register_hooks();
 		Localizer::register_hooks();
 		Liaison::register_hooks();
-	}
-
-	// =========================
-	// ! Controls
-	// =========================
-
-	/**
-	 * Set the current language.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Registry::set() to store the new current language.
-	 *
-	 * @param Language $language The desired language id.
-	 * @param bool     $lock     Wether or not to lock the selection.
-	 */
-	public static function set_language( Language $language, $lock = false ) {
-		// If locked, fail
-		if ( defined( 'NL_LANGUAGE_LOCKED' ) ) {
-			return false;
-		}
-
-		Registry::set( 'current_language', $language->id );
-
-		if ( $lock ) {
-			// Lock the language from being changed again
-			define( 'NL_LANGUAGE_LOCKED', true );
-		}
-
-		return true;
 	}
 
 	// =========================

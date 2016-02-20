@@ -84,7 +84,7 @@ class Frontend extends Handler {
 	 * @uses Registry::languages() to validate and retrieve a detected language.
 	 * @uses Registry::get() to get the query var option.
 	 * @uses Rewriter::process_url() to parse the current page URL.
-	 * @uses System::set_language() to tentatively apply the detected language.
+	 * @uses Registry::set_language() to tentatively apply the detected language.
 	 */
 	public static function detect_language() {
 		// First, check if the language was specified by the GET or POST parameters
@@ -124,7 +124,7 @@ class Frontend extends Handler {
 			define( "NL_{$mode}_LANGUAGE", $language->id );
 
 			// Set the language, but don't lock it
-			System::set_language( $language );
+			Registry::set_language( $language );
 		}
 	}
 
