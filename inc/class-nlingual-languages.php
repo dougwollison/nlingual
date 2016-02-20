@@ -361,21 +361,15 @@ class Languages implements \Iterator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Language::export() on each Language object.
-	 *
-	 * @param bool   $numeric Optional. Return just the values, no keys.
+	 * @uses Language::dump() on each Language object.
 	 *
 	 * @return array An array of the languages.
 	 */
-	public function dump( $numeric = false ) {
+	public function dump() {
 		$data = array();
 
 		foreach ( $this as $language ) {
-			$data[ $language->id ] = $language->dump();
-		}
-
-		if ( $numeric ) {
-			$data = array_values( $data );
+			$data[] = $language->dump();
 		}
 
 		return $data;

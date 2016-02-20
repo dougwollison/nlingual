@@ -582,6 +582,6 @@ class Registry {
 		update_option( 'nlingual_options', static::$options );
 
 		// Save the languages
-		update_option( 'nlingual_languages', static::$languages->dump( 'numeric' ) );
+		update_option( 'nlingual_languages', static::$languages->dump() );
 	}
 }

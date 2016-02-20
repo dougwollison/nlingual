@@ -978,7 +978,7 @@ class Backend extends Handler {
 				var admin_url = '<?php echo admin_url(); ?>';
 			}
 			nLingual.default_language = <?php echo Registry::get( 'default_language' ); ?>;
-			nLingual.Languages.add( <?php echo json_encode( Registry::languages()->dump( 'numeric' ) ); ?> );
+			nLingual.Languages.add( <?php echo json_encode( Registry::languages()->dump() ); ?> );
 		</script>
 		<?php
 	}
