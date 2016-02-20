@@ -194,27 +194,6 @@ class Registry {
 	}
 
 	/**
-	 * Get the info for a language.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Languages::get() to validate/retrieve the language ID.
-	 *
-	 * @param mixed  $id_or_slug The ID or slug of the language to get info for.
-	 * @param string $field      Optional. The field to get from language.
-	 *
-	 * @return mixed The language or the value of the language's field.
-	 */
-	public static function get_language( $id_or_slug, $field = null ) {
-		$language = static::$languages->get( $id_or_slug );
-		if ( is_null( $field ) ) {
-			return $language;
-		}
-
-		return $language->$field;
-	}
-
-	/**
 	 * Set the current language.
 	 *
 	 * @since 2.0.0
@@ -301,7 +280,7 @@ class Registry {
 	 */
 	public static function default_language( $field = null ) {
 		$language_id = static::get( 'default_language' );
-		return static::get_language( $language_id, $field );
+		return static::languages()->get( $language_id, $field );
 	}
 
 	/**
@@ -318,7 +297,7 @@ class Registry {
 	 */
 	public static function current_language( $field = null ) {
 		$language_id = static::$current_language ?: static::get( 'default_language' );
-		return static::get_language( $language_id, $field );
+		return static::languages()->get( $language_id, $field );
 	}
 
 	/**

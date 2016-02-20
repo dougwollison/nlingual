@@ -130,7 +130,7 @@ function nl_get_lang( $field = null, $language = null ) {
 	}
 
 	// Fetch the language
-	return Registry::get_language( $language, $field );
+	return Registry::languages()->get( $language, $field );
 }
 
 /**

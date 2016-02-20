@@ -473,7 +473,7 @@ class Installer extends Handler {
 			if ( preg_match( '/(.+?)--(\w{2})$/', $location, $matches ) ) {
 				list( , $location, $slug ) = $matches;
 				// Find a language matching the slug
-				if ( $language_id = $languages->get( $slug ) ) {
+				if ( $language_id = Registry::languages()->get( $slug ) ) {
 					// Add the location to the list of localizable ones
 					$menu_locations[] = $location;
 
