@@ -61,13 +61,46 @@ class Liaison extends Handler {
 		// Load the old template functions
 		require( NL_PLUGIN_DIR . '/inc/functions-compatibility.php' );
 
+		// Old split-language string support
+		static::add_filter( 'the_title', 'maybe_split_langs_for_post', 10, 2 );
+		if ( ! get_option( '_nlingual_options_converted' ) ) {
+			// Somehow the options were not converted (not taking chances),
+			// hook nl_split_langs into blogname and blogdescription
+			add_filter( 'option_blogname', 'nl_split_langs', 10, 1 );
+			add_filter( 'option_blogdescription', 'nl_split_langs', 10, 1 );
+		}
+
 		// Localizable terms migration utility
 		static::add_action( 'admin_notices', 'compatibility_convert_terms_notice', 10, 0 );
 		static::add_action( 'admin_init', 'compatibility_convert_terms_process', 10, 0 );
 	}
 
 	// =========================
-	// ! - Hook Redirects
+	// ! - Split-Language
+	// =========================
+
+	/**
+	 * Filter the post title through nl_split_langs if applicable.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string  $title The title to filter.
+	 * @param WP_Post $post  Optional. The post this is for.
+	 *
+	 * @return string The filtered option value.
+	 */
+	public static function maybe_split_langs_for_option( $title, WP_Post $post = null ) {
+		// If a post was specified (should have been),
+		// don't bother if it doesn't support translation
+		if ( Registry::is_post_type_supported( $post->post_type ) ) {
+			return $title;
+		}
+
+		return nl_split_langs( $title );
+	}
+
+	// =========================
+	// ! - Filter Redirects
 	// =========================
 
 	// =========================
