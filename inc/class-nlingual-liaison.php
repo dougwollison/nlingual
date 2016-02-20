@@ -13,9 +13,9 @@ namespace nLingual;
 /**
  * The Liaison System
  *
- * Hooks into select 3rd party systems to provide
- * better compatibility with them, namely other plugins
- * by Doug Wollison.
+ * Adds compatibility with older versions of nLingual,
+ * along with select 3rd party systems, namely those
+ * written by Doug Wollison.
  *
  * @internal Used by the System.
  *
@@ -33,11 +33,186 @@ class Liaison extends Handler {
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
+		// Backwards compatibility
+		static::add_action( 'plugins_loaded', 'add_backwards_compatibility', 10, 0 );
+
 		// QuickStart compatibility
 		static::add_action( 'after_setup_theme', 'add_quickstart_helpers', 10, 0 );
 
 		// IndexPages compatibility
 		static::add_action( 'after_setup_theme', 'add_indexpages_helpers', 10, 0 );
+	}
+
+	// =========================
+	// ! Backwards Compatibility
+	// =========================
+
+	/**
+	 * Check if backwards compatibility is needed, setup necessary hooks.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function add_backwards_compatibility() {
+		// Abort if backwards_compatible isn't enabled
+		if ( ! Registry::get( 'backwards_compatible' ) ) {
+			return;
+		}
+
+		// Load the old template functions
+		require( NL_PLUGIN_DIR . '/inc/functions-compatibility.php' );
+
+		// Localizable terms migration utility
+		static::add_action( 'admin_notices', 'compatibility_convert_terms_notice', 10, 0 );
+		static::add_action( 'admin_init', 'compatibility_convert_terms_process', 10, 0 );
+	}
+
+	// =========================
+	// ! - Hook Redirects
+	// =========================
+
+	// =========================
+	// ! - Terms Migration
+	// =========================
+
+	/**
+	 * Print notice offering migration of localizable terms if applicable.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 */
+	public static function compatibility_convert_terms_notice() {
+		global $wpdb;
+
+		// Get the old options, check for a separator
+		$old_options = get_option( '__old-nLingual-options', array() );
+
+		// Abort if no separator is present
+		if ( ! isset( $old_options['separator'] ) || ! $old_options['separator'] ) {
+			return;
+		}
+
+		// Escape % and _ characters in separator
+		$separator = str_replace( array( '%', '_' ), array( '\\%', '\\_' ), $separator );
+
+		// Check if ANY term names contain the separator
+		$terms = $wpdb->get_results( "SELECT term_id, name FROM $wpdb->terms WHERE name LIKE '%$separator%'" );
+
+		// Abort if no terms are found
+		if ( ! $terms ) {
+			return;
+		}
+
+		// Print the message with the upgrade link
+		$message = __( 'It looks like some of your terms use the old language splitting method. <a href="%s">Click here</a> to convert them to the new localized format.' );
+		$nonce = wp_create_nonce( 'convert-localized-terms' );
+		$link = admin_url( 'admin.php?nlingual-action=convert-terms&_nlnonce=' . $nonce );
+		$message = sprintf( $message, $link );
+		?>
+		<div class="notice">
+			<p><?php echo $message; ?></p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Proceed to convert applicable terms to the new format.
+	 *
+	 * Also enable their respective taxonomies if not already.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @uses Installer::convert_split_string() to handle split term names/descriptions.
+	 */
+	public static function compatibility_convert_terms_process() {
+		global $wpdb;
+
+		// Only proceed if action is correct
+		if ( ! isset( $_GET['nlingual-action'] ) || $_GET['nlingual-action'] != 'convert-terms' ) {
+			return;
+		}
+
+		// Fail if nonce does
+		if ( ! wp_verify_nonce( $_GET['_nlnonce'], 'convert-localized-terms' ) ) {
+			nLingual\cheatin();
+		}
+
+		// Get the old separator
+		$separator = get_option( 'nlingual-old_separator' );
+
+		// Fail if no separator is present
+		if ( ! $separator ) {
+			wp_die( _e( 'No language separator found, unable to convert terms.' ) );
+		}
+
+		// Escape % and _ characters in separator for MySQL use
+		$separator_mysql = str_replace( array( '%', '_' ), array( '\\%', '\\_' ), $separator );
+
+		// Get all terms that need to be converted
+		$terms = $wpdb->get_results( "
+			SELECT t.name, x.description, x.term_taxonomy_id, x.term_id, x.taxonomy
+			FROM $wpdb->terms AS t
+				LEFT JOIN $wpdb->term_taxonomy AS x ON (t.term_id = x.term_id)
+			WHERE t.name LIKE '%$separator_mysql%'
+				OR x.description LIKE '%$separator_mysql%'
+		" );
+
+		// Fail if nothing is found
+		if ( ! $terms ) {
+			wp_die( _e( 'No terms found needing conversion.' ) );
+		}
+
+		// Start a list of taxonomies that needed localization
+		$taxonomies = array();
+
+		// Loop through each term name, convert and store
+		foreach ( $terms as $term ) {
+			// add taxonomy to list
+			$taxonomies[] = $term->taxonomy;
+
+			$unlocalized_name = Installer::convert_split_string( $term->name, 'term_name', $term->term_id );
+			$unlocalized_description = Installer::convert_split_string( $term->description, 'term_description', $term->term_id );
+
+			// Update the values in the database with unlocalized versions
+			$wpdb->update( $wpdb->terms, array(
+				'name' => $unlocalized_name,
+			), array(
+				'term_id' => $term->term_id,
+			) );
+			$wpdb->update( $wpdb->term_taxonomy, array(
+				'description' => $unlocalized_description,
+			), array(
+				'term_taxonomy_id' => $term->term_taxonomy_id,
+			) );
+		}
+
+		// Now ensure all those taxonomies are registered for localization
+		$taxonomies = array_merge( $taxonomies, Registry::get( 'taxonomies' ) );
+		$taxonomies = array_unique( $taxonomies );
+		update_option( 'nlingual_taxonomies', $taxonomies );
+
+		wp_redirect( 'admin.php?page=nlingual-localizables&notice=nl-terms-converted' );
+		exit;
+	}
+
+	/**
+	 * Print notice confirming the terms were converted.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function nl_compatibility_convert_terms_success() {
+		// Abort if no indication of terms being converted
+		if ( ! isset( $_GET['notice'] ) || $_GET['notice'] != 'nl-terms-converted' ) {
+			return;
+		}
+
+		?>
+		<div class="updated">
+			<p><?php _e( 'All terms found have been successfully converted, and their taxonomies have been enabled for localization.' ); ?></p>
+		</div>
+		<?php
 	}
 
 	// =========================
