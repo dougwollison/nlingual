@@ -90,15 +90,15 @@ class Liaison extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string  $title The title to filter.
-	 * @param WP_Post $post  Optional. The post this is for.
+	 * @param string $title   The title to filter.
+	 * @param int    $post_id Optional. The ID of the post this is for.
 	 *
 	 * @return string The filtered option value.
 	 */
-	public static function maybe_split_langs_for_title( $title, WP_Post $post = null ) {
-		// If a post was specified (should have been),
+	public static function maybe_split_langs_for_title( $title, $post_id = null ) {
+		// If a post ID was specified (should have been),
 		// don't bother if it doesn't support translation
-		if ( Registry::is_post_type_supported( $post->post_type ) ) {
+		if ( $post_id && Registry::is_post_type_supported( get_post_type( $post_id ) ) ) {
 			return $title;
 		}
 
