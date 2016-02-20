@@ -142,7 +142,7 @@ class Liaison extends Handler {
 	 *
 	 * @param string   $url        The new localized URL.
 	 * @param string   $old_url    The original URL passed to this function.
-	 * @param Langauge $language   The language requested.
+	 * @param Language $language   The language requested.
 	 * @param bool     $relocalize Whether or not to forcibly relocalize the URL.
 	 *
 	 * @return string The filtered URL.

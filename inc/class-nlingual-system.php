@@ -41,13 +41,13 @@ class System extends Handler {
 	 * @uses Localizer::register_hooks() to setup Localize This widget.
 	 * @uses Documenter::register_hooks() to setup admin documentation.
 	 * @uses Frontend::register_hooks() to setup frontend functionality.
-	 * @uses Liaison::register_hooks() to setup plugin cross-compatability.
+	 * @uses Liaison::register_hooks() to setup plugin cross-compatibility.
 	 * @uses is_backend() to check if the query is for wp-admin.
 	 */
 	public static function setup() {
 		global $wpdb;
 
-		// Register the database tables (with backwards compatability for their old nL_ version)
+		// Register the database tables (with backwards compatibility for their old nL_ version)
 		$wpdb->nl_languages = $wpdb->nL_languages = $wpdb->prefix . 'nl_languages';
 		$wpdb->nl_translations = $wpdb->nL_translations = $wpdb->prefix . 'nl_translations';
 		$wpdb->nl_localizations = $wpdb->prefix . 'nl_localizations';
