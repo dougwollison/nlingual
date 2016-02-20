@@ -163,9 +163,16 @@ class Language extends Model {
 		// Setup the object with the provided values
 		parent::__construct( $values );
 
-		// If language_id was passed, use that for id
-		if ( isset( $values['language_id'] ) ) {
-			$this->id = $values['language_id'];
+		// Handle alternate field names
+		foreach ( array(
+			'lang_id'     => 'id',
+			'language_id' => 'id',
+			'iso'         => 'iso_code',
+			'mo'          => 'locale_name',
+		) as $alt_field => $property ) {
+			if ( isset( $values[ $alt_field ] ) ) {
+				$this->$property = $values[ $alt_field ];
+			}
 		}
 
 		// Ensure $id is integer
