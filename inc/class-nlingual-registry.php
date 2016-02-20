@@ -200,13 +200,13 @@ class Registry {
 	 *
 	 * @uses Languages::get() to validate/retrieve the language ID.
 	 *
-	 * @param int    $language_id The ID of the language to get info for.
-	 * @param string $field       Optional. The field to get from language.
+	 * @param mixed  $id_or_slug The ID or slug of the language to get info for.
+	 * @param string $field      Optional. The field to get from language.
 	 *
 	 * @return mixed The language or the value of the language's field.
 	 */
-	public static function get_language( $language_id, $field = null ) {
-		$language = static::$languages->get( $language_id );
+	public static function get_language( $id_or_slug, $field = null ) {
+		$language = static::$languages->get( $id_or_slug );
 		if ( is_null( $field ) ) {
 			return $language;
 		}
