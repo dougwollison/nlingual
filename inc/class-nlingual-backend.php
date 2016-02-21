@@ -780,17 +780,20 @@ class Backend extends Handler {
 
 		// Add addendums to every set of messages
 		foreach ( $bulk_notices as &$notices ) {
-			if ( Registry::get_rules( 'sync', 'post_type', $screen->post_type ) ) {
+			// Get the rules for this post type
+			$sync_rules = Registry::get_rules( 'sync', 'post_type', $screen->post_type );
+
+			if ( $sync_rules ) {
 				$notices['updated'] .= ' ' . $updated_addendum;
+			}
+
+			if ( isset( $sync_rules['post_fields'] ) && in_array( 'post_status', $sync_rules['post_fields'] ) ) {
+				$notices['trashed'] .= ' ' . $trashed_addendum;
+				$notices['untrashed'] .= ' ' . $untrashed_addendum;
 			}
 
 			if ( Registry::get( 'delete_sister_posts' ) ) {
 				$notices['deleted'] .= ' ' . $deleted_addendum;
-			}
-
-			if ( Registry::get( 'trash_sister_posts' ) ) {
-				$notices['trashed'] .= ' ' . $trashed_addendum;
-				$notices['untrashed'] .= ' ' . $untrashed_addendum;
 			}
 		}
 

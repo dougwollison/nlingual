@@ -366,7 +366,8 @@ class Settings {
 	protected static function build_sync_settings_field( $name, $value, $post_type ) {
 		// Post Data values
 		$post_fields = _ax( Documenter::$post_field_names, 'post field' );
-		$post_fields['post_parent'] .= '*'; // flag parent field for note about counterpart translation
+		$post_fields['post_status'] .= '<sup>1</sup>'; // flag parent field for note about trashing
+		$post_fields['post_parent'] .= '<sup>2</sup>'; // flag parent field for note about counterpart translation
 
 		// Taxonomies values
 		$post_taxs = get_object_taxonomies( $post_type, 'objects' );
@@ -394,16 +395,16 @@ class Settings {
 				</label></h4>
 				<?php echo static::build_checklist_field( "{$name}[post_fields]", $value['post_fields'], $post_fields ); ?>
 				<p class="description"><?php _e( 'What post information should be copied?' ); ?> <br />
-					<small>* <?php _e( 'will use counterpart translation if found' ); ?></small></p>
+					<small><sup>1</sup> <?php _e( 'will also apply to trashing and untrashing' ); ?></small> <br />
+					<small><sup>2</sup> <?php _e( 'will use counterpart translation if found' ); ?></small></p>
 
 				<?php if ( $post_taxs ) : ?>
 					<h4><label title="<?php _e( 'Check All/None', TXTDMN ); ?>">
-						<?php _e( 'Taxonomies' ); ?>*
+						<?php _e( 'Taxonomies' ); ?>
 						<input type="checkbox" class="nl-checkall" data-name="<?php echo "{$name}[post_terms]"; ?>" />
 					</label></h4>
 					<?php echo static::build_checklist_field( "{$name}[post_terms]", $value['post_terms'], $post_taxs ); ?>
-					<p class="description"><?php _e( 'What terms should be copied?' ); ?> <br />
-						<small>* <?php _e( 'will use counterpart translation(s) if found' ); ?></small></p>
+					<p class="description"><?php _e( 'What terms should be copied?' ); ?></p>
 				<?php endif; ?>
 
 				<h4><label  title="<?php _e( 'Match All/None', TXTDMN ); ?>">

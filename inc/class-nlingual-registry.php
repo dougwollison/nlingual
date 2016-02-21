@@ -104,8 +104,6 @@ class Registry {
 		'redirection_permanent'  => false,
 		// The patch WP_Locale option.
 		'patch_wp_locale'        => true,
-		// The TRASH sister posts option.
-		'trash_sister_posts'     => false,
 		// The DELETE sister posts option.
 		'delete_sister_posts'    => false,
 		// The backwards compatibility option.

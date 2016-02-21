@@ -84,8 +84,6 @@ class System extends Handler {
 		static::add_action( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
 
 		// Post Changes
-		static::add_filter( 'trashed_post', 'trash_sister_posts', 10, 1 );
-		static::add_filter( 'untrashed_post', 'untrash_sister_posts', 10, 1 );
 		static::add_filter( 'deleted_post', 'delete_sister_posts', 10, 1 );
 		static::add_filter( 'deleted_post', 'delete_post_language', 11, 1 );
 
@@ -140,64 +138,6 @@ class System extends Handler {
 	}
 
 	/**
-	 * Trash a post's sister translations when it's trashed.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Registry::get() to check the trash_sister_posts option.
-	 *
-	 * @param int $post_id The ID of the post that was trashed.
-	 */
-	public static function trash_sister_posts( $post_id ) {
-		// Abort if option isn't enabled
-		if ( ! Registry::get( 'trash_sister_posts' ) ) {
-			return;
-		}
-
-		// Unhook to prevent loop
-		static::remove_action( 'trashed_post', __FUNCTION__, 10 );
-
-		// Get the translations of the post
-		$translations = Translator::get_post_translations( $post_id );
-		foreach ( $translations as $translation ) {
-			// Trash it
-			wp_trash_post( $translation );
-		}
-
-		// Rehook now that we're done
-		static::add_action( 'trashed_post', __FUNCTION__, 10, 1 );
-	}
-
-	/**
-	 * Untrash a post's sister translations when it's untrashed.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Registry::get() to check the trash_sister_posts option.
-	 *
-	 * @param int $post_id The ID of the post that was untrashed.
-	 */
-	public static function untrash_sister_posts( $post_id ) {
-		// Abort if option isn't enabled
-		if ( ! Registry::get( 'trash_sister_posts' ) ) {
-			return;
-		}
-
-		// Unhook to prevent loop
-		static::remove_action( 'untrashed_post', __FUNCTION__, 10 );
-
-		// Get the translations of the post
-		$translations = Translator::get_post_translations( $post_id );
-		foreach ( $translations as $translation ) {
-			// Untrash it
-			wp_untrash_post( $translation );
-		}
-
-		// Rehook now that we're done
-		static::add_action( 'untrashed_post', __FUNCTION__, 10, 1 );
-	}
-
-	/**
 	 * Delete a post's sister translations when it's deleted.
 	 *
 	 * @since 2.0.0
@@ -218,8 +158,10 @@ class System extends Handler {
 		// Get the translations of the post
 		$translations = Translator::get_post_translations( $post_id );
 		foreach ( $translations as $translation ) {
-			// Delete it
-			wp_delete_post( $translation, true );
+			// Delete it (if it's also in the trash)
+			if ( get_post_status( $translation ) == 'trash' ) {
+				wp_delete_post( $translation, true );
+			}
 		}
 
 		// Rehook now that we're done

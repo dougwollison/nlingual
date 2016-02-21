@@ -417,7 +417,6 @@ class Installer extends Handler {
 		$renamed_options = array(
 			'default_lang'      => 'default_language',
 			'delete_sisters'    => 'delete_sister_posts',
-			'delete_sisters'    => 'trash_sister_posts',
 			'get_var'           => 'query_var',
 			'l10n_dateformat'   => 'localize_date',
 			'post_types'        => 'post_types',
