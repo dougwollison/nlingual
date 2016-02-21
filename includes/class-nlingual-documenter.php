@@ -171,7 +171,7 @@ class Documenter extends Handler {
 		$section = sanitize_file_name( $section );
 
 		// Build the path to the doc file
-		$path = NL_PLUGIN_DIR . '/doc';
+		$path = NL_PLUGIN_DIR . '/documentation';
 
 		// If a section is specified, add to the path
 		if ( ! is_null( $section ) ) {

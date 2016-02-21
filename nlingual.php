@@ -9,6 +9,7 @@ Author URI: http://dougw.me
 Tags: multilingual, multi, language, admin, bilingual, switcher, translation, nlingual
 License: GPL2
 Text Domain: nLingual
+Domain Path: /languages
 */
 
 
@@ -56,11 +57,11 @@ define( 'NL_ORIGINAL_URL', ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTT
 // ! Includes
 // =========================
 
-require( NL_PLUGIN_DIR . '/inc/flags.php' );
-require( NL_PLUGIN_DIR . '/inc/autoloader.php' );
-require( NL_PLUGIN_DIR . '/inc/functions-nlingual.php' );
-require( NL_PLUGIN_DIR . '/inc/functions-gettext.php' );
-require( NL_PLUGIN_DIR . '/inc/functions-alias.php' );
+require( NL_PLUGIN_DIR . '/includes/flags.php' );
+require( NL_PLUGIN_DIR . '/includes/autoloader.php' );
+require( NL_PLUGIN_DIR . '/includes/functions-nlingual.php' );
+require( NL_PLUGIN_DIR . '/includes/functions-gettext.php' );
+require( NL_PLUGIN_DIR . '/includes/functions-alias.php' );
 
 // =========================
 // ! Setup
