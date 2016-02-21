@@ -152,9 +152,20 @@ class Registry {
 	// =========================
 
 	/**
-	 * Retrieve a option value.
+	 * Check if an option is supported.
 	 *
-	 * Will redirect to Registry::languages() if applicable.
+	 * @since 2.0.0
+	 *
+	 * @param string $option  The option name.
+	 *
+	 * @return bool Wether or not the option is supported.
+	 */
+	public static function has( $option ) {
+		return in_array( $option, static::$options_whitelist );
+	}
+
+	/**
+	 * Retrieve a option value.
 	 *
 	 * @since 2.0.0
 	 *
@@ -165,7 +176,7 @@ class Registry {
 	 */
 	public static function get( $option, $default = null ) {
 		// Throw "unsupported" error if trying to set an unsupported option
-		if ( ! in_array( $option, static::$options_whitelist ) ) {
+		if ( ! static::has( $option ) ) {
 			throw new Exception( "The option '{$option}' is not supported", NL_ERR_UNSUPPORTED );
 		}
 
@@ -189,7 +200,7 @@ class Registry {
 	 */
 	public static function set( $option, $value = null ) {
 		// Throw "unsupported" error if trying to set an unsupported option
-		if ( ! in_array( $option, static::$options_whitelist ) ) {
+		if ( ! static::has( $option ) ) {
 			throw new Exception( "The option '{$option}' is not supported", NL_ERR_UNSUPPORTED );
 		}
 
