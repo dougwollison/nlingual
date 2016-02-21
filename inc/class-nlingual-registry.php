@@ -92,38 +92,52 @@ class Registry {
 	 * @var array
 	 */
 	protected static $options_whitelist = array(
-		// The show all languages for objects option.
-		'show_all_languages'     => true,
-		// The localize date format string option.
-		'localize_date'          => false,
-		// The skip default language localizing option.
-		'skip_default_l10n'      => false,
-		// The post language override option.
+		/* General Options */
+
+		// - The default language id.
+		'default_language' => 0,
+		// - The localize date format string option.
+		'localize_date' => false,
+		// - The patch WP_Locale option.
+		'patch_wp_locale' => true,
+		// - The backwards compatibility option.
+		'backwards_compatible' => false,
+
+		/* Content Management Options */
+
+		// - The show all languages for objects option.
+		'show_all_languages' => true,
+		// - The DELETE sister posts option.
+		'delete_sister_posts' => false,
+
+		/* Request/Redirection Options */
+
+		// - The language query var.
+		'query_var' => 'nl_language',
+		// - The URL redirection method.
+		'url_rewrite_method' => 'get',
+		// - The skip default language localizing option.
+		'skip_default_l10n' => false,
+		// - The post language override option.
 		'post_language_override' => true,
-		// The permanent redirection option.
-		'redirection_permanent'  => false,
-		// The patch WP_Locale option.
-		'patch_wp_locale'        => true,
-		// The DELETE sister posts option.
-		'delete_sister_posts'    => false,
-		// The backwards compatibility option.
-		'backwards_compatible'   => false,
-		// The default language id.
-		'default_language'       => 0,
-		// The language query var.
-		'query_var'              => 'nl_language',
-		// The URL redirection method.
-		'url_rewrite_method'     => 'get',
-		// The supported post types.
-		'post_types'             => array(),
-		// The supported taxonomies.
-		'taxonomies'             => array(),
-		// The list of localizable features.
-		'localizables'           => array(),
-		// The synchronization rules.
-		'sync_rules'             => array(),
-		// The cloning rules.
-		'clone_rules'            => array(),
+		// - The permanent redirection option.
+		'redirection_permanent' => false,
+
+		/* Localizable Stuff */
+
+		// - The supported post types.
+		'post_types' => array(),
+		// - The supported taxonomies.
+		'taxonomies' => array(),
+		// - The list of localizable features.
+		'localizables' => array(),
+
+		/* Synchronization Stuff */
+
+		// - The synchronization rules.
+		'sync_rules' => array(),
+		// - The cloning rules.
+		'clone_rules' => array(),
 	);
 
 	// =========================
@@ -552,11 +566,9 @@ class Registry {
 			$value = $default;
 			if ( isset( $options[ $option ] ) ) {
 				$value = $options[ $option ];
-			}
 
-			// If the default was boolean, convert value to boolean
-			if ( is_bool( $default ) ) {
-				$value = (bool) $value;
+				// Ensure the value is the same type as the default
+				settype( $value, gettype( $default ) );
 			}
 
 			static::set( $option, $value );
