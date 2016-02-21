@@ -180,6 +180,7 @@
 			// Row builder utility
 			function buildLangRow( language ) {
 				var row = languageRowTemplate, regex;
+					row = row.replace( /%id%/g, language.id );
 				// Loop through properties and replace
 				for ( var prop in language.attributes ) {
 					regex = new RegExp( '%' + prop + '%', 'g' );
