@@ -392,26 +392,14 @@ class Installer extends Handler {
 		// Get the old nLingual-options
 		$old_options = get_option( 'nLingual-options', array() );
 
-		// Reassign to new options
-		$renamed_options = array(
-			'default_lang'      => 'default_language',
-			'delete_sisters'    => 'delete_sister_posts',
-			'get_var'           => 'query_var',
-			'l10n_dateformat'   => 'localize_date',
-			'post_types'        => 'post_types',
-			'skip_default_l10n' => 'skip_default_l10n',
-			'separator'         => '_old_separator',
-		);
-		foreach ( $renamed_options as $oldname => $newname ) {
-			if ( isset( $old_options[ $oldname ] ) ) {
-				Registry::set( $newname, $old_options[ $oldname ] );
+		// Go through all the options...
+		foreach ( $old_options as $option => $value ) {
+			// If it's the redirect method, convert it
+			if ( $option == 'method' ) {
+				$value = strtolower( str_replace( 'NL_REDIRECT_USING_', '', $value ) );
 			}
-		}
-
-		// Convert the redirection method
-		if ( isset( $old_options['method'] ) ) {
-			$method = strtolower( str_replace( 'NL_REDIRECT_USING_', '', $old_options['method'] ) );
-			Registry::set( 'url_rewrite_method', $method );
+			// Copy it to the Registry
+			Registry::set( $option, $value );
 		}
 
 		/**

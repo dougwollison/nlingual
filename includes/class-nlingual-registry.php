@@ -147,6 +147,24 @@ class Registry {
 		'_old_separator' => '',
 	);
 
+	/**
+	 * The deprecated options and their alternatives.
+	 *
+	 * @internal
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var array
+	 */
+	protected static $options_deprecated = array(
+		'default_lang'      => 'default_language',
+		'delete_sisters'    => 'delete_sister_posts',
+		'post_var'          => 'query_var',
+		'get_var'           => 'query_var',
+		'l10n_dateformat'   => 'localize_date',
+		'separator'         => '_old_separator',
+	);
+
 	// =========================
 	// ! Property Accessing
 	// =========================
@@ -154,13 +172,20 @@ class Registry {
 	/**
 	 * Check if an option is supported.
 	 *
+	 * Will also udpate the option value if it was deprecated
+	 * but has a sufficient alternative.
+	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $option  The option name.
+	 * @param string &$option The option name.
 	 *
 	 * @return bool Wether or not the option is supported.
 	 */
-	public static function has( $option ) {
+	public static function has( &$option ) {
+		if ( isset( static::$options_deprecated[ $option ] ) ) {
+			$option = $deprecated_options[ $option ];
+		}
+
 		return in_array( $option, static::$options_whitelist );
 	}
 
