@@ -576,12 +576,18 @@ class Registry {
 	 * Save the options and languages to the database.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @param string $what Optional. Save just options/languages or both (true)?
 	 */
-	public static function save() {
-		// Save the options
-		update_option( 'nlingual_options', static::$options );
+	public static function save( $what = true ) {
+		if ( $what == 'options' ) {
+			// Save the options
+			update_option( 'nlingual_options', static::$options );
+		}
 
-		// Save the languages
-		update_option( 'nlingual_languages', static::$languages->dump() );
+		if ( $what == 'languages' ) {
+			// Save the languages
+			update_option( 'nlingual_languages', static::$languages->dump() );
+		}
 	}
 }
