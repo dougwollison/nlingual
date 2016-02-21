@@ -43,7 +43,7 @@ define( 'NL_ERR_FORBIDDEN', 403 );
  *
  * @var string
  */
-define( 'NL_ERR_MISSING', 404 );
+define( 'NL_ERR_NOTFOUND', 404 );
 
 /**
  * Error code for an unsupported action.
