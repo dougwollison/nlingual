@@ -652,8 +652,8 @@ class Manager extends Handler {
 							<input type="text" name="nlingual_languages[%id%][slug]" value="%slug%" maxlength="100" />
 						</td>
 						<td class="nl-language-direction">
-							<label title="Left to Right"><input type="radio" name="nlingual_languages[%id%][direction]" value="ltr" />ltr</label>
-							<label title="Right to Left"><input type="radio" name="nlingual_languages[%id%][direction]" value="rtl" />rtl</label>
+							<label title="Left to Right"><input type="radio" name="nlingual_languages[%id%][direction]" value="ltr" />&rsaquo;&para;</label>
+							<label title="Right to Left"><input type="radio" name="nlingual_languages[%id%][direction]" value="rtl" />&para;&lsaquo;</label>
 						</td>
 						<td class="nl-language-active">
 							<input type="checkbox" name="nlingual_languages[%id%][active]" value="1" />

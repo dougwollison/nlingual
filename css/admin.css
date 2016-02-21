@@ -196,7 +196,8 @@
 #nlingual_languages .nl-language-locale_name {
   width: 60px; }
 #nlingual_languages .nl-language-direction {
-  width: 100px; }
+  width: 100px;
+  text-align: center; }
   #nlingual_languages .nl-language-direction label {
     margin: 4px 4px 0 0;
     display: inline-block;
