@@ -166,7 +166,7 @@ class Frontend extends Handler {
 			// And the override is set, or otherwise the language wasn't specified,
 			// Redirect to the post's language
 			if ( $post_language && Registry::is_current_language( $post_language )
-			&& ( Registry::get( 'post_language_override', 0 ) || ! defined( 'NL_REQUESTED_LANGUAGE' ) ) ) {
+			&& ( Registry::get( 'post_language_override', false ) || ! defined( 'NL_REQUESTED_LANGUAGE' ) ) ) {
 				$redirect_language = $post_language;
 			}
 		}
