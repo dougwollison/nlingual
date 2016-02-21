@@ -297,13 +297,13 @@ class Languages implements \Iterator {
 		}
 
 		// Add to the index if successful
-		if ( $language ) {
+		if ( $language && $language->id > 0 ) {
 			$this->items[] = $language;
-		}
 
-		if ( $sort ) {
-			// Sort the collection
-			$this->sort();
+			if ( $sort ) {
+				// Sort the collection
+				$this->sort();
+			}
 		}
 
 		return $this;
