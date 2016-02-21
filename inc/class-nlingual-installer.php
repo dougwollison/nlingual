@@ -309,24 +309,15 @@ class Installer extends Handler {
 
 		// If upgrading from nLingual 1, convert tables before updating them
 		if ( static::is_upgrading() ) {
+			// Flag as having been upgraded
+			add_option( 'nlingual_upgraded', 1 );
+
+			static::convert_options();
 			static::convert_tables();
 		}
 
 		// Perform regular install
 		static::install();
-
-		// If upgrading from nLingual 1, convert options
-		if ( static::is_upgrading() ) {
-			static::convert_options();
-
-			// Flag as having been upgraded
-			add_option( 'nlingual_upgraded', 1 );
-
-			// Also auto-enable backwards compatibility
-			Registry::set( 'backwards_compatible', 1 );
-			// Save the change
-			Registry::save();
-		}
 
 		// Log the current database version
 		update_option( 'nlingual_database_version', NL_DB_VERSION );
@@ -495,12 +486,15 @@ class Installer extends Handler {
 		$localizables['nav_menu_locations'] = $menu_locations;
 		Registry::set( 'localizables', $localizables );
 
-		// Save changes
-		Registry::save();
-
 		/**
 		 * Final cleanup
 		 */
+
+		// Auto-enable backwards compatibility
+		Registry::set( 'backwards_compatible', true );
+
+		// Save changes
+		Registry::save();
 
 		// Get the blog name and description values
 		$name = get_option( 'blogname' );
