@@ -565,7 +565,10 @@ class Registry {
 		}
 
 		// Load the languages
-		$data = get_option( 'nlingual_languages', array() );
+		$data = get_option( 'nlingual_languages', array(
+			'entries' => array(),
+			'auto_increment' => 1,
+		) );
 		static::$languages = new Languages( $data['entries'], $data['auto_increment'] );
 
 		// Flag that we've loaded everything

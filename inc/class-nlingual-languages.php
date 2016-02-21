@@ -140,7 +140,7 @@ class Languages implements \Iterator {
 	 * @param array $languages      Optional. A list of languages to add.
 	 * @param int   $auto_increment Optional. An explicit auto_increment value to use.
 	 */
-	public function __construct( $languages = array(), $auto_increment = 0 ) {
+	public function __construct( $languages = array(), $auto_increment = 1 ) {
 		if ( is_array( $languages ) && ! empty ( $languages ) ) {
 			foreach ( $languages as $language ) {
 				$this->add( $language, false );
@@ -148,7 +148,7 @@ class Languages implements \Iterator {
 		}
 
 		// If $auto_increment was 0 but we have items, use the max ID + 1
-		if ( $auto_increment == 0 && $this->count() > 0 ) {
+		if ( $auto_increment == 1 && $this->count() > 0 ) {
 			$auto_increment = $this->sort( 'id', 'desc' )->nth( 0 )->id + 1;
 		}
 
@@ -320,7 +320,11 @@ class Languages implements \Iterator {
 		if ( $language ) {
 			// If language has no ID, assign it one
 			if ( $language->id == 0 ) {
-				$language->id = ++$this->auto_increment;
+				$language->id = $this->auto_increment++;
+			}
+			// Otherwise, if it's higher than the AI, raise it
+			elseif ( $language->id >= $this->auto_increment ) {
+				$this->auto_increment = $language->id + 1;
 			}
 
 			$this->items[] = $language;
