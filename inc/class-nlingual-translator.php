@@ -286,7 +286,6 @@ class Translator {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 *
-	 *
 	 * @param string $type The type of object.
 	 * @param int    $id   The ID of the object.
 	 *
@@ -312,6 +311,8 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
 	 * @uses validate_language() to validate the language and get the Language object.
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
@@ -319,6 +320,8 @@ class Translator {
 	 * @param mixed  $language The language to remove the association for.
 	 */
 	public static function delete_language( $language ) {
+		global $wpdb;
+
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			// Throw exception if not found
