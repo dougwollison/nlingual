@@ -309,15 +309,19 @@ class Installer extends Handler {
 
 		// If upgrading from nLingual 1, convert tables before updating them
 		if ( static::is_upgrading() ) {
+			static::convert_tables();
+
 			// Flag as having been upgraded
 			add_option( 'nlingual_upgraded', 1 );
-
-			static::convert_options();
-			static::convert_tables();
 		}
 
 		// Perform regular install
 		static::install();
+
+		// If upgrading from nLingual 1, convert options
+		if ( static::is_upgrading() ) {
+			static::convert_options();
+		}
 
 		// Log the current database version
 		update_option( 'nlingual_database_version', NL_DB_VERSION );
