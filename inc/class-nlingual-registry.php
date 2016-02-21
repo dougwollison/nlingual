@@ -565,8 +565,8 @@ class Registry {
 		}
 
 		// Load the languages
-		$languages = get_option( 'nlingual_languages', array() );
-		static::$languages = new Languages( $languages );
+		$data = get_option( 'nlingual_languages', array() );
+		static::$languages = new Languages( $data['entries'], $data['auto_increment'] );
 
 		// Flag that we've loaded everything
 		static::$__loaded = true;
@@ -587,7 +587,7 @@ class Registry {
 
 		if ( $what == 'languages' ) {
 			// Save the languages
-			update_option( 'nlingual_languages', static::$languages->dump() );
+			update_option( 'nlingual_languages', static::$languages->export() );
 		}
 	}
 }
