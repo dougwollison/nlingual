@@ -214,14 +214,13 @@ class Liaison extends Handler {
 	public static function compatibility_convert_terms_notice() {
 		global $wpdb;
 
-		// Get the old options, check for a separator, abort if none found
-		$old_options = get_option( '__old-nLingual-options', array() );
-		if ( ! isset( $old_options['separator'] ) || ! $old_options['separator'] ) {
+		// Get the old separator, abort if not found
+		if ( ! $separator = Registry::get( '_old_separator' ) ) {
 			return;
 		}
 
 		// Check if ANY term names contain the separator
-		$separator = $wpdb->esc_like( $old_options['separator'] );
+		$separator = $wpdb->esc_like( $separator );
 		$terms = $wpdb->get_results( $wpdb->prepare( "SELECT term_id, name FROM $wpdb->terms WHERE name LIKE %s", "%$separator%" ) );
 
 		// Abort if no terms are found
@@ -265,14 +264,13 @@ class Liaison extends Handler {
 			nLingual\cheatin();
 		}
 
-		// Get the old options, check for a separator, abort if none found
-		$old_options = get_option( '__old-nLingual-options', array() );
-		if ( ! isset( $old_options['separator'] ) || ! $old_options['separator'] ) {
-			wp_die( _e( 'No language separator found, unable to convert terms.' ) );
+		// Get the old separator, abort if not found
+		if ( ! $separator = Registry::get( '_old_separator' ) ) {
+			return $value;
 		}
 
 		// Escape % and _ characters in separator for MySQL use
-		$separator_mysql = str_replace( array( '%', '_' ), array( '\\%', '\\_' ), $old_options['separator'] );
+		$separator_mysql = str_replace( array( '%', '_' ), array( '\\%', '\\_' ), $separator );
 
 		// Get all terms that need to be converted
 		$terms = $wpdb->get_results( "

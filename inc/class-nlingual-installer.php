@@ -89,26 +89,6 @@ class Installer extends Handler {
 		return is_array( $old_options );
 	}
 
-	/**
-	 * Get an old option value, return it, while archiving it under a prefixed name.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param string $option  The name of the old option to retrieve.
-	 * @param mixed  $default The default value for the option.
-	 *
-	 * @return mixed The value of the option.
-	 */
-	protected static function get_old_option( $option, $default = null ) {
-		$value = get_option( $option, $default );
-
-		// Store under __old prefix and delete original
-		update_option( "__old-$option", $value );
-		delete_option( $option );
-
-		return $value;
-	}
-
 	// =========================
 	// ! Public Utilities
 	// =========================
@@ -134,14 +114,13 @@ class Installer extends Handler {
 	public static function convert_split_string( $value, $string_key, $object_id = 0 ) {
 		global $wpdb;
 
-		// Get the old options, check for a separator, abort if none found
-		$old_options = get_option( '__old-nLingual-options', array() );
-		if ( ! isset( $old_options['separator'] ) || ! $old_options['separator'] ) {
+		// Get the old separator, abort if not found
+		if ( ! $separator = Registry::get( '_old_separator' ) ) {
 			return $value;
 		}
 
 		// Prep the separator for regex use
-		$separator_regex = preg_quote( $old_options['separator'], '/' );
+		$separator_regex = preg_quote( $separator, '/' );
 
 		// Split
 		$values = preg_split( "/\s*$separator_regex\s*/", $value );
@@ -312,7 +291,7 @@ class Installer extends Handler {
 			static::convert_tables();
 
 			// Flag as having been upgraded
-			add_option( 'nlingual_upgraded', 1 );
+			add_option( 'nlingual_upgraded', 1, '', 'no' );
 		}
 
 		// Perform regular install
@@ -375,7 +354,7 @@ class Installer extends Handler {
 		update_option( 'nlingual_database_version', '2.0.0' );
 
 		// Flag as having been converted
-		update_option( '_nlingual_tables_converted', 1 );
+		add_option( '_nlingual_tables_converted', 1, '', 'no' );
 	}
 
 	/**
@@ -410,8 +389,8 @@ class Installer extends Handler {
 		 * Convert General Options
 		 */
 
-		// Get the old nLingual-options, and drop it
-		$options = static::get_old_option( 'nLingual-options', array() );
+		// Get the old nLingual-options
+		$old_options = get_option( 'nLingual-options', array() );
 
 		// Reassign to new options
 		$renamed_options = array(
@@ -421,16 +400,17 @@ class Installer extends Handler {
 			'l10n_dateformat'   => 'localize_date',
 			'post_types'        => 'post_types',
 			'skip_default_l10n' => 'skip_default_l10n',
+			'separator'         => '_old_separator',
 		);
 		foreach ( $renamed_options as $oldname => $newname ) {
-			if ( isset( $options[ $oldname ] ) ) {
-				Registry::set( $newname, $options[ $oldname ] );
+			if ( isset( $old_options[ $oldname ] ) ) {
+				Registry::set( $newname, $old_options[ $oldname ] );
 			}
 		}
 
 		// Convert the redirection method
-		if ( isset( $options['method'] ) ) {
-			$method = strtolower( str_replace( 'NL_REDIRECT_USING_', '', $options['method'] ) );
+		if ( isset( $old_options['method'] ) ) {
+			$method = strtolower( str_replace( 'NL_REDIRECT_USING_', '', $old_options['method'] ) );
 			Registry::set( 'url_rewrite_method', $method );
 		}
 
@@ -509,10 +489,12 @@ class Installer extends Handler {
 		update_option( 'blogname', $unlocalized_name );
 		update_option( 'blogdescription', $unlocalized_description );
 
-		// Now, drop the languages table
+		// Now, drop the old options and the languages table
+		delete_option( 'nLingual-options' );
+		delete_option( 'nLingual-sync_rules' );
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nL_languages" );
 
 		// Flag as having been converted
-		update_option( '_nlingual_options_converted', 1 );
+		add_option( '_nlingual_options_converted', 1, '', 'no' );
 	}
 }

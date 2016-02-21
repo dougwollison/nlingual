@@ -94,52 +94,57 @@ class Registry {
 	protected static $options_whitelist = array(
 		/* General Options */
 
-		// - The default language id.
+		// - The default language id
 		'default_language' => 0,
-		// - The localize date format string option.
+		// - The localize date format string option
 		'localize_date' => false,
-		// - The patch WP_Locale option.
+		// - The patch WP_Locale option
 		'patch_wp_locale' => true,
-		// - The backwards compatibility option.
+		// - The backwards compatibility option
 		'backwards_compatible' => false,
 
 		/* Content Management Options */
 
-		// - The show all languages for objects option.
+		// - The show all languages for objects option
 		'show_all_languages' => true,
-		// - The DELETE sister posts option.
+		// - The DELETE sister posts option
 		'delete_sister_posts' => false,
 
 		/* Request/Redirection Options */
 
-		// - The language query var.
+		// - The language query var
 		'query_var' => 'nl_language',
-		// - The URL redirection method.
+		// - The URL redirection method
 		'url_rewrite_method' => 'get',
-		// - The skip default language localizing option.
+		// - The skip default language localizing option
 		'skip_default_l10n' => false,
-		// - The post language override option.
+		// - The post language override option
 		'post_language_override' => true,
-		// - The permanent redirection option.
+		// - The permanent redirection option
 		'redirection_permanent' => false,
 
-		/* Localizable Stuff */
+		/* Localizable Things */
 
-		// - The supported post types.
+		// - The supported post types
 		'post_types' => array(),
-		// - The supported taxonomies.
+		// - The supported taxonomies
 		'taxonomies' => array(),
 		// - The supported nav menus
 		'nav_menu_locations' => array(),
 		// - The supported sidebars
 		'sidebar_locations' => array(),
 
-		/* Synchronization Stuff */
+		/* Synchronization Rules */
 
-		// - The synchronization rules.
+		// - The synchronization rules
 		'sync_rules' => array(),
-		// - The cloning rules.
+		// - The cloning rules
 		'clone_rules' => array(),
+
+		/* Hidden Options */
+
+		// - The old split-language separator
+		'_old_separator' => '',
 	);
 
 	// =========================
