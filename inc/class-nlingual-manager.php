@@ -606,7 +606,7 @@ class Manager extends Handler {
 				<?php settings_fields( $plugin_page ); ?>
 				<div id="nl_language_controls">
 					<select id="nl_language_preset">
-						<option value=""><?php _e( 'Custom Language' ); ?></option>
+						<option value=""><?php _e( '&mdash; Custom Language &mdash;' ); ?></option>
 					</select>
 					<button type="button" id="nl_language_add" class="button"><?php _e( 'Add Language' ); ?></button>
 				</div>
