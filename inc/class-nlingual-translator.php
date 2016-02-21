@@ -307,6 +307,32 @@ class Translator {
 		return true;
 	}
 
+	/**
+	 * Deletes all translation entries for the specified language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses validate_language() to validate the language and get the Language object.
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @param mixed  $language The language to remove the association for.
+	 */
+	public static function delete_language( $language ) {
+		// Ensure $language is a Language
+		if ( ! validate_language( $language ) ) {
+			// Throw exception if not found
+			throw new Exception( 'The language specified does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
+		}
+
+		$wpdb->delete(
+			$wpdb->nl_translations,
+			array(
+				'language_id' => $language->id,
+			)
+		);
+	}
+
 	// =========================
 	// ! Translation Handling
 	// =========================
@@ -523,7 +549,7 @@ class Translator {
 	 * @param int    $id       The ID of the object.
 	 * @param mixed  $language The language to remove the association for.
 	 *
-	 * @return bool Wether or not a deletion was performed (false = invalid language, null = nothing to delete).
+	 * @return bool Wether or not a deletion was performed (false = nothing to delete).
 	 */
 	public static function delete_object_translation( $type, $id, $language ) {
 		global $wpdb;
@@ -539,7 +565,7 @@ class Translator {
 
 		// If none was found, abort
 		if ( ! $group_id ) {
-			return null;
+			return false;
 		}
 
 		// Get a new group ID for the sister object
