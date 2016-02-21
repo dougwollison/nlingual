@@ -221,7 +221,7 @@ class Liaison extends Handler {
 
 		// Check if ANY term names contain the separator
 		$separator = $wpdb->esc_like( $separator );
-		$terms = $wpdb->get_results( $wpdb->prepare( "SELECT term_id, name FROM $wpdb->terms WHERE name LIKE %s", "%$separator%" ) );
+		$terms = $wpdb->get_resutls( $wpdb->prepare( "SELECT term_id FROM $wpdb->terms WHERE name LIKE %s LIMIT 1", "%$separator%" ) );
 
 		// Abort if no terms are found
 		if ( ! $terms ) {
