@@ -39,6 +39,17 @@ class Languages implements \Iterator {
 	protected $position = 0;
 
 	/**
+	 * The last auto-increment ID.
+	 *
+	 * @internal
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var int
+	 */
+	protected $auto_increment = 0;
+
+	/**
 	 * The array of Language objects.
 	 *
 	 * @internal
@@ -126,13 +137,19 @@ class Languages implements \Iterator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param array $languages Optional. A list of languages to add.
+	 * @param array $languages      Optional. A list of languages to add.
+	 * @param int   $auto_increment Optional. An explicit auto_increment value to use.
 	 */
-	public function __construct( $languages = array() ) {
+	public function __construct( $languages = array(), $auto_increment = 0 ) {
 		if ( is_array( $languages ) && ! empty ( $languages ) ) {
 			foreach ( $languages as $language ) {
 				$this->add( $language, false );
 			}
+		}
+
+		// If $auto_increment was 0 but we have items, use the max ID + 1
+		if ( $auto_increment == 0 && $this->count() > 0 ) {
+			$auto_increment = $this->sort( 'id', 'desc' )->nth( 0 )->id + 1;
 		}
 
 		// Sort the collection
@@ -140,6 +157,9 @@ class Languages implements \Iterator {
 
 		// Reset the position
 		$this->position = 0;
+
+		// Set the auto_increment
+		$this->auto_increment = $auto_increment;
 	}
 
 	/**
@@ -297,7 +317,12 @@ class Languages implements \Iterator {
 		}
 
 		// Add to the index if successful
-		if ( $language && $language->id > 0 ) {
+		if ( $language ) {
+			// If language has no ID, assign it one
+			if ( $language->id == 0 ) {
+				$language->id = ++$this->auto_increment;
+			}
+
 			$this->items[] = $language;
 
 			if ( $sort ) {
@@ -392,6 +417,25 @@ class Languages implements \Iterator {
 			$key = $key_field ? $language->$key_field : $i;
 			$data[ $key ] = $language->$val_field;
 		}
+
+		return $data;
+	}
+
+	/**
+	 * Export a class-agnostic representation of the object.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Languages::dump() to get the items in array form.
+	 * @uses Languages::$auto_increment to store the auto_increment value.
+	 *
+	 * @return array An array with a dump of $items and the $auto_increment.
+	 */
+	public function export() {
+		$data = array(
+			'entries' => $this->dump(),
+			'auto_increment' => $this->auto_increment,
+		);
 
 		return $data;
 	}
