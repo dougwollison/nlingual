@@ -315,7 +315,8 @@ class Liaison extends Handler {
 		// Now ensure all those taxonomies are registered for localization
 		$taxonomies = array_merge( $taxonomies, Registry::get( 'taxonomies' ) );
 		$taxonomies = array_unique( $taxonomies );
-		update_option( 'nlingual_taxonomies', $taxonomies );
+		Registry::set( 'taxonomies', $taxonomies );
+		Registry::save( 'options' );
 
 		wp_redirect( 'admin.php?page=nlingual-localizables&notice=nl-terms-converted' );
 		exit;
