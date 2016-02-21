@@ -129,8 +129,10 @@ class Registry {
 		'post_types' => array(),
 		// - The supported taxonomies.
 		'taxonomies' => array(),
-		// - The list of localizable features.
-		'localizables' => array(),
+		// - The supported nav menus
+		'nav_menu_locations' => array(),
+		// - The supported sidebars
+		'sidebar_locations' => array(),
 
 		/* Synchronization Stuff */
 
@@ -432,7 +434,7 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::get() to get the localizables settings.
+	 * @uses Registry::get() to get the matching localizable list.
 	 * @uses Registry::languages() to get the registered languages.
 	 *
 	 * @param string $item The name of the localizable to check support for.
@@ -440,8 +442,7 @@ class Registry {
 	 */
 	public static function is_feature_localizable( $item, $list ) {
 		// Check if this feature is enabled
-		$localizables = static::get( 'localizables' );
-		if ( ! isset( $localizables[ $item ] ) || ! $localizables[ $item ] ) {
+		if ( ! static::get( $item ) ) {
 			return false;
 		}
 
@@ -461,7 +462,7 @@ class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::get() to get the localizables settings.
+	 * @uses Registry::get() to get the matching localizable list.
 	 *
 	 * @param string $type     The type of location to check for.
 	 * @param string $location The ID of the location to check.
@@ -473,18 +474,18 @@ class Registry {
 		$type .= '_locations';
 
 		// Check if type is present in localizables list
-		$localizables = static::get( 'localizables' );
-		if ( ! isset( $localizables[ $type ] ) ) {
+		$localizables = static::get( $type );
+		if ( ! $localizables ) {
 			return false;
 		}
 
 		// Check if any under $type should be localizable
-		if ( $localizables[ $type ] === true ) {
+		if ( $localizables === true ) {
 			return true;
 		}
 
 		// Check if specified location is localizable
-		if ( in_array( $location, $localizables[ $type ] ) ) {
+		if ( in_array( $location, $localizables ) ) {
 			return true;
 		}
 

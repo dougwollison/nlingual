@@ -484,10 +484,8 @@ class Installer extends Handler {
 		// Update the assigned menus
 		set_theme_mod( 'nav_menu_locations', $new_menus );
 
-		// Add the nav menu locations to the localizables list
-		$localizables = array();
-		$localizables['nav_menu_locations'] = $menu_locations;
-		Registry::set( 'localizables', $localizables );
+		// Store the localizable locations
+		Registry::set( 'nav_menu_locations', $menu_locations );
 
 		/**
 		 * Final cleanup

@@ -494,7 +494,7 @@ class Manager extends Handler {
 
 		// Add if we have any
 		if ( $nav_locations ) {
-			$fields['localizables[nav_menu_locations]'] = array(
+			$fields['nav_menu_locations'] = array(
 				'title' => __( 'Menu Locations' ),
 				'help'  => __( 'Should any navigation menus have versions for each language?' ),
 				'type'  => 'checklist',
@@ -514,7 +514,7 @@ class Manager extends Handler {
 
 		// Add if we have any
 		if ( $sidebars ) {
-			$fields['localizables[sidebar_locations]'] = array(
+			$fields['sidebar_locations'] = array(
 				'title' => __( 'Sidebar Locations' ),
 				'help'  => __( 'Should any widget areas have versions for each language?' ),
 				'type'  => 'checklist',
