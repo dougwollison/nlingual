@@ -162,43 +162,29 @@ class Manager extends Handler {
 	 * @uses Manager::setup_sync_fields() to add fields to the sync options page.
 	 */
 	public static function register_settings() {
-		// Translation Options
-		Settings::register( array(
-			// General settings
-			'default_language'       => 'intval',
-			'localize_date'          => 'intval',
-			'skip_default_l10n'      => 'intval',
-			'patch_wp_locale'        => 'intval',
-			'backwards_compatible'   => 'intval',
-			// Content management settings
-			'show_all_languages'     => 'intval',
-			'trash_sister_posts'     => 'intval',
-			'delete_sister_posts'    => 'intval',
-			// Request/redirection settings
-			'query_var'              => null,
-			'url_rewrite_method'     => null,
-			'post_language_override' => 'intval',
-			'redirection_permanent'  => 'intval',
-		), 'options' );
+		foreach ( array( 'options', 'localizables', 'synchronization' ) as $group ) {
+			register_setting( 'nlingual-' . $group, 'nlingual_options', array( __CLASS__, 'update_options' ) );
+			static::{'setup_' . $group . '_fields'}();
+		}
+	}
 
-		static::setup_options_fields();
+	// =========================
+	// ! Settings Saving
+	// =========================
 
-		// Localizables Options
-		Settings::register( array(
-			'post_types'   => null,
-			'taxonomies'   => null,
-			'localizables' => null,
-		), 'localizables' );
+	/**
+	 * Merge the updated options with the rest before saving.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param mixed $value The options being updated.
+	 *
+	 * @return mixed The merged/sanitized options.
+	 */
+	public static function update_options( $updated_options ) {
+		$all_options = get_option( 'nlingual_options', array() );
 
-		static::setup_localizables_fields();
-
-		// Sync Options
-		Settings::register( array(
-			'sync_rules'  => array( get_called_class(), 'sanitize_rules' ),
-			'clone_rules' => array( get_called_class(), 'sanitize_rules' ),
-		), 'sync' );
-
-		static::setup_sync_fields();
+		return array_merge( $all_options, $updated_options );
 	}
 
 	/**
@@ -241,9 +227,8 @@ class Manager extends Handler {
 		foreach ( $languages as $id => $language ) {
 			// If delete option is present, go straight to deleting it
 			if ( isset( $language['delete'] ) && $language['delete'] ) {
-				if ( $id > 0 ) {
-					$wpdb->delete( $wpdb->nl_languages, array( 'language_id' => $id ), array( '%d' ) );
-				}
+				Translator::delete_language( $id );
+				Registry::languages()->remove( $id );
 				continue;
 			}
 
@@ -284,14 +269,17 @@ class Manager extends Handler {
 			$entry['list_order'] = $i;
 			$i++;
 
-			if ( $id > 0 ) {
-				// Assume existing language; update
-				$wpdb->update( $wpdb->nl_languages, $entry, array( 'language_id' => $id ), $formats, array( '%d' ) );
+			// If the language already exists, update it
+			if ( $language = Registry::languages()->get( $id ) ) {
+				$language->update( $entry );
 			} else {
-				// Assume new language; insert
-				$wpdb->insert( $wpdb->nl_languages, $entry, $formats );
+				// Assume new language and add
+				Registry::languages()->add( $entry );
 			}
 		}
+
+		// Save the registry
+		Registry::save( 'languages' );
 
 		// Check for setting errors; add an "updated" message if none are found
 		if ( ! count( get_settings_errors() ) ) {
@@ -544,14 +532,14 @@ class Manager extends Handler {
 	}
 
 	/**
-	 * Fields for the Sync Options page.
+	 * Fields for the Sync/Clone Rules page.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to retrieve the enabled post types.
 	 * @uses Registry::add_fields() to add the sycn/clone controls for the page.
 	 */
-	protected static function setup_sync_fields() {
+	protected static function setup_synchronization_fields() {
 		// Abort if no post types are registered
 		$post_types = Registry::get( 'post_types' );
 		if ( ! $post_types ) {

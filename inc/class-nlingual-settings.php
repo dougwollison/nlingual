@@ -23,23 +23,6 @@ namespace nLingual;
 
 class Settings {
 	/**
-	 * Register the desired settings.
-	 *
-	 * Prefixes all option names with "nlingual_"
-	 * and the group name with "nlingual-"
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param array  $settings The settings to register, in name => sanitize_callback format.
-	 * @param string $group    The name of the group to register them for.
-	 */
-	public static function register( array $settings, $group ) {
-		foreach ( $settings as $setting => $callback ) {
-			register_setting( "nlingual-{$group}", "nlingual_{$setting}", $callback );
-		}
-	}
-
-	/**
 	 * Add the desired settings field.
 	 *
 	 * Prefixes option name with "nlingual_"
@@ -74,7 +57,7 @@ class Settings {
 		$args = array(
 			'class'     => "nl-settings-field nl-settings-{$page}-field nlingual_{$class}-field",
 			'option'    => $field,
-			'name'      => "nlingual_{$field}",
+			'name'      => "nlingual_options[{$field}]",
 			'label'     => $options['label'],
 			'help'      => $options['help'],
 			'type'      => $options['type'],
@@ -83,7 +66,7 @@ class Settings {
 
 		// Add label_for arg if appropriate
 		if ( ! in_array( $options['type'], array( 'radiolist', 'checklist', 'checkbox', 'sync_settings' ) ) ) {
-			$args['label_for'] = "nlingual_{$field}";
+			$args['label_for'] = sanitize_key( $args['name'] );
 		}
 
 		// Add the settings field
