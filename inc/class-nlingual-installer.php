@@ -403,7 +403,7 @@ class Installer extends Handler {
 		// Grab the language entries, run them through the framework, and save them
 		$entries = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}nL_languages ORDER BY list_order ASC", ARRAY_A );
 		foreach ( $entries as $entry ) {
-			Registry::languages()->add( $entry );
+			Registry::languages()->add( $entry, false );
 		}
 
 		/**
