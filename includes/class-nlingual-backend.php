@@ -58,6 +58,7 @@ class Backend extends Handler {
 
 		// Posts Screen Interface
 		static::add_filter( 'query_vars', 'add_language_var' );
+		static::add_filter( 'display_post_states', 'flag_translated_posts', 10, 2 );
 		static::add_action( 'restrict_manage_posts', 'add_language_filter', 10, 0 );
 		$post_types = Registry::get( 'post_types' );
 		foreach ( $post_types as $post_type ) {
@@ -345,6 +346,35 @@ class Backend extends Handler {
 			$vars[] = $query_var;
 		}
 		return $vars;
+	}
+
+	/**
+	 * Filter the post states list, flagging translated versions where necessary.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array   $post_states The list of post states for the post.
+	 * @param WP_Post $post        The post in question.
+	 *
+	 * @return array The filtered post states list.
+	 */
+	public static function flag_translated_posts( array $post_states, \WP_Post $post ) {
+		// If it's a page and not in the default language...
+		$language = Translator::get_post_language( $post->ID );
+		if ( $post->post_type == 'page' && ! Registry::is_language_default( $language ) ) {
+			$translation = Translator::get_post_translation( $post->ID, Registry::default_language() );
+
+			// Check if it's a translation of the home page
+			if ( $translation == get_option( 'page_on_front' ) ) {
+				$post_states['page_on_front'] = _fx( '%s Front Page', 'front page translation', $language->system_name );
+			}
+			// or the posts page
+			elseif ( $translation == get_option( 'page_for_posts' ) ) {
+				$post_states['page_for_posts'] = _fx( '%s Posts Page', 'front page translation', $language->system_name );
+			}
+		}
+
+		return $post_states;
 	}
 
 	/**
