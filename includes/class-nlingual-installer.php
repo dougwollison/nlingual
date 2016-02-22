@@ -212,8 +212,17 @@ class Installer extends Handler {
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_translations" );
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_localizations" );
 
-		// And delete the options
-		$wpdb->query( "DELETE FROM $wpdb->options WHERE option_name like 'nlingual\_%'" );
+		// And delete all options that may exist
+		foreach ( array(
+			'options',
+			'languages',
+			'database_version',
+			'upgraded',
+			'upgraded_options',
+			'upgraded_tables',
+		) as $option ) {
+			delete_option( "nlingual_{$option}" );
+		}
 	}
 
 	// =========================
@@ -321,7 +330,7 @@ class Installer extends Handler {
 		global $wpdb;
 
 		// Abort if already flagged as converted
-		if ( get_option( '_nlingual_tables_converted' ) ) {
+		if ( get_option( 'nlingual_upgraded_tables' ) ) {
 			return;
 		}
 
@@ -354,7 +363,7 @@ class Installer extends Handler {
 		update_option( 'nlingual_database_version', '2.0.0' );
 
 		// Flag as having been converted
-		add_option( '_nlingual_tables_converted', 1, '', 'no' );
+		add_option( 'nlingual_upgraded_tables', 1, '', 'no' );
 	}
 
 	/**
@@ -371,7 +380,7 @@ class Installer extends Handler {
 		global $wpdb;
 
 		// Abort if already flagged as converted
-		if ( get_option( '_nlingual_options_converted' ) ) {
+		if ( get_option( 'nlingual_upgraded_options' ) ) {
 			return;
 		}
 
@@ -483,6 +492,6 @@ class Installer extends Handler {
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nL_languages" );
 
 		// Flag as having been converted
-		add_option( '_nlingual_options_converted', 1, '', 'no' );
+		add_option( 'nlingual_upgraded_options', 1, '', 'no' );
 	}
 }
