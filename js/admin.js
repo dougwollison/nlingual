@@ -1,4 +1,4 @@
-/* globals alert, prompt, _, Backbone, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n */
+/* globals alert, prompt, Backbone, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n */
 ( function() {
 	var nL = window.nLingual = {};
 
