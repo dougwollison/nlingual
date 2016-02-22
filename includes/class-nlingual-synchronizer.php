@@ -183,7 +183,7 @@ class Synchronizer {
 
 		// Validate $language if an ID
 		if ( ! is_a( $language, __NAMESPACE__ . '\\Language' ) ) {
-			$language = Registry::languages()->get( $language );
+			$language = Registry::get_language( $language );
 			if ( ! $language ) {
 				return false;
 			}

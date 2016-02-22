@@ -108,7 +108,7 @@ function nl_get_lang( $field = null, $language = null ) {
 
 	// Handle fetching of the entire language as an array
 	if ( $field === true ) {
-		$result = Registry::languages()->get( $language )->dump();
+		$result = Registry::get_language( $language )->dump();
 		// Fill fields for old names
 		$result['lang_id'] =& $result['id'];
 		$result['iso']     =& $result['iso_code'];
@@ -130,7 +130,7 @@ function nl_get_lang( $field = null, $language = null ) {
 	}
 
 	// Fetch the language
-	return Registry::languages()->get( $language, $field );
+	return Registry::get_language( $language, $field );
 }
 
 /**
@@ -197,7 +197,7 @@ function nl_split_langs( $text, $language = null, $separator = null, $force = fa
 	if ( is_null( $language ) ) {
 		$language = Registry::current_language();
 	} elseif ( ! is_a( $language, 'nLingual\\Language' ) ) {
-		$language = Registry::languages()->get( $language );
+		$language = Registry::get_language( $language );
 	}
 
 	$index = $language->list_order;

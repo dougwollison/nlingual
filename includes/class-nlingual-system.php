@@ -361,7 +361,7 @@ class System extends Handler {
 
 		// Get the id of the current language or the requested one
 		if ( isset( $args['language'] ) ) {
-			$filter_language = Registry::languages()->get( $args['language'] );
+			$filter_language = Registry::get_language( $args['language'] );
 
 			// If it's not a valid language, return the original list
 			if ( ! $filter_language ) {

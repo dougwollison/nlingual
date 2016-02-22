@@ -66,7 +66,7 @@ class AJAX extends Handler {
 		}
 
 		// Fail if language does not exist
-		$language = Registry::languages()->get( $_REQUEST['language_id'] );
+		$language = Registry::get_language( $_REQUEST['language_id'] );
 		if ( ! $language ) {
 			return;
 		}

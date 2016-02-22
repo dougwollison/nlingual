@@ -90,7 +90,7 @@ class Frontend extends Handler {
 		// First, check if the language was specified by the GET or POST parameters
 		if ( ( $query_var = Registry::get( 'query_var' ) ) && isset( $_REQUEST[ $query_var ] ) ) {
 			// Even if the language specified is invalid, don't fallback from here.
-			$language = Registry::languages()->get( $_REQUEST[ $query_var ] );
+			$language = Registry::get_language( $_REQUEST[ $query_var ] );
 			$mode = 'REQUESTED';
 		}
 		// Failing that, get the language from the url
@@ -400,7 +400,7 @@ class Frontend extends Handler {
 			if ( $item->type == 'nl_language_link' ) {
 				// Language link, set URL to the localized version of the current location
 				// Delete the item if it's for a language that doesn't exist or is inactive
-				if ( $language = Registry::languages()->get( $item->object ) ) {
+				if ( $language = Registry::get_language( $item->object ) ) {
 					$item->url = Rewriter::localize_here( $language );
 				} else {
 					unset( $items[$i] );

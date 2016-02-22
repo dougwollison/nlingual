@@ -210,7 +210,7 @@ class Translator {
 			return false;
 		}
 
-		return Registry::languages()->get( $group['language_by_object'][ $id ] );
+		return Registry::get_language( $group['language_by_object'][ $id ] );
 	}
 
 	/**

@@ -71,7 +71,7 @@ function validate_language( &$language, $default_current = false ) {
 	}
 
 	// Find the language, replace it if so
-	$found = Registry::languages()->get( $language );
+	$found = Registry::get_language( $language );
 	if ( $found !== false ) {
 		$language = $found;
 		return true;

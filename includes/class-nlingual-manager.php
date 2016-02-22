@@ -270,7 +270,7 @@ class Manager extends Handler {
 			$i++;
 
 			// If the language already exists, update it
-			if ( $language = Registry::languages()->get( $id ) ) {
+			if ( $language = Registry::get_language( $id ) ) {
 				$language->update( $entry );
 			} else {
 				// Assume new language and add
