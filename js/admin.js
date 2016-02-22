@@ -139,7 +139,7 @@
 		$( '.nl-preview' ).hide().filter( '.nl-redirect-get' ).show();
 
 		// Changing the method will change which previews are shown
-		$( 'input[name="nlingual_url_rewrite_method"]' ).change( function() {
+		$( 'input[name="nlingual_options[url_rewrite_method]"]' ).change( function() {
 			var method = $( this ).val();
 
 			// Ignore if it's not checked or somehow has no value
