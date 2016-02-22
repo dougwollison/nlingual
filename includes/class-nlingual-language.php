@@ -46,7 +46,7 @@ class Language extends Model {
 	 *
 	 * @var bool
 	 */
-	public $active = false;
+	public $active = true;
 
 	/**
 	 * The slug of the language for URL use.
@@ -173,6 +173,17 @@ class Language extends Model {
 			if ( isset( $values[ $alt_field ] ) ) {
 				$this->$property = $values[ $alt_field ];
 			}
+		}
+
+		// If no iso_code is provided, default
+		// to first 2 characters of locale_name
+		if ( ! $this->iso_code && $this->locale_name ) {
+			$this->iso_code = substr( $this->locale_name, 0, 2 );
+		}
+
+		// If no slug is provided, default to iso_code
+		if ( ! $this->slug && $this->iso_code ) {
+			$this->slug = $this->iso_code;
 		}
 
 		// Ensure $id is integer
