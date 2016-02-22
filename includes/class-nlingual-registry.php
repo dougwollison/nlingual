@@ -249,6 +249,54 @@ class Registry {
 	}
 
 	/**
+	 * Get the sync or cloning rules for a specific object.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::get() to retrive the appropriate rules array.
+	 *
+	 * @param string $rule_type   The type of rules to retrieve ('sync' or 'clone').
+	 * @param string $sections... Optional A list of indexes drilling down into the array.
+	 *
+	 * @return array The array of rules, empty if not found.
+	 */
+	public static function get_rules( $rule_type ) {
+		// Get the rules
+		$rules = Registry::get( $rule_type . '_rules' );
+
+		// Fail if no rules found
+		if ( ! $rules ) {
+			return array();
+		}
+
+		// Get the args as the sections map
+		$sections = func_get_args();
+		array_shift( $sections ); // Skip the first argment (list type)
+
+		// If no section list is present, return the rules
+		if ( ! $sections ) {
+			return $rules;
+		}
+
+		// Loop through the sections list
+		foreach ( $sections as $section ) {
+			// Drill down if an array is found
+			if ( isset( $rules[ $section ] ) && is_array( $rules[ $section ] ) ) {
+				$rules = $rules[ $section ];
+			} else {
+				// Abort and return empty array
+				return array();
+			}
+		}
+
+		return $rules;
+	}
+
+	// =========================
+	// ! Language Accessing
+	// =========================
+
+	/**
 	 * Get the info for a language.
 	 *
 	 * @since 2.0.0
@@ -289,7 +337,7 @@ class Registry {
 			return false;
 		}
 
-		Registry::set( 'current_language', $language->id );
+		static::$current_language = $language->id;
 
 		if ( $lock ) {
 			// Lock the language from being changed again
@@ -385,52 +433,8 @@ class Registry {
 		return static::get_language( $language_id, $field );
 	}
 
-	/**
-	 * Get the sync or cloning rules for a specific object.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Registry::get() to retrive the appropriate rules array.
-	 *
-	 * @param string $rule_type   The type of rules to retrieve ('sync' or 'clone').
-	 * @param string $sections... Optional A list of indexes drilling down into the array.
-	 *
-	 * @return array The array of rules, empty if not found.
-	 */
-	public static function get_rules( $rule_type ) {
-		// Get the rules
-		$rules = Registry::get( $rule_type . '_rules' );
-
-		// Fail if no rules found
-		if ( ! $rules ) {
-			return array();
-		}
-
-		// Get the args as the sections map
-		$sections = func_get_args();
-		array_shift( $sections ); // Skip the first argment (list type)
-
-		// If no section list is present, return the rules
-		if ( ! $sections ) {
-			return $rules;
-		}
-
-		// Loop through the sections list
-		foreach ( $sections as $section ) {
-			// Drill down if an array is found
-			if ( isset( $rules[ $section ] ) && is_array( $rules[ $section ] ) ) {
-				$rules = $rules[ $section ];
-			} else {
-				// Abort and return empty array
-				return array();
-			}
-		}
-
-		return $rules;
-	}
-
 	// =========================
-	// ! Language Testing Tools
+	// ! Language Testing
 	// =========================
 
 	/**
