@@ -87,6 +87,10 @@ class System extends Handler {
 		static::add_filter( 'deleted_post', 'delete_sister_posts', 10, 1 );
 		static::add_filter( 'deleted_post', 'delete_post_language', 11, 1 );
 
+		// URL Rewriting
+		static::add_filter( 'home_url', 'localize_home_url', 10, 3 );
+		static::add_filter( 'page_link', 'localize_page_link', 10, 3 );
+
 		// Query Manipulation
 		static::add_action( 'parse_query', 'maybe_set_queried_language', 10, 1 );
 		static::add_filter( 'posts_join_request', 'add_post_translations_join_clause', 10, 2 );
@@ -166,6 +170,61 @@ class System extends Handler {
 
 		// Rehook now that we're done
 		static::add_action( 'deleted_post', __FUNCTION__, 10, 1 );
+	}
+
+	// =========================
+	// ! URL Rewriting
+	// =========================
+
+	/**
+	 * Localize the home URL.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses NL_UNLOCALIZED to prevent filter recursion.
+	 * @uses Rewriter::localize_url() to create the new url.
+	 *
+	 * @param string      $url     The complete home URL including scheme and path.
+	 * @param string      $path    Path relative to the home URL.
+	 * @param string|null $scheme  Scheme to give the home URL context.
+	 *
+	 * @return string The localized home URL.
+	 */
+	public static function localize_home_url( $url, $path, $scheme ) {
+		// Check if we shouldn't actually localize this
+		// (will be indicated by custom $scheme value)
+		if ( $scheme == NL_UNLOCALIZED ) {
+			return $url;
+		}
+
+		// Return the localized version of the URL
+		return Rewriter::localize_url( $url );
+	}
+
+	/**
+	 * Localize a page's URL.
+	 *
+	 * Namely, detect if it's a translation of the home page and return the localize home URL.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::current_language() to get the current language.
+	 * @uses Translator::get_post_translation() to get the post for that language.
+	 *
+	 * @param string $permalink The permalink of the post.
+	 * @param int    $page_id   The ID of the page.
+	 *
+	 * @return string The localized permalink.
+	 */
+	public static function localize_page_link( $permalink, $page_id ) {
+		$translation = Translator::get_post_translation( $page_id, null, true );
+
+		if ( $translation == get_option( 'page_on_front' ) ) {
+			$language = Translator::get_post_language( $page_id );
+			$permalink = Rewriter::localize_url( home_url( '', NL_UNLOCALIZED ), $language );
+		}
+
+		return $permalink;
 	}
 
 	// =========================

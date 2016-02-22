@@ -44,11 +44,6 @@ class Frontend extends Handler {
 		static::add_filter( 'wp', 'maybe_redirect_language', 10, 0 );
 		static::add_filter( 'redirect_canonical', 'localize_canonical', 10, 2 );
 
-		// URL Rewriting
-		static::add_filter( 'home_url', 'localize_home_url', 10, 3 );
-		static::add_filter( 'page_link', 'localize_page_link', 10, 2 );
-		static::add_filter( 'user_trailingslashit', 'fix_trailingshash', 10, 1 );
-
 		// The Mod rewriting
 		static::add_filter( 'theme_mod_nav_menu_locations', 'localize_nav_menu_locations', 10, 1 );
 		static::add_filter( 'sidebars_widgets', 'localize_sidebar_locations', 10, 1 );
@@ -165,7 +160,7 @@ class Frontend extends Handler {
 			// If the post has a language, and it doesn't match the current one,
 			// And the override is set, or otherwise the language wasn't specified,
 			// Redirect to the post's language
-			if ( $post_language && Registry::is_current_language( $post_language )
+			if ( $post_language && ! Registry::is_language_current( $post_language )
 			&& ( Registry::get( 'post_language_override', false ) || ! defined( 'NL_REQUESTED_LANGUAGE' ) ) ) {
 				$redirect_language = $post_language;
 			}
@@ -219,82 +214,6 @@ class Frontend extends Handler {
 		}
 
 		return $redirect_url;
-	}
-
-	// =========================
-	// ! URL Rewriting
-	// =========================
-
-	/**
-	 * Localize the home URL.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses NL_UNLOCALIZED to prevent filter recursion.
-	 * @uses Rewriter::localize_url() to create the new url.
-	 *
-	 * @param string      $url     The complete home URL including scheme and path.
-	 * @param string      $path    Path relative to the home URL.
-	 * @param string|null $scheme  Scheme to give the home URL context.
-	 *
-	 * @return string The localized home URL.
-	 */
-	public static function localize_home_url( $url, $path, $scheme ) {
-		// Check if we shouldn't actually localize this
-		// (will be indicated by custom $scheme value)
-		if ( $scheme == NL_UNLOCALIZED ) {
-			return $url;
-		}
-
-		// Return the localized version of the URL
-		return Rewriter::localize_url( $url );
-	}
-
-	/**
-	 * Localize a page's URL.
-	 *
-	 * Namely, detect if it's a translation of the home page and return the localize home URL.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Registry::current_language() to get the current language.
-	 * @uses Translator::get_post_translation() to get the post for that language.
-	 *
-	 * @param string $permalink The permalink of the post.
-	 * @param int    $page_id   The ID of the page.
-	 *
-	 * @return string The localized permalink.
-	 */
-	public static function localize_page_link( $permalink, $page_id ) {
-		$current_language = Registry::current_language();
-		$translation = Translator::get_post_translation( $page_id, $current_language, true );
-
-		if ( $translation == get_option( 'page_on_front' ) ) {
-			$permalink = home_url();
-		}
-
-		return $permalink;
-	}
-
-	/**
-	 * Fix the trailing slash on a URL.
-	 *
-	 * Makes sure that the trailing slash before the query string if present.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param string $string The URL being filtered.
-	 *
-	 * @return string The filtered URL.
-	 */
-	public static function fix_trailingshash( $url ) {
-		// First, check if a query string is present
-		if ( strpos( $url, '?' ) !== false ) {
-			// Assuming the query string doesn't follow a slash already, move it to be after the slash
-			$url = preg_replace( '#(?<!/)(\?.*?)/$#', '/$1', $url );
-		}
-
-		return $url;
 	}
 
 	// =========================
