@@ -236,7 +236,7 @@ class Installer extends Handler {
 	 */
 	public static function install() {
 		// Load the language presets
-		require( NL_PLUGIN_DIR . '/includes/presets-languages.php' );
+		$presets = require( NL_PLUGIN_DIR . '/includes/presets-languages.php' );
 
 		// Default options
 		add_option( 'nlingual_options', array() );
