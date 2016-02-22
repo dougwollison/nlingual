@@ -245,17 +245,25 @@ class Translator {
 			throw new Exception( 'The language specified does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
 		}
 
+		// Check the old language
+		$old_language = static::get_object_language( $type, $id );
+		// If it has one and is the same, abort
+		if ( $old_language && $old_language->id == $language->id ) {
+			return true;
+		}
+
 		// Get a group ID for the object, a new on if necessary
 		$group_id = static::get_group_id( $type, $id );
 
 		if ( $group_id ) {
-			// Check if a counterpart for the language in this group exists
-			$language_exists = $wpdb->get_var( $wpdb->prepare( "
+			// Get an object of that type for the language in this group exists
+			$current_object = $wpdb->get_var( $wpdb->prepare( "
 				SELECT object_id FROM $wpdb->nl_translations
-				WHERE group_id = %d AND language_id = %d
-			", $group_id, $language->id ) );
+				WHERE group_id = %d AND language_id = %d AND object_type = %s
+			", $group_id, $language->id, $type ) );
 
-			if ( $language_exists ) {
+			// Check if it exists (and isn't the same object; it shouldn't)
+			if ( $current_object && $current_object != $id ) {
 				// Get a new group ID if so
 				$new_group_id = static::new_group_id();
 			} else {
