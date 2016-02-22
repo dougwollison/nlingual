@@ -235,9 +235,29 @@ class Installer extends Handler {
 	 * @since 2.0.0
 	 */
 	public static function install() {
-		// Default option(s)
+		// Load the language presets
+		require( NL_PLUGIN_DIR . '/includes/presets-languages.php' );
+
+		// Default options
 		add_option( 'nlingual_options', array() );
-		add_option( 'nlingual_languages', array() );
+
+		// Default languages (use site's language)
+		$languages = new Languages();
+
+		// Get the language code for the site
+		$locale = get_locale() ?: 'en_US';
+		$iso = substr( $locale, 0, 2 );
+		// If a preset exists, use it
+		if ( isset( $presets[ $iso ] ) ) {
+			$language = $presets[ $iso ];
+		} else {
+			// default to english otherwise
+			$language = $presets[ 'en' ];
+		}
+
+		// Add the language, save it
+		$languages->add( $language );
+		add_option( 'nlingual_languages', $languages->export() );
 
 		// Load dbDelta utility
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
