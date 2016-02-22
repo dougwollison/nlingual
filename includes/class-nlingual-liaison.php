@@ -433,6 +433,9 @@ class Liaison extends Handler {
 		if ( is_backend() ) {
 			// Flag translations of index pages
 			static::add_filter( 'display_post_states', 'indexpages_flag_translations', 10, 2 );
+
+			// Add notice of the page being a translation of an index page
+			static::add_action( 'edit_form_after_title', 'indexpages_translation_notice', 10, 1 );
 		} else {
 			// Replace the retrieved index page's ID with it's current language counterpart
 			Frontend::add_filter( 'indexpages_get_index_page', 'current_language_post', 10, 1 );
@@ -443,7 +446,7 @@ class Liaison extends Handler {
 	}
 
 	/**
-	 * Filter the post states list, flagging translated versions where necessary.
+	 * Filter the post states list, flagging translated indexes where necessary.
 	 *
 	 * This will also work for the QuickStart version of this utility.
 	 *
@@ -487,5 +490,37 @@ class Liaison extends Handler {
 		}
 
 		return $post_states;
+	}
+
+	/**
+	 * Print a notice about the current page being a translation of an index page.
+	 *
+	 * Unlike WordPress for the Posts page, it will not disabled the editor.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param WP_Post $post The post in question.
+	 */
+	function indexpages_translation_notice( \WP_Post $post ) {
+		$language = Translator::get_post_language( $post->ID );
+
+		// Abort if not a page, or in the default language
+		if ( $post->post_type != 'page' || Registry::is_language_default( $language ) ) {
+			return;
+		}
+
+		$translation = Translator::get_post_translation( $post->ID, Registry::default_language() );
+
+		// Abort if the original is not an index page
+		if ( ! $post_type = IndexPages\Registry::is_index_page( $translation ) ) {
+			return;
+		}
+
+		// Get the plural labe to use
+		$label = strtolower( get_post_type_object( $post_type )->label );
+		echo '<div class="notice notice-warning inline"><p>' .
+			_fx( 'You are currently editing a translation of the page that shows your latest %s.', 'index page translation', $label ) .
+			' <em>' . \__( 'Your current theme may not display the content you write here.', 'index-pages' ) . '</em>' .
+		'</p></div>';
 	}
 }
