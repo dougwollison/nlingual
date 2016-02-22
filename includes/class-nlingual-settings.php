@@ -57,6 +57,7 @@ class Settings {
 		$args = array(
 			'class'     => "nl-settings-field nl-settings-{$page}-field nlingual_{$class}-field",
 			'option'    => $field,
+			'id'        => "nlingual_{$field}",
 			'name'      => "nlingual_options[{$field}]",
 			'label'     => $options['label'],
 			'help'      => $options['help'],
@@ -66,7 +67,7 @@ class Settings {
 
 		// Add label_for arg if appropriate
 		if ( ! in_array( $options['type'], array( 'radiolist', 'checklist', 'checkbox', 'sync_settings' ) ) ) {
-			$args['label_for'] = sanitize_key( $args['name'] );
+			$args['label_for'] = $args['id'];
 		}
 
 		// Add the settings field
@@ -196,12 +197,16 @@ class Settings {
 			case 'checklist':
 			case 'sync_settings':
 				$method = "build_{$args['type']}_field";
-				$cb_args = array( $args['name'], $value, $args['data'] );
+				if ( $args['type'] == 'select' ){
+					$cb_args = array( $args['name'], $args['id'], $value, $args['data'] );
+				} else {
+					$cb_args = array( $args['name'], $value, $args['data'] );
+				}
 				break;
 
 			default:
 				$method = "build_input_field";
-				$cb_args = array( $args['name'], $value, $args['type'], $args['data'] );
+				$cb_args = array( $args['name'], $args['id'], $value, $args['type'], $args['data'] );
 		}
 
 		$html = call_user_func_array( array( get_called_class(), $method ), $cb_args );
@@ -227,18 +232,16 @@ class Settings {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $name       The name/ID of the field.
+	 * @param string $name       The name of the field.
+	 * @param string $id         The ID of the field.
 	 * @param mixed  $value      The value of the field.
 	 * @param string $label      Optional. The label for the input.
 	 * @param array  $attributes Optional. Custom attributes for the field.
 	 *
 	 * @return string The HTML of the field.
 	 */
-	protected static function build_input_field( $name, $value, $type, $attributes = array() ) {
+	protected static function build_input_field( $name, $id, $value, $type, $attributes = array() ) {
 		$html = '';
-
-		// Create an ID out of the name
-		$id = sanitize_key( $name );
 
 		// Ensure $attributes is an array
 		$attributes = (array) $attributes;
@@ -283,15 +286,13 @@ class Settings {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $name    The name/ID of the field.
+	 * @param string $name       The name of the field.
+	 * @param string $id         The ID of the field.
 	 * @param mixed  $value   The value of the field.
 	 * @param array  $options The options for the field.
 	 */
-	protected static function build_select_field( $name, $value, $options ) {
+	protected static function build_select_field( $name, $id, $value, $options ) {
 		$html = '';
-
-		// Create an ID out of the name
-		$id = sanitize_key( $name );
 
 		$html .= sprintf( '<select name="%s" id="%s">', $name, $id );
 		foreach ( $options as $val => $label ) {
@@ -309,7 +310,7 @@ class Settings {
 	 * @since 2.0.0
 	 *
 	 * @param string $type    The input type.
-	 * @param string $name    The name/ID of the field.
+	 * @param string $name    The name of the field.
 	 * @param mixed  $value   The value of the field.
 	 * @param array  $options The options for the field.
 	 */
