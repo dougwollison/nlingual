@@ -349,7 +349,8 @@ class Languages implements \Iterator {
 	 */
 	public function remove( $language ) {
 		// Get the object's index
-		if ( $index = $this->find( $language ) ) {
+		$index = $this->find( $language );
+		if ( $index !== false ) {
 			// Remove it
 			unset( $this->items[ $index ] );
 		}
