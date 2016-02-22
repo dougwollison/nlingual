@@ -291,7 +291,7 @@ class Frontend extends Handler {
 		// First, check if a query string is present
 		if ( strpos( $url, '?' ) !== false ) {
 			// Assuming the query string doesn't follow a slash already, move it to be after the slash
-			$url = preg_replace( '#(?!/)(\?.*?)/$#', '/$1', $url );
+			$url = preg_replace( '#(?<!/)(\?.*?)/$#', '/$1', $url );
 		}
 
 		return $url;
