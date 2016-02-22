@@ -74,7 +74,7 @@ class Backend extends Handler {
 
 		// Admin Notices
 		static::add_action( 'edit_form_top', 'synchronization_notice', 10, 1 );
-		static::add_filter( 'bulk_post_updated_messages', 'bulk_updated_sisters_messages', 20, 1 );
+		static::add_filter( 'bulk_post_updated_messages', 'bulk_updated_sisters_messages', 20, 2 );
 
 		// Saving Post Data
 		static::add_action( 'save_post', 'save_post_language', 10, 1 );
