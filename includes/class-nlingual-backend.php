@@ -58,7 +58,7 @@ class Backend extends Handler {
 
 		// Posts Screen Interface
 		static::add_filter( 'query_vars', 'add_language_var' );
-		static::add_filter( 'display_post_states', 'flag_translated_posts', 10, 2 );
+		static::add_filter( 'display_post_states', 'flag_translated_pages', 10, 2 );
 		static::add_action( 'restrict_manage_posts', 'add_language_filter', 10, 0 );
 		$post_types = Registry::get( 'post_types' );
 		foreach ( $post_types as $post_type ) {
@@ -358,7 +358,7 @@ class Backend extends Handler {
 	 *
 	 * @return array The filtered post states list.
 	 */
-	public static function flag_translated_posts( array $post_states, \WP_Post $post ) {
+	public static function flag_translated_pages( array $post_states, \WP_Post $post ) {
 		// If it's a page and not in the default language...
 		$language = Translator::get_post_language( $post->ID );
 		if ( $post->post_type == 'page' && ! Registry::is_language_default( $language ) ) {
