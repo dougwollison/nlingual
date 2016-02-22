@@ -200,9 +200,9 @@ class Registry {
 	 * @return mixed The property value.
 	 */
 	public static function get( $option, $default = null ) {
-		// Throw "unsupported" error if trying to set an unsupported option
+		// Trigger notice error if trying to set an unsupported option
 		if ( ! static::has( $option ) ) {
-			throw new Exception( "The option '{$option}' is not supported", NL_ERR_UNSUPPORTED );
+			trigger_error( "[nLingual] The option '{$option}' is not supported", E_NOTICE );
 		}
 
 		// Check if it's set, return it's value.
@@ -224,9 +224,9 @@ class Registry {
 	 * @param mixed  $value  The value to assign.
 	 */
 	public static function set( $option, $value = null ) {
-		// Throw "unsupported" error if trying to set an unsupported option
+		// Trigger notice error if trying to set an unsupported option
 		if ( ! static::has( $option ) ) {
-			throw new Exception( "The option '{$option}' is not supported", NL_ERR_UNSUPPORTED );
+			trigger_error( "[nLingual] The option '{$option}' is not supported", E_NOTICE );
 		}
 
 		static::$options[ $option ] = $value;
