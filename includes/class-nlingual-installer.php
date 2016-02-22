@@ -270,7 +270,8 @@ class Installer extends Handler {
 			language_id bigint(20) unsigned NOT NULL,
 			object_type varchar(20) DEFAULT 'post' NOT NULL,
 			object_id bigint(20) unsigned NOT NULL,
-			UNIQUE KEY translation (group_id,language_id,object_type,object_id),
+			UNIQUE KEY object (object_type,object_id),
+			UNIQUE KEY translation (group_id,language_id),
 			KEY group_id (group_id),
 			KEY object_id (object_id)
 		) $charset_collate;";
