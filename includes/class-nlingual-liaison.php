@@ -357,8 +357,15 @@ class Liaison extends Handler {
 
 		// Custom index page feature adjustments
 		if ( current_theme_supports( 'quickstart-index_page' ) ) {
-			// Replace the retrieved index page's ID with it's translation counterpart
-			Frontend::add_filter( 'qs_helper_get_index', 'current_language_post', 10, 1 );
+			// Only run these on the frontend
+			if ( is_backend() ) {
+				// Flag translations of index pages
+				// (uses same as IndexPage's one but it can handle both implementations)
+				static::add_filter( 'display_post_states', 'indexpages_flag_translations', 10, 2 );
+			} else {
+				// Replace the retrieved index page's ID with it's translation counterpart
+				Frontend::add_filter( 'qs_helper_get_index', 'current_language_post', 10, 1 );
+			}
 		}
 
 		// Order manager feature adjustments
@@ -422,10 +429,63 @@ class Liaison extends Handler {
 			return;
 		}
 
-		// Replace the retrieved index page's ID with it's current language counterpart
-		Frontend::add_filter( 'indexpages_get_index_page', 'current_language_post', 10, 1 );
+		// Only run these on the frontend
+		if ( is_backend() ) {
+			// Flag translations of index pages
+			static::add_filter( 'display_post_states', 'indexpages_flag_translations', 10, 2 );
+		} else {
+			// Replace the retrieved index page's ID with it's current language counterpart
+			Frontend::add_filter( 'indexpages_get_index_page', 'current_language_post', 10, 1 );
 
-		// Replace the retrieved index page's ID with it's default language counterpart
-		Frontend::add_filter( 'indexpages_is_index_page', 'default_language_post', 10, 1 );
+			// Replace the retrieved index page's ID with it's default language counterpart
+			Frontend::add_filter( 'indexpages_is_index_page', 'default_language_post', 10, 1 );
+		}
+	}
+
+	/**
+	 * Filter the post states list, flagging translated versions where necessary.
+	 *
+	 * This will also work for the QuickStart version of this utility.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array   $post_states The list of post states for the post.
+	 * @param WP_Post $post        The post in question.
+	 *
+	 * @return array The filtered post states list.
+	 */
+	public static function indexpages_flag_translations( array $post_states, \WP_Post $post ) {
+		// Determine which function to use (IndexPages' Registry::is_index_page() or QuickStart's is_index_page())
+		if ( class_exists( 'IndexPages\Registry' ) ) {
+			$function = array( 'IndexPages\Registry', 'is_index_page' );
+		} elseif ( function_exists( 'is_index_page' ) ) {
+			$function = 'is_index_page';
+		} else {
+			// Somehow neither are available, abort
+			return $post_states;
+		}
+
+		// If it's a page and not in the default language...
+		$language = Translator::get_post_language( $post->ID );
+		if ( $post->post_type == 'page' && ! Registry::is_language_default( $language ) ) {
+			$translation = Translator::get_post_translation( $post->ID, Registry::default_language() );
+
+			// Check if the original is an assigned index page (other than post), get associated post type
+			if ( ( $post_type = call_user_func( $function, $translation ) ) && $post_type !== 'post' ) {
+				$post_type_obj = get_post_type_object( $post_type );
+
+				// Check if the index_page_translation label exists, use that
+				if ( property_exists( $post_type_obj->labels, 'index_page_translation' ) ) {
+					$label = sprintf( $post_type_obj->labels->index_page_translation, $language->system_name );
+				} else {
+					// Use generic one otherwise
+					$label = _fx( '%1$s %2$s Page', 'index page translation', $language->system_name, $post_type_obj->label );
+				}
+
+				$post_states[ "page_for_{$post_type}_posts"] = $label;
+			}
+		}
+
+		return $post_states;
 	}
 }
