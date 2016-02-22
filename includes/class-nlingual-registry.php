@@ -334,9 +334,10 @@ class Registry {
 	 */
 	public static function restore_language() {
 		$last_language = array_pop( static::$previous_languages );
+
+		// If no previous language, go with default
 		if ( ! $last_language ) {
-			// No previous language, go with default
-			$last_language = static::get( 'default_language' );
+			$last_language = static::default_language( 'id' );
 		}
 
 		// Replace $current_language with last language
@@ -356,6 +357,14 @@ class Registry {
 	 */
 	public static function default_language( $field = null ) {
 		$language_id = static::get( 'default_language' );
+
+		// If default_language is not set/valid, default to first language
+		if ( ! $language_id || ! static::$languages->get( $language_id ) ) {
+			$language_id = static::$languages->sort()->nth( 0 )->id;
+			// Also update it for future calls
+			static::set( 'default_language', $language_id );
+		}
+
 		return static::get_language( $language_id, $field );
 	}
 
@@ -372,7 +381,7 @@ class Registry {
 	 * @param string $field Optional. The field to get from the language.
 	 */
 	public static function current_language( $field = null ) {
-		$language_id = static::$current_language ?: static::get( 'default_language' );
+		$language_id = static::$current_language ?: static::default_language( 'id' );
 		return static::get_language( $language_id, $field );
 	}
 
