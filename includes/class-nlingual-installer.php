@@ -313,7 +313,7 @@ class Installer extends Handler {
 
 		// Abort if the site was previously using nLingual 2 or higher
 		if ( version_compare( get_option( 'nlingual_database_version', '1.0.0' ), NL_DB_VERSION, '>=' ) ) {
-			//return false;
+			return false;
 		}
 
 		// If upgrading from nLingual 1, convert tables before updating them
@@ -376,9 +376,10 @@ class Installer extends Handler {
 		// Rename post_id to object_id, placing it after object_type
 		$wpdb->query("ALTER TABLE $wpdb->nl_translations CHANGE `post_id` `object_id` bigint(20) unsigned NOT NULL AFTER `object_type`");
 		// Add the new keys
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD UNIQUE KEY group_lang (group_id, language_id)");
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD UNIQUE KEY group_object (group_id, object_id)");
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD UNIQUE KEY object_type (object_type, object_id)");
+		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD UNIQUE KEY translation (group_id, language_id)");
+		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD UNIQUE KEY object (object_type, object_id)");
+		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD KEY group_id (group_id)");
+		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD KEY object_id (object_id)");
 
 		// Just in case, mark them down as being at least up to 2.0.0
 		update_option( 'nlingual_database_version', '2.0.0' );
