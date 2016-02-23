@@ -212,7 +212,8 @@ class URL extends Model {
 
 		// Add the path
 		if ( $this->path ) {
-			$url .= $this->path;
+			// Ensure leading slash
+			$url .= '/' . ltrim( $this->path, '/' );
 		}
 
 		// Add the query string

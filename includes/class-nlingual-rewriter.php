@@ -141,7 +141,7 @@ class Rewriter {
 							$the_url->meta['language'] = $language;
 
 							// Update the path with the remainder
-							$the_url->path = $matches[2];
+							$the_url->path = '/' . $matches[2];
 						}
 					}
 					break;
