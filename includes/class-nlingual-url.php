@@ -124,17 +124,24 @@ class URL extends Model {
 	/**
 	 * Parse a URL string and load it's components.
 	 *
-	 * @since 2.0.0
+	 * @see URL::parse()
+	 */
+	public function __construct( $url = null, $defaults = array() ) {
+		// If a URL is provided, parse it
+		if ( ! is_null( $url ) ) {
+			$this->parse( $url, $defaults );
+		}
+	}
+
+	/**
+	 * Parse the URL (if string) and load it's components.
+	 *
+	 * since 2.0.0
 	 *
 	 * @param string|array $url      The URL to process.
-	 * @param array        $defaults The default properties to use.
+	 * @param array        $defaults Optional. The default property values.
 	 */
-	public function __construct( $url = null, $defaults ) {
-		// Don't do anything if no URL is provided
-		if ( is_null( $url ) ) {
-			return;
-		}
-
+	public function parse( $url, $defaults = array() ) {
 		// If it's a string, parse it
 		if ( is_string( $url ) ) {
 			$url_data = parse_url( $url );
@@ -163,7 +170,7 @@ class URL extends Model {
 	 *
 	 * @return string $url The URL in string form.
 	 */
-	public function __toString() {
+	public function build() {
 		$url = '';
 
 		// Ensure all useable keys are present
@@ -230,5 +237,14 @@ class URL extends Model {
 		}
 
 		return $url;
+	}
+
+	/**
+	 * Convert to string; alias of URL::build().
+	 *
+	 * @see URL::build()
+	 */
+	public function __toString() {
+		return $this->build();
 	}
 }
