@@ -853,8 +853,7 @@ class Backend extends Handler {
 		// Abort if the nonce doesn't exist/check out, or if the language isn't provided
 		if ( ! isset( $_POST['_nl_nonce'] )
 		|| ! wp_verify_nonce( $_POST['_nl_nonce'], 'update-post_' . $post_id )
-		|| ! isset( $_POST['nlingual_language'] )
-		|| empty( $_POST['nlingual_language'] ) ) {
+		|| ! isset( $_POST['nlingual_language'] ) ) {
 			return;
 		}
 
@@ -913,6 +912,7 @@ class Backend extends Handler {
 		if ( ! isset( $_REQUEST['bulk_edit'] )
 		|| ! isset( $_REQUEST['_nl_nonce'] )
 		|| ! wp_verify_nonce( $_REQUEST['_nl_nonce'], 'bulk-posts' )
+		|| ! isset( $_REQUEST['post'] )
 		|| ! in_array( $post_id, (array) $_REQUEST['post'] )
 		|| ! isset( $_REQUEST['nlingual_bulk_language'] )
 		|| empty( $_REQUEST['nlingual_bulk_language'] )) {
