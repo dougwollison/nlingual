@@ -80,7 +80,6 @@ class Backend extends Handler {
 		// Saving Post Data
 		static::add_action( 'save_post', 'save_post_language', 10, 1 );
 		static::add_action( 'save_post', 'save_post_translations', 10, 1 );
-		static::add_action( 'save_post', 'synchronize_posts', 10, 1 );
 
 		// Menu Editor Meta Box
 		static::add_action( 'admin_head', 'add_nav_menu_meta_box', 10, 0 );
@@ -901,35 +900,6 @@ class Backend extends Handler {
 		} catch ( Exception $e ) {
 			wp_die( __( 'Error assigning translations: one or more languages do not exist.' ) );
 		}
-	}
-
-	/**
-	 * Handle any synchronization with sister posts.
-	 *
-	 * @since 2.0.0
-	 * @uses Synchronizer::sync_post_with_sister() to handle post synchronizing.
-	 *
-	 * @param int $post_id The ID of the post being saved.
-	 */
-	public static function synchronize_posts( $post_id ) {
-		// Abort if doing auto save or it's a revision
-		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || wp_is_post_revision( $post_id ) ) {
-			return;
-		}
-
-		// Unhook this and the language/translation saving hooks to prevent
-		// infinite loop and uncessary language assignemnt
-		static::remove_action( 'save_post', __FUNCTION__, 10 );
-		static::remove_action( 'save_post', 'save_post_language', 10 );
-		static::remove_action( 'save_post', 'save_post_translations', 10 );
-
-		// Now synchronize the post's translations
-		Synchronizer::sync_post_with_sisters( $post_id );
-
-		// Rehook now that we're done
-		static::add_action( 'save_post', __FUNCTION__, 10, 1 );
-		static::add_action( 'save_post', 'save_post_language', 10, 1 );
-		static::add_action( 'save_post', 'save_post_translations', 10, 1 );
 	}
 
 	// =========================
