@@ -459,6 +459,9 @@ class Backend extends Handler {
 			return;
 		}
 
+		// Add a dead nonce field for use by the inlineEdit hook
+		printf( '<input type="hidden" class="nl-nonce" value="%s" />', wp_create_nonce( 'update-post_' . $post_id ) );
+
 		// Start by printing out the language
 		$language = Translator::get_post_language( $post_id );
 		if ( ! $language ) {
@@ -517,6 +520,7 @@ class Backend extends Handler {
 		$languages = Registry::languages();
 		?>
 		<fieldset class="inline-edit-col-right nl-translations-manager">
+			<input type="hidden" name="_nl_nonce" class="nl-nonce" />
 			<div class="inline-edit-col nl-set-language">
 				<label>
 					<span class="title"><?php _e( 'Language' );?></span>
@@ -559,9 +563,6 @@ class Backend extends Handler {
 			</div>
 		</fieldset>
 		<?php
-
-		// Nonce field for save validation
-		wp_nonce_field( 'nlingual_post', '_nl_nonce', false );
 	}
 
 	/**
@@ -593,7 +594,7 @@ class Backend extends Handler {
 			<div class="inline-edit-col">
 				<label>
 					<span class="title"><?php _e( 'Language' );?></span>
-					<select name="nlingual_language" id="nl_language">
+					<select name="nlingual_bulk_language" id="nl_language">
 						<option value="0">&mdash; <?php _e( 'No Change' ); ?> &mdash;</option>
 						<?php
 						// Print the options
@@ -606,9 +607,6 @@ class Backend extends Handler {
 			</div>
 		</fieldset>
 		<?php
-
-		// Nonce field for save validation
-		wp_nonce_field( 'nlingual_post', '_nl_nonce', false );
 	}
 
 	// =========================
@@ -837,6 +835,8 @@ class Backend extends Handler {
 	/**
 	 * Save language settings from the translations meta box.
 	 *
+	 * Also works for the quick-edit interface if _nl_nonce was included.
+	 *
 	 * @since 2.0.0
 	 *
 	 * @uses Translator::set_object_language() to assign/update the post's language.
@@ -866,6 +866,8 @@ class Backend extends Handler {
 
 	/**
 	 * Save translation assignments from the translations meta box.
+	 *
+	 * Also works for the quick-edit interface if _nl_nonce was included.
 	 *
 	 * @since 2.0.0
 	 *

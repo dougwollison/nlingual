@@ -523,6 +523,10 @@
 				var $postRow = $( '#post-' + post_id ),
 					$editRow = $( '#edit-' + post_id );
 
+				// Update the nonce field
+				var nonce = $postRow.find( '.nl-nonce' ).val();
+				$editRow.find( '.nl-nonce' ).val( nonce );
+
 				// Update the language field
 				var post_language = $postRow.find( '.nl-language' ).val();
 				$editRow.find( '.nl-language-input' ).val( post_language ).change();
