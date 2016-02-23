@@ -242,16 +242,16 @@ class System extends Handler {
 	 * @return string The localized permalink.
 	 */
 	public static function localize_page_link( $permalink, $page_id ) {
-		// Get the language
-		$language = Translator::get_post_language( $page_id );
+		// Check if it has a language
+		if ( $language = Translator::get_post_language( $page_id ) ) {
+			// Get the default language translation
+			$translation = Translator::get_post_translation( $page_id, null, true );
 
-		// Get the default language translation
-		$translation = Translator::get_post_translation( $page_id, null, true );
-
-		if ( $translation == get_option( 'page_on_front' ) ) {
-			$permalink = Rewriter::localize_url( home_url( '', NL_UNLOCALIZED ), $language );
-		} else {
-			$permalink = Rewriter::localize_url( $permalink, $language, true );
+			if ( $translation == get_option( 'page_on_front' ) ) {
+				$permalink = Rewriter::localize_url( home_url( '', NL_UNLOCALIZED ), $language );
+			} else {
+				$permalink = Rewriter::localize_url( $permalink, $language, true );
+			}
 		}
 
 		return $permalink;
