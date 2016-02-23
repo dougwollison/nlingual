@@ -52,13 +52,22 @@ class Settings {
 			'data'  => array()
 		) );
 
+		// Handle prefixing the name with nlingual_options
+		if ( preg_match( '/([^\[]+)(\[.+\])/', $field, $matches ) ) {
+			$id = "nlingual_" . trim( preg_replace( '/[\[\]]+/', '_', $field ), '_' );
+			$name = "nlingual_options[{$matches[1]}]{$matches[2]}";
+		} else {
+			$id = "nlingual_{$field}";
+			$name = "nlingual_options[{$field}]";
+		}
+
 		// Build the callback arguments
 		$class = sanitize_key( $field );
 		$args = array(
 			'class'     => "nl-settings-field nl-settings-{$page}-field nlingual_{$class}-field",
 			'option'    => $field,
-			'id'        => "nlingual_{$field}",
-			'name'      => "nlingual_options[{$field}]",
+			'id'        => $id,
+			'name'      => $name,
 			'label'     => $options['label'],
 			'help'      => $options['help'],
 			'type'      => $options['type'],
@@ -412,7 +421,7 @@ class Settings {
 					<?php _e( 'Meta Data' ); ?>
 					<input type="checkbox" class="nl-matchall" data-name="<?php echo "{$name}[post_meta]"; ?>" />
 				</label></h4>
-				<?php echo static::build_input_field( "{$name}[post_meta]", implode( "\n", (array) $value['post_meta'] ), 'textarea', array(
+				<?php echo static::build_input_field( "{$name}[post_meta]", "{$name}_post_meta", implode( "\n", (array) $value['post_meta'] ), 'textarea', array(
 					'class' => 'widefat',
 					'rows' => 5,
 				) ); ?>
