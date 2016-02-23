@@ -255,6 +255,9 @@ class Translator {
 		// Get a group ID for the object, a new on if necessary
 		$group_id = static::get_group_id( $type, $id );
 
+		// Save the old group ID
+		$old_group_id = $group_id;
+
 		if ( $group_id ) {
 			// Get an object of that type for the language in this group exists
 			$current_object = $wpdb->get_var( $wpdb->prepare( "
@@ -265,24 +268,22 @@ class Translator {
 			// Check if it exists (and isn't the same object; it shouldn't)
 			if ( $current_object && $current_object != $id ) {
 				// Get a new group ID if so
-				$new_group_id = static::new_group_id();
-			} else {
-				$new_group_id = $group_id;
+				$group_id = static::new_group_id();
 			}
 		} else {
-			$new_group_id = static::new_group_id();
+			$group_id = static::new_group_id();
 		}
 
 		// Insert a new one
 		$wpdb->replace( $wpdb->nl_translations, array(
-			'group_id'    => $new_group_id,
+			'group_id'    => $group_id,
 			'object_type' => $type,
 			'object_id'   => $id,
 			'language_id' => $language->id,
 		), array( '%d', '%s', '%d', '%d' ) );
 
 		// Flush and update the relevant cache
-		static::flush_cache( $type, $id, $group_id, $new_group_id );
+		static::flush_cache( $type, $id, $old_group_id, $group_id );
 
 		return true;
 	}
