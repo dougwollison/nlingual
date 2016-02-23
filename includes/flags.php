@@ -28,6 +28,15 @@ define( 'NL_UNLOCALIZED', 'NL_UNLOCALIZED' );
 // =========================
 
 /**
+ * Error code for a n invalid action.
+ *
+ * @since 2.0.0
+ *
+ * @var string
+ */
+define( 'NL_ERR_BADREQUEST', 400 );
+
+/**
  * Error code for a forbidden action.
  *
  * @since 2.0.0
