@@ -351,11 +351,11 @@ class Localizer extends Handler {
 
 		if ( ! is_backend() ) {
 			// Setup filtering if needed (frontend only)
-			static::maybe_add_action( 'the_post', 'handle_localized_post_fields', 10, 1 );
+			static::add_action( 'the_post', 'handle_localized_post_fields', 10, 1 );
 		}
 
 		// Add action to handle updating
-		static::maybe_add_action( 'post_updated', 'update_unlocalized_post_fields', 10, 2 );
+		static::add_action( 'post_updated', 'update_unlocalized_post_fields', 10, 2 );
 	}
 
 	/**
@@ -412,11 +412,11 @@ class Localizer extends Handler {
 
 		if ( ! is_backend() ) {
 			// Setup filtering (if not already)
-			static::maybe_add_filter( "get_{$meta_type}_metadata", 'handle_localized_metadata_field', 10, 4 );
+			static::add_filter( "get_{$meta_type}_metadata", 'handle_localized_metadata_field', 10, 4 );
 		}
 
 		// Add action to handle updating
-		static::maybe_add_action( "update_{$meta_type}_metadata", 'update_unlocalized_metadata_field', 10, 4 );
+		static::add_action( "update_{$meta_type}_metadata", 'update_unlocalized_metadata_field', 10, 4 );
 	}
 
 	/**

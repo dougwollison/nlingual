@@ -374,7 +374,7 @@ class Liaison extends Handler {
 		// Order manager feature adjustments
 		if ( current_theme_supports( 'quickstart-order_manager' ) ) {
 			// Set language appropriately
-			static::maybe_add_filter( 'nlingual_pre_set_queried_language', 'quickstart_order_manager_language', 10, 2 );
+			static::add_filter( 'nlingual_pre_set_queried_language', 'quickstart_order_manager_language', 10, 2 );
 		}
 	}
 

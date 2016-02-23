@@ -154,13 +154,13 @@ class System extends Handler {
 		}
 
 		// Unhook this hook to prevent an infinite loop
-		static::remove_action( 'save_post', __FUNCTION__, 20 );
+		$priority = static::remove_action( 'save_post', __FUNCTION__ );
 
 		// Now synchronize the post's translations
 		Synchronizer::sync_post_with_sisters( $post_id, $skip_ids );
 
 		// Rehook now that we're done
-		static::add_action( 'save_post', __FUNCTION__, 20, 1 );
+		static::add_action( 'save_post', __FUNCTION__, $priority, 1 );
 	}
 
 	/**
@@ -193,7 +193,7 @@ class System extends Handler {
 		}
 
 		// Unhook to prevent loop
-		static::remove_action( 'deleted_post', __FUNCTION__, 10 );
+		$priority = static::remove_action( 'deleted_post', __FUNCTION__ );
 
 		// Get the translations of the post
 		$translations = Translator::get_post_translations( $post_id );
@@ -205,7 +205,7 @@ class System extends Handler {
 		}
 
 		// Rehook now that we're done
-		static::add_action( 'deleted_post', __FUNCTION__, 10, 1 );
+		static::add_action( 'deleted_post', __FUNCTION__, $priority, 1 );
 	}
 
 	// =========================

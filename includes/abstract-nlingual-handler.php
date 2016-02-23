@@ -32,6 +32,8 @@ abstract class Handler {
 	/**
 	 * Add an internal method to a filter hook.
 	 *
+	 * Will not add if it already exists for that hook.
+	 *
 	 * @api
 	 *
 	 * @since 2.0.0
@@ -44,7 +46,10 @@ abstract class Handler {
 	 * @param int    $accepted_args Optional. The number of arguments the callback accepts.
 	 */
 	final public static function add_filter( $tag, $method, $priority = 10, $accepted_args = 1 ) {
-		add_filter( $tag, array( get_called_class(), $method ), $priority, $accepted_args );
+		// Only add the filter if it hasn't already been added to the hook
+		if ( has_filter( $tag, array( get_called_class(), $method ) ) === false ) {
+			add_filter( $tag, array( get_called_class(), $method ), $priority, $accepted_args );
+		}
 	}
 
 	/**
@@ -55,7 +60,7 @@ abstract class Handler {
 	}
 
 	/**
-	 * Remove an internal method to a filter hook.
+	 * Remove an internal method from a filter hook.
 	 *
 	 * @api
 	 *
@@ -63,12 +68,18 @@ abstract class Handler {
 	 *
 	 * @see remove_filter() for details.
 	 *
-	 * @param string $tag      The name of the filter to hook the $method to.
-	 * @param string $method   The name of the called class' method to run when applied.
-	 * @param int    $priority Optional. The priority to use for this particular callback.
+	 * @param string $tag    The name of the filter to remove from.
+	 * @param string $method The name of the called class' method to remove.
+	 *
+	 * @return bool|int The priority it originally had (false if wasn't added).
 	 */
-	final public static function remove_filter( $tag, $method, $priority = 10 ) {
-		remove_filter( $tag, array( get_called_class(), $method ), $priority );
+	final public static function remove_filter( $tag, $method ) {
+		// Get old priority, only remove if it had one
+		$priority = has_filter( $tag, array( get_called_class(), $method ) );
+		if ( $priority !== false ) {
+			remove_filter( $tag, array( get_called_class(), $method ), $priority );
+			return $priority;
+		}
 	}
 
 	/**
@@ -76,31 +87,6 @@ abstract class Handler {
 	 */
 	final public static function remove_action() {
 		call_user_func_array( 'self::remove_filter', func_get_args() );
-	}
-
-	/**
-	 * Add an internal method to a filter hook if it hasn't already been.
-	 *
-	 * @api
-	 *
-	 * @since 2.0.0
-	 *
-	 * @see Handler::add_filter() for argument details.
-	 *
-	 * @param string $tag    The name of the filter to hook the $method to.
-	 * @param string $method The name of the called class' method to add/check for.
-	 */
-	final public static function maybe_add_filter( $tag, $method ) {
-		if ( ! has_filter( $tag, array( get_called_class(), $method ) ) ) {
-			call_user_func_array( 'self::add_filter', func_get_args() );
-		}
-	}
-
-	/**
-	 * @see Handler::maybe_add_filter()
-	 */
-	final public static function maybe_add_action() {
-		call_user_func_array( 'self::maybe_add_filter', func_get_args() );
 	}
 
 	/**
