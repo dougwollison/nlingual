@@ -740,9 +740,9 @@ class Translator {
 			// Build target method name
 			$method = $action . '_object_' . $meta;
 
-			// If the method does not exist, throw an error
+			// If the method does not exist, throw exception
 			if ( ! method_exists( __CLASS__, $method ) ) {
-				throw new Exception( sprintf( 'Call to unrecognized method alias %s::%s()', __CLASS__, $name ), NL_ERR_UNSUPPORTED );
+				throw new Exception( _f( 'Call to unrecognized method alias %s::%s()', __CLASS__, $name ), NL_ERR_UNSUPPORTED );
 			}
 
 			// Add the $type argument
