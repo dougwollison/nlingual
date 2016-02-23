@@ -180,8 +180,8 @@ class Liaison extends Handler {
 	public static function redirect_old_localize_here_array_hook( $url, $old_url, Language $language ) {
 		// Only apply the old filter if there are hooks registered to it.
 		if ( has_filter( 'nLingual_localize_here_array' ) ) {
-			// Conver to data array
-			$url_data = Rewriter::parse_url( $url );
+			// Convert to data array
+			$the_url = new URL( $url );
 
 			/**
 			 * Filter the $url_data of the localized current URL.
@@ -191,10 +191,10 @@ class Liaison extends Handler {
 			 * @param array  $url_data The new localized URL.
 			 * @param string $lang     The slug of the language requested.
 			 */
-			$url_data = apply_filters( 'nLingual_localize_here_array', $url_data, $language->slug );
+			$url_data = apply_filters( 'nLingual_localize_here_array', $the_url->dump(), $language->slug );
 
-			// Build the filtered URL
-			$url = Rewriter::build_url( $url_data );
+			// Update and build the filtered URL
+			$url = $the_url->update( $url_data )->build();
 		}
 
 		return $url;

@@ -59,143 +59,6 @@ class Rewriter {
 	}
 
 	// =========================
-	// ! URL Parsing/Building
-	// =========================
-
-	/**
-	 * Parse a URL, including it's query string, with optional default values.
-	 *
-	 * An extension of PHP's native parse_url().
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param string $url      The url to parse.
-	 * @param array  $defaults Optional. The default values for the components list.
-	 *
-	 * @return array The URL components list.
-	 */
-	public static function parse_url( $url, $defaults = array() ) {
-		// If it's a string, parse into components list
-		if ( is_string( $url ) ) {
-			$url = parse_url( $url );
-		}
-		// If not an array, fail
-		elseif ( ! is_array( $url ) ) {
-			return false;
-		}
-
-		// Parse components with defaults
-		$url = wp_parse_args( $url, $defaults );
-
-		// If a query is set, parse that into a new args entry
-		if ( isset( $url['query'] ) ) {
-			parse_str( $url['query'], $url['args'] );
-			unset( $url['query'] );
-		}
-
-		return $url;
-	}
-
-	/**
-	 * Build a URL from provided parts.
-	 *
-	 * Primarily a stand-in for http_build_url since it may
-	 * not be available. Can return a relative URL if no host
-	 * is specified and also supports a paged parameter for
-	 * pagination permalinks.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param array $data The parsed URL parts.
-	 *		@option string "scheme"   the URL scheme (http, https, etc.).
-	 *		@option string "user"     the username.
-	 *		@option string "pass"     the password.
-	 *		@option string "host"     the host name.
-	 *		@option int    "port"     the port number.
-	 *		@option string "path"     the URI path.
-	 *		@option int    "paged"    the paged parameter (for WordPress)
-	 *		@option string "query"    the query string.
-	 *		@option array  "args"     the query args (overrites "query" option).
-	 *		@option string "fragment" the document fragment.
-	 *
-	 * @return string The assembled URL.
-	 */
-	public static function build_url( $data ) {
-		$url = '';
-
-		// Ensure all useable keys are present
-		$data = array_merge( array(
-			'scheme'   => null,
-			'user'     => null,
-			'pass'     => null,
-			'host'     => null,
-			'port'     => null,
-			'path'     => null,
-			'paged'    => null,
-			'query'    => null,
-			'args'     => null,
-			'fragment' => null,
-		), $data );
-
-		// Build the query string if args are present
-		if ( is_array( $data['args'] ) ) {
-			$data['query'] = http_build_query( $data['args'] );
-		}
-
-		// Add the paged parameter to the path if present
-		if ( $data['paged'] ) {
-			$data['path'] .= sprintf( 'page/%d/', $data['paged'] );
-		}
-
-		// Start with the scheme
-		if ( $data['scheme'] ) {
-			$url .= $data['scheme'] . '://';
-
-			// Next add the host
-			if ( $data['host'] ) {
-				// First add username/password (unlikely but why not?)
-				if ( $data['user'] ) {
-					$url .= $data['user'];
-
-					// Add password
-					if ( $data['pass'] ) {
-						$url .= ':' . $data['pass'];
-					}
-
-					// Finish with @ symbol
-					if ( $data['user'] ) {
-						$url .= '@';
-					}
-				}
-
-				$url .= $data['host'];
-
-				// Add the port
-				if ( $data['port'] ) {
-					$url .= ':' . $data['port'];
-				}
-			}
-		}
-
-		// Add the path
-		if ( $data['path'] ) {
-			$url .= $data['path'];
-		}
-
-		// Add the query string
-		if ( $data['query'] ) {
-			$url .= '?' . $data['query'];
-		}
-
-		// Finishe with the fragment
-		if ( $data['fragment'] ) {
-			$url .= '#' . $data['fragment'];
-		}
-
-		return $url;
-	}
-
-	// =========================
 	// ! URL Processing
 	// =========================
 
@@ -208,15 +71,14 @@ class Rewriter {
 	 *
 	 * @uses NL_UNLOCALIZED to get the unlocalized home URL.
 	 * @uses Registry::languages() to get the active registered languages.
-	 * @uses Rewriter::parse_url() to parse the URL data.
 	 * @uses Registry::get() to get the query var and redirection method options.
 	 *
-	 * @param mixed  $url_data     The URL string or parsed array to process.
-	 * @param string $single_field Optional A specific field to return instead of the full array.
+	 * @param mixed $url_data        Optional. The URL string or parsed array to process.
+	 * @param bool  $return_language Optional. Wether or not to return just the language.
 	 *
-	 * @return array|string An array of the resulting language and true hostname/path, or the requested field.
+	 * @return URL The parsed and processed URL object.
 	 */
-	public static function process_url( $url_data = null, $single_field = false ) {
+	public static function process_url( $url_data = null, $return_language = false ) {
 		$language = null;
 
 		// Get the home URL (unlocalized)
@@ -234,85 +96,74 @@ class Rewriter {
 		}
 
 		// Parse it
-		$url_data = static::parse_url( $url_data, array(
-			'host'      => '',
-			'path'      => '/',
-			'query'     => '',
-			'args'      => array(),
-			'language'  => null
+		$the_url = new URL( $url_data, array(
+			'path' => '/',
 		) );
 
 		// Check if the language was already part of the arguments
 		$query_var = Registry::get( 'query_var' );
-		if ( isset( $url_data['args'][ $query_var ] ) ) {
-			$url_data['language'] = $url_data['args'][ $query_var ];
-			unset( $url_data['args'][ $query_var ] );
+		if ( isset( $the_url->args[ $query_var ] ) ) {
+			$the_url->meta['language'] = $the_url->args[ $query_var ];
 
-			// Return the results now
-			return $url_data;
-		}
+			return $the_url;
+		} else {
+			// Try using the desired method
+			switch( Registry::get( 'url_rewrite_method' ) ) {
+				case 'domain':
+					// Get the subdirectory if found, see if it matches a language
+					if ( preg_match( '#^([a-z\-]+)\.(.+)#i', $the_url->host, $matches ) ) {
+						if ( $language = $active_languages->get( $matches[1] ) ) {
+							// Update language with the matched
+							$the_url->meta['language'] = $language;
 
-		$host = $url_data['host'];
-		$path = $url_data['path'];
-
-		// Try using the desired method
-		switch( Registry::get( 'url_rewrite_method' ) ) {
-			case 'domain':
-				// Get the subdirectory if found, see if it matches a language
-				if ( preg_match( '#^([a-z\-]+)\.(.+)#i', $host, $matches ) ) {
-					if ( $language = $active_languages->get( $matches[1] ) ) {
-						// Update language with the matched
-						$url_data['language'] = $language;
-
-						// Replace $path with the remainder of the URL
-						$url_data['host'] = $matches[2];
+							// Update the host with the remainder
+							$the_url->host = $matches[2];
+						}
 					}
-				}
-				break;
-
-			case 'path':
-				// Get the path of the home URL, with trailing slash
-				$home = trailingslashit( parse_url( $home, PHP_URL_PATH ) );
-
-				// Subtract the home path from the start of the path provided
-				$path = substr( $path, strlen( $home ) );
-
-				// If there's nothing left of $path (e.g. if $path == $home) abort
-				if ( ! $path ) {
 					break;
-				}
 
-				// Get the subdirectory if found, see if it matches a language
-				if ( preg_match( '#^([a-z\-]+)(?:/(.*)|$)#i', $path, $matches ) ) {
-					if ( $language = $active_languages->get( $matches[1] ) ) {
-						// Update language with the matched
-						$url_data['language'] = $language;
+				case 'path':
+					// Get the path of the home URL, with trailing slash
+					$home_path = trailingslashit( parse_url( $home, PHP_URL_PATH ) );
 
-						// Replace $path with the remainder of the URL
-						$path = $matches[2];
+					// Subtract the home path from the start of the path provided
+					$path = substr( $the_url->path, strlen( $home_path ) );
+
+					// If there's nothing left of $path (e.g. if $path == $home) abort
+					if ( ! $path ) {
+						break;
 					}
-				}
 
-				$url_data['path'] = $home . $path;
-				break;
+					// Get the subdirectory if found, see if it matches a language
+					if ( preg_match( '#^([a-z\-]+)(?:/(.*)|$)#i', $path, $matches ) ) {
+						if ( $language = $active_languages->get( $matches[1] ) ) {
+							// Update language with the matched
+							$the_url->meta['language'] = $language;
+
+							// Update the path with the remainder
+							$the_url->path = $matches[2];
+						}
+					}
+					break;
+			}
 		}
 
 		/**
-		 * Filter the $url_data array.
+		 * Filter the $the_url object.
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param array $url_data     The updated URL data.
-		 * @param array $old_url_data The original URL data.
+		 * @param URL   $the_url      The updated URL object.
+		 * @param mixed $old_url_data The original URL data.
 		 */
-		$url_data = apply_filters( 'nlingual_process_url', $url_data, $old_url_data );
+		$the_url = apply_filters( 'nlingual_process_url', $the_url, $old_url_data );
 
-		// Return specified field if desired
-		if ( $single_field ) {
-			return isset( $url_data[ $single_field ] ) ? $url_data[ $single_field ] : null;
+		// Return just the language if desired
+		if ( $return_language ) {
+			return $the_url->meta['language'];
 		}
 
-		return $url_data;
+		return $the_url;
 	}
 
 	// =========================
@@ -331,7 +182,6 @@ class Rewriter {
 	 * @uses Rewriter::process_url() to process the URL into it's components.
 	 * @uses Registry::is_language_default() to check if the language provided is the default.
 	 * @uses Registry::get() to get the skip_default_l10n, url_rewrite_method and query_var options.
-	 * @uses Rewriter::build_url() to assemble the new URL from the modified components.
 	 *
 	 * @param string $url        The URL to parse.
 	 * @param mixed  $language   Optional. The desired language to localize to.
@@ -400,39 +250,40 @@ class Rewriter {
 			}
 
 			// Process
-			$url_data = static::process_url( $url );
+			$the_url = new URL( $url );
 
 			// If no language could be gleaned,
 			// and provided it's not a wordpress internal URL,
 			// AND if we're not in the default language (provided skip_defalt_l10n is on)
 			// Go ahead and localize the URL
-			if ( is_null( $url_data['language'] )
-			&& ! preg_match( '#^wp-([\w-]+.php|(admin|content|includes)/)#', $url_data['path'] )
+			if ( is_null( $the_url->meta['language'] )
+			&& ! preg_match( '#^wp-([\w-]+.php|(admin|content|includes)/)#', $the_url->path )
 			&& ( ! Registry::is_language_default( $language ) || ! Registry::get( 'skip_default_l10n' ) ) ) {
 				switch ( Registry::get( 'url_rewrite_method' ) ) {
 					case 'domain':
 						// Prepend hostname with language slug
-						$url_data['host'] = "{$language->slug}.{$url_data['host']}";
+						$the_url->host = "{$language->slug}.{$the_url->host}";
 						break;
 					case 'path':
 						// Add language slug to path (after any home path)
 						$home_path = parse_url( $home, PHP_URL_PATH ) ?: '';
-						$request_path = substr( $url_data['path'], strlen( $home_path ) );
+						$request_path = substr( $the_url->path, strlen( $home_path ) );
 
 						// Trim excess slashes
 						$home_path = trim( $home_path, '/' );
 						$request_path = trim( $request_path, '/' );
 
 						// Build the new path
-						$url_data['path'] = trailingslashit( $home_path . "/{$language->slug}/" . $request_path );
+						$the_url->path = trailingslashit( $home_path . "/{$language->slug}/" . $request_path );
 						break;
 					default:
 						// Add the query argument
 						$query_var = Registry::get( 'query_var' );
-						$url_data['args'][ $query_var ] = $language->slug;
+						$the_url->args[ $query_var ] = $language->slug;
 				}
 
-				$url = static::build_url( $url_data );
+				// Compile to string
+				$url = $the_url->build();
 			}
 		}
 
@@ -443,7 +294,7 @@ class Rewriter {
 		 *
 		 * @param string   $url        The new localized URL.
 		 * @param string   $old_url    The original URL passed to this function.
-		 * @param Language $language       The slug of the language requested.
+		 * @param Language $language   The language requested.
 		 * @param bool     $relocalize Whether or not to forcibly relocalize the URL.
 		 */
 		$url = apply_filters( 'nlingual_localize_url', $url, $old_url, $language, $relocalize );
@@ -460,7 +311,6 @@ class Rewriter {
 	 * @since 2.0.0
 	 *
 	 * @uses Rewriter::process_url() to extract the language if present.
-	 * @uses Rewriter::build_url() to remake the URL sans-language.
 	 *
 	 * @param string $url The URL to delocalize.
 	 *
@@ -468,11 +318,11 @@ class Rewriter {
 	 */
 	public static function delocalize_url( $url ) {
 		// Parse and process the url
-		$url_data = static::process_url( $url );
+		$the_url = static::process_url( $url );
 
 		// If a language was extracted, rebuild the $url
-		if ( $url_data['language'] ) {
-			$url = static::build_url( $url_data );
+		if ( isset( $the_url->meta['language'] ) ) {
+			$url = $the_url->build();
 		}
 
 		return $url;
@@ -489,7 +339,6 @@ class Rewriter {
 	 * @uses Registry::restore_language() to switch back to the previous language.
 	 * @uses Rewriter::localize_url() to localize the current URI as-is.
 	 * @uses Rewriter::process_url() to localize the original URL of the page.
-	 * @uses Rewriter::build_url() to build the localized URL from it's components.
 	 * @uses Translator::get_post_translation() to get the page/post's translation.
 	 *
 	 * @param mixed $language The language to localize the current page for.
@@ -560,18 +409,18 @@ class Rewriter {
 		}
 
 		// Now parse the URL
-		$url_data = static::parse_url( $url, array( 'args' => array() ) );
+		$the_url = new URL( $url );
 
 		// Merge the args with the $_GET variables
-		$url_data['args'] = wp_parse_args( $url_data['args'], $_GET );
+		$the_url->args = array_merge( $the_url->args, $_GET );
 
 		// Check if paged and add entry to $url_data
 		if ( is_paged() ) {
-			$url_data['paged'] .= get_query_var( 'paged' );
+			$the_url->paged = get_query_var( 'paged' );
 		}
 
 		// Build the URL
-		$url = static::build_url( $url_data );
+		$url = $the_url->build();
 
 		/**
 		 * Filter the URL.
@@ -579,10 +428,10 @@ class Rewriter {
 		 * @since 2.0.0
 		 *
 		 * @param string   $url      The new URL.
-		 * @param array    $url_data The parsed URL data.
+		 * @param URL      $the_url  The parsed URL object.
 		 * @param Language $language The desired language to localize for.
 		 */
-		$url = apply_filters( 'nlingual_localize_here', $url, $url_data, $language );
+		$url = apply_filters( 'nlingual_localize_here', $url, $the_url, $language );
 
 		return $url;
 	}
