@@ -142,14 +142,25 @@ class System extends Handler {
 			return;
 		}
 
+		$skip_ids = array();
+		// If doing a bulk edit, and this is one of the intended posts,
+		// make sure to skip all listed posts
+		if ( isset( $_REQUEST['bulk_edit'] )
+		&& isset( $_REQUEST['_nl_nonce'] )
+		&& wp_verify_nonce( $_REQUEST['_nl_nonce'], 'bulk-posts' )
+		&& isset( $_REQUEST['post'] )
+		&& in_array( $post_id, (array) $_REQUEST['post'] ) ) {
+			$skip_ids = (array) $_REQUEST['post'];
+		}
+
 		// Unhook this hook to prevent an infinite loop
-		static::remove_action( 'save_post', __FUNCTION__, 10 );
+		static::remove_action( 'save_post', __FUNCTION__, 20 );
 
 		// Now synchronize the post's translations
-		Synchronizer::sync_post_with_sisters( $post_id );
+		Synchronizer::sync_post_with_sisters( $post_id, $skip_ids );
 
 		// Rehook now that we're done
-		static::add_action( 'save_post', __FUNCTION__, 10, 1 );
+		static::add_action( 'save_post', __FUNCTION__, 20, 1 );
 	}
 
 	/**

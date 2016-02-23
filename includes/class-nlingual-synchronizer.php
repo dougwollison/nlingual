@@ -135,14 +135,17 @@ class Synchronizer {
 	 * @uses Translator::get_object_translations() to get the posts sisters.
 	 * @uses Synchronizer::sync_posts() to sync the post with each sister.
 	 *
-	 * @param int $post_id The ID of the post to synchronize with.
+	 * @param int   $post_id  The ID of the post to synchronize with.
+	 * @param array $skip_ids A blacklist of IDs to not sync with.
 	 */
-	public static function sync_post_with_sisters( $post_id ) {
+	public static function sync_post_with_sisters( $post_id, $skip_ids = array() ) {
 		// Get the translations
 		$translations = Translator::get_post_translations( $post_id );
 
 		foreach ( $translations as $translation ) {
-			static::sync_posts( $post_id, $translation );
+			if ( ! in_array( $translation, $skip_ids ) ) {
+				static::sync_posts( $post_id, $translation );
+			}
 		}
 	}
 
