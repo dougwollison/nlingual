@@ -84,6 +84,7 @@ class System extends Handler {
 		static::add_action( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
 
 		// Post Changes
+		static::add_action( 'save_post', 'synchronize_posts', 10, 1 );
 		static::add_filter( 'deleted_post', 'delete_sister_posts', 10, 1 );
 		static::add_filter( 'deleted_post', 'delete_post_language', 11, 1 );
 
@@ -126,6 +127,30 @@ class System extends Handler {
 	// =========================
 	// ! Post Changes
 	// =========================
+
+	/**
+	 * Handle any synchronization with sister posts.
+	 *
+	 * @since 2.0.0
+	 * @uses Synchronizer::sync_post_with_sister() to handle post synchronizing.
+	 *
+	 * @param int $post_id The ID of the post being saved.
+	 */
+	public static function synchronize_posts( $post_id ) {
+		// Abort if doing auto save or it's a revision
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || wp_is_post_revision( $post_id ) ) {
+			return;
+		}
+
+		// Unhook this hook to prevent an infinite loop
+		static::remove_action( 'save_post', __FUNCTION__, 10 );
+
+		// Now synchronize the post's translations
+		Synchronizer::sync_post_with_sisters( $post_id );
+
+		// Rehook now that we're done
+		static::add_action( 'save_post', __FUNCTION__, 10, 1 );
+	}
 
 	/**
 	 * Delete the language for a post being deleted.
