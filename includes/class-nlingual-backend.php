@@ -80,6 +80,7 @@ class Backend extends Handler {
 		// Saving Post Data
 		static::add_action( 'save_post', 'save_post_language', 10, 1 );
 		static::add_action( 'save_post', 'save_post_translations', 10, 1 );
+		static::add_action( 'save_post', 'bulk_save_post_language', 10, 1 );
 
 		// Menu Editor Meta Box
 		static::add_action( 'admin_head', 'add_nav_menu_meta_box', 10, 0 );
@@ -607,6 +608,9 @@ class Backend extends Handler {
 			</div>
 		</fieldset>
 		<?php
+
+		// Nonce fields for save validation
+		wp_nonce_field( 'bulk-posts', '_nl_nonce', false );
 	}
 
 	// =========================
@@ -792,9 +796,6 @@ class Backend extends Handler {
 		// Get the current screen
 		$screen = get_current_screen();
 
-		// Get the IDs of the updated posts
-		$ids = isset( $_REQUEST['ids'] ) ? $_REQUEST['ids'] : array();
-
 		// Abort if current post type is not supported
 		if ( ! Registry::is_post_type_supported( $screen->post_type ) ) {
 			return $bulk_notices;
@@ -881,7 +882,7 @@ class Backend extends Handler {
 			return;
 		}
 
-		// Abort if the nonce doesn't exist/check out, or if the translations aren't provided
+		// Abort if the nonce fails, or if the translations aren't provided
 		if ( ! isset( $_POST['_nl_nonce'] )
 		|| ! wp_verify_nonce( $_POST['_nl_nonce'], 'update-post_' . $post_id )
 		|| ! isset( $_POST['nlingual_translation'] )
@@ -894,6 +895,32 @@ class Backend extends Handler {
 			Translator::set_post_translations( $post_id, $_POST['nlingual_translation'] );
 		} catch ( Exception $e ) {
 			wp_die( __( 'Error assigning translations: one or more languages do not exist.' ) );
+		}
+	}
+
+	/**
+	 * Save the language sent via the bulk-edit interface.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param int $post_id The ID of the post being saved.
+	 */
+	public static function bulk_save_post_language( $post_id ) {
+		// Abort if not a bulk edit (nonce fails), no language set,
+		// or not one of the intended posts
+		if ( ! isset( $_REQUEST['bulk_edit'] )
+		|| ! isset( $_REQUEST['_nl_nonce'] )
+		|| ! wp_verify_nonce( $_REQUEST['_nl_nonce'], 'bulk-posts' )
+		|| ! isset( $_REQUEST['nlingual_bulk_language'] )
+		|| ! in_array( $post_id, (array) $_REQUEST['post'] ) ) {
+			return;
+		}
+
+		// Assign the post to the language, fail if there's an error
+		try {
+			Translator::set_post_language( $post_id, $_REQUEST['nlingual_bulk_language'] );
+		} catch ( Exception $e ) {
+			wp_die( __( 'Error assigning language: the selected language does not exist.' ) );
 		}
 	}
 
