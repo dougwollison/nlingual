@@ -45,6 +45,8 @@ abstract class Model {
 	 * @uses Model::$properties.
 	 *
 	 * @param array $values The values to update.
+	 *
+	 * @return static The object.
 	 */
 	public function update( $values ) {
 		// Set all values provided
@@ -53,6 +55,8 @@ abstract class Model {
 				$this->$key = $value;
 			}
 		}
+
+		return $this;
 	}
 
 	/**
