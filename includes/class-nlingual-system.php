@@ -84,7 +84,7 @@ class System extends Handler {
 		static::add_action( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
 
 		// Post Changes
-		static::add_action( 'save_post', 'synchronize_posts', 10, 1 );
+		static::add_action( 'save_post', 'synchronize_posts', 20, 1 );
 		static::add_filter( 'deleted_post', 'delete_sister_posts', 10, 1 );
 		static::add_filter( 'deleted_post', 'delete_post_language', 11, 1 );
 
