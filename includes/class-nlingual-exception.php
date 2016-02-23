@@ -67,29 +67,8 @@ class Exception extends \Exception {
 	    // Begin the initial message
 	    $message = __CLASS__ . ': ' . $this->message;
 
-	    // Append the relevant stack trace info based on error code
-	    $trace = $this->getTrace();
-	    switch ( $this->code ) {
-		    case NL_ERR_FORBIDDEN:
-		    case NL_ERR_NOTFOUND:
-		    case NL_ERR_UNSUPPORTED:
-		    	// First, mention the source
-		    	$message .= " via " . static::get_step_function( $trace[0] );
-
-		    	// The trigger would be the next step in the trace, unless it's via a magic method
-		    	if ( $trace[1]['function'] == 'call_user_func_array' && $trace[2]['function'] == '__callStatic' ) {
-			    	// Identify the function that called it and where it was called
-			    	$message .= " by " . static::get_step_function( $trace[4] ) . " in {$trace[3]['file']} on line {$trace[3]['line']}";
-		    	} else {
-			    	// Identify where it was called
-			    	$message .= " in {$trace[1]['file']} on line {$trace[1]['line']}";
-		    	}
-		    	break;
-
-		    default:
-		    	// Include everything
-		    	$message .= "\nStack trace:\n" . $this->getTraceAsString();
-	    }
+	    // Append the stack trace
+	    $message .= "\nStack trace:\n" . $this->getTraceAsString();
 
 	    return $message;
     }
