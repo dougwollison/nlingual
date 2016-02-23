@@ -127,20 +127,8 @@ class URL extends Model {
 	public $meta = array();
 
 	// =========================
-	// ! Methods
+	// ! Parse/Build Methods
 	// =========================
-
-	/**
-	 * Parse a URL string and load it's components.
-	 *
-	 * @see URL::parse()
-	 */
-	public function __construct( $url = null, $defaults = array() ) {
-		// If a URL is provided, parse it
-		if ( ! is_null( $url ) ) {
-			$this->parse( $url, $defaults );
-		}
-	}
 
 	/**
 	 * Parse the URL (if string) and load it's components.
@@ -238,6 +226,22 @@ class URL extends Model {
 		}
 
 		return $url;
+	}
+
+	// =========================
+	// ! Setup/Magic Methods
+	// =========================
+
+	/**
+	 * Parse a URL string and load it's components.
+	 *
+	 * @see URL::parse()
+	 */
+	public function __construct( $url = null, $defaults = array() ) {
+		// If a URL is provided, parse it
+		if ( ! is_null( $url ) ) {
+			$this->parse( $url, $defaults );
+		}
 	}
 
 	/**
