@@ -113,12 +113,12 @@ class Liaison extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param array $url_data     The updated URL data.
+	 * @param URL   $the_url      The processed URL object.
 	 * @param mixed $old_url_data The original URL data.
 	 *
-	 * @return array The filtered URL data.
+	 * @return URL The filtered URL object.
 	 */
-	public static function redirect_old_process_url_hook( $url_data, $old_url_data ) {
+	public static function redirect_old_process_url_hook( URL $the_url, $old_url_data ) {
 		// Only apply the old filter if there are hooks registered to it.
 		if ( has_filter( 'nLingual_process_url' ) ) {
 			/**
@@ -129,10 +129,13 @@ class Liaison extends Handler {
 			 * @param array $url_data     The updated URL data.
 			 * @param mixed $old_url_data The original URL data.
 			 */
-			$url_data = apply_filters( 'nLingual_process_url', $url_data, $old_url_data );
+			$url_data = apply_filters( 'nLingual_process_url', $the_url->dump(), $old_url_data );
+
+			// Update with the filtered URL data
+			$the_url->update( $url_data );
 		}
 
-		return $url_data;
+		return $the_url;
 	}
 
 	/**
