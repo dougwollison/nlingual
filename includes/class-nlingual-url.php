@@ -109,7 +109,16 @@ class URL extends Model {
 	public $args = array();
 
 	/**
-	 * Special-use meta data.
+	 * The page parameter.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var array
+	 */
+	public $page = null;
+
+	/**
+	 * Miscellaneous meta data.
 	 *
 	 * @since 2.0.0
 	 *
@@ -173,19 +182,6 @@ class URL extends Model {
 	public function build() {
 		$url = '';
 
-		// Ensure all useable keys are present
-		$data = array_merge( array(
-			'scheme'   => null,
-			'user'     => null,
-			'password' => null,
-			'host'     => null,
-			'port'     => null,
-			'path'     => null,
-			'query'    => null,
-			'args'     => null,
-			'fragment' => null,
-		), $data );
-
 		// Build the query string if args are present
 		if ( is_array( $this->args ) ) {
 			$this->query = http_build_query( $this->args );
@@ -219,6 +215,11 @@ class URL extends Model {
 					$url .= ':' . $this->port;
 				}
 			}
+		}
+
+		// If the page property is present, add it to the path
+		if ( $this->page ) {
+			$this->path = sprintf( 'page/%d/', $this->page );
 		}
 
 		// Add the path
