@@ -114,7 +114,7 @@ class Liaison extends Handler {
 	 * @since 2.0.0
 	 *
 	 * @param array $url_data     The updated URL data.
-	 * @param array $old_url_data The original URL data.
+	 * @param mixed $old_url_data The original URL data.
 	 *
 	 * @return array The filtered URL data.
 	 */
@@ -127,7 +127,7 @@ class Liaison extends Handler {
 			 * @deprecated Use "nlingual_process_url" instead (case-sensitive).
 			 *
 			 * @param array $url_data     The updated URL data.
-			 * @param array $old_url_data The original URL data.
+			 * @param mixed $old_url_data The original URL data.
 			 */
 			$url_data = apply_filters( 'nLingual_process_url', $url_data, $old_url_data );
 		}
