@@ -741,7 +741,7 @@ class Backend extends Handler {
 		<?php
 
 		// Nonce fields for save validation
-		wp_nonce_field( 'nlingual_post', '_nl_nonce', false );
+		wp_nonce_field( 'update-post_' . $post->ID, '_nl_nonce', false );
 	}
 
 	// =========================
@@ -849,14 +849,11 @@ class Backend extends Handler {
 			return;
 		}
 
-		// Check for the nonce and language
-		if ( ! isset( $_REQUEST['_nl_nonce'] ) || ! isset( $_REQUEST['nlingual_language'] ) ) {
+		// Abort if the nonce doesn't exist/check out, or if the language isn't provided
+		if ( ! isset( $_POST['_nl_nonce'] )
+		|| ! wp_verify_nonce( $_POST['_nl_nonce'], 'update-post_' . $post_id )
+		|| ! isset( $_POST['nlingual_language'] ) ) {
 			return;
-		}
-
-		// Fail if nonce is invalid
-		if ( ! wp_verify_nonce( $_REQUEST['_nl_nonce'], 'nlingual_post' ) ) {
-			cheatin();
 		}
 
 		// Assign the post to the language, fail if there's an error
@@ -882,21 +879,17 @@ class Backend extends Handler {
 			return;
 		}
 
-		// Check for the nonce and translations list
-		if ( ! isset( $_REQUEST['_nl_nonce'] )
-		|| ! isset( $_REQUEST['nlingual_translation'] )
-		|| ! is_array( $_REQUEST['nlingual_translation'] ) ) {
+		// Abort if the nonce doesn't exist/check out, or if the translations aren't provided
+		if ( ! isset( $_POST['_nl_nonce'] )
+		|| ! wp_verify_nonce( $_POST['_nl_nonce'], 'update-post_' . $post_id )
+		|| ! isset( $_POST['nlingual_translation'] )
+		|| ! is_array( $_POST['nlingual_translation'] ) ) {
 			return;
-		}
-
-		// Fail if nonce is invalid
-		if ( ! wp_verify_nonce( $_REQUEST['_nl_nonce'], 'nlingual_post' ) ) {
-			cheatin();
 		}
 
 		// Assign the translations, fail if there's an error
 		try {
-			Translator::set_post_translations( $post_id, $_REQUEST['nlingual_translation'] );
+			Translator::set_post_translations( $post_id, $_POST['nlingual_translation'] );
 		} catch ( Exception $e ) {
 			wp_die( __( 'Error assigning translations: one or more languages do not exist.' ) );
 		}
