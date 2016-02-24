@@ -437,6 +437,68 @@ class Rewriter {
 	}
 
 	// =========================
+	// ! URL Generation
+	// =========================
+
+	/**
+	 * Get the permalink for a post in the desired language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses validate_language() to validate the language and get the Language object.
+	 * @uses Translator::get_object_translation() to get the post's translation.
+	 *
+	 * @param int   $post_id  The ID of the post.
+	 * @param mixed $language Optional. The desired language (defaults to current).
+	 *
+	 * @return string The translation's permalink.
+	 */
+	public static function get_permalink( $post_id, $language = null ) {
+		// Ensure $language is a Language, defaulting to current
+		if ( ! validate_language( $language, true ) ) {
+			// Doesn't exit; resort to original permalink
+			return get_permalink( $post_id );
+		}
+
+		// Get the translation counterpart
+		$translation_id = static::get_post_translation( $post_id, $language );
+
+		// Return the translations permalink
+		return get_permalink( $translation_id );
+	}
+
+	/**
+	 * Get the translated version of the post based on the path.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Translator::get_permalink() to get the permalink for the matched post's translation.
+	 *
+	 * @param string $path      The path (in /parent/child/ or /page/ form) of the page to find.
+	 * @param string $post_type The post type it should be looking for (defaults to page).
+	 * @param mixed  $language  The slug of the language requested (defaults to current language).
+	 *
+	 * @return string The translated permalink.
+	 */
+	public static function translate_link( $path, $post_type = null, $language = null ) {
+		// Default to page for post type
+		if ( ! $post_type ) {
+			$post_type = 'page';
+		}
+
+		// Get the ID based on the path provided
+		$post = get_page_by_path( trim( $path, '/' ), OBJECT, $post_type );
+
+		// Abort if not found
+		if ( ! $post ) {
+			return null;
+		}
+
+		// Get the translation's permalink
+		return static::get_permalink( $post->ID, $language );
+	}
+
+	// =========================
 	// ! Utilities
 	// =========================
 

@@ -90,6 +90,58 @@ class Backend extends Handler {
 	}
 
 	// =========================
+	// ! Utilities
+	// =========================
+
+	/**
+	 * Get the number of posts in a specific language.
+	 *
+	 * Filter by post type and status.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @param mixed  $language_id The id of the language to get the count for.
+	 * @param string $post_type   The post type to filter by.
+	 * @param string $post_status The post status to filter by.
+	 *
+	 * @return int The number of posts found.
+	 */
+	public static function language_posts_count( $language_id, $post_type = null, $post_status = null ) {
+		global $wpdb;
+
+		$query = "
+		SELECT COUNT(p.ID)
+		FROM $wpdb->posts AS p
+			LEFT JOIN $wpdb->nl_translations AS t
+				ON p.ID = t.object_id AND t.object_type = 'post'
+		";
+
+		// Add language filter appropriately
+		if ( $language_id ) {
+			$query .= $wpdb->prepare( "WHERE t.language_id = %d", $language_id );
+		} else {
+			$query .= "WHERE t.language_id IS NULL";
+		}
+
+		// Add post_type filter if applicable
+		if ( ! is_null( $post_type ) ) {
+			$query .= $wpdb->prepare( " AND p.post_type = %s", $post_type );
+		}
+
+		// Add post_status filter if applicable
+		if ( ! is_null( $post_status ) ) {
+			$query .= $wpdb->prepare( " AND p.post_status = %s", $post_status );
+		}
+
+		// Run the query and return the results
+		$count = $wpdb->get_var( $query );
+
+		return intval( $count );
+	}
+
+	// =========================
 	// ! Post-Setup Stuff
 	// =========================
 
@@ -385,7 +437,7 @@ class Backend extends Handler {
 	 * @uses Registry::is_post_type_supported() to check for support.
 	 * @uses Registry::get() to retrieve the query var.
 	 * @uses Registry::languages() to loop through all registered languages.
-	 * @uses Translator::language_posts_count() to get the post count for each language.
+	 * @uses Backend::language_posts_count() to get the post count for each language.
 	 */
 	public static function add_language_filter() {
 		global $typenow, $wp_query;
@@ -409,11 +461,11 @@ class Backend extends Handler {
 		<select name="<?php echo $query_var; ?>" class="postform">
 			<option value="-1"><?php _e( 'All Languages' ); ?></option>
 			<?php
-			$count = Translator::language_posts_count( 0, $post_type, $post_status );
+			$count = Backend::language_posts_count( 0, $post_type, $post_status );
 			printf( '<option value="%s" %s>%s (%s)</option>', 0, $current == '0' ? 'selected' : '', __( 'No Language' ), $count );
 			foreach ( Registry::languages( 'active' ) as $language ) {
 				$selected = $current == $language->slug;
-				$count = Translator::language_posts_count( $language->id, $post_type, $post_status );
+				$count = Backend::language_posts_count( $language->id, $post_type, $post_status );
 				printf( '<option value="%s" %s>%s (%d)</option>', $language->slug, $selected ? 'selected' : '', $language->system_name, $count );
 			}
 			?>
