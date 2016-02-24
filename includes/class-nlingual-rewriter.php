@@ -41,6 +41,17 @@ class Rewriter {
 	// =========================
 
 	/**
+	 * Get $do_localization.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return bool The value.
+	 */
+	public static function will_do_localization() {
+		return static::$do_localization;
+	}
+
+	/**
 	 * Set $do_localization.
 	 *
 	 * @since 2.0.0
