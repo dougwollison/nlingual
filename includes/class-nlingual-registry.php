@@ -583,7 +583,7 @@ class Registry {
 	 * @return bool Wether or not the post type(s) are supported.
 	 */
 	public static function is_post_type_supported( $post_types ) {
-		$post_types = (array) $post_types; // Covnert to array
+		$post_types = (array) $post_types; // Convert to array
 
 		// Get the supported post types list
 		$supported = static::get( 'post_types' );
@@ -607,7 +607,7 @@ class Registry {
 	 * @return bool Wether or not the taxonomy(ies) are supported.
 	 */
 	public static function is_taxonomy_supported( $taxonomies ) {
-		$taxonomies = (array) $taxonomies; // Covnert to array
+		$taxonomies = (array) $taxonomies; // Convert to array
 
 		// Get the supported post types list
 		$supported = static::get( 'taxonomies' );
