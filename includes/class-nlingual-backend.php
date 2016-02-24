@@ -249,56 +249,6 @@ class Backend extends Handler {
 	}
 
 	// =========================
-	// ! Script/Style Enqueues
-	// =========================
-
-	/**
-	 * Enqueue necessary styles and scripts.
-	 *
-	 * @since 2.0.0
-	 */
-	public static function enqueue_assets() {
-		// Admin styling
-		wp_enqueue_style( 'nlingual-admin', plugins_url( 'css/admin.css', NL_PLUGIN_FILE ), '2.0.0', 'screen' );
-
-		// Admin javascript
-		wp_enqueue_script( 'nlingual-admin-js', plugins_url( 'js/admin.js', NL_PLUGIN_FILE ), array( 'backbone', 'jquery-ui-sortable' ), '2.0.0' );
-
-		// Localize the javascript
-		wp_localize_script( 'nlingual-admin-js', 'nlingualL10n', array(
-			'TranslationTitle'            => __( 'Enter the title for this translation.' ),
-			'TranslationTitlePlaceholder' => __( 'Translate to %s: %s' ),
-			'NewTranslationError'         => __( 'Error creating translation, please try again later or create one manually.' ),
-			'NoPostSelected'              => __( 'No post selected to edit.' ),
-			'NewTranslation'              => __( '[New]' ),
-			'LocalizeThis'                => __( 'Localize This' ),
-			'LocalizeFor'                 => __( 'Localize for %s' ),
-		) );
-	}
-
-	/**
-	 * Patch the use of Open Sans for better character display.
-	 *
-	 * Replaces the relevant font stacks to include Tahoma, so that
-	 * character sets like Arabic display (and nicely) in Chrome.
-	 *
-	 * @since 2.0.0
-	 */
-	public static function fix_open_sans() {
-		if ( wp_style_is( 'open-sans', 'enqueued' ) ) {
-			?>
-			<style id="nlingual-open-sans-fix" type="text/css" media="all">
-				body,
-				#wpadminbar,
-				#wpadminbar * {
-					font-family: 'Open Sans', Helvetica, Tahoma, Arial, sans-serif;
-				}
-			</style>
-			<?php
-		}
-	}
-
-	// =========================
 	// ! Menu/Sidebar Localization
 	// =========================
 
@@ -799,89 +749,6 @@ class Backend extends Handler {
 	}
 
 	// =========================
-	// ! Admin Notices
-	// =========================
-
-	/**
-	 * Print notice about sister posts being synchronized during update.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param \WP_Post $post The current post being edited.
-	 */
-	public static function synchronization_notice( \WP_Post $post ) {
-		// page or "post"?
-		if ( $post->post_type == 'page' ) {
-			$message = __( 'The translations of this page have been updated accordingly.' );
-		} else {
-			$message = __( 'The translations of this post have been updated accordingly.' );
-		}
-
-		// Check that...
-		if (
-			// The post was updated in some manner
-			isset( $_GET['message'] ) && in_array( $_GET['message'], array( 1, 4, 6, 8, 9, 10 ) )
-			// And the post type supports translation
-			&& Registry::is_post_type_supported( $post->post_type )
-			// And the post type has syncronization rules specified
-			&& Registry::get_rules( 'sync', 'post_type', $post->post_type )
-			// And the post has sister translations
-			&& Translator::get_post_translations( $post->ID )
-		) : ?>
-		<div class="notice notice-info is-dimissable">
-			<p><?php echo $message; ?></p>
-		</div>
-		<?php endif;
-	}
-
-	/**
-	 * Print notice about any sister posts being updated/trashed/deleted.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param array $bulk_messages Arrays of messages per post type.
-	 * @param array $bulk_counts   Array of item counts for each message.
-	 *
-	 * @return array The filtered message arrays.
-	 */
-	public static function bulk_updated_sisters_messages( $bulk_notices, $bulk_counts ) {
-		// Get the current screen
-		$screen = get_current_screen();
-
-		// Abort if current post type is not supported
-		if ( ! Registry::is_post_type_supported( $screen->post_type ) ) {
-			return $bulk_notices;
-		}
-
-		// Create the addendums
-		$updated_addendum   = __( 'Any associated translations have been synchronized accordingly.' );
-		$deleted_addendum   = __( 'Any associated translations have also been deleted.' );
-		$trashed_addendum   = __( 'Any associated translations have also been moved.' );
-		$untrashed_addendum = __( 'Any associated translations have also been restored.' );
-
-		// Add addendums to every set of messages
-		foreach ( $bulk_notices as &$notices ) {
-			// Get the rules for this post type
-			$sync_rules = Registry::get_rules( 'sync', 'post_type', $screen->post_type );
-
-			if ( $sync_rules ) {
-				$notices['updated'] .= ' ' . $updated_addendum;
-			}
-
-			if ( isset( $sync_rules['post_fields'] ) && in_array( 'post_status', $sync_rules['post_fields'] ) ) {
-				$notices['trashed'] .= ' ' . $trashed_addendum;
-				$notices['untrashed'] .= ' ' . $untrashed_addendum;
-			}
-
-			if ( Registry::get( 'delete_sister_posts' ) ) {
-				$notices['deleted'] .= ' ' . $deleted_addendum;
-			}
-		}
-
-		return $bulk_notices;
-	}
-
-	// =========================
 	// ! Saving Post Data
 	// =========================
 
@@ -980,6 +847,89 @@ class Backend extends Handler {
 	}
 
 	// =========================
+	// ! Admin Notices
+	// =========================
+
+	/**
+	 * Print notice about sister posts being synchronized during update.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param \WP_Post $post The current post being edited.
+	 */
+	public static function synchronization_notice( \WP_Post $post ) {
+		// page or "post"?
+		if ( $post->post_type == 'page' ) {
+			$message = __( 'The translations of this page have been updated accordingly.' );
+		} else {
+			$message = __( 'The translations of this post have been updated accordingly.' );
+		}
+
+		// Check that...
+		if (
+			// The post was updated in some manner
+			isset( $_GET['message'] ) && in_array( $_GET['message'], array( 1, 4, 6, 8, 9, 10 ) )
+			// And the post type supports translation
+			&& Registry::is_post_type_supported( $post->post_type )
+			// And the post type has syncronization rules specified
+			&& Registry::get_rules( 'sync', 'post_type', $post->post_type )
+			// And the post has sister translations
+			&& Translator::get_post_translations( $post->ID )
+		) : ?>
+		<div class="notice notice-info is-dimissable">
+			<p><?php echo $message; ?></p>
+		</div>
+		<?php endif;
+	}
+
+	/**
+	 * Print notice about any sister posts being updated/trashed/deleted.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $bulk_messages Arrays of messages per post type.
+	 * @param array $bulk_counts   Array of item counts for each message.
+	 *
+	 * @return array The filtered message arrays.
+	 */
+	public static function bulk_updated_sisters_messages( $bulk_notices, $bulk_counts ) {
+		// Get the current screen
+		$screen = get_current_screen();
+
+		// Abort if current post type is not supported
+		if ( ! Registry::is_post_type_supported( $screen->post_type ) ) {
+			return $bulk_notices;
+		}
+
+		// Create the addendums
+		$updated_addendum   = __( 'Any associated translations have been synchronized accordingly.' );
+		$deleted_addendum   = __( 'Any associated translations have also been deleted.' );
+		$trashed_addendum   = __( 'Any associated translations have also been moved.' );
+		$untrashed_addendum = __( 'Any associated translations have also been restored.' );
+
+		// Add addendums to every set of messages
+		foreach ( $bulk_notices as &$notices ) {
+			// Get the rules for this post type
+			$sync_rules = Registry::get_rules( 'sync', 'post_type', $screen->post_type );
+
+			if ( $sync_rules ) {
+				$notices['updated'] .= ' ' . $updated_addendum;
+			}
+
+			if ( isset( $sync_rules['post_fields'] ) && in_array( 'post_status', $sync_rules['post_fields'] ) ) {
+				$notices['trashed'] .= ' ' . $trashed_addendum;
+				$notices['untrashed'] .= ' ' . $untrashed_addendum;
+			}
+
+			if ( Registry::get( 'delete_sister_posts' ) ) {
+				$notices['deleted'] .= ' ' . $deleted_addendum;
+			}
+		}
+
+		return $bulk_notices;
+	}
+
+	// =========================
 	// ! Menu Editor Meta Box
 	// =========================
 
@@ -1038,6 +988,56 @@ class Backend extends Handler {
 			</p>
 		</div>
 		<?php
+	}
+
+	// =========================
+	// ! Script/Style Enqueues
+	// =========================
+
+	/**
+	 * Enqueue necessary styles and scripts.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function enqueue_assets() {
+		// Admin styling
+		wp_enqueue_style( 'nlingual-admin', plugins_url( 'css/admin.css', NL_PLUGIN_FILE ), '2.0.0', 'screen' );
+
+		// Admin javascript
+		wp_enqueue_script( 'nlingual-admin-js', plugins_url( 'js/admin.js', NL_PLUGIN_FILE ), array( 'backbone', 'jquery-ui-sortable' ), '2.0.0' );
+
+		// Localize the javascript
+		wp_localize_script( 'nlingual-admin-js', 'nlingualL10n', array(
+			'TranslationTitle'            => __( 'Enter the title for this translation.' ),
+			'TranslationTitlePlaceholder' => __( 'Translate to %s: %s' ),
+			'NewTranslationError'         => __( 'Error creating translation, please try again later or create one manually.' ),
+			'NoPostSelected'              => __( 'No post selected to edit.' ),
+			'NewTranslation'              => __( '[New]' ),
+			'LocalizeThis'                => __( 'Localize This' ),
+			'LocalizeFor'                 => __( 'Localize for %s' ),
+		) );
+	}
+
+	/**
+	 * Patch the use of Open Sans for better character display.
+	 *
+	 * Replaces the relevant font stacks to include Tahoma, so that
+	 * character sets like Arabic display (and nicely) in Chrome.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function fix_open_sans() {
+		if ( wp_style_is( 'open-sans', 'enqueued' ) ) {
+			?>
+			<style id="nlingual-open-sans-fix" type="text/css" media="all">
+				body,
+				#wpadminbar,
+				#wpadminbar * {
+					font-family: 'Open Sans', Helvetica, Tahoma, Arial, sans-serif;
+				}
+			</style>
+			<?php
+		}
 	}
 
 	// =========================
