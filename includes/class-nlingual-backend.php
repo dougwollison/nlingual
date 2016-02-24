@@ -40,7 +40,7 @@ class Backend extends Handler {
 			return;
 		}
 
-		// Post-setup stuff
+		// Setup stuff
 		static::add_action( 'plugins_loaded', 'load_textdomain', 10, 0 );
 		static::add_action( 'plugins_loaded', 'setup_documentation', 10, 0 );
 		static::add_action( 'plugins_loaded', 'prepare_rules', 10, 0 );
@@ -142,7 +142,7 @@ class Backend extends Handler {
 	}
 
 	// =========================
-	// ! Post-Setup Stuff
+	// ! Setup Stuff
 	// =========================
 
 	/**

@@ -80,7 +80,7 @@ class System extends Handler {
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
-		// Post-setup stuff
+		// Setup Stuff
 		static::add_action( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
 
 		// Post Changes
