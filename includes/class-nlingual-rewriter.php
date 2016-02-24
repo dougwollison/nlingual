@@ -41,21 +41,38 @@ class Rewriter {
 	// =========================
 
 	/**
+	 * Set $do_localization.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return bool The old value.
+	 */
+	public static function toggle_localization( $value ) {
+		$old_value = static::$do_localization;
+		static::$do_localization = $value;
+		return $old_value;
+	}
+
+	/**
 	 * Set $do_localization to true.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @return bool The old value.
 	 */
 	public static function enable_localization() {
-		static::$do_localization = true;
+		return static::toggle_localization( true );
 	}
 
 	/**
 	 * Set $do_localization to false.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @return bool The old value.
 	 */
 	public static function disable_localization() {
-		static::$do_localization = false;
+		return static::toggle_localization( false );
 	}
 
 	// =========================
