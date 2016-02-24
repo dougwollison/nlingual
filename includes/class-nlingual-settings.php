@@ -204,7 +204,7 @@ class Settings {
 			// Not actually fields
 			case 'notice':
 				$method = "print_notice";
-				$cb_args = array( $args['name'], $value, $args['data'] );
+				$cb_args = array( $args['data'] );
 				break;
 
 			// Special fields
@@ -449,8 +449,7 @@ class Settings {
 	 * @param mixed  $value The value of the field.
 	 * @param string $text  The notice text.
 	 */
-	protected static function print_notice( $name, $value, $text ) {
-		printf( '<input type="hidden" name="%s" value="%s" />', $name, $value );
+	protected static function print_notice( $text ) {
 		printf( '<p><span class="nl-settings-notice">%s</span></p>', $text );
 	}
 }
