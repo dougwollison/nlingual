@@ -647,7 +647,13 @@ class Registry {
 	public static function can_use_rewrites() {
 		global $wp_rewrite;
 
-		return ! empty( $wp_rewrite->using_permalinks() );
+		if ( $wp_rewrite ) {
+			// Use WP_Rewrite's check
+			return ! empty( $wp_rewrite->using_permalinks() );
+		} else {
+			// Does not exist yet, check permalink_structure option
+			return ! empty( get_option( 'permalink_structure' ) );
+		}
 	}
 
 	// =========================
