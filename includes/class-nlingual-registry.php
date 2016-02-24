@@ -647,7 +647,7 @@ class Registry {
 	public static function can_use_rewrites() {
 		global $wp_rewrite;
 
-		return ! empty( $wp_rewrite->permalink_structure );
+		return ! empty( $wp_rewrite->using_permalinks() );
 	}
 
 	// =========================
