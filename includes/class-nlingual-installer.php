@@ -100,7 +100,7 @@ class Installer extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @uses Registry::languages() to get the languages.
 	 * @uses Localizer::save_string_value() to save the localized values of the string.
@@ -163,7 +163,7 @@ class Installer extends Handler {
 	 *
 	 * @todo Set default language to the current one of the install.
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 */
 	public static function plugin_activate() {
 		if ( ! static::plugin_security_check( 'activate' ) ) {
@@ -199,7 +199,7 @@ class Installer extends Handler {
 	 *
 	 * @uses Installer::plugin_security_check() to check for WP_UNINSTALL_PLUGIN.
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 */
 	public static function plugin_uninstall() {
 		global $wpdb;
@@ -304,7 +304,7 @@ class Installer extends Handler {
 	 * @uses Installer::install_tables() to install/upgrade database tables.
 	 * @uses Installer::convert_options() to convert relevant plugin and blog options.
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @return bool Wether or not an upgrade was performed.
 	 */
@@ -345,7 +345,7 @@ class Installer extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 */
 	protected static function convert_tables() {
 		global $wpdb;
@@ -393,7 +393,7 @@ class Installer extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @uses Installer::get_old_option() to fetch/archive general/sync options.
 	 * @uses Installer::convert_split_string() to convert blog name/description.

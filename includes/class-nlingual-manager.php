@@ -192,7 +192,7 @@ class Manager extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 */
 	public static function save_languages() {
 		global $wpdb;
@@ -302,7 +302,7 @@ class Manager extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global WP_Rewrite $wp_rewrite The rewrite API.
+	 * @global \WP_Rewrite $wp_rewrite The rewrite API.
 	 *
 	 * @uses Registry::language() to get the list of registered languages.
 	 * @uses Languages::export() to export the language list to an array.

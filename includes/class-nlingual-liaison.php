@@ -212,7 +212,7 @@ class Liaison extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 */
 	public static function compatibility_convert_terms_notice() {
 		global $wpdb;
@@ -250,7 +250,7 @@ class Liaison extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @uses Installer::convert_split_string() to handle split term names/descriptions.
 	 */

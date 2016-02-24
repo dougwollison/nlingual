@@ -452,7 +452,7 @@ class Frontend extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @uses Registry::is_post_type_supported() to check for post type support.
 	 *
@@ -482,7 +482,7 @@ class Frontend extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @uses Registry::is_post_type_supported() to check for post type support.
 	 * @uses Translator::get_post_language() to get the language of the current post.

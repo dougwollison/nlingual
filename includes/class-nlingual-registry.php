@@ -640,7 +640,7 @@ class Registry {
 	 *
 	 * @internal Used by the Registry and Manager.
 	 *
-	 * @global WP_Rewrite $wp_rewrite The WordPress rewrite API.
+	 * @global \WP_Rewrite $wp_rewrite The WordPress rewrite API.
 	 *
 	 * @return bool Wether or not rewriting can be used.
 	 */

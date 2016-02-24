@@ -465,7 +465,7 @@ class Localizer extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @param string $key         The field key to search for.
 	 * @param int    $language_id The language ID to match.
@@ -508,7 +508,7 @@ class Localizer extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @uses Localizer::$fields_by_key to check if any fields are registered under this key.
 	 * @uses Registry::languages() to fill out empty slots for each language as needed.
@@ -554,7 +554,7 @@ class Localizer extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @uses Localizer::$fields_by_key to check if any fields are registered under this key.
 	 *
@@ -1053,7 +1053,7 @@ class Localizer extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 */
 	public static function preload_localized_fields() {
 		global $wpdb;

@@ -71,7 +71,7 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @return int The new group ID.
 	 */
@@ -91,7 +91,7 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @param string $type The type of object.
 	 * @param int    $id   The ID of the object.
@@ -125,7 +125,7 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @param string $type The type of object.
 	 * @param int    $id   The ID of the object.
@@ -218,7 +218,7 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @uses Translator::delete_object_language() to allow for replacement.
 	 * @uses validate_language() to ensure $language is a Language object.
@@ -293,7 +293,7 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @param string $type The type of object.
 	 * @param int    $id   The ID of the object.
@@ -320,11 +320,11 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @uses validate_language() to validate the language and get the Language object.
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @param mixed  $language The language to remove the association for.
 	 */
@@ -429,7 +429,7 @@ class Translator {
 	 * @uses Translator::get_object_language() to get the current language of the object.
 	 * @uses Translator::delete_object_translation() if a translation is to be unset.
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @param string $type    The type of the objects.
 	 * @param int    $id      The ID of the primary object.
@@ -530,7 +530,7 @@ class Translator {
 	 * @uses Translator::new_group_id() to get the group ID for the object
 	 *                                     as well a new one for it's sister.
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @param string $type     The type of object.
 	 * @param int    $id       The ID of the object.

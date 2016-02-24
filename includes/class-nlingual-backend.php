@@ -100,7 +100,7 @@ class Backend extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @param mixed  $language_id The id of the language to get the count for.
 	 * @param string $post_type   The post type to filter by.
@@ -498,7 +498,7 @@ class Backend extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @uses Registry::is_post_type_supported() to check for support.
 	 * @uses Registry::languages() to loop through the active languages.
@@ -650,7 +650,7 @@ class Backend extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @uses Registry::languages() to get the languages to loop through.
 	 * @uses Translator::get_object_language() to get the post's language.

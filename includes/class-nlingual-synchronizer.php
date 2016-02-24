@@ -33,7 +33,7 @@ class Synchronizer {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @uses Registry::get_rules() to retrieve the synchronization rules.
 	 * @uses Translator::get_object_language() to get the target's language.

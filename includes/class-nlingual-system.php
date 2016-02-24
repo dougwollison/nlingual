@@ -31,7 +31,7 @@ class System extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @uses Loader::register_hooks() to setup plugin management.
 	 * @uses Registry::load() to load the options.
@@ -285,7 +285,7 @@ class System extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global WP_Rewrite $wp_rewrite The WordPress rewrite API.
+	 * @global \WP_Rewrite $wp_rewrite The WordPress rewrite API.
 	 *
 	 * @param string $rules The mod_rewrite block.
 	 *
@@ -406,7 +406,7 @@ class System extends Handler {
 	 * @uses Registry::is_post_type_supported() to check if clause editing is needed.
 	 * @uses Registry::get() to get the query var option.
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @param string   $clause The JOIN clause.
 	 * @param WP_Query $query  The WP_Query instance.
@@ -437,7 +437,7 @@ class System extends Handler {
 	 * @uses Registry::languages() to get the available languages.
 	 * @uses Languages::get() to get a specific language by slug/ID.
 	 *
-	 * @global wpdb $wpdb The database abstraction class instance.
+	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @param string   $clause The WHERE clause.
 	 * @param WP_Query $query  The WP_Query instance.
