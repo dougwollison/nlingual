@@ -406,7 +406,7 @@ class Manager extends Handler {
 		$redirection_settings = array(
 			'query_var' => array(
 				'title' => __( 'Query Variable' ),
-				'help'  => __( 'The variable name to use for when requesting/filtering by language (recommended: "language")' ),
+				'help'  => __( 'The variable name for <code>WP_Query</code> to use when filtering by language.' ),
 				'type'  => 'input',
 			),
 			'url_rewrite_method' => array(
@@ -443,7 +443,7 @@ class Manager extends Handler {
 			$redirection_settings['url_rewrite_method'] = array(
 				'title' => __( 'URL Scheme' ),
 				'type'  => 'notice',
-				'data'  => __( 'You have permalinks disabled; translated URLs will use the HTTP query method.' ),
+				'data'  => __( 'You have permalinks disabled; translated URLs will use the HTTP query method, using the <strong>query variable</strong> set above.' ),
 				'help'  => '<span class="nl-previews">' . _f( 'Preview: %s', $redirect_previews ) . '</span>',
 			);
 		}
