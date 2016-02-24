@@ -201,6 +201,13 @@ class Settings {
 		}
 
 		switch ( $args['type'] ) {
+			// Not actually fields
+			case 'notice':
+				$method = "print_notice";
+				$cb_args = array( $args['name'], $value, $args['data'] );
+				break;
+
+			// Special fields
 			case 'select':
 			case 'radiolist':
 			case 'checklist':
@@ -213,6 +220,7 @@ class Settings {
 				}
 				break;
 
+			// Regular fields
 			default:
 				$method = "build_input_field";
 				$cb_args = array( $args['name'], $args['id'], $value, $args['type'], $args['data'] );
@@ -430,5 +438,19 @@ class Settings {
 			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 *
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $name  The name of the field.
+	 * @param mixed  $value The value of the field.
+	 * @param string $text  The notice text.
+	 */
+	protected static function print_notice( $name, $value, $text ) {
+		printf( '<input type="hidden" name="%s" value="%s" />', $name, $value );
+		printf( '<p><span class="nl-settings-notice">%s</span></p>', $text );
 	}
 }
