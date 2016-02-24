@@ -1055,7 +1055,7 @@ class Backend extends Handler {
 	public static function print_javascript_vars() {
 		?>
 		<script>
-			if(typeof admin_url === 'undefined'){
+			if ( typeof admin_url === 'undefined' ) {
 				var admin_url = '<?php echo admin_url(); ?>';
 			}
 			nLingual.default_language = <?php echo Registry::default_language( 'id' ); ?>;
