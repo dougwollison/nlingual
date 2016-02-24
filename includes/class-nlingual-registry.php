@@ -207,10 +207,28 @@ class Registry {
 
 		// Check if it's set, return it's value.
 		if ( isset( static::$options[ $option ] ) ) {
-			return static::$options[ $option ];
+			$value = static::$options[ $option ];
+		} else {
+			$value = $default;
 		}
 
-		return $default;
+		// Handle internal filtering of certain options
+		switch ( $option ) {
+			case 'url_rewrite_method':
+				// If rewrites can be used, must be path or domain
+				if ( static::can_use_rewrites() ) {
+					if ( $value != 'domain' ) {
+						$value = 'path';
+					}
+				}
+				// Otherwise, must be get
+				else {
+					$value = 'get';
+				}
+				break;
+		}
+
+		return $value;
 	}
 
 	/**
@@ -613,6 +631,23 @@ class Registry {
 		$supported = static::get( 'taxonomies' );
 
 		return (bool) array_intersect( $supported, $taxonomies );
+	}
+
+	/**
+	 * Test if rewriting can be used.
+	 *
+	 * Basically just checks if there's a permalink structure set.
+	 *
+	 * @internal Used by the Registry and Manager
+	 *
+	 * @global WP_Rewrite $wp_rewrite The WordPress rewrite API.
+	 *
+	 * @return bool Wether or not rewriting can be used.
+	 */
+	public static function can_use_rewrites() {
+		global $wp_rewrite;
+
+		return ! empty( $wp_rewrite->permalink_structure );
 	}
 
 	// =========================

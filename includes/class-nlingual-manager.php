@@ -302,11 +302,74 @@ class Manager extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @global WP_Rewrite $wp_rewrite The rewrite API.
+	 *
 	 * @uses Registry::language() to get the list of registered languages.
 	 * @uses Languages::export() to export the language list to an array.
 	 * @uses Settings::add_fields() to define the controls on the page.
 	 */
 	protected static function setup_options_fields() {
+		global $wp_rewrite;
+
+		/**
+		 * General Settings
+		 */
+		$general_settings = array(
+			'default_language' => array(
+				'title' => __( 'Default Language' ),
+				'help'  => null,
+				'type'  => 'select',
+				'data'  => Registry::languages()->pluck( 'system_name' ),
+			),
+			'localize_date' => array(
+				'title' => __( 'Localize date format?' ),
+				'help'  => __( 'Run localization on the date format defined under General Settings. Useful if any languages you use require custom date formats.' ),
+				'type'  => 'checkbox',
+			),
+			'patch_wp_locale' => array(
+				'title' => __( 'Patch <code>WP_Locale</code>?' ),
+				'help'  => __( 'Replaced the Date/Time localization system with one using your Theme’s translation files instead (front-end only).' ),
+				'type'  => 'checkbox',
+			),
+		);
+
+		// If this is an upgraded install, offer the backwards compatibility option
+		if ( get_option( 'nlingual_upgraded' ) ) {
+			$general_settings['backwards_compatible'] = array(
+				'title' => __( 'Backwards Compatibility' ),
+				'help'  => __( 'Include support for old template functions, and features like language splitting.' ),
+				'type'  => 'checkbox',
+			);
+		}
+
+		// Add the section and fields
+		add_settings_section( 'default', null, null, 'nlingual-options' );
+		Settings::add_fields( $general_settings, 'options' );
+
+		/**
+		 * Content Management Settings
+		 */
+		$management_settings = array(
+			'show_all_languages' => array(
+				'title' => __( 'Show All Languages?' ),
+				'help'  => __( 'Should objects of all languages be listed by default in the admin?' ),
+				'type'  => 'checkbox',
+			),
+			'delete_sister_posts' => array(
+				'title' => __( 'Delete Sister Translations?' ),
+				'help'  => __( 'When deleting an object (that’s in the Trash), should its translations be deleted as well?' ),
+				'type'  => 'checkbox',
+			),
+		);
+
+		// Add the sections and fields
+		add_settings_section( 'management', __( 'Translated Content Management' ), null, 'nlingual-options' );
+		Settings::add_fields( $management_settings, 'options', 'management' );
+
+		/**
+		 * Request/Redirection Previews
+		 */
+
 		// Build the previews for the URLs
 		$domain = parse_url( home_url(), PHP_URL_HOST );
 
@@ -337,45 +400,10 @@ class Manager extends Handler {
 				"en.$domain/french-page/ > fr.$domain/french-page/" ,
 				"en.$domain/french-page/ > en.$domain/english-page/" );
 
-		// The general setting fields
-		add_settings_section( 'default', null, null, 'nlingual-options' );
-		Settings::add_fields( array(
-			'default_language' => array(
-				'title' => __( 'Default Language' ),
-				'help'  => null,
-				'type'  => 'select',
-				'data'  => Registry::languages()->pluck( 'system_name' ),
-			),
-			'localize_date' => array(
-				'title' => __( 'Localize date format?' ),
-				'help'  => __( 'Run localization on the date format defined under General Settings. Useful if any languages you use require custom date formats.' ),
-				'type'  => 'checkbox',
-			),
-			'patch_wp_locale' => array(
-				'title' => __( 'Patch <code>WP_Locale</code>?' ),
-				'help'  => __( 'Replaced the Date/Time localization system with one using your Theme’s translation files instead (front-end only).' ),
-				'type'  => 'checkbox',
-			),
-		), 'options' );
-
-		// The content management setting fields
-		add_settings_section( 'management', __( 'Translated Content Management' ), null, 'nlingual-options' );
-		Settings::add_fields( array(
-			'show_all_languages' => array(
-				'title' => __( 'Show All Languages?' ),
-				'help'  => __( 'Should objects of all languages be listed by default in the admin?' ),
-				'type'  => 'checkbox',
-			),
-			'delete_sister_posts' => array(
-				'title' => __( 'Delete Sister Translations?' ),
-				'help'  => __( 'When deleting an object (that’s in the Trash), should its translations be deleted as well?' ),
-				'type'  => 'checkbox',
-			),
-		), 'options', 'management' );
-
-		// The request/redirection setting fields
-		add_settings_section( 'redirection', __( 'Request and Redirection Handling' ), null, 'nlingual-options' );
-		Settings::add_fields( array(
+		/**
+		 * Request/Redirection Settings
+		 */
+		$redirection_settings = array(
 			'query_var' => array(
 				'title' => __( 'Query Variable' ),
 				'help'  => __( 'The variable name to use for when requesting/filtering by language (recommended: "language")' ),
@@ -387,7 +415,6 @@ class Manager extends Handler {
 					'<br /> <span class="nl-previews">' . _f( 'Preview: %s', $redirect_previews ) . '</span>',
 				'type'  => 'radiolist',
 				'data'  => array(
-					'get'    => __( 'HTTP query' ),
 					'path'   => __( 'Path prefix' ),
 					'domain' => __( 'Subdomain' ),
 				),
@@ -409,18 +436,21 @@ class Manager extends Handler {
 				'help'  => __( 'Use "permanent" (HTTP 301) instead of "temporary" (HTTP 302) redirects?' ),
 				'type'  => 'checkbox',
 			),
-		), 'options', 'redirection' );
+		);
 
-		// If this is an upgraded install, offer the backwards compatibility option
-		if ( get_option( 'nlingual_upgraded' ) ) {
-			Settings::add_fields( array(
-				'backwards_compatible' => array(
-					'title' => __( 'Backwards Compatibility' ),
-					'help'  => __( 'Include support for old template functions, and features like language splitting.' ),
-					'type'  => 'checkbox',
-				),
-			), 'options' );
+		// If rewrites can't be used, replace the rewrite field with a notice
+		if ( ! Registry::can_use_rewrites() ) {
+			$redirection_settings['url_rewrite_method'] = array(
+				'title' => __( 'URL Scheme' ),
+				'type'  => 'notice',
+				'data'  => __( 'You have permalinks disabled; translated URLs will use the HTTP query method.' ),
+				'help'  => '<span class="nl-previews">' . _f( 'Preview: %s', $redirect_previews ) . '</span>',
+			);
 		}
+
+		// Add the sections and fields
+		add_settings_section( 'redirection', __( 'Request and Redirection Handling' ), null, 'nlingual-options' );
+		Settings::add_fields( $redirection_settings, 'options', 'redirection' );
 	}
 
 	/**
