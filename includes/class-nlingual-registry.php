@@ -638,7 +638,7 @@ class Registry {
 	 *
 	 * Basically just checks if there's a permalink structure set.
 	 *
-	 * @internal Used by the Registry and Manager
+	 * @internal Used by the Registry and Manager.
 	 *
 	 * @global WP_Rewrite $wp_rewrite The WordPress rewrite API.
 	 *
