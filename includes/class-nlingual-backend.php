@@ -774,7 +774,7 @@ class Backend extends Handler {
 			// And the post type has syncronization rules specified
 			&& Registry::get_rules( 'sync', 'post_type', $post->post_type )
 			// And the post has sister translations
-			&& Translator::does_post_have_translations( $post->ID )
+			&& Translator::get_post_translations( $post->ID )
 		) : ?>
 		<div class="notice notice-info is-dimissable">
 			<p><?php echo $message; ?></p>
