@@ -56,7 +56,7 @@ class Frontend extends Handler {
 		static::add_filter( 'option_page_for_posts', 'current_language_post', 10, 1 );
 		static::add_filter( 'option_date_format', 'localize_date_format', 10, 1 );
 
-		// Front-end only query rewrites
+		// Frontend-Only Query Rewrites
 		static::add_filter( 'get_previous_post_join', 'add_adjacent_translation_join_clause', 10, 1 );
 		static::add_filter( 'get_next_post_join', 'add_adjacent_translation_join_clause', 10, 1 );
 		static::add_filter( 'get_previous_post_where', 'add_adjacent_translation_where_clause', 10, 1 );
@@ -65,6 +65,13 @@ class Frontend extends Handler {
 		// Locale & GetText Rewrites
 		static::add_action( 'wp', 'maybe_patch_wp_locale', 10, 0 );
 		static::add_filter( 'gettext_with_context', 'handle_text_direction', 10, 4 );
+
+		// Frontend-Only URL Rewrites
+		static::add_filter( 'site_url', 'localize_uri', 10, 1 );
+		static::add_filter( 'stylesheet_directory_uri', 'localize_uri', 10, 1 );
+		static::add_filter( 'template_directory_uri', 'localize_uri', 10, 1 );
+		static::add_filter( 'upload_dir', 'localize_dir', 10, 1 );
+		static::add_filter( 'the_content', 'localize_attachment_urls', 10, 1 );
 	}
 
 	// =========================
@@ -549,5 +556,66 @@ class Frontend extends Handler {
 		}
 
 		return $translation;
+	}
+
+	// =========================
+	// ! URL Rewriting
+	// =========================
+
+	/**
+	 * Localize resource URIs.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $uri The URI to filter.
+	 *
+	 * @return string The filtered URI.
+	 */
+	public static function localize_uri( $uri ) {
+		// Only do so if using the domain rewrite method, and if enabled
+		if ( Registry::get( 'url_rewrite_method' ) == 'domain'
+		&& Rewriter::will_do_localization() ) {
+			$uri = Rewriter::localize_url( $uri );
+		}
+		return $uri;
+	}
+
+	/**
+	 * Localize the uploads directory URLs.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $dir The upload directory array.
+	 *
+	 * @return array The filtered URLs.
+	 */
+	public static function localize_dir( $dir ) {
+		// Only do so if using the domain rewrite method, and if enabled
+		if ( Registry::get( 'url_rewrite_method' ) == 'domain'
+		&& Rewriter::will_do_localization() ) {
+			$dir['url'] = Rewriter::localize_url( $dir['url'] );
+			$dir['baseurl'] = Rewriter::localize_url( $dir['baseurl'] );
+		}
+		return $dir;
+	}
+
+	/**
+	 * Localize any attachment URLs found.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $content The content to filter.
+	 *
+	 * @return string The filtered content.
+	 */
+	public static function localize_attachment_urls( $content ) {
+		// Only do so if using the domain rewrite method, and if enabled
+		if ( Registry::get( 'url_rewrite_method' ) == 'domain'
+		&& Rewriter::will_do_localization() ) {
+			$find_url = home_url( '', NL_UNLOCALIZED ) . '/wp-content/uploads/';
+			$replace_url = Rewriter::localize_url( $find_url );
+			$content = str_replace( $find_url, $replace_url, $content );
+		}
+		return $content;
 	}
 }
