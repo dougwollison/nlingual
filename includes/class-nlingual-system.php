@@ -90,7 +90,10 @@ class System extends Handler {
 
 		// URL Rewriting
 		static::add_filter( 'home_url', 'localize_home_url', 10, 3 );
-		static::add_filter( 'page_link', 'localize_page_link', 10, 3 );
+		static::add_filter( 'page_link', 'localize_post_link', 10, 2 );
+		static::add_filter( 'post_link', 'localize_post_link', 10, 2 );
+		static::add_filter( 'post_type_link', 'localize_post_link', 10, 2 );
+		static::add_filter( 'mod_rewrite_rules', 'fix_mod_rewrite_rules', 0, 1 );
 
 		// Query Manipulation
 		static::add_action( 'parse_query', 'maybe_set_queried_language', 10, 1 );
@@ -238,9 +241,10 @@ class System extends Handler {
 	}
 
 	/**
-	 * Localize a page's URL.
+	 * Localize a post's URL.
 	 *
-	 * Namely, detect if it's a translation of the home page and return the localize home URL.
+	 * Namely, localize it for it's assigned language.
+	 * Also checks for localizing a home page translation.
 	 *
 	 * @since 2.0.0
 	 *
@@ -248,24 +252,70 @@ class System extends Handler {
 	 * @uses Translator::get_post_translation() to get the post for that language.
 	 *
 	 * @param string $permalink The permalink of the post.
-	 * @param int    $page_id   The ID of the page.
+	 * @param int    $post_id   The ID of the post.
 	 *
 	 * @return string The localized permalink.
 	 */
-	public static function localize_page_link( $permalink, $page_id ) {
+	public static function localize_post_link( $permalink, $post_id ) {
 		// Check if it has a language
-		if ( $language = Translator::get_post_language( $page_id ) ) {
-			// Get the default language translation
-			$translation = Translator::get_post_translation( $page_id, null, true );
+		if ( $language = Translator::get_post_language( $post_id ) ) {
+			// If it's a page, check if it's a home page translation
+			if ( current_filter() == 'page_link' ) {
+				// Get the default language translation
+				$translation = Translator::get_post_translation( $post_id, null, true );
 
-			if ( $translation == get_option( 'page_on_front' ) ) {
-				$permalink = Rewriter::localize_url( home_url( '', NL_UNLOCALIZED ), $language );
-			} else {
-				$permalink = Rewriter::localize_url( $permalink, $language, true );
+				// If it's a home page translation, return the localized home url
+				if ( $translation == get_option( 'page_on_front' ) ) {
+					return Rewriter::localize_url( home_url( '', NL_UNLOCALIZED ), $language );
+				}
 			}
+
+			// Just ensure the URL is localized for it's language and return it
+			return Rewriter::localize_url( $permalink, $language, true );
 		}
 
 		return $permalink;
+	}
+
+	/**
+	 * Fixes possible bugs with mod_rewrite rules.
+	 *
+	 * If skip_default_l10n is disabled, the mod_rewrite_rules
+	 * will use the path prefix in instead of the true home path.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global WP_Rewrite $wp_rewrite The WordPress rewrite API.
+	 *
+	 * @param string $rules The mod_rewrite block.
+	 *
+	 * @return string The filtered rewrite block.
+	 */
+	public function fix_mod_rewrite_rules( $rules ) {
+		global $wp_rewrite;
+
+		// Only bother if using the path rewrite method
+		// (shouldn't need fixing otherwise)
+		if ( Registry::get( 'url_rewrite_method' ) != 'path' ) {
+			return $rules;
+		}
+
+		// Unhook to prevent infinite loop
+		$priority = static::remove_filter( 'mod_rewrite_rules', __FUNCTION__ );
+
+		// Turn off URL localization, getting the old setting
+		$status = Rewriter::disable_localization();
+
+		// Now retry generating the rules without interference from nLingual
+		$rules = $wp_rewrite->mod_rewrite_rules();
+
+		// Restore URL localization to it's former setting
+		Rewriter::enable_localization( $status );
+
+		// Rehook now that we're done
+		static::add_filter( 'mod_rewrite_rules', __FUNCTION__, $priority, 1 );
+
+		return $rules;
 	}
 
 	// =========================
