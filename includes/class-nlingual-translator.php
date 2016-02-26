@@ -617,6 +617,7 @@ class Translator {
 				foreach ( $id_fields as $id_field ) {
 					if ( property_exists( $object_id, $id_field ) ) {
 						$object_id = $object_id->$id_field;
+						break;
 					}
 				}
 				// Update it in the arguments list
