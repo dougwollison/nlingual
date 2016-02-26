@@ -612,14 +612,14 @@ class Translator {
 			// If the second argument ($object_id in all cases) is an object, get the ID appropriately if possible.
 			$object_id = $args[1];
 			if ( is_object( $object_id ) ) {
-				switch ( $object_type ) {
-					case 'post' :
-						$object_id = $object_id->ID;
-						break;
-					case 'term' :
-						$object_id = $object_id->term_id;
-						break;
+				// Get the property list, find the ID field and get it
+				$id_fields = array( 'id', 'ID', "{$object_type}_id", "{$object_type}_ID" );
+				foreach ( $id_fields as $id_field ) {
+					if ( property_exists( $object_id, $id_field ) ) {
+						$object_id = $object_id->$id_field;
+					}
 				}
+				// Update it in the arguments list
 				$args[1] = $object_id;
 			}
 
