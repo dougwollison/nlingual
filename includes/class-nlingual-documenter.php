@@ -43,7 +43,7 @@ class Documenter extends Handler {
 			),
 			'sidebar' => true,
 		),
-		'synchronization' => array(
+		'synchronizer' => array(
 			'tabs' => array(
 				'overview' => 'Overview',
 				'cloning' => 'Cloning Rules',

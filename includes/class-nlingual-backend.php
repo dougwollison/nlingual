@@ -74,7 +74,7 @@ class Backend extends Handler {
 		static::add_action( 'add_meta_boxes', 'add_post_meta_box', 10, 1 );
 
 		// Admin Notices
-		static::add_action( 'edit_form_top', 'synchronization_notice', 10, 1 );
+		static::add_action( 'edit_form_top', 'synced_posts_notice', 10, 1 );
 		static::add_filter( 'bulk_post_updated_messages', 'bulk_updated_sisters_messages', 20, 2 );
 
 		// Saving Post Data
@@ -857,7 +857,7 @@ class Backend extends Handler {
 	 *
 	 * @param \WP_Post $post The current post being edited.
 	 */
-	public static function synchronization_notice( \WP_Post $post ) {
+	public static function synced_posts_notice( \WP_Post $post ) {
 		// page or "post"?
 		if ( $post->post_type == 'page' ) {
 			$message = __( 'The translations of this page have been updated accordingly.', 'nlingual' );

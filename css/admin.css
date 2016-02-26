@@ -144,15 +144,15 @@
   .nl-localizer:hover .nl-localizer-option, .nl-localizer-option.nl-current {
     max-width: 150px; }
 
-#nlingual-synchronization-form .nl-inputlist {
+#nlingual-sync-form .nl-inputlist {
   *zoom: 1; }
-  #nlingual-synchronization-form .nl-inputlist:after {
+  #nlingual-sync-form .nl-inputlist:after {
     content: "";
     display: table;
     clear: both; }
-  #nlingual-synchronization-form .nl-inputlist label {
+  #nlingual-sync-form .nl-inputlist label {
     margin-right: 1.5em !important; }
-  #nlingual-synchronization-form .nl-inputlist br {
+  #nlingual-sync-form .nl-inputlist br {
     display: none; }
 
 #nl_language_controls {

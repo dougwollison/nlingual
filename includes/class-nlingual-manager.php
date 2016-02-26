@@ -129,12 +129,12 @@ class Manager extends Handler {
 		);
 
 		// Sync/Clone Rules manager
-		$sync_page_hook = add_submenu_page(
+		$synchronizer_page_hook = add_submenu_page(
 			'nlingual-options', // parent
-			__( 'Post Synchronization', 'nlingual' ), // page title
-			__( 'Synchronization', 'nlingual' ), // menu title
+			__( 'Post Synchronizer', 'nlingual' ), // page title
+			__( 'Synchronizer', 'nlingual' ), // menu title
 			'manage_options', // capability
-			'nlingual-synchronization', // slug
+			'nlingual-synchronizer', // slug
 			array( get_called_class(), 'settings_page' ) // callback
 		);
 
@@ -142,7 +142,7 @@ class Manager extends Handler {
 		Documenter::register_help_tabs( array(
 			$options_page_hook	    => 'options',
 			$localizables_page_hook => 'localizables',
-			$sync_page_hook		    => 'synchronization',
+			$synchronizer_page_hook => 'synchronizer',
 			$languages_page_hook    => 'languages',
 		) );
 	}
@@ -162,7 +162,7 @@ class Manager extends Handler {
 	 * @uses Manager::setup_sync_fields() to add fields to the sync options page.
 	 */
 	public static function register_settings() {
-		foreach ( array( 'options', 'localizables', 'synchronization' ) as $group ) {
+		foreach ( array( 'options', 'localizables', 'synchronizer' ) as $group ) {
 			register_setting( 'nlingual-' . $group, 'nlingual_options', array( __CLASS__, 'update_options' ) );
 			static::{'setup_' . $group . '_fields'}();
 		}
@@ -564,7 +564,7 @@ class Manager extends Handler {
 	 * @uses Registry::get() to retrieve the enabled post types.
 	 * @uses Registry::add_fields() to add the sycn/clone controls for the page.
 	 */
-	protected static function setup_synchronization_fields() {
+	protected static function setup_synchronizer_fields() {
 		// Abort if no post types are registered
 		$post_types = Registry::get( 'post_types' );
 		if ( ! $post_types ) {
@@ -583,12 +583,12 @@ class Manager extends Handler {
 		}
 
 		// The post synchronizing setting fields
-		add_settings_section( 'default', null, null, 'nlingual-synchronization' );
-		Settings::add_fields( $sync_fields, 'synchronization' );
+		add_settings_section( 'default', null, null, 'nlingual-synchronizer' );
+		Settings::add_fields( $sync_fields, 'synchronizer' );
 
 		// The post cloning setting fields
-		add_settings_section( 'cloning', __( 'New Translations', 'nlingual' ), array( get_called_class(), 'settings_section_cloning' ), 'nlingual-synchronization' );
-		Settings::add_fields( $clone_fields, 'synchronization', 'cloning' );
+		add_settings_section( 'cloning', __( 'New Translations', 'nlingual' ), array( get_called_class(), 'settings_section_cloning' ), 'nlingual-synchronizer' );
+		Settings::add_fields( $clone_fields, 'synchronizer', 'cloning' );
 	}
 
 	// =========================

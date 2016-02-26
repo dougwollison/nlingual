@@ -8,6 +8,6 @@ $plural = strtolower( get_post_type_object( $post_type )->labels->name );
 
 <p><?php _e( 'If you don’t have a translated version for a particular language yet, you can select the option to create a new one; a copy of the current post will be created automatically for you to work from.', 'nlingual' ); ?></p>
 
-<p><?php _ef( 'When you save your changes, certain fields and settings will be copied to it’s sister translations, synchronizing them. The exact fields/settings that will be synchronized is controlled <a href="%s" target="_blank">here</a>, along with what will be copied when creating a new translation (usually everything).', 'nlingual', admin_url('admin.php?page=nlingual-sync') ); ?></p>
+<p><?php _ef( 'When you save your changes, certain fields and settings will be copied to it’s sister translations, synchronizing them. The exact fields/settings that will be synchronized is controlled <a href="%s" target="_blank">here</a>, along with what will be copied when creating a new translation (usually everything).', 'nlingual', admin_url('admin.php?page=nlingual-synchronizer') ); ?></p>
 
 <?php require( dirname( __DIR__ ) . '/shared/post-sync-summary.php' ); ?>
