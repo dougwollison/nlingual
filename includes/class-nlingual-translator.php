@@ -50,11 +50,13 @@ class Translator {
 	protected static function flush_cache( $type, $id, $group = null, $new_group = null ) {
 		// Get the group if not provided
 		if ( is_null( $group ) ) {
-			$group = static::get_group( $type, $id );
+			$group = static::get_group_id( $type, $id );
 		}
 
 		// Delete the cached group data
-		wp_cache_delete( $group, 'nlingual:group' );
+		if ( $group ) {
+			wp_cache_delete( $group, 'nlingual:group' );
+		}
 
 		// If a new group is provided, update it, otherwise delete it
 		if ( ! is_null( $new_group ) ) {
