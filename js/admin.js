@@ -445,8 +445,8 @@
 				// Ask for a title for the translation
 				var title = $( '#title' ).val();
 				var placeholder = nlingualL10n.TranslationTitlePlaceholder
-					.replace( /%s/, Languages.get( language_id ).get( 'system_name' ) )
-					.replace( /%s/, title );
+					.replace( '%1$s', Languages.get( language_id ).get( 'system_name' ) )
+					.replace( '%2$s', title );
 				var translation_title = prompt( nlingualL10n.TranslationTitle, placeholder );
 
 				// Abort if empty or null
