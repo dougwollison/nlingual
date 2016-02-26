@@ -614,7 +614,6 @@ class Translator {
 			if ( is_object( $object_id ) ) {
 				switch ( $object_type ) {
 					case 'post' :
-					case 'user' :
 						$object_id = $object_id->ID;
 						break;
 					case 'term' :
