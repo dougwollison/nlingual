@@ -733,4 +733,46 @@ class Registry {
 			update_option( 'nlingual_languages', static::$languages->export() );
 		}
 	}
+
+	// =========================
+	// ! Overloading
+	// =========================
+
+	/**
+	 * Handle aliases of existing methods, namely get_rules().
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $name The name of the method being called.
+	 * @param array  $args The list of arguments for the method.
+	 *
+	 * @return mixed The result of the target method.
+	 */
+	public static function __callStatic( $name, $args ) {
+		// Check if $name could be a kind of get_rules() alias
+		if ( preg_match( '/^get_(\w+?)_rules$/', $name, $matches ) ) {
+			// This should attempt to handle methods like "get_post_sync_rules"
+
+			// Split at the underscore into sections
+			$sections = explode( '_', $matches[1] ); // should be rule
+
+			// Flip and append the arguments
+			$sections = array_merge( array_reverse( $sections ), $args );
+
+			// Handle renaming of level 2
+			if ( isset( $sections[1] ) ) {
+				// If level 2 is "post", change to "post_type"
+				if ( $sections[1] == 'post' ) {
+					$sections[1] = 'post_type';
+				}
+				// If it's "term", change to "taxonomy"
+				elseif ( $sections[1] == 'term' ) {
+					$sections[1] = 'taxonomy';
+				}
+			}
+
+			// Pass to get_rules and return output
+			return call_user_func_array( array( __CLASS__, 'get_rules' ), $sections );
+		}
+	}
 }
