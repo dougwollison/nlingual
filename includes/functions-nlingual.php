@@ -102,109 +102,6 @@ function sanitize_tag( $tag, $_ = false ) {
 }
 
 // =========================
-// ! GetText Functions
-// =========================
-
-/**
- * The following functions are aliases to the public
- * localization functions (custom ones included), but
- * with the nLingual text domain included automatically,
- * since it's used in 99% of calls within the classes.
- */
-
-/**
- * @see __()
- */
-function __( $string ) {
-	return \__( $string, 'nlingual' );
-}
-
-/**
- * @see _e()
- */
-function _e( $string ) {
-	return \_e( $string, 'nlingual' );
-}
-
-/**
- * @see _n()
- */
-function _n( $single, $plural, $number ) {
-	return \_n( $single, $plural, $number, 'nlingual' );
-}
-
-/**
- * @see _x()
- */
-function _x( $string, $context ) {
-	return \_x( $string, 'nlingual' );
-}
-
-/**
- * @see _ex()
- */
-function _ex( $string, $context ) {
-	\_ex( $string, 'nlingual' );
-}
-
-/**
- * @see _nx()
- */
-function _nx( $single, $plural, $number, $context ) {
-	return \_nx( $single, $plural, $number, $context, 'nlingual' );
-}
-
-/**
- * @see _f()
- */
-function _f() {
-	$args = func_get_args();
-	array_splice( $args, 1, 0, 'nlingual' );
-	return call_user_func_array( '\_f', $args );
-}
-
-/**
- * @see _ef()
- */
-function _ef() {
-	$args = func_get_args();
-	array_splice( $args, 1, 0, 'nlingual' );
-	return call_user_func_array( '\_ef', $args );
-}
-
-/**
- * @see _fx()
- */
-function _fx() {
-	$args = func_get_args();
-	array_splice( $args, 2, 0, 'nlingual' );
-	return call_user_func_array( '\_fx', $args );
-}
-
-/**
- * @see _efx()
- */
-function _efx() {
-	$args = func_get_args();
-	array_splice( $args, 2, 0, 'nlingual' );
-	return call_user_func_array( '\_efx', $args );
-}
-
-/**
- * @see _a()
- */
-function _a( $array ) {
-	return \_a( $array, 'nlingual' );
-}
-
-/**
- * @see _ax()
- */
-function _ax( $array, $context ) {
-	return \_a( $array, $context, 'nlingual' );
-}
-
-// =========================
 // ! Misc. Utilities
 // =========================
 
@@ -216,5 +113,5 @@ function _ax( $array, $context ) {
  * @since 2.0.0
  */
 function cheatin() {
-	wp_die( \__( 'Cheatin&#8217; uh?' ), 403 );
+	wp_die( __( 'Cheatin&#8217; uh?' ), 403 );
 }

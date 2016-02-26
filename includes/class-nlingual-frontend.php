@@ -439,7 +439,7 @@ class Frontend extends Handler {
 		}
 
 		$domain = wp_get_theme()->get( 'TextDomain' );
-		$format = \__( $format, $domain );
+		$format = __( $format, $domain );
 		return $format;
 	}
 

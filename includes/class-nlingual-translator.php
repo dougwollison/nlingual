@@ -603,7 +603,7 @@ class Translator {
 
 			// If the method does not exist, throw exception
 			if ( ! method_exists( __CLASS__, $method ) ) {
-				throw new Exception( _f( 'Call to unrecognized method alias %s::%s()', __CLASS__, $name ), NL_ERR_UNSUPPORTED );
+				throw new Exception( _f( 'Call to unrecognized method alias %s::%s()', 'nlingual', __CLASS__, $name ), NL_ERR_UNSUPPORTED );
 			}
 
 			// Add the $object_type argument
@@ -633,7 +633,7 @@ class Translator {
 				}
 				// Otherwise, throw exception
 				else {
-					throw new Exception( _f( 'The requested post (ID: %d) does not belong to a supported post type.', $object_id ), NL_ERR_UNSUPPORTED );
+					throw new Exception( _f( 'The requested post (ID: %d) does not belong to a supported post type.', 'nlingual', $object_id ), NL_ERR_UNSUPPORTED );
 				}
 			}
 

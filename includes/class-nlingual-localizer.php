@@ -930,7 +930,7 @@ class Localizer extends Handler {
 			foreach ( $localized[ $field->field ] as $language_id => $value ) {
 				// Fail if the language is not found
 				if ( ! $languages->get( $language_id ) ) {
-					wp_die( __( 'That language does not exist.' ) );
+					wp_die( __( 'That language does not exist.', 'nlingual' ) );
 				}
 
 				// Unescape the value

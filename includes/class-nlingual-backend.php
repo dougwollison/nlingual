@@ -368,11 +368,11 @@ class Backend extends Handler {
 
 			// Check if it's a translation of the home page
 			if ( $translation == get_option( 'page_on_front' ) ) {
-				$post_states['page_on_front'] = _fx( '%s Front Page', 'front page translation', $language->system_name );
+				$post_states['page_on_front'] = _fx( '%s Front Page', 'front page translation', 'nlingual', $language->system_name );
 			}
 			// or the posts page
 			elseif ( $translation == get_option( 'page_for_posts' ) ) {
-				$post_states['page_for_posts'] = _fx( '%s Posts Page', 'front page translation', $language->system_name );
+				$post_states['page_for_posts'] = _fx( '%s Posts Page', 'front page translation', 'nlingual', $language->system_name );
 			}
 		}
 
@@ -409,10 +409,10 @@ class Backend extends Handler {
 		$current = reset( $current );
 		?>
 		<select name="<?php echo $query_var; ?>" class="postform">
-			<option value="-1"><?php _e( 'All Languages' ); ?></option>
+			<option value="-1"><?php _e( 'All Languages', 'nlingual' ); ?></option>
 			<?php
 			$count = Backend::language_posts_count( 0, $post_type, $post_status );
-			printf( '<option value="%s" %s>%s (%s)</option>', 0, $current == '0' ? 'selected' : '', __( 'No Language' ), $count );
+			printf( '<option value="%s" %s>%s (%s)</option>', 0, $current == '0' ? 'selected' : '', __( 'No Language', 'nlingual' ), $count );
 			foreach ( Registry::languages( 'active' ) as $language ) {
 				$selected = $current == $language->slug;
 				$count = Backend::language_posts_count( $language->id, $post_type, $post_status );
@@ -434,7 +434,7 @@ class Backend extends Handler {
 	 * @return array The modified list of columns.
 	 */
 	public static function add_language_column( $columns ) {
-		$columns['nlingual'] = __( 'Language' );
+		$columns['nlingual'] = __( 'Language', 'nlingual' );
 		return $columns;
 	}
 
@@ -469,7 +469,7 @@ class Backend extends Handler {
 		$language = Translator::get_post_language( $post_id );
 		if ( ! $language ) {
 			echo '<input type="hidden" class="nl-language" value="0" />';
-			_e( 'None', 'no language' );
+			_e( 'None', 'nlingual', 'no language' );
 			return;
 		}
 
@@ -526,9 +526,9 @@ class Backend extends Handler {
 			<input type="hidden" name="_nl_nonce" class="nl-nonce" />
 			<div class="inline-edit-col nl-set-language">
 				<label>
-					<span class="title"><?php _e( 'Language' );?></span>
+					<span class="title"><?php _e( 'Language', 'nlingual' );?></span>
 					<select name="nlingual_language" class="nl-input nl-language-input">
-						<option value="0">&mdash; <?php _ex( 'None', 'no language' ); ?> &mdash;</option>
+						<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
 						<?php
 						// Print the options
 						foreach ( $languages as $language ) {
@@ -541,9 +541,9 @@ class Backend extends Handler {
 			<div class="inline-edit-col nl-set-translations">
 				<?php foreach ( $languages as $language ) : ?>
 				<label class="nl-translation-field nl-translation-<?php echo $language->id; ?>"  data-nl_language="<?php echo $language->id; ?>">
-					<span class="title"><?php _ef( '%s Translation', $language->system_name );?></span>
+					<span class="title"><?php _ef( '%s Translation', 'nlingual', $language->system_name );?></span>
 					<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
-						<option value="0">&mdash; <?php _ex( 'None', 'no translation' ); ?> &mdash;</option>
+						<option value="0">&mdash; <?php _ex( 'None', 'no translation', 'nlingual' ); ?> &mdash;</option>
 						<?php
 						// Get all posts in this language
 						$posts = $wpdb->get_results( $wpdb->prepare( "
@@ -596,9 +596,9 @@ class Backend extends Handler {
 		<fieldset id="nl_post_bulk_language" class="inline-edit-col-right">
 			<div class="inline-edit-col">
 				<label>
-					<span class="title"><?php _e( 'Language' );?></span>
+					<span class="title"><?php _e( 'Language', 'nlingual' );?></span>
 					<select name="nlingual_bulk_language" id="nl_language">
-						<option value="0">&mdash; <?php _e( 'No Change' ); ?> &mdash;</option>
+						<option value="0">&mdash; <?php _e( 'No Change', 'nlingual' ); ?> &mdash;</option>
 						<?php
 						// Print the options
 						foreach ( $languages as $language ) {
@@ -636,7 +636,7 @@ class Backend extends Handler {
 		foreach ( $post_types as $post_type ) {
 			add_meta_box(
 				'nlingual_translations', // id
-				__( 'Language & Translations' ), // title
+				__( 'Language & Translations', 'nlingual' ), // title
 				array( get_called_class(), 'post_meta_box' ), // callback
 				$post_type, // screen
 				'side', // context
@@ -698,9 +698,9 @@ class Backend extends Handler {
 		?>
 		<div class="nl-translations-manager">
 			<div class="nl-field nl-language-field">
-				<label for="nl_language" class="nl-field-label"><?php _e( 'Language' ); ?></label>
+				<label for="nl_language" class="nl-field-label"><?php _e( 'Language', 'nlingual' ); ?></label>
 				<select name="nlingual_language" id="nl_language" class="nl-input nl-language-input">
-					<option value="0">&mdash; <?php _ex( 'None', 'no language' ); ?> &mdash;</option>
+					<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
 					<?php
 					// Print the options
 					foreach ( $language_options as $value => $label ) {
@@ -713,17 +713,17 @@ class Backend extends Handler {
 
 			<div class="nl-manage-translations">
 				<?php if ( $languages->count() > 1 ) : ?>
-				<h4 class="nl-heading"><?php _e( 'Translations' ); ?></h4>
+				<h4 class="nl-heading"><?php _e( 'Translations', 'nlingual' ); ?></h4>
 				<?php foreach ( $languages as $language ) : ?>
 				<div class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?>" data-nl_language="<?php echo $language->id?>">
 					<label for="nl_translation_<?php echo $language->id; ?>_input">
 						<?php echo $language->system_name; ?>
-						<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' );?>"><?php _e( 'Edit' );?></button>
+						<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' );?>"><?php _e( 'Edit', 'nlingual' );?></button>
 					</label>
 
 					<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
-						<option value="0">&mdash; <?php _ex( 'None', 'no translation' ); ?> &mdash;</option>
-						<option value="new" class="nl-new-translation">&mdash;<?php _ef( 'New %s %s', $language->system_name, $post_type->labels->singular_name ); ?>&mdash;</option>
+						<option value="0">&mdash; <?php _ex( 'None', 'no translation', 'nlingual' ); ?> &mdash;</option>
+						<option value="new" class="nl-new-translation">&mdash;<?php _ef( 'New %s %s', 'nlingual', $language->system_name, $post_type->labels->singular_name ); ?>&mdash;</option>
 						<?php
 						// Print the options
 						foreach ( $post_options[ $language->id ] as $option ) {
@@ -731,7 +731,7 @@ class Backend extends Handler {
 							$label = $option->post_title;
 							// If this post is already a translation of something, identify it as such.
 							if ( Translator::get_post_translations( $option->ID ) ) {
-								$label = _e( '[Taken]' ) . ' ' . $label;
+								$label = _e( '[Taken]', 'nlingual' ) . ' ' . $label;
 							}
 							printf( '<option value="%s" %s>%s</option>', $option->ID, $selected, $label );
 						}
@@ -780,7 +780,7 @@ class Backend extends Handler {
 		try {
 			Translator::set_post_language( $post_id, $_REQUEST['nlingual_language'] );
 		} catch ( Exception $e ) {
-			wp_die( __( 'Error assigning language: the selected language does not exist.' ) );
+			wp_die( __( 'Error assigning language: the selected language does not exist.', 'nlingual' ) );
 		}
 	}
 
@@ -814,7 +814,7 @@ class Backend extends Handler {
 		try {
 			Translator::set_post_translations( $post_id, $_POST['nlingual_translation'] );
 		} catch ( Exception $e ) {
-			wp_die( __( 'Error assigning translations: one or more languages do not exist.' ) );
+			wp_die( __( 'Error assigning translations: one or more languages do not exist.', 'nlingual' ) );
 		}
 	}
 
@@ -842,7 +842,7 @@ class Backend extends Handler {
 		try {
 			Translator::set_post_language( $post_id, $_REQUEST['nlingual_bulk_language'] );
 		} catch ( Exception $e ) {
-			wp_die( __( 'Error assigning language: the selected language does not exist.' ) );
+			wp_die( __( 'Error assigning language: the selected language does not exist.', 'nlingual' ) );
 		}
 	}
 
@@ -860,9 +860,9 @@ class Backend extends Handler {
 	public static function synchronization_notice( \WP_Post $post ) {
 		// page or "post"?
 		if ( $post->post_type == 'page' ) {
-			$message = __( 'The translations of this page have been updated accordingly.' );
+			$message = __( 'The translations of this page have been updated accordingly.', 'nlingual' );
 		} else {
-			$message = __( 'The translations of this post have been updated accordingly.' );
+			$message = __( 'The translations of this post have been updated accordingly.', 'nlingual' );
 		}
 
 		// Check that...
@@ -902,10 +902,10 @@ class Backend extends Handler {
 		}
 
 		// Create the addendums
-		$updated_addendum   = __( 'Any associated translations have been synchronized accordingly.' );
-		$deleted_addendum   = __( 'Any associated translations have also been deleted.' );
-		$trashed_addendum   = __( 'Any associated translations have also been moved.' );
-		$untrashed_addendum = __( 'Any associated translations have also been restored.' );
+		$updated_addendum   = __( 'Any associated translations have been synchronized accordingly.', 'nlingual' );
+		$deleted_addendum   = __( 'Any associated translations have also been deleted.', 'nlingual' );
+		$trashed_addendum   = __( 'Any associated translations have also been moved.', 'nlingual' );
+		$untrashed_addendum = __( 'Any associated translations have also been restored.', 'nlingual' );
 
 		// Add addendums to every set of messages
 		foreach ( $bulk_notices as &$notices ) {
@@ -941,7 +941,7 @@ class Backend extends Handler {
 	public static function add_nav_menu_meta_box() {
 		add_meta_box(
 			'add-nl_language_link', // metabox id
-			__( 'Language Links' ), // title
+			__( 'Language Links', 'nlingual' ), // title
 			array( get_called_class(), 'do_nav_menu_meta_box' ), // callback
 			'nav-menus', // screen
 			'side' // context
@@ -959,7 +959,7 @@ class Backend extends Handler {
 		global $nav_menu_selected_id;
 		?>
 		<div class="posttypediv" id="nl_language_link">
-			<p><?php _e( 'These links will go to the respective language versions of the current URL.' ); ?></p>
+			<p><?php _e( 'These links will go to the respective language versions of the current URL.', 'nlingual' ); ?></p>
 			<div id="tabs-panel-nl_language_link-all" class="tabs-panel tabs-panel-active">
 				<ul id="pagechecklist-most-recent" class="categorychecklist form-no-clear">
 				<?php $i = -1; foreach ( Registry::languages( 'active' ) as $language ) : ?>
@@ -982,7 +982,7 @@ class Backend extends Handler {
 				</span>
 
 				<span class="add-to-menu">
-					<input type="submit"<?php wp_nav_menu_disabled_check( $nav_menu_selected_id ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( __( 'Add to Menu' ) ); ?>" name="add-post-type-menu-item" id="submit-nl_language_link" />
+					<input type="submit"<?php wp_nav_menu_disabled_check( $nav_menu_selected_id ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( __( 'Add to Menu', 'nlingual' ) ); ?>" name="add-post-type-menu-item" id="submit-nl_language_link" />
 					<span class="spinner"></span>
 				</span>
 			</p>
@@ -1008,13 +1008,13 @@ class Backend extends Handler {
 
 		// Localize the javascript
 		wp_localize_script( 'nlingual-admin-js', 'nlingualL10n', array(
-			'TranslationTitle'            => __( 'Enter the title for this translation.' ),
-			'TranslationTitlePlaceholder' => __( 'Translate to %s: %s' ),
-			'NewTranslationError'         => __( 'Error creating translation, please try again later or create one manually.' ),
-			'NoPostSelected'              => __( 'No post selected to edit.' ),
-			'NewTranslation'              => __( '[New]' ),
-			'LocalizeThis'                => __( 'Localize This' ),
-			'LocalizeFor'                 => __( 'Localize for %s' ),
+			'TranslationTitle'            => __( 'Enter the title for this translation.', 'nlingual' ),
+			'TranslationTitlePlaceholder' => __( 'Translate to %s: %s', 'nlingual' ),
+			'NewTranslationError'         => __( 'Error creating translation, please try again later or create one manually.', 'nlingual' ),
+			'NoPostSelected'              => __( 'No post selected to edit.', 'nlingual' ),
+			'NewTranslation'              => __( '[New]', 'nlingual' ),
+			'LocalizeThis'                => __( 'Localize This', 'nlingual' ),
+			'LocalizeFor'                 => __( 'Localize for %s', 'nlingual' ),
 		) );
 	}
 

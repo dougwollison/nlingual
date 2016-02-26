@@ -232,7 +232,7 @@ class Liaison extends Handler {
 		}
 
 		// Print the message with the upgrade link
-		$message = __( 'It looks like some of your terms use the old language splitting method. <a href="%s">Click here</a> to convert them to the new localized format.' );
+		$message = __( 'It looks like some of your terms use the old language splitting method. <a href="%s">Click here</a> to convert them to the new localized format.', 'nlingual' );
 		$nonce = wp_create_nonce( 'convert-localized-terms' );
 		$link = admin_url( 'admin.php?nlingual-action=convert-terms&_nlnonce=' . $nonce );
 		$message = sprintf( $message, $link );
@@ -286,7 +286,7 @@ class Liaison extends Handler {
 
 		// Fail if nothing is found
 		if ( ! $terms ) {
-			wp_die( _e( 'No terms found needing conversion.' ) );
+			wp_die( _e( 'No terms found needing conversion.', 'nlingual' ) );
 		}
 
 		// Start a list of taxonomies that needed localization
@@ -336,7 +336,7 @@ class Liaison extends Handler {
 
 		?>
 		<div class="updated">
-			<p><?php _e( 'All terms found have been successfully converted, and their taxonomies have been enabled for localization.' ); ?></p>
+			<p><?php _e( 'All terms found have been successfully converted, and their taxonomies have been enabled for localization.', 'nlingual' ); ?></p>
 		</div>
 		<?php
 	}
@@ -485,7 +485,7 @@ class Liaison extends Handler {
 					$label = sprintf( $post_type_obj->labels->index_page_translation, $language->system_name );
 				} else {
 					// Use generic one otherwise
-					$label = _fx( '%1$s %2$s Page', 'index page translation', $language->system_name, $post_type_obj->label );
+					$label = _fx( '%1$s %2$s Page', 'index page translation', 'nlingual', $language->system_name, $post_type_obj->label );
 				}
 
 				$post_states[ "page_for_{$post_type}_posts"] = $label;
@@ -522,8 +522,8 @@ class Liaison extends Handler {
 		// Get the plural labe to use
 		$label = strtolower( get_post_type_object( $post_type )->label );
 		echo '<div class="notice notice-warning inline"><p>' .
-			_fx( 'You are currently editing a translation of the page that shows your latest %s.', 'index page translation', $label ) .
-			' <em>' . \__( 'Your current theme may not display the content you write here.', 'index-pages' ) . '</em>' .
+			_fx( 'You are currently editing a translation of the page that shows your latest %s.', 'index page translation', 'nlingual', $label ) .
+			' <em>' . __( 'Your current theme may not display the content you write here.', 'nlingual', 'index-pages' ) . '</em>' .
 		'</p></div>';
 	}
 }

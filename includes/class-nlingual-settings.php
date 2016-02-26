@@ -405,36 +405,36 @@ class Settings {
 		}
 		?>
 		<div class="nl-field-section">
-			<button type="button" class="button nl-section-toggle hide-if-no-js" data-alt="<?php _e( 'Close Settings' ); ?>"><?php _e( 'Open Settings' ); ?></button>
+			<button type="button" class="button nl-section-toggle hide-if-no-js" data-alt="<?php _e( 'Close Settings', 'nlingual' ); ?>"><?php _e( 'Open Settings', 'nlingual' ); ?></button>
 			<div class="nl-section-content">
-				<h4><label  title="<?php _e( 'Check All/None', TXTDMN ); ?>">
-					<?php _e( 'Post Data' ); ?>
+				<h4><label  title="<?php _e( 'Check All/None', 'nlingual', TXTDMN ); ?>">
+					<?php _e( 'Post Data', 'nlingual' ); ?>
 					<input type="checkbox" class="nl-checkall" data-name="<?php echo "{$name}[post_fields]"; ?>" />
 				</label></h4>
 				<?php echo static::build_checklist_field( "{$name}[post_fields]", $value['post_fields'], $post_fields ); ?>
-				<p class="description"><?php _e( 'What post information should be copied?' ); ?> <br />
-					<small><sup>1</sup> <?php _e( 'will also apply to trashing and untrashing' ); ?></small> <br />
-					<small><sup>2</sup> <?php _e( 'will use counterpart translation if found' ); ?></small></p>
+				<p class="description"><?php _e( 'What post information should be copied?', 'nlingual' ); ?> <br />
+					<small><sup>1</sup> <?php _e( 'will also apply to trashing and untrashing', 'nlingual' ); ?></small> <br />
+					<small><sup>2</sup> <?php _e( 'will use counterpart translation if found', 'nlingual' ); ?></small></p>
 
 				<?php if ( $post_taxs ) : ?>
-					<h4><label title="<?php _e( 'Check All/None', TXTDMN ); ?>">
-						<?php _e( 'Taxonomies' ); ?>
+					<h4><label title="<?php _e( 'Check All/None', 'nlingual', TXTDMN ); ?>">
+						<?php _e( 'Taxonomies', 'nlingual' ); ?>
 						<input type="checkbox" class="nl-checkall" data-name="<?php echo "{$name}[post_terms]"; ?>" />
 					</label></h4>
 					<?php echo static::build_checklist_field( "{$name}[post_terms]", $value['post_terms'], $post_taxs ); ?>
-					<p class="description"><?php _e( 'What terms should be copied?' ); ?></p>
+					<p class="description"><?php _e( 'What terms should be copied?', 'nlingual' ); ?></p>
 				<?php endif; ?>
 
-				<h4><label  title="<?php _e( 'Match All/None', TXTDMN ); ?>">
-					<?php _e( 'Meta Data' ); ?>
+				<h4><label  title="<?php _e( 'Match All/None', 'nlingual', TXTDMN ); ?>">
+					<?php _e( 'Meta Data', 'nlingual' ); ?>
 					<input type="checkbox" class="nl-matchall" data-name="<?php echo "{$name}[post_meta]"; ?>" />
 				</label></h4>
 				<?php echo static::build_input_field( "{$name}[post_meta]", "{$name}_post_meta", implode( "\n", (array) $value['post_meta'] ), 'textarea', array(
 					'class' => 'widefat',
 					'rows' => 5,
 				) ); ?>
-				<p class="description"><?php _e( 'Which custom fields should be copied?' ); ?> <br />
-					<small><?php _e( 'One per line. Enter an asterisk (*) to match all fields.' ); ?></small></p>
+				<p class="description"><?php _e( 'Which custom fields should be copied?', 'nlingual' ); ?> <br />
+					<small><?php _e( 'One per line. Enter an asterisk (*) to match all fields.', 'nlingual' ); ?></small></p>
 			</div>
 		</div>
 		<?php

@@ -1,10 +1,9 @@
-<?php namespace nLingual; ?>
 <?php if ( $rules = Registry::get_rules( 'sync', 'post_type', $post_type ) ) : ?>
 	<hr />
-	<strong><?php _ef( 'The following details will be synchronized between sister %s', $plural ); ?></strong>
+	<strong><?php _ef( 'The following details will be synchronized between sister %s', 'nlingual', $plural ); ?></strong>
 	<ul>
 		<?php if ( $rules['post_fields'] ) : ?>
-		<li><strong><?php _e( 'Post Data' ); ?></strong> - <?php
+		<li><strong><?php _e( 'Post Data', 'nlingual' ); ?></strong> - <?php
 			$post_fields = array();
 			// Get the names of each field
 			foreach ( $rules['post_fields'] as $post_field ) {
@@ -15,7 +14,7 @@
 		<?php endif; ?>
 
 		<?php if ( $rules['post_terms'] ) : ?>
-		<li><strong><?php _e( 'Taxonomies' ); ?></strong> - <?php
+		<li><strong><?php _e( 'Taxonomies', 'nlingual' ); ?></strong> - <?php
 			$taxonomies = array();
 			// Get the names of each field
 			foreach ( $rules['post_terms'] as $taxonomy ) {
@@ -26,7 +25,7 @@
 		<?php endif; ?>
 
 		<?php if ( $rules['post_meta'] ) : ?>
-		<li><strong><?php _e( 'Meta Data' ); ?></strong> - <?php
+		<li><strong><?php _e( 'Meta Data', 'nlingual' ); ?></strong> - <?php
 			if ( in_array( '*', $rules['post_meta'] ) ) {
 				echo _( 'All custom fields found.' );
 			} else {

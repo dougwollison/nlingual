@@ -100,8 +100,8 @@ class Manager extends Handler {
 	public static function add_menu_pages() {
 		// Main Options page
 		$options_page_hook = add_utility_page(
-			__( 'Translation Options' ), // page title
-			_x( 'Translation', 'menu title' ), // menu title
+			__( 'Translation Options', 'nlingual' ), // page title
+			_x( 'Translation', 'menu title', 'nlingual' ), // menu title
 			'manage_options', // capability
 			'nlingual-options', // slug
 			array( get_called_class(), 'settings_page' ), // callback
@@ -111,8 +111,8 @@ class Manager extends Handler {
 		// Languages manager
 		$languages_page_hook = add_submenu_page(
 			'nlingual-options', // parent
-			__( 'Manage Languages' ), // page title
-			_x( 'Languages', 'menu title' ), // menu title
+			__( 'Manage Languages', 'nlingual' ), // page title
+			_x( 'Languages', 'menu title', 'nlingual' ), // menu title
 			'manage_options', // capability
 			'nlingual-languages', // slug
 			array( get_called_class(), 'settings_page_languages' ) // callback
@@ -121,8 +121,8 @@ class Manager extends Handler {
 		// Localizable Objects manager
 		$localizables_page_hook = add_submenu_page(
 			'nlingual-options', // parent
-			__( 'Manage Localizable Objects' ), // page title
-			__( 'Localizables' ), // menu title
+			__( 'Manage Localizable Objects', 'nlingual' ), // page title
+			__( 'Localizables', 'nlingual' ), // menu title
 			'manage_options', // capability
 			'nlingual-localizables', // slug
 			array( get_called_class(), 'settings_page' ) // callback
@@ -131,8 +131,8 @@ class Manager extends Handler {
 		// Sync/Clone Rules manager
 		$sync_page_hook = add_submenu_page(
 			'nlingual-options', // parent
-			__( 'Post Synchronization' ), // page title
-			__( 'Synchronization' ), // menu title
+			__( 'Post Synchronization', 'nlingual' ), // page title
+			__( 'Synchronization', 'nlingual' ), // menu title
 			'manage_options', // capability
 			'nlingual-synchronization', // slug
 			array( get_called_class(), 'settings_page' ) // callback
@@ -238,7 +238,7 @@ class Manager extends Handler {
 					add_settings_error(
 						'nlingual-languages',
 						'nl_language',
-						__( 'One or more languages were incomplete and were not saved.' ),
+						__( 'One or more languages were incomplete and were not saved.', 'nlingual' ),
 						'error'
 					);
 					break;
@@ -283,7 +283,7 @@ class Manager extends Handler {
 
 		// Check for setting errors; add an "updated" message if none are found
 		if ( ! count( get_settings_errors() ) ) {
-			add_settings_error( 'nlingual-languages', 'settings_updated', __( 'Languages saved.' ), 'updated' );
+			add_settings_error( 'nlingual-languages', 'settings_updated', __( 'Languages saved.', 'nlingual' ), 'updated' );
 		}
 		set_transient( 'settings_errors', get_settings_errors(), 30);
 
@@ -316,19 +316,19 @@ class Manager extends Handler {
 		 */
 		$general_settings = array(
 			'default_language' => array(
-				'title' => __( 'Default Language' ),
+				'title' => __( 'Default Language', 'nlingual' ),
 				'help'  => null,
 				'type'  => 'select',
 				'data'  => Registry::languages()->pluck( 'system_name' ),
 			),
 			'localize_date' => array(
-				'title' => __( 'Localize date format?' ),
-				'help'  => __( 'Run localization on the date format defined under General Settings. Useful if any languages you use require custom date formats.' ),
+				'title' => __( 'Localize date format?', 'nlingual' ),
+				'help'  => __( 'Run localization on the date format defined under General Settings. Useful if any languages you use require custom date formats.', 'nlingual' ),
 				'type'  => 'checkbox',
 			),
 			'patch_wp_locale' => array(
-				'title' => __( 'Patch <code>WP_Locale</code>?' ),
-				'help'  => __( 'Replaced the Date/Time localization system with one using your Theme’s translation files instead (front-end only).' ),
+				'title' => __( 'Patch <code>WP_Locale</code>?', 'nlingual' ),
+				'help'  => __( 'Replaced the Date/Time localization system with one using your Theme’s translation files instead (front-end only).', 'nlingual' ),
 				'type'  => 'checkbox',
 			),
 		);
@@ -336,8 +336,8 @@ class Manager extends Handler {
 		// If this is an upgraded install, offer the backwards compatibility option
 		if ( get_option( 'nlingual_upgraded' ) ) {
 			$general_settings['backwards_compatible'] = array(
-				'title' => __( 'Backwards Compatibility' ),
-				'help'  => __( 'Include support for old template functions, and features like language splitting.' ),
+				'title' => __( 'Backwards Compatibility', 'nlingual' ),
+				'help'  => __( 'Include support for old template functions, and features like language splitting.', 'nlingual' ),
 				'type'  => 'checkbox',
 			);
 		}
@@ -351,19 +351,19 @@ class Manager extends Handler {
 		 */
 		$management_settings = array(
 			'show_all_languages' => array(
-				'title' => __( 'Show All Languages?' ),
-				'help'  => __( 'Should objects of all languages be listed by default in the admin?' ),
+				'title' => __( 'Show All Languages?', 'nlingual' ),
+				'help'  => __( 'Should objects of all languages be listed by default in the admin?', 'nlingual' ),
 				'type'  => 'checkbox',
 			),
 			'delete_sister_posts' => array(
-				'title' => __( 'Delete Sister Translations?' ),
-				'help'  => __( 'When deleting an object (that’s in the Trash), should its translations be deleted as well?' ),
+				'title' => __( 'Delete Sister Translations?', 'nlingual' ),
+				'help'  => __( 'When deleting an object (that’s in the Trash), should its translations be deleted as well?', 'nlingual' ),
 				'type'  => 'checkbox',
 			),
 		);
 
 		// Add the sections and fields
-		add_settings_section( 'management', __( 'Translated Content Management' ), null, 'nlingual-options' );
+		add_settings_section( 'management', __( 'Translated Content Management', 'nlingual' ), null, 'nlingual-options' );
 		Settings::add_fields( $management_settings, 'options', 'management' );
 
 		/**
@@ -405,35 +405,35 @@ class Manager extends Handler {
 		 */
 		$redirection_settings = array(
 			'query_var' => array(
-				'title' => __( 'Query Variable' ),
-				'help'  => __( 'The variable name for <code>WP_Query</code> to use when filtering by language.' ),
+				'title' => __( 'Query Variable', 'nlingual' ),
+				'help'  => __( 'The variable name for <code>WP_Query</code> to use when filtering by language.', 'nlingual' ),
 				'type'  => 'input',
 			),
 			'url_rewrite_method' => array(
-				'title' => __( 'URL Scheme' ),
-				'help'  => __( 'What style should be used for the translated URLs?' ) .
-					'<br /> <span class="nl-previews">' . _f( 'Preview: %s', $redirect_previews ) . '</span>',
+				'title' => __( 'URL Scheme', 'nlingual' ),
+				'help'  => __( 'What style should be used for the translated URLs?', 'nlingual' ) .
+					'<br /> <span class="nl-previews">' . _f( 'Preview: %s', 'nlingual', $redirect_previews ) . '</span>',
 				'type'  => 'radiolist',
 				'data'  => array(
-					'path'   => __( 'Path prefix' ),
-					'domain' => __( 'Subdomain' ),
+					'path'   => __( 'Path prefix', 'nlingual' ),
+					'domain' => __( 'Subdomain', 'nlingual' ),
 				),
 			),
 			'skip_default_l10n' => array(
-				'title' => __( 'Skip Localization for Default Language?' ),
-				'help'  => __( 'URLs for the default language will be unmodified.' ) .
-					'<br /> <span class="nl-previews">' . _f( 'Preview: %s', $url_previews ) . '</span>',
+				'title' => __( 'Skip Localization for Default Language?', 'nlingual' ),
+				'help'  => __( 'URLs for the default language will be unmodified.', 'nlingual' ) .
+					'<br /> <span class="nl-previews">' . _f( 'Preview: %s', 'nlingual', $url_previews ) . '</span>',
 				'type'  => 'checkbox',
 			),
 			'post_language_override' => array(
-				'title' => __( 'Post Language Override' ),
-				'help'  => __( 'Should the language of the requested post take precedence in the event of a language mismatch?' ) .
-					'<br /> <span class="nl-previews">' . _f( 'Example: %s', $override_previews ) . '</span>',
+				'title' => __( 'Post Language Override', 'nlingual' ),
+				'help'  => __( 'Should the language of the requested post take precedence in the event of a language mismatch?', 'nlingual' ) .
+					'<br /> <span class="nl-previews">' . _f( 'Example: %s', 'nlingual', $override_previews ) . '</span>',
 				'type'  => 'checkbox',
 			),
 			'redirection_permanent' => array(
-				'title' => __( 'Permanently Redirect URLs?' ),
-				'help'  => __( 'Use "permanent" (HTTP 301) instead of "temporary" (HTTP 302) redirects?' ),
+				'title' => __( 'Permanently Redirect URLs?', 'nlingual' ),
+				'help'  => __( 'Use "permanent" (HTTP 301) instead of "temporary" (HTTP 302) redirects?', 'nlingual' ),
 				'type'  => 'checkbox',
 			),
 		);
@@ -441,15 +441,15 @@ class Manager extends Handler {
 		// If rewrites can't be used, replace the rewrite field with a notice
 		if ( ! Registry::can_use_rewrites() ) {
 			$redirection_settings['url_rewrite_method'] = array(
-				'title' => __( 'URL Scheme' ),
+				'title' => __( 'URL Scheme', 'nlingual' ),
 				'type'  => 'notice',
-				'data'  => __( 'You have permalinks disabled; translated URLs will use the HTTP query method, using the <strong>query variable</strong> set above.' ),
-				'help'  => '<span class="nl-previews">' . _f( 'Preview: %s', $redirect_previews ) . '</span>',
+				'data'  => __( 'You have permalinks disabled; translated URLs will use the HTTP query method, using the <strong>query variable</strong> set above.', 'nlingual' ),
+				'help'  => '<span class="nl-previews">' . _f( 'Preview: %s', 'nlingual', $redirect_previews ) . '</span>',
 			);
 		}
 
 		// Add the sections and fields
-		add_settings_section( 'redirection', __( 'Request and Redirection Handling' ), null, 'nlingual-options' );
+		add_settings_section( 'redirection', __( 'Request and Redirection Handling', 'nlingual' ), null, 'nlingual-options' );
 		Settings::add_fields( $redirection_settings, 'options', 'redirection' );
 	}
 
@@ -482,8 +482,8 @@ class Manager extends Handler {
 		// Add if we have any
 		if ( $post_types ) {
 			$fields['post_types'] = array(
-				'title' => __( 'Post Types' ),
-				'help'  => __( 'What post types should support language and translations?' ),
+				'title' => __( 'Post Types', 'nlingual' ),
+				'help'  => __( 'What post types should support language and translations?', 'nlingual' ),
 				'type'  => 'checklist',
 				'data'  => $post_types,
 			);
@@ -508,8 +508,8 @@ class Manager extends Handler {
 		// Add if we have any
 		if ( $taxonomies ) {
 			$fields['taxonomies'] = array(
-				'title' => __( 'Taxonomies' ),
-				'help'  => __( 'What taxonomies should support name and description localization?' ),
+				'title' => __( 'Taxonomies', 'nlingual' ),
+				'help'  => __( 'What taxonomies should support name and description localization?', 'nlingual' ),
 				'type'  => 'checklist',
 				'data'  => $taxonomies,
 			);
@@ -525,8 +525,8 @@ class Manager extends Handler {
 		// Add if we have any
 		if ( $nav_locations ) {
 			$fields['nav_menu_locations'] = array(
-				'title' => __( 'Menu Locations' ),
-				'help'  => __( 'Should any navigation menus have versions for each language?' ),
+				'title' => __( 'Menu Locations', 'nlingual' ),
+				'help'  => __( 'Should any navigation menus have versions for each language?', 'nlingual' ),
 				'type'  => 'checklist',
 				'data'  => $nav_locations,
 			);
@@ -545,8 +545,8 @@ class Manager extends Handler {
 		// Add if we have any
 		if ( $sidebars ) {
 			$fields['sidebar_locations'] = array(
-				'title' => __( 'Sidebar Locations' ),
-				'help'  => __( 'Should any widget areas have versions for each language?' ),
+				'title' => __( 'Sidebar Locations', 'nlingual' ),
+				'help'  => __( 'Should any widget areas have versions for each language?', 'nlingual' ),
 				'type'  => 'checklist',
 				'data'  => $sidebars,
 			);
@@ -587,7 +587,7 @@ class Manager extends Handler {
 		Settings::add_fields( $sync_fields, 'synchronization' );
 
 		// The post cloning setting fields
-		add_settings_section( 'cloning', __( 'New Translations' ), array( get_called_class(), 'settings_section_cloning' ), 'nlingual-synchronization' );
+		add_settings_section( 'cloning', __( 'New Translations', 'nlingual' ), array( get_called_class(), 'settings_section_cloning' ), 'nlingual-synchronization' );
 		Settings::add_fields( $clone_fields, 'synchronization', 'cloning' );
 	}
 
@@ -636,23 +636,23 @@ class Manager extends Handler {
 				<?php settings_fields( $plugin_page ); ?>
 				<div id="nl_language_controls">
 					<select id="nl_language_preset">
-						<option value=""><?php _e( '&mdash; Custom Language &mdash;' ); ?></option>
+						<option value=""><?php _e( '&mdash; Custom Language &mdash;', 'nlingual' ); ?></option>
 					</select>
-					<button type="button" id="nl_language_add" class="button"><?php _e( 'Add Language' ); ?></button>
+					<button type="button" id="nl_language_add" class="button"><?php _e( 'Add Language', 'nlingual' ); ?></button>
 				</div>
 				<table id="nlingual_languages" class="wp-list-table widefat fixed striped">
 					<thead>
 						<tr>
-							<th scope="col" class="nl-language-list_order"><?php _e( 'List Order' ); ?></th>
-							<th scope="col" class="nl-language-system_name"><?php _e( 'System Name' ); ?></th>
-							<th scope="col" class="nl-language-native_name"><?php _e( 'Native Name' ); ?></th>
-							<th scope="col" class="nl-language-short_name"><?php _e( 'Short Name' ); ?></th>
-							<th scope="col" class="nl-language-locale_name"><?php _e( 'Locale' ); ?></th>
-							<th scope="col" class="nl-language-iso_code"><?php _e( 'ISO' ); ?></th>
-							<th scope="col" class="nl-language-slug"><?php _e( 'Slug' ); ?></th>
-							<th scope="col" class="nl-language-direction"><?php _e( 'Text Direction' ); ?></th>
-							<th scope="col" class="nl-language-active"><?php _e( 'Active?' ); ?></th>
-							<td class="nl-language-delete"><?php _e( 'Delete?' ); ?></td>
+							<th scope="col" class="nl-language-list_order"><?php _e( 'List Order', 'nlingual' ); ?></th>
+							<th scope="col" class="nl-language-system_name"><?php _e( 'System Name', 'nlingual' ); ?></th>
+							<th scope="col" class="nl-language-native_name"><?php _e( 'Native Name', 'nlingual' ); ?></th>
+							<th scope="col" class="nl-language-short_name"><?php _e( 'Short Name', 'nlingual' ); ?></th>
+							<th scope="col" class="nl-language-locale_name"><?php _e( 'Locale', 'nlingual' ); ?></th>
+							<th scope="col" class="nl-language-iso_code"><?php _e( 'ISO', 'nlingual' ); ?></th>
+							<th scope="col" class="nl-language-slug"><?php _e( 'Slug', 'nlingual' ); ?></th>
+							<th scope="col" class="nl-language-direction"><?php _e( 'Text Direction', 'nlingual' ); ?></th>
+							<th scope="col" class="nl-language-active"><?php _e( 'Active?', 'nlingual' ); ?></th>
+							<td class="nl-language-delete"><?php _e( 'Delete?', 'nlingual' ); ?></td>
 						</tr>
 					</thead>
 					<tbody id="nl_language_list">
@@ -682,8 +682,8 @@ class Manager extends Handler {
 							<input type="text" name="nlingual_languages[%id%][slug]" value="%slug%" maxlength="100" />
 						</td>
 						<td class="nl-language-direction">
-							<label title="<?php _e( 'Left to Right' ); ?>"><input type="radio" name="nlingual_languages[%id%][direction]" value="ltr" />&rsaquo;&para;</label>
-							<label title="<?php _e( 'Right to Left' ); ?>"><input type="radio" name="nlingual_languages[%id%][direction]" value="rtl" />&para;&lsaquo;</label>
+							<label title="<?php _e( 'Left to Right', 'nlingual' ); ?>"><input type="radio" name="nlingual_languages[%id%][direction]" value="ltr" />&rsaquo;&para;</label>
+							<label title="<?php _e( 'Right to Left', 'nlingual' ); ?>"><input type="radio" name="nlingual_languages[%id%][direction]" value="rtl" />&para;&lsaquo;</label>
 						</td>
 						<td class="nl-language-active">
 							<input type="checkbox" name="nlingual_languages[%id%][active]" value="1" />
@@ -710,7 +710,7 @@ class Manager extends Handler {
 	 */
 	public static function settings_section_cloning() {
 		?>
-		<p><?php _e( 'When creating a new translation of an existing post (i.e. a clone), what details should be cloned?' ); ?></p>
+		<p><?php _e( 'When creating a new translation of an existing post (i.e. a clone), what details should be cloned?', 'nlingual' ); ?></p>
 		<?php
 	}
 }
