@@ -715,7 +715,7 @@ class Backend extends Handler {
 				<?php if ( $languages->count() > 1 ) : ?>
 				<h4 class="nl-heading"><?php _e( 'Translations', 'nlingual' ); ?></h4>
 				<?php foreach ( $languages as $language ) : ?>
-				<div class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?>" data-nl_language="<?php echo $language->id?>">
+				<div class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?>" data-nl_language="<?php echo $language->id; ?>">
 					<label for="nl_translation_<?php echo $language->id; ?>_input">
 						<?php echo $language->system_name; ?>
 						<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' ); ?>"><?php _e( 'Edit', 'nlingual' ); ?></button>
