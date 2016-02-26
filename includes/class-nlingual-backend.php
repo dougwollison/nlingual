@@ -485,7 +485,7 @@ class Backend extends Handler {
 					echo '<li>';
 					printf( '<input type="hidden" class="nl-translation-%d" value="%d" />', $language->id, $post );
 					$link = sprintf( '<a href="%s" target="_blank">%s</a>', get_edit_post_link( $post ), get_the_title( $post ) );
-					_efx( '%s: %s', 'language: title', $language->system_name, $link );
+					_efx( '%1$s: %2$s', 'language: title', 'nlingual', $language->system_name, $link );
 					echo '<li>';
 				}
 			}
@@ -1009,7 +1009,7 @@ class Backend extends Handler {
 		// Localize the javascript
 		wp_localize_script( 'nlingual-admin-js', 'nlingualL10n', array(
 			'TranslationTitle'            => __( 'Enter the title for this translation.', 'nlingual' ),
-			'TranslationTitlePlaceholder' => __( 'Translate to %s: %s', 'nlingual' ),
+			'TranslationTitlePlaceholder' => __( 'Translate to %1$s: %2$s', 'nlingual' ),
 			'NewTranslationError'         => __( 'Error creating translation, please try again later or create one manually.', 'nlingual' ),
 			'NoPostSelected'              => __( 'No post selected to edit.', 'nlingual' ),
 			'NewTranslation'              => __( '[New]', 'nlingual' ),
