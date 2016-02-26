@@ -695,7 +695,7 @@ class Manager extends Handler {
 				</script>
 				<script>
 					<?php $presets = require( NL_PLUGIN_DIR . '/includes/presets-languages.php' ); ?>
-					nLingual.presets = <?php echo json_encode( $presets );?>
+					nLingual.presets = <?php echo json_encode( $presets ); ?>
 				</script>
 				<?php submit_button(); ?>
 			</form>

@@ -526,7 +526,7 @@ class Backend extends Handler {
 			<input type="hidden" name="_nl_nonce" class="nl-nonce" />
 			<div class="inline-edit-col nl-set-language">
 				<label>
-					<span class="title"><?php _e( 'Language', 'nlingual' );?></span>
+					<span class="title"><?php _e( 'Language', 'nlingual' ); ?></span>
 					<select name="nlingual_language" class="nl-input nl-language-input">
 						<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
 						<?php
@@ -541,7 +541,7 @@ class Backend extends Handler {
 			<div class="inline-edit-col nl-set-translations">
 				<?php foreach ( $languages as $language ) : ?>
 				<label class="nl-translation-field nl-translation-<?php echo $language->id; ?>"  data-nl_language="<?php echo $language->id; ?>">
-					<span class="title"><?php _ef( '%s Translation', 'nlingual', $language->system_name );?></span>
+					<span class="title"><?php _ef( '%s Translation', 'nlingual', $language->system_name ); ?></span>
 					<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
 						<option value="0">&mdash; <?php _ex( 'None', 'no translation', 'nlingual' ); ?> &mdash;</option>
 						<?php
@@ -596,7 +596,7 @@ class Backend extends Handler {
 		<fieldset id="nl_post_bulk_language" class="inline-edit-col-right">
 			<div class="inline-edit-col">
 				<label>
-					<span class="title"><?php _e( 'Language', 'nlingual' );?></span>
+					<span class="title"><?php _e( 'Language', 'nlingual' ); ?></span>
 					<select name="nlingual_bulk_language" id="nl_language">
 						<option value="0">&mdash; <?php _e( 'No Change', 'nlingual' ); ?> &mdash;</option>
 						<?php
@@ -718,7 +718,7 @@ class Backend extends Handler {
 				<div class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?>" data-nl_language="<?php echo $language->id?>">
 					<label for="nl_translation_<?php echo $language->id; ?>_input">
 						<?php echo $language->system_name; ?>
-						<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' );?>"><?php _e( 'Edit', 'nlingual' );?></button>
+						<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' ); ?>"><?php _e( 'Edit', 'nlingual' ); ?></button>
 					</label>
 
 					<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
