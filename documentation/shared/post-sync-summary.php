@@ -7,7 +7,7 @@
 			$post_fields = array();
 			// Get the names of each field
 			foreach ( $rules['post_fields'] as $post_field ) {
-				$post_fields[] = _x( Documenter::$post_field_names[ $post_field ], 'post field' );
+				$post_fields[] = _x( nLingual\Documenter::$post_field_names[ $post_field ], 'post field' );
 			}
 			echo implode( ', ', $post_fields );
 		?></li>
