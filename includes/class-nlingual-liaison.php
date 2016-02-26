@@ -403,7 +403,7 @@ class Liaison extends Handler {
 		}
 
 		// Get the sync rules for the post type
-		$rules = Registry::get_rules( 'sync', 'post_type', $post_type, 'post_fields' );
+		$rules = Registry::get_post_sync_rules( $post_type, 'post_fields' );
 		// If menu_order isn't set included in the sync rules, abort
 		if ( ! in_array( 'menu_order', $rules ) ) {
 			return $pre_value;

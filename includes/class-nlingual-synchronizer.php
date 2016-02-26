@@ -66,7 +66,7 @@ class Synchronizer {
 
 		// Load general sync rules by default
 		if ( is_null( $rules ) ) {
-			$rules = Registry::get_rules( 'sync', 'post_type', $original->post_type );
+			$rules = Registry::get_post_sync_rules( $original->post_type );
 		}
 
 		// Post Fields
@@ -199,7 +199,7 @@ class Synchronizer {
 		}
 
 		// Get the cloning rules
-		$rules = Registry::get( 'clone_rules' );
+		$rules = Registry::get_post_clone_rules();
 
 		// Create the new post
 		$post_data = array(

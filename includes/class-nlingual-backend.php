@@ -183,11 +183,11 @@ class Backend extends Handler {
 	 */
 	public static function prepare_rules() {
 		// Get the sync and clone rules, making sure post_type array is present for both
-		$sync_rules = Registry::get( 'sync_rules' );
+		$sync_rules = Registry::get_sync_rules();
 		if ( ! isset( $sync_rules['post_type'] ) || ! is_array( $sync_rules['post_type'] ) ) {
 			$sync_rules['post_type'] = array();
 		}
-		$clone_rules = Registry::get( 'clone_rules' );
+		$clone_rules = Registry::get_clone_rules();
 		if ( ! isset( $clone_rules['post_type'] ) || ! is_array( $clone_rules['post_type'] ) ) {
 			$clone_rules['post_type'] = array();
 		}
@@ -871,7 +871,7 @@ class Backend extends Handler {
 			// And the post type supports translation
 			&& Registry::is_post_type_supported( $post->post_type )
 			// And the post type has syncronization rules specified
-			&& Registry::get_rules( 'sync', 'post_type', $post->post_type )
+			&& Registry::get_post_sync_rules( $post->post_type )
 			// And the post has sister translations
 			&& Translator::get_post_translations( $post->ID )
 		) : ?>
@@ -909,7 +909,7 @@ class Backend extends Handler {
 		// Add addendums to every set of messages
 		foreach ( $bulk_notices as &$notices ) {
 			// Get the rules for this post type
-			$sync_rules = Registry::get_rules( 'sync', 'post_type', $screen->post_type );
+			$sync_rules = Registry::get_post_sync_rules( $screen->post_type );
 
 			if ( $sync_rules ) {
 				$notices['updated'] .= ' ' . $updated_addendum;

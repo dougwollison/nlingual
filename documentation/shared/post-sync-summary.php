@@ -1,4 +1,4 @@
-<?php if ( array_filter( $rules = nLingual\Registry::get_rules( 'sync', 'post_type', $post_type ) ) ) : ?>
+<?php if ( array_filter( $rules = nLingual\Registry::get_post_sync_rules( $post_type ) ) ) : ?>
 	<hr />
 	<strong><?php _ef( 'The following details will be synchronized between sister %s', 'nlingual', $plural ); ?></strong>
 	<ul>
