@@ -374,7 +374,7 @@ class Settings {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Documenter::$post_field_names
+	 * @uses Documenter::post_field_names() to get the post field names.
 	 * @uses Settings::build_checklist_field() to build checklists of fields and terms to enable.
 	 *
 	 * @param string $name      The name of the field.
@@ -383,7 +383,7 @@ class Settings {
 	 */
 	protected static function build_sync_settings_field( $name, $value, $post_type ) {
 		// Post Data values
-		$post_fields = _ax( Documenter::$post_field_names, 'post field' );
+		$post_fields = Documenter::post_field_names();
 		$post_fields['post_status'] .= '<sup>1</sup>'; // flag parent field for note about trashing
 		$post_fields['post_parent'] .= '<sup>2</sup>'; // flag parent field for note about counterpart translation
 

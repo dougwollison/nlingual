@@ -82,23 +82,29 @@ class Documenter extends Handler {
 	 */
 	protected static $registered_screens = array();
 
+	// =========================
+	// ! Dynamic Properties
+	// =========================
+
 	/**
-	 * A reference list for names of post fields.
+	 * Get a reference list for names of post fields.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @var array
+	 * @return array The list of names, localized.
 	 */
-	public static $post_field_names = array(
-		'post_author'    => 'Author',
-		'post_date'      => 'Date',
-		'post_status'    => 'Status',
-		'post_parent'    => 'Parent',
-		'menu_order'     => 'Menu Order',
-		'post_password'  => 'Password',
-		'comment_status' => 'Comment Status',
-		'ping_status'    => 'Pingback Status',
-	);
+	public static function post_field_names() {
+		return array(
+			'post_author'    => _x( 'Author', 'post field', 'nlingual' ),
+			'post_date'      => _x( 'Date', 'post field', 'nlingual' ),
+			'post_status'    => _x( 'Status', 'post field', 'nlingual' ),
+			'post_parent'    => _x( 'Parent', 'post field', 'nlingual' ),
+			'menu_order'     => _x( 'Menu Order', 'post field', 'nlingual' ),
+			'post_password'  => _x( 'Password', 'post field', 'nlingual' ),
+			'comment_status' => _x( 'Comment Status', 'post field', 'nlingual' ),
+			'ping_status'    => _x( 'Pingback Status', 'post field', 'nlingual' ),
+		);
+	}
 
 	// =========================
 	// ! Hook Registration

@@ -361,11 +361,10 @@ class Backend extends Handler {
 	 * @return array The filtered post states list.
 	 */
 	public static function flag_translated_pages( array $post_states, \WP_Post $post ) {
-		// If it's a page and not in the default language...
+		// Check if it's a page in another language, with a translation
 		$language = Translator::get_post_language( $post->ID );
-		if ( $post->post_type == 'page' && ! Registry::is_language_default( $language ) ) {
-			$translation = Translator::get_post_translation( $post->ID, Registry::default_language() );
-
+		if ( $post->post_type == 'page' && ! Registry::is_language_default( $language )
+		&& $translation = Translator::get_post_translation( $post->ID, Registry::default_language() ) ) {
 			// Check if it's a translation of the home page
 			if ( $translation == get_option( 'page_on_front' ) ) {
 				$post_states['page_on_front'] = _fx( '%s Front Page', 'front page translation', 'nlingual', $language->system_name );
