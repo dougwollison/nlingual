@@ -242,7 +242,7 @@ class Installer extends Handler {
 		$default_options = Registry::get_defaults();
 		$default_options['post_types'] = array( 'post', 'page' );
 		$default_options['taxonomies'] = array( 'category', 'post_tag' );
-		add_option( 'nlingual_options', array() );
+		add_option( 'nlingual_options', $default_options );
 
 		// Default languages (use site's language)
 		$languages = new Languages();
