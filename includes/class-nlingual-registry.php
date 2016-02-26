@@ -170,6 +170,19 @@ class Registry {
 	// =========================
 
 	/**
+	 * Retrieve the whitelist.
+	 *
+	 * @internal Used by the Installer.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return array The options whitelist.
+	 */
+	public static function get_defaults() {
+		return static::$options_whitelist;
+	}
+
+	/**
 	 * Check if an option is supported.
 	 *
 	 * Will also udpate the option value if it was deprecated
