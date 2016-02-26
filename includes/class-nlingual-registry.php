@@ -781,5 +781,8 @@ class Registry {
 			// Pass to get_rules and return output
 			return call_user_func_array( array( __CLASS__, 'get_rules' ), $sections );
 		}
+
+		// No match, throw exception
+		throw new Exception( _f( 'Call to unrecognized method alias %1$::%2$s()', 'nlingual', __CLASS__, $name ), NL_ERR_UNSUPPORTED );
 	}
 }
