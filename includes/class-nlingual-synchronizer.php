@@ -69,6 +69,17 @@ class Synchronizer {
 			$rules = Registry::get_post_sync_rules( $original->post_type );
 		}
 
+		/**
+		 * Filter the post sync rules.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param array    $rules    The sync rules for this post's type.
+		 * @param \WP_Post $original The post being synchronized from.
+		 * @param \WP_Post $target   The post being synchronized to.
+		 */
+		$rules = apply_filters( 'nlingual_post_sync_rules', $rules, $original, $target );
+
 		// Post Fields
 		if ( isset( $rules['post_fields'] ) && $rules['post_fields'] ) {
 			// Build the list of fields to change
@@ -180,16 +191,14 @@ class Synchronizer {
 		if ( ! is_a( $post, 'WP_Post' ) ) {
 			$post = get_post( $post );
 			if ( ! $post ) {
-				return false;
+				throw new Exception( 'The post specified does not exist: ' . func_get_arg( 0 ), NL_ERR_NOTFOUND );
 			}
 		}
 
-		// Validate $language if an ID
-		if ( ! is_a( $language, __NAMESPACE__ . '\\Language' ) ) {
-			$language = Registry::get_language( $language );
-			if ( ! $language ) {
-				return false;
-			}
+		// Ensure $language is a Language
+		if ( ! validate_language( $language ) ) {
+			// Throw exception if not found
+			throw new Exception( 'The language specified does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
 		}
 
 		// Default title if not passed
@@ -197,9 +206,6 @@ class Synchronizer {
 			$title = _f( 'Translate to %1$s: %2$s', 'nlingual', $language->system_name, $post->post_title );
 			$_title_is_default = true;
 		}
-
-		// Get the cloning rules
-		$rules = Registry::get_post_clone_rules();
 
 		// Create the new post
 		$post_data = array(
@@ -236,6 +242,20 @@ class Synchronizer {
 		// Set the language of the translation and it's associate it with the original
 		Translator::set_post_language( $translation->ID, $language );
 		Translator::set_post_translation( $post->ID, $language, $translation->ID );
+
+		// Get the cloning rules
+		$rules = Registry::get_post_clone_rules();
+
+		/**
+		 * Filter the post sync rules.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param array    $rules    The clone rules for this post's type.
+		 * @param \WP_Post $post     The post being cloned.
+		 * @param Language $language The language being cloned for.
+		 */
+		$rules = apply_filters( 'nlingual_post_clone_rules', $rules, $post, $language );
 
 		// Synchronize the two posts
 		static::sync_posts( $post->ID, $translation->ID, $rules );
