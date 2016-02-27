@@ -160,16 +160,25 @@ class Frontend extends Handler {
 		$redirect_language = Registry::current_language();
 
 		// Check if the queried object is a post
-		if ( is_a( get_queried_object(), 'WP_Post' ) ) {
-			// Get the language of the post
-			$post_language = Translator::get_post_language( get_queried_object_id() );
+		$queried_object = get_queried_object();
+		if ( is_a( $queried_object, 'WP_Post' ) ) {
+			// Check if it's post type is supported
+			if ( Registry::is_post_type_supported( $queried_object->post_type ) ) {
+				// Get the language
+				$post_language = Translator::get_post_language( $queried_object );
 
-			// If the post has a language, and it doesn't match the current one,
-			// And the override is set, or otherwise the language wasn't specified,
-			// Redirect to the post's language
-			if ( $post_language && ! Registry::is_language_current( $post_language )
-			&& ( Registry::get( 'post_language_override', false ) || ! defined( 'NL_REQUESTED_LANGUAGE' ) ) ) {
-				$redirect_language = $post_language;
+				// If the post has a language, and it doesn't match the current one,
+				// and the override is set (or otherwise the language wasn't specified),
+				// or if it doesn't have a translation (and language_is_required is set),
+				// Redirect to the post's language
+				if ( ( $post_language
+					&& ! Registry::is_language_current( $post_language )
+					&& ( Registry::get( 'post_language_override', false )
+						|| ! defined( 'NL_REQUESTED_LANGUAGE' ) ) )
+				|| ( ! Translator::get_post_translation( $queried_object )
+					&& Registry::get( 'language_is_required' ) ) ) {
+					$redirect_language = $post_language;
+				}
 			}
 		}
 		// If the language was already specified, or otherwise it's the default and skip is enabled, do nothing

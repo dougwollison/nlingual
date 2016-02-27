@@ -118,6 +118,8 @@ class Registry {
 		'skip_default_l10n' => false,
 		// - The post language override option
 		'post_language_override' => true,
+		// - The must_have_language option
+		'language_is_required' => false,
 		// - The permanent redirection option
 		'redirection_permanent' => false,
 
@@ -338,12 +340,16 @@ class Registry {
 	 * @return mixed The language or the value of the language's field.
 	 */
 	public static function get_language( $id_or_slug, $field = null ) {
-		$language = static::$languages->get( $id_or_slug );
-		if ( is_null( $field ) ) {
-			return $language;
+		// Check if id/slug is a value, and that it matches a language
+		if ( $id_or_slug && $language = static::$languages->get( $id_or_slug ) ) {
+			if ( is_null( $field ) ) {
+				return $language;
+			}
+
+			return $language->$field;
 		}
 
-		return $language->$field;
+		return false;
 	}
 
 	/**

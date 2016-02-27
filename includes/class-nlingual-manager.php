@@ -427,13 +427,18 @@ class Manager extends Handler {
 			'skip_default_l10n' => array(
 				'title' => __( 'Skip Localization for Default Language?', 'nlingual' ),
 				'help'  => __( 'URLs for the default language will be unmodified.', 'nlingual' ) .
-					'<br /> <span class="nl-previews">' . _f( 'Preview: %s', 'nlingual', $url_previews ) . '</span>',
+					'<br /> <span class="nl-previews">' . _f( 'Example: %s', 'nlingual', $url_previews ) . '</span>',
 				'type'  => 'checkbox',
 			),
 			'post_language_override' => array(
 				'title' => __( 'Post Language Override', 'nlingual' ),
 				'help'  => __( 'Should the language of the requested post take precedence in the event of a language mismatch?', 'nlingual' ) .
 					'<br /> <span class="nl-previews">' . _f( 'Example: %s', 'nlingual', $override_previews ) . '</span>',
+				'type'  => 'checkbox',
+			),
+			'language_is_required' => array(
+				'title' => __( 'Language is Required', 'nlingual' ),
+				'help'  => __( 'Should all supported objects have a language? (Default will be assumed)', 'nlingual' ),
 				'type'  => 'checkbox',
 			),
 			'redirection_permanent' => array(

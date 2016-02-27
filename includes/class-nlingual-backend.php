@@ -501,6 +501,7 @@ class Backend extends Handler {
 	 *
 	 * @uses Registry::is_post_type_supported() to check for support.
 	 * @uses Registry::languages() to loop through the active languages.
+	 * @uses Registry::get() to get the language_is_required; need for "None" option.
 	 *
 	 * @param string $column    The column this box corresponds to.
 	 * @param string $post_type The post type this is for.
@@ -527,7 +528,9 @@ class Backend extends Handler {
 				<label>
 					<span class="title"><?php _e( 'Language', 'nlingual' ); ?></span>
 					<select name="nlingual_language" class="nl-input nl-language-input">
+						<?php if ( ! Registry::get( 'language_is_required' ) ) : ?>
 						<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
+						<?php endif; ?>
 						<?php
 						// Print the options
 						foreach ( $languages as $language ) {
@@ -654,6 +657,7 @@ class Backend extends Handler {
 	 * @uses Registry::languages() to get the languages to loop through.
 	 * @uses Translator::get_object_language() to get the post's language.
 	 * @uses Translator::get_post_translations() to get the post's translations.
+	 * @uses Registry::get() to get the language_is_required; need for "None" option.
 	 *
 	 * @param WP_Post $post The post being edited.
 	 */
@@ -699,7 +703,9 @@ class Backend extends Handler {
 			<div class="nl-field nl-language-field">
 				<label for="nl_language" class="nl-field-label"><?php _e( 'Language', 'nlingual' ); ?></label>
 				<select name="nlingual_language" id="nl_language" class="nl-input nl-language-input">
+					<?php if ( ! Registry::get( 'language_is_required' ) ) : ?>
 					<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
+					<?php endif; ?>
 					<?php
 					// Print the options
 					foreach ( $language_options as $value => $label ) {

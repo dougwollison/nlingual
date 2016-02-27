@@ -195,8 +195,9 @@ class Translator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Translator::get_translation_gorup() to retrieve the object's translation group.
+	 * @uses Translator::get_translation_group() to retrieve the object's translation group.
 	 * @uses Registry::languages() to retrieve the Language object by ID.
+	 * @uses Registry::get() to get the language_is_required option.
 	 *
 	 * @param string $object_type The type of object.
 	 * @param int    $object_id   The ID of the object.
@@ -207,12 +208,17 @@ class Translator {
 		// Get the translation group for the object
 		$group = static::get_group( $object_type, $object_id );
 
-		// If no translation group exists, return false
-		if ( ! $group ) {
-			return false;
+		// If translation group exists, get the language
+		if ( $group ) {
+			$language = Registry::get_language( $group['language_by_object'][ $object_id ] );
 		}
 
-		return Registry::get_language( $group['language_by_object'][ $object_id ] );
+		// If language was not found, and language_is_required is enabled, use default
+		if ( ! $language && Registry::get( 'language_is_required' ) ) {
+			$language = Registry::default_language();
+		}
+
+		return $language;
 	}
 
 	/**
