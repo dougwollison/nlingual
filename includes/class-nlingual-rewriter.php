@@ -363,7 +363,7 @@ class Rewriter {
 	 *
 	 * @uses Registry::get() to check for backwards compatibility.
 	 * @uses Registry::current_language() to get the current Language object.
-	 * @uses Registry::switch_language() to switch to the specified language.
+	 * @uses System::switch_language() to switch to the specified language.
 	 * @uses Registry::restore_language() to switch back to the previous language.
 	 * @uses Rewriter::localize_url() to localize the current URI as-is.
 	 * @uses Rewriter::process_url() to localize the original URL of the page.
@@ -391,7 +391,7 @@ class Rewriter {
 			$url = static::localize_url( $url, $language, true );
 		} else {
 			// Switch to the language (redundant for current one but doesn't matter)
-			Registry::switch_language( $language );
+			System::switch_language( $language );
 
 			// Now try various other conditional tags...
 
@@ -433,7 +433,7 @@ class Rewriter {
 			}
 
 			// Switch back to the current language
-			Registry::restore_language();
+			System::restore_language();
 		}
 
 		// Now parse the URL
