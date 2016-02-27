@@ -633,13 +633,13 @@ class Translator {
 			// If it's a post and we can get the type, check if it's supported
 			if ( $object_type == 'post' && ( $post_type = get_post_type( $object_id ) )
 			&& ! Registry::is_post_type_supported( $post_type ) ) {
-				// If this was a get method, return false
-				if ( $action == 'get' ) {
-					return false;
-				}
-				// Otherwise, throw exception
-				else {
+				// If this was the set method, throw exception
+				if ( $action == 'set' ) {
 					throw new Exception( _f( 'The requested post (ID: %d) does not belong to a supported post type.', 'nlingual', $object_id ), NL_ERR_UNSUPPORTED );
+				}
+				// Otherwise, return false
+				else {
+					return false;
 				}
 			}
 
