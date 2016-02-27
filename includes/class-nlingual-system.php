@@ -280,6 +280,8 @@ class System extends Handler {
 
 		// Post Changes
 		static::add_action( 'save_post', 'synchronize_posts', 20, 1 );
+		static::add_filter( 'trashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
+		static::add_filter( 'untrashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
 		static::add_filter( 'deleted_post', 'delete_sister_posts', 10, 1 );
 		static::add_filter( 'deleted_post', 'delete_post_language', 11, 1 );
 
@@ -423,6 +425,41 @@ class System extends Handler {
 	public static function delete_post_language( $post_id ) {
 		// Delete the language
 		Translator::delete_post_language( $post_id );
+	}
+
+	/**
+	 * (Un)trash a post's sister translations when it's deleted.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::get() to check the trash_sister_posts option.
+	 *
+	 * @param int $post_id The ID of the post that was deleted.
+	 */
+	public static function trash_or_untrash_sister_posts( $post_id ) {
+		// Abort if option isn't enabled
+		if ( ! Registry::get( 'trash_sister_posts' ) ) {
+			return;
+		}
+
+		// Get the current action
+		$action = current_filter();
+
+		// Determine the function to use
+		$function = 'wp_' . str_replace( 'ed_post', '', $action ) . '_post';
+
+		// Unhook to prevent loop
+		$priority = static::remove_action( $action, __FUNCTION__ );
+
+		// Get the translations of the post
+		$translations = Translator::get_post_translations( $post_id );
+		foreach ( $translations as $translation ) {
+			// (Un)trash it
+			call_user_func( $function, $translation );
+		}
+
+		// Rehook now that we're done
+		static::add_action( $action, __FUNCTION__, $priority, 1 );
 	}
 
 	/**

@@ -900,6 +900,9 @@ class Backend extends Handler {
 			return $bulk_notices;
 		}
 
+		// Get the trash_sister_posts option
+		$trash_sister_posts = Registry::get( 'trash_sister_posts' );
+
 		// Create the addendums
 		$updated_addendum   = __( 'Any associated translations have been synchronized accordingly.', 'nlingual' );
 		$deleted_addendum   = __( 'Any associated translations have also been deleted.', 'nlingual' );
@@ -911,15 +914,18 @@ class Backend extends Handler {
 			// Get the rules for this post type
 			$sync_rules = Registry::get_post_sync_rules( $screen->post_type );
 
-			if ( $sync_rules ) {
+			// If any rules exist, add updated addendum
+			if ( array_filter( $sync_rules ) ) {
 				$notices['updated'] .= ' ' . $updated_addendum;
 			}
 
-			if ( isset( $sync_rules['post_fields'] ) && in_array( 'post_status', $sync_rules['post_fields'] ) ) {
+			// If trash_sister_posts is enabled, or post_status is synced, add trashed/untrashed addendum
+			if ( $trash_sister_posts || ( isset( $sync_rules['post_fields'] ) && in_array( 'post_status', $sync_rules['post_fields'] ) ) ) {
 				$notices['trashed'] .= ' ' . $trashed_addendum;
 				$notices['untrashed'] .= ' ' . $untrashed_addendum;
 			}
 
+			// If delete_sister_posts is enabled, add deleted addendum
 			if ( Registry::get( 'delete_sister_posts' ) ) {
 				$notices['deleted'] .= ' ' . $deleted_addendum;
 			}

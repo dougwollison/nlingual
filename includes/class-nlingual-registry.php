@@ -103,6 +103,8 @@ class Registry {
 
 		// - The show all languages for objects option
 		'show_all_languages' => true,
+		// - The TRASH sister posts option
+		'trash_sister_posts' => false,
 		// - The DELETE sister posts option
 		'delete_sister_posts' => false,
 

@@ -355,6 +355,11 @@ class Manager extends Handler {
 				'help'  => __( 'Should objects of all languages be listed by default in the admin?', 'nlingual' ),
 				'type'  => 'checkbox',
 			),
+			'trash_sister_posts' => array(
+				'title' => __( 'Trash Sister Translations?', 'nlingual' ),
+				'help'  => __( 'When trashing or restoring an object, should its translations be trashed/restored as well?', 'nlingual' ),
+				'type'  => 'checkbox',
+			),
 			'delete_sister_posts' => array(
 				'title' => __( 'Delete Sister Translations?', 'nlingual' ),
 				'help'  => __( 'When deleting an object (that’s in the Trash), should its translations be deleted as well?', 'nlingual' ),
