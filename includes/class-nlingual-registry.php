@@ -46,17 +46,6 @@ class Registry {
 	protected static $__loaded = false;
 
 	/**
-	 * Language switching log.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @var array
-	 */
-	protected static $previous_languages = array();
-
-	/**
 	 * The current language id.
 	 *
 	 * @internal
@@ -362,8 +351,9 @@ class Registry {
 	 *
 	 * @param mixed $language The desired language.
 	 * @param bool  $lock     Wether or not to lock the selection.
+	 * @param bool  $override Wether or not to override the lock.
 	 */
-	public static function set_language( $language, $lock = false ) {
+	public static function set_language( $language, $lock = false, $override = false ) {
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			// Throw exception if not found
@@ -371,7 +361,7 @@ class Registry {
 		}
 
 		// If locked, fail
-		if ( defined( 'NL_LANGUAGE_LOCKED' ) ) {
+		if ( defined( 'NL_LANGUAGE_LOCKED' ) && ! $override ) {
 			return false;
 		}
 
@@ -383,51 +373,6 @@ class Registry {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Switch to a different language.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses validate_language() to ensure $language is a Language object.
-	 * @uses Registry::$current_language to get/update the current language.
-	 * @uses Registry::$previous_languages to log the current language.
-	 *
-	 * @param mixed $language The language object, slug or id.
-	 */
-	public static function switch_language( $language ) {
-		// Ensure $language is a Language
-		if ( ! validate_language( $language ) ) {
-			return false; // Does not exist
-		}
-
-		// Log the current language
-		static::$previous_languages[] = static::$current_language;
-
-		// Replace $current_language with desired language
-		static::$current_language = $language->id;
-	}
-
-	/**
-	 * Switch back to the previous language.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Registry::$previous_languages to get the previous language.
-	 * @uses Registry::get() to get the default language id.
-	 * @uses Registry::$current_language to update the current language.
-	 */
-	public static function restore_language() {
-		$last_language = array_pop( static::$previous_languages );
-
-		// If no previous language, go with default
-		if ( ! $last_language ) {
-			$last_language = static::default_language( 'id' );
-		}
-
-		// Replace $current_language with last language
-		static::$current_language = $last_language;
 	}
 
 	/**
