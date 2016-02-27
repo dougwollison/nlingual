@@ -1100,6 +1100,6 @@ class Localizer extends Handler {
 		}
 
 		// Not a valid method alias, throw exception
-		throw new Exception( sprintf( 'Call to unrecognized method alias %s::%s()', __CLASS__, $name ), NL_ERR_UNSUPPORTED );
+		throw new Exception( sprintf( 'Call to unrecognized method alias %1$s::%2$s()', __CLASS__, $name ), NL_ERR_UNSUPPORTED );
 	}
 }
