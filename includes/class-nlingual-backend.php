@@ -80,7 +80,7 @@ class Backend extends Handler {
 		// Saving Post Data
 		static::add_action( 'save_post', 'save_post_language', 10, 1 );
 		static::add_action( 'save_post', 'save_post_translations', 10, 1 );
-		static::add_action( 'save_post', 'bulk_save_post_language', 10, 1 );
+		static::add_action( 'edit_post', 'bulk_save_post_language', 10, 1 );
 
 		// Menu Editor Meta Box
 		static::add_action( 'admin_head', 'add_nav_menu_meta_box', 10, 0 );
