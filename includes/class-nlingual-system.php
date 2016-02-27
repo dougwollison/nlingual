@@ -37,14 +37,123 @@ class System extends Handler {
 	 */
 	protected static $language_stack = array();
 
+	/**
+	 * The internal text domain cache.
+	 *
+	 * @internal
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var array
+	 */
+	protected static $textdomain_cache = array();
+
+	/**
+	 * The internal text domain log.
+	 *
+	 * @internal
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var array
+	 */
+	protected static $textdomain_log = array();
+
+	/**
+	 * The last locale text domains were reloaded for.
+	 *
+	 * @internal
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var string
+	 */
+	protected static $last_locale_reloaded = '';
+
 	// =========================
 	// ! Utilities
 	// =========================
 
 	/**
+	 * Cache the text domains and re-load them.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global array $l10n The index of loaded text domain files.
+	 *
+	 * @param string $old_local The previous locale.
+	 */
+	public static function reload_textdomains( $old_local ) {
+		global $l10n;
+
+		// Current locale
+		$new_locale = get_locale();
+
+		// Abort if $new_locale matches the previous reload locale
+		if ( $new_locale == static::$last_locale_reloaded ) {
+			return;
+		}
+
+		// Record the new locale
+		static::$last_locale_reloaded = $new_locale;
+
+		// Cache the current list
+		static::$textdomain_cache[ $old_local ] = $l10n;
+
+		// If a list exists for the new local, us it
+		if ( isset( static::$textdomain_cache[ $new_locale ] ) ) {
+			$l10n = static::$textdomain_cache[ $new_locale ];
+		}
+		// Otherwise, go through each one and reload it
+		else {
+			// Backup and clear $l10n
+			$old_textdomains = $l10n;
+			$l10n = array();
+
+			// Loop through all old domains
+			foreach ( $old_textdomains as $domain => $mo ) {
+				// If it wasn't logged, skip it (99% chance it's a filler NOOP)
+				if ( ! isset( static::$textdomain_log[ $domain ] ) ) {
+					continue;
+				}
+
+				// "default" is easy
+				if ( $domain == 'default' ) {
+					load_default_textdomain( $new_locale );
+					continue;
+				}
+
+				// Get the type and path(s) from the log
+				$type = static::$textdomain_log[ $domain ]['type'];
+				$paths = static::$textdomain_log[ $domain ]['paths'];
+
+				// The new mo file name
+				$mofile = $the_locale . '.mo';
+
+				// Filter it if needed
+				$the_locale = $new_locale;
+				if ( $type ) {
+					$the_locale = apply_filters( "{$type}_locale", $new_locale, $domain );
+				}
+
+				// The new mo file name
+				$mofile = $the_locale . '.mo';
+
+				// In the case of a plugin, prefix with domain
+				if ( $type == 'plugin' ) {
+					$mofile = $domain . '-' . $mofile;
+				}
+
+				// Load it for each path
+				foreach ( $paths as $dir ) {
+					load_textdomain( $domain, $dir . '/' . $mofile );
+				}
+			}
+		}
+	}
+
+	/**
 	 * Switch to a different language.
-	 *
-	 *
 	 *
 	 * @since 2.0.0
 	 *
@@ -52,19 +161,28 @@ class System extends Handler {
 	 * @uses Registry::$current_language to get/update the current language.
 	 * @uses Registry::$previous_languages to log the current language.
 	 *
-	 * @param mixed $language The language object, slug or id.
+	 * @param mixed $language           The language object, slug or id.
+	 * @param bool  $reload_textdomains Wether or not to reload text domains.
 	 */
-	public static function switch_language( $language ) {
+	public static function switch_language( $language, $reload_textdomains = false ) {
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			return false; // Does not exist
 		}
+
+		// Get the old locale for text domain reloading
+		$old_local = get_locale();
 
 		// Log the current language
 		static::$language_stack[] = Registry::current_language( 'id' );
 
 		// Set to the desired language
 		Registry::set_language( $language->id, false, 'override' );
+
+		if ( $reload_textdomains ) {
+			// Reload the text domains
+			static::reload_textdomains( $old_local );
+		}
 	}
 
 	/**
@@ -84,8 +202,14 @@ class System extends Handler {
 			$last_language = Registry::default_language( 'id' );
 		}
 
+		// Get the old locale for text domain reloading
+		$old_local = get_locale();
+
 		// Set to the last language
-		Registry::set_language( $language->id, false, 'override' );
+		Registry::set_language( $last_language, false, 'override' );
+
+		// Reload the text domains
+		static::reload_textdomains( $old_local );
 	}
 
 	// =========================
@@ -149,6 +273,11 @@ class System extends Handler {
 		// Setup Stuff
 		static::add_action( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
 
+		// Text Domain Manipulation
+		static::add_filter( 'theme_locale', 'log_textdomain_type', 10, 2 );
+		static::add_filter( 'plugin_locale', 'log_textdomain_type', 10, 2 );
+		static::add_action( 'load_textdomain', 'log_textdomain_path', 10, 2 );
+
 		// Post Changes
 		static::add_action( 'save_post', 'synchronize_posts', 20, 1 );
 		static::add_filter( 'deleted_post', 'delete_sister_posts', 10, 1 );
@@ -191,6 +320,56 @@ class System extends Handler {
 		foreach ( $taxonomies as $taxonomy ) {
 			Localizer::register_taxonomy( $taxonomy );
 		}
+	}
+
+	// =========================
+	// ! Text Domain Caching
+	// =========================
+
+	/**
+	 * Log the type ("theme" or "plugin") of a text domain.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $locale The locale being loaded for.
+	 * @param string $domain The text domain being loaded.
+	 *
+	 * @return string The locale, untouched.
+	 */
+	public static function log_textdomain_type( $locale, $domain ) {
+		// Get the type
+		$type = str_replace( '_locale', '', current_filter() );
+
+		// Add/update it in the list
+		if ( ! isset( static::$textdomain_log[ $domain ] ) ) {
+			static::$textdomain_log[ $domain ] = array();
+		}
+		static::$textdomain_log[ $domain ]['type'] = $type;
+
+		return $locale;
+	}
+
+	/**
+	 * Log the directory a text domain file was stored in.
+	 *
+	 * Since we can't be 100% sure what directories are valid and
+	 * usable, we'll log every one attempted and try each one
+	 * when reloading the domain.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $domain The text domain being loaded.
+	 * @param string $mofile The file being loaded.
+	 */
+	public static function log_textdomain_path( $domain, $mofile ) {
+		// Get the directory
+		$dir = dirname( $mofile );
+
+		// Add/update it in the list
+		if ( ! isset( static::$textdomain_log[ $domain ] ) ) {
+			static::$textdomain_log[ $domain ] = array();
+		}
+		static::$textdomain_log[ $domain ]['paths'][] = $dir;
 	}
 
 	// =========================
