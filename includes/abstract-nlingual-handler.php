@@ -86,7 +86,7 @@ abstract class Handler {
 	 * @see Handler::remove_filter()
 	 */
 	final public static function remove_action() {
-		call_user_func_array( 'self::remove_filter', func_get_args() );
+		return call_user_func_array( 'self::remove_filter', func_get_args() );
 	}
 
 	/**
