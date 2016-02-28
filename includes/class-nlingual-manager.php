@@ -422,6 +422,7 @@ class Manager extends Handler {
 			'url_rewrite_method' => array(
 				'title' => __( 'URL Scheme', 'nlingual' ),
 				'help'  => __( 'What style should be used for the translated URLs?', 'nlingual' ) .
+					/* Translators: %s = The HTML code to be appended */
 					'<br /> <span class="nl-previews">' . _f( 'Preview: %s', 'nlingual', $redirect_previews ) . '</span>',
 				'type'  => 'radiolist',
 				'data'  => array(
@@ -432,12 +433,14 @@ class Manager extends Handler {
 			'skip_default_l10n' => array(
 				'title' => __( 'Skip Localization for Default Language?', 'nlingual' ),
 				'help'  => __( 'URLs for the default language will be unmodified.', 'nlingual' ) .
+					/* Translators: %s = The HTML code to be appended */
 					'<br /> <span class="nl-previews">' . _f( 'Example: %s', 'nlingual', $url_previews ) . '</span>',
 				'type'  => 'checkbox',
 			),
 			'post_language_override' => array(
 				'title' => __( 'Post Language Override', 'nlingual' ),
 				'help'  => __( 'Should the language of the requested post take precedence in the event of a language mismatch?', 'nlingual' ) .
+					/* Translators: %s = The HTML code to be appended */
 					'<br /> <span class="nl-previews">' . _f( 'Example: %s', 'nlingual', $override_previews ) . '</span>',
 				'type'  => 'checkbox',
 			),

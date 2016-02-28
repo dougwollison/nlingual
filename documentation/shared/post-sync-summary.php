@@ -1,6 +1,8 @@
 <?php if ( array_filter( $rules = nLingual\Registry::get_post_sync_rules( $post_type ) ) ) : ?>
 	<hr />
-	<strong><?php _ef( 'The following details will be synchronized between sister %s', 'nlingual', $plural ); ?></strong>
+	<strong><?php
+	/* Translators: %s = The plural name of the post type. */
+	_ef( 'The following details will be synchronized between sister %s', 'nlingual', $plural ); ?></strong>
 	<ul>
 		<?php if ( $rules['post_fields'] ) : ?>
 		<li><strong><?php _e( 'Post Data', 'nlingual' ); ?></strong> - <?php

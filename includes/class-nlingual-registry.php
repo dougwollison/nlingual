@@ -738,6 +738,7 @@ class Registry {
 		}
 
 		// No match, throw exception
-		throw new Exception( _f( 'Call to unrecognized method alias %1$s::%2$s()', 'nlingual', __CLASS__, $name ), NL_ERR_UNSUPPORTED );
+		/* Translators: %s = The full name of the method being called. (Low priority translation) */
+		throw new Exception( _f( 'Call to unrecognized method alias %s', 'nlingual', __CLASS__ . '::' . $name . '()' ), NL_ERR_UNSUPPORTED );
 	}
 }

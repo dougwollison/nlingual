@@ -367,10 +367,12 @@ class Backend extends Handler {
 		&& $translation = Translator::get_post_translation( $post->ID, Registry::default_language() ) ) {
 			// Check if it's a translation of the home page
 			if ( $translation == get_option( 'page_on_front' ) ) {
+				/* Translators: %s = The name of the language */
 				$post_states['page_on_front'] = _fx( '%s Front Page', 'front page translation', 'nlingual', $language->system_name );
 			}
 			// or the posts page
 			elseif ( $translation == get_option( 'page_for_posts' ) ) {
+				/* Translators: %s = The name of the language */
 				$post_states['page_for_posts'] = _fx( '%s Posts Page', 'front page translation', 'nlingual', $language->system_name );
 			}
 		}
@@ -484,6 +486,7 @@ class Backend extends Handler {
 					echo '<li>';
 					printf( '<input type="hidden" class="nl-translation-%d" value="%d" />', $language->id, $post );
 					$link = sprintf( '<a href="%s" target="_blank">%s</a>', get_edit_post_link( $post ), get_the_title( $post ) );
+					/* Translators: %1$s = The name of the language, %2$s = The title of the post, wrapped in a link */
 					_efx( '%1$s: %2$s', 'language: title', 'nlingual', $language->system_name, $link );
 					echo '<li>';
 				}
@@ -544,7 +547,9 @@ class Backend extends Handler {
 				</div>
 				<div class="inline-edit-col nl-set-translations">
 					<?php foreach ( $languages as $language ) : ?>
-					<label class="nl-translation-field nl-translation-<?php echo $language->id; ?>" title="<?php _ef( 'Assign %s Translation', 'nlingual', $language->system_name ); ?>" data-nl_language="<?php echo $language->id; ?>">
+					<label class="nl-translation-field nl-translation-<?php echo $language->id; ?>" title="<?php
+						/* Translators: %s = The name of the language */
+						_ef( 'Assign %s Translation', 'nlingual', $language->system_name ); ?>" data-nl_language="<?php echo $language->id; ?>">
 						<span class="title"><?php echo $language->system_name; ?></span>
 						<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
 							<option value="0">&mdash; <?php _ex( 'None', 'no translation', 'nlingual' ); ?> &mdash;</option>
@@ -735,7 +740,9 @@ class Backend extends Handler {
 
 					<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
 						<option value="0">&mdash; <?php _ex( 'None', 'no translation', 'nlingual' ); ?> &mdash;</option>
-						<option value="new" class="nl-new-translation">&mdash;<?php _ef( 'New %1$s %2$s', 'nlingual', $language->system_name, $post_type->labels->singular_name ); ?>&mdash;</option>
+						<option value="new" class="nl-new-translation">&mdash;<?php
+						/* Translators: %1$s = The name of the language, %2$s = The singular name of the post type. */
+						_ef( 'New %1$s %2$s', 'nlingual', $language->system_name, $post_type->labels->singular_name ); ?>&mdash;</option>
 						<?php
 						// Print the options
 						foreach ( $post_options[ $language->id ] as $option ) {

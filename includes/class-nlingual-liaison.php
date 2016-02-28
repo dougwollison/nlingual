@@ -485,6 +485,7 @@ class Liaison extends Handler {
 					$label = sprintf( $post_type_obj->labels->index_page_translation, $language->system_name );
 				} else {
 					// Use generic one otherwise
+					/* Translators: %1$s = The name of the language, %2$s = The (likely plural) name of the post type. */
 					$label = _fx( '%1$s %2$s Page', 'index page translation', 'nlingual', $language->system_name, $post_type_obj->label );
 				}
 
@@ -520,8 +521,9 @@ class Liaison extends Handler {
 		}
 
 		// Get the plural labe to use
-		$label = strtolower( get_post_type_object( $post_type )->label );
+		$label = get_post_type_object( $post_type )->label;
 		echo '<div class="notice notice-warning inline"><p>' .
+			/* Translators: %s = The (likely plural) name of the post type. */
 			_fx( 'You are currently editing a translation of the page that shows your latest %s.', 'index page translation', 'nlingual', $label ) .
 			' <em>' . __( 'Your current theme may not display the content you write here.', 'nlingual', 'index-pages' ) . '</em>' .
 		'</p></div>';

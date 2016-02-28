@@ -145,6 +145,7 @@ class URL extends Model {
 		}
 		// If not an array, throw an exception
 		elseif ( ! is_array( $url ) ) {
+			/* Translators: %1$s = The class name, %2$s = The type used. */
 			throw new Exception( _f( '%1$s expects a string or array, %2$s given', 'nlingual', __CLASS__, gettype( $url ) ), NL_ERR_UNSUPPORTED );
 		}
 
