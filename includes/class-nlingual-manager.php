@@ -365,6 +365,11 @@ class Manager extends Handler {
 				'help'  => __( 'When deleting an object (that’s in the Trash), should its translations be deleted as well?', 'nlingual' ),
 				'type'  => 'checkbox',
 			),
+			'patch_font_stack' => array(
+				'title' => __( 'Patch Admin Font?', 'nlingual' ),
+				'help'  => __( 'Replace the font used in the WordPress admin to better display characters like Arabic and Chinese.', 'nlingual' ),
+				'type'  => 'checkbox',
+			),
 		);
 
 		// Add the sections and fields

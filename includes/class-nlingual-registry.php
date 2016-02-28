@@ -107,6 +107,8 @@ class Registry {
 		'trash_sister_posts' => false,
 		// - The DELETE sister posts option
 		'delete_sister_posts' => false,
+		// - The patch font stack option
+		'patch_font_stack' => false,
 
 		/* Request/Redirection Options */
 
