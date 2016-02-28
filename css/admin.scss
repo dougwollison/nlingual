@@ -185,6 +185,17 @@
 		}
 	}
 
+.nl-translations-manager,
+.nl-bulk-language-manager {
+	padding: 5px 0 0;
+}
+
+.nl-set-language {
+	.title {
+		font-weight: bold;
+	}
+}
+
 #nlingual-synchronizer-form {
 	.nl-inputlist {
 		@include pie-clearfix;

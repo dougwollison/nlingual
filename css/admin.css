@@ -144,6 +144,13 @@
   .nl-localizer:hover .nl-localizer-option, .nl-localizer-option.nl-current {
     max-width: 150px; }
 
+.nl-translations-manager,
+.nl-bulk-language-manager {
+  padding: 5px 0 0; }
+
+.nl-set-language .title {
+  font-weight: bold; }
+
 #nlingual-synchronizer-form .nl-inputlist {
   *zoom: 1; }
   #nlingual-synchronizer-form .nl-inputlist:after {

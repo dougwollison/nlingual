@@ -67,8 +67,8 @@ class Backend extends Handler {
 		}
 
 		// Quick/Bulk Edit Interfaces
-		static::add_action( 'quick_edit_custom_box', 'quick_edit_post_translation', 10, 2 );
-		static::add_action( 'bulk_edit_custom_box', 'bulk_edit_post_language', 10, 2 );
+		static::add_action( 'quick_edit_custom_box', 'quick_edit_post_translation', 20, 2 );
+		static::add_action( 'bulk_edit_custom_box', 'bulk_edit_post_language', 20, 2 );
 
 		// Post Editor Interfaces
 		static::add_action( 'add_meta_boxes', 'add_post_meta_box', 10, 1 );
@@ -522,51 +522,54 @@ class Backend extends Handler {
 		// Get the languages list
 		$languages = Registry::languages();
 		?>
-		<fieldset class="inline-edit-col-right nl-translations-manager">
-			<input type="hidden" name="_nl_nonce" class="nl-nonce" />
-			<div class="inline-edit-col nl-set-language">
-				<label>
-					<span class="title"><?php _e( 'Language', 'nlingual' ); ?></span>
-					<select name="nlingual_language" class="nl-input nl-language-input">
-						<?php if ( ! Registry::get( 'language_is_required' ) ) : ?>
-						<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
-						<?php endif; ?>
-						<?php
-						// Print the options
-						foreach ( $languages as $language ) {
-							printf( '<option value="%s">%s</option>', $language->id, $language->system_name );
-						}
-						?>
-					</select>
-				</label>
-			</div>
-			<div class="inline-edit-col nl-set-translations">
-				<?php foreach ( $languages as $language ) : ?>
-				<label class="nl-translation-field nl-translation-<?php echo $language->id; ?>"  data-nl_language="<?php echo $language->id; ?>">
-					<span class="title"><?php _ef( '%s Translation', 'nlingual', $language->system_name ); ?></span>
-					<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
-						<option value="0">&mdash; <?php _ex( 'None', 'no translation', 'nlingual' ); ?> &mdash;</option>
-						<?php
-						// Get all posts in this language
-						$posts = $wpdb->get_results( $wpdb->prepare( "
-							SELECT p.ID, p.post_title
-							FROM $wpdb->nl_translations AS t
-							LEFT JOIN $wpdb->posts AS p ON (t.object_id = p.ID)
-							WHERE t.object_type = 'post'
-							AND t.language_id = %d
-							AND p.post_type = %s
-						", $language->id, $post_type ) );
+		<div class="nl-translations-manager clear">
+			<hr />
+			<fieldset class="nl-fieldset">
+				<input type="hidden" name="_nl_nonce" class="nl-nonce" />
+				<div class="inline-edit-col nl-set-language">
+					<label>
+						<span class="title"><?php _e( 'Language', 'nlingual' ); ?></span>
+						<select name="nlingual_language" class="nl-input nl-language-input">
+							<?php if ( ! Registry::get( 'language_is_required' ) ) : ?>
+							<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
+							<?php endif; ?>
+							<?php
+							// Print the options
+							foreach ( $languages as $language ) {
+								printf( '<option value="%s">%s</option>', $language->id, $language->system_name );
+							}
+							?>
+						</select>
+					</label>
+				</div>
+				<div class="inline-edit-col nl-set-translations">
+					<?php foreach ( $languages as $language ) : ?>
+					<label class="nl-translation-field nl-translation-<?php echo $language->id; ?>" title="<?php _ef( 'Assign %s Translation', 'nlingual', $language->system_name ); ?>" data-nl_language="<?php echo $language->id; ?>">
+						<span class="title"><?php echo $language->system_name; ?></span>
+						<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
+							<option value="0">&mdash; <?php _ex( 'None', 'no translation', 'nlingual' ); ?> &mdash;</option>
+							<?php
+							// Get all posts in this language
+							$posts = $wpdb->get_results( $wpdb->prepare( "
+								SELECT p.ID, p.post_title
+								FROM $wpdb->nl_translations AS t
+								LEFT JOIN $wpdb->posts AS p ON (t.object_id = p.ID)
+								WHERE t.object_type = 'post'
+								AND t.language_id = %d
+								AND p.post_type = %s
+							", $language->id, $post_type ) );
 
-						// Print the options
-						foreach ( $posts as $option ) {
-							printf( '<option value="%s">%s</option>', $option->ID, $option->post_title );
-						}
-						?>
-					</select>
-				</label>
-				<?php endforeach; ?>
-			</div>
-		</fieldset>
+							// Print the options
+							foreach ( $posts as $option ) {
+								printf( '<option value="%s">%s</option>', $option->ID, $option->post_title );
+							}
+							?>
+						</select>
+					</label>
+					<?php endforeach; ?>
+				</div>
+			</fieldset>
+		</div>
 		<?php
 	}
 
@@ -595,22 +598,26 @@ class Backend extends Handler {
 		// Get the languages list
 		$languages = Registry::languages();
 		?>
-		<fieldset id="nl_post_bulk_language" class="inline-edit-col-right">
-			<div class="inline-edit-col">
-				<label>
-					<span class="title"><?php _e( 'Language', 'nlingual' ); ?></span>
-					<select name="nlingual_bulk_language" id="nl_language">
-						<option value="0">&mdash; <?php _e( 'No Change', 'nlingual' ); ?> &mdash;</option>
-						<?php
-						// Print the options
-						foreach ( $languages as $language ) {
-							printf( '<option value="%s">%s</option>', $language->id, $language->system_name );
-						}
-						?>
-					</select>
-				</label>
-			</div>
-		</fieldset>
+		<!-- <?php echo __FUNCTION__; ?> -->
+		<div class="nl-bulk-language-manager clear">
+			<hr />
+			<fieldset class="nl-fieldset">
+				<div class="inline-edit-col">
+					<label>
+						<span class="title"><?php _e( 'Language', 'nlingual' ); ?></span>
+						<select name="nlingual_bulk_language" id="nl_language">
+							<option value="0">&mdash; <?php _e( 'No Change', 'nlingual' ); ?> &mdash;</option>
+							<?php
+							// Print the options
+							foreach ( $languages as $language ) {
+								printf( '<option value="%s">%s</option>', $language->id, $language->system_name );
+							}
+							?>
+						</select>
+					</label>
+				</div>
+			</fieldset>
+		</div>
 		<?php
 
 		// Nonce fields for save validation
