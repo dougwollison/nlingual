@@ -193,7 +193,7 @@ function nl_print_lang_links( $prefix = '', $sep = ' ', $skip_current = false ) 
  *
  * @return string The part of the text corresponding to the language desired.
  */
-function nl_split_langs( $text, $language = null, $separator = null, $force = false ){
+function nl_split_langs( $text, $language = null, $separator = null, $force = false ) {
 	if ( is_null( $language ) ) {
 		$language = Registry::current_language();
 	} elseif ( ! is_a( $language, 'nLingual\\Language' ) ) {

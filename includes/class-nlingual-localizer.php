@@ -1039,7 +1039,7 @@ class Localizer extends Handler {
 
 		?>
 		<script>
-		nLingual.LocalizableFields.add(<?php echo json_encode( $data ); ?>);
+		nLingual.LocalizableFields.add( <?php echo json_encode( $data ); ?> );
 		</script>
 		<?php
 	}

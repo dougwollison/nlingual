@@ -367,22 +367,22 @@ class Installer extends Handler {
 		// We need to alter the translations table to the new format
 
 		// Rename to lowercase
-		$wpdb->query("ALTER TABLE {$wpdb->prefix}nL_translations RENAME TO {$wpdb->prefix}nl_translations2");
-		$wpdb->query("ALTER TABLE {$wpdb->prefix}nl_translations2 RENAME TO $wpdb->nl_translations");
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}nL_translations RENAME TO {$wpdb->prefix}nl_translations2" );
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}nl_translations2 RENAME TO $wpdb->nl_translations" );
 		// Start by removing the old unique keys
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations DROP KEY post");
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations DROP KEY translation");
+		$wpdb->query( "ALTER TABLE $wpdb->nl_translations DROP KEY post" );
+		$wpdb->query( "ALTER TABLE $wpdb->nl_translations DROP KEY translation" );
 		// Rename lang_id to language_id, keeping it after group_id
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations CHANGE `lang_id` `language_id` bigint(20) unsigned NOT NULL AFTER `group_id`");
+		$wpdb->query( "ALTER TABLE $wpdb->nl_translations CHANGE `lang_id` `language_id` bigint(20) unsigned NOT NULL AFTER `group_id`" );
 		// Now add the new object_type column
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD `object_type` varchar(20) $collate NOT NULL DEFAULT 'post'");
+		$wpdb->query( "ALTER TABLE $wpdb->nl_translations ADD `object_type` varchar(20) $collate NOT NULL DEFAULT 'post'" );
 		// Rename post_id to object_id, placing it after object_type
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations CHANGE `post_id` `object_id` bigint(20) unsigned NOT NULL AFTER `object_type`");
+		$wpdb->query( "ALTER TABLE $wpdb->nl_translations CHANGE `post_id` `object_id` bigint(20) unsigned NOT NULL AFTER `object_type`" );
 		// Add the new keys
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD UNIQUE KEY translation (group_id, language_id)");
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD UNIQUE KEY object (object_type, object_id)");
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD KEY group_id (group_id)");
-		$wpdb->query("ALTER TABLE $wpdb->nl_translations ADD KEY object_id (object_id)");
+		$wpdb->query( "ALTER TABLE $wpdb->nl_translations ADD UNIQUE KEY translation (group_id, language_id)" );
+		$wpdb->query( "ALTER TABLE $wpdb->nl_translations ADD UNIQUE KEY object (object_type, object_id)" );
+		$wpdb->query( "ALTER TABLE $wpdb->nl_translations ADD KEY group_id (group_id)" );
+		$wpdb->query( "ALTER TABLE $wpdb->nl_translations ADD KEY object_id (object_id)" );
 
 		// Just in case, mark them down as being at least up to 2.0.0
 		update_option( 'nlingual_database_version', '2.0.0' );

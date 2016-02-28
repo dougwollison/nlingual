@@ -47,7 +47,7 @@ class Locale extends \WP_Locale {
 		$this->weekday_initial[ __( 'Saturday', $domain ) ]  = /* translators: one-letter abbreviation of the weekday */ __( 'S_Saturday_initial', $domain );
 
 		foreach ($this->weekday_initial as $weekday_ => $weekday_initial_) {
-			$this->weekday_initial[ $weekday_ ] = preg_replace( '/_.+_initial$/', '', $weekday_initial_);
+			$this->weekday_initial[ $weekday_ ] = preg_replace( '/_.+_initial$/', '', $weekday_initial_ );
 		}
 
 		// Abbreviations for each day.

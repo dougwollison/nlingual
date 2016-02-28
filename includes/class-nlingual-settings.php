@@ -213,7 +213,7 @@ class Settings {
 			case 'checklist':
 			case 'sync_settings':
 				$method = "build_{$args['type']}_field";
-				if ( $args['type'] == 'select' ){
+				if ( $args['type'] == 'select' ) {
 					$cb_args = array( $args['name'], $args['id'], $value, $args['data'] );
 				} else {
 					$cb_args = array( $args['name'], $value, $args['data'] );

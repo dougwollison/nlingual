@@ -285,7 +285,7 @@ class Manager extends Handler {
 		if ( ! count( get_settings_errors() ) ) {
 			add_settings_error( 'nlingual-languages', 'settings_updated', __( 'Languages saved.', 'nlingual' ), 'updated' );
 		}
-		set_transient( 'settings_errors', get_settings_errors(), 30);
+		set_transient( 'settings_errors', get_settings_errors(), 30 );
 
 		// Return to settings page
 		$redirect = add_query_arg( 'settings-updated', 'true',  wp_get_referer() );

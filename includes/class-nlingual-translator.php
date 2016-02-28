@@ -602,7 +602,7 @@ class Translator {
 		// Check if $name matches an existing method with $object_type instead of object
 		if ( preg_match( '/^(get|set|delete)_(\w+?)_(language|translations?)$/', $name, $matches ) ) {
 			// Get the parts
-			list(, $action, $object_type, $meta ) = $matches;
+			list( , $action, $object_type, $meta ) = $matches;
 
 			// Build target method name
 			$method = $action . '_object_' . $meta;

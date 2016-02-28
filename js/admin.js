@@ -128,7 +128,7 @@
 		$( '#nlingual_skip_default_l10n' ).change( function() {
 			$( '.nl-preview' ).trigger( 'nl:render' );
 		} );
-		$( '#nlingual_post_language_override' ).change(function() {
+		$( '#nlingual_post_language_override' ).change( function() {
 			$( '.nl-preview' ).trigger( 'nl:render' );
 		} );
 		$( '#nlingual_query_var' ).on( 'keyup change', function() {
@@ -276,13 +276,13 @@
 		var nlLocalizerSkipUpdate = 'nlLocalizerSkipUpdate';
 
 		// Setup the base localizer
-		var $localizer = $('<span class="nl-localizer"></span>').html(function(){
+		var $localizer = $( '<span class="nl-localizer"></span>' ).html( function() {
 			var html = '<span class="nl-localizer-toggle" title="' + nlingualL10n.LocalizeThis + '"></span>';
 			Languages.each( function( language ) {
 				html += '<span class="nl-localizer-option" title="' + nlingualL10n.LocalizeFor.replace( '%s', language.get( 'system_name' ) ) + '" data-nl_language="' + language.id + '"><i class="nl-option-text">' + language.get( 'system_name' ) + '</i></span>';
 			} );
 			return html;
-		});
+		} );
 
 		LocalizableFields.each( function( field ) {
 			var field_id = field.get( 'field_id' ),
@@ -293,7 +293,7 @@
 
 			// Get the field if it exists and is an input/textarea
 			var $field = $( '#' + field_id );
-			if ( $field.length === 0 || ! $field.is('input, textarea') ) {
+			if ( $field.length === 0 || ! $field.is( 'input, textarea' ) ) {
 				return;
 			}
 			$field.addClass( 'nl-localizable-input' );
