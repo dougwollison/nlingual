@@ -562,6 +562,7 @@ class Backend extends Handler {
 								WHERE t.object_type = 'post'
 								AND t.language_id = %d
 								AND p.post_type = %s
+								ORDER BY p.post_date DESC
 							", $language->id, $post_type ) );
 
 							// Print the options
@@ -703,6 +704,7 @@ class Backend extends Handler {
 				AND t.language_id = %d
 				AND t.object_id != %d
 				AND p.post_type = %s
+				ORDER BY p.post_date DESC
 			", $language->id, $post->ID, $post->post_type ) );
 
 			// Set translation to for this language to 0 if not present
