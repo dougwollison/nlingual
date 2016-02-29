@@ -70,6 +70,9 @@ class Liaison extends Handler {
 			add_filter( 'option_blogdescription', 'nl_split_langs', 10, 1 );
 		}
 
+		// Old body classes
+		static::add_filter( 'body_class', 'add_body_classes', 10, 1 );
+
 		// Redirects for old filters, running them at the very end
 		static::add_filter( 'nlingual_process_url', 'redirect_old_process_url_hook', PHP_INT_MAX, 2 );
 		static::add_filter( 'nlingual_localize_url', 'redirect_old_localize_url_hook', PHP_INT_MAX, 4 );
@@ -102,6 +105,28 @@ class Liaison extends Handler {
 		}
 
 		return nl_split_langs( $title );
+	}
+
+	// =========================
+	// ! - Old Body Class
+	// =========================
+
+	/**
+	 * Add the lang class.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::current_language() to get the current language.
+	 *
+	 * @param array $classes The current list of body classes.
+	 *
+	 * @return array The modified list of classes.
+	 */
+	public static function add_body_classes( $classes ) {
+		// Add language slug
+		$classes[] = 'lang-' . Registry::current_language( 'slug' );
+
+		return $classes;
 	}
 
 	// =========================
