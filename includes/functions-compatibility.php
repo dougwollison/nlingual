@@ -203,7 +203,7 @@ function nl_split_langs( $text, $language = null, $separator = null, $force = fa
 	$index = $language->list_order;
 
 	if ( is_null( $separator ) ) {
-		$separator = get_option( 'nlingual-old_separator' );
+		$separator = Registry::get( '_old_separator' );
 	}
 
 	if ( ! $separator ) {
