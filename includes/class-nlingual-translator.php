@@ -210,15 +210,15 @@ class Translator {
 
 		// If translation group exists, get the language
 		if ( $group ) {
-			$language = Registry::get_language( $group['language_by_object'][ $object_id ] );
+			return Registry::get_language( $group['language_by_object'][ $object_id ] );
 		}
 
 		// If language was not found, and language_is_required is enabled, use default
 		if ( ! $language && Registry::get( 'language_is_required' ) ) {
-			$language = Registry::default_language();
+			return Registry::default_language();
 		}
 
-		return $language;
+		return false;
 	}
 
 	/**
@@ -375,6 +375,12 @@ class Translator {
 		if ( ! validate_language( $language, true ) ) {
 			// Throw exception if not found
 			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
+		}
+
+		// If the object requested has NO language, or IS the object for that language, return it/false
+		$object_language = static::get_object_language( $object_type, $object_id );
+		if ( ! $object_language || $language->id == $object_language->id ) {
+			return $return_self ? $id : false;
 		}
 
 		// Get the translation group for the object
