@@ -262,7 +262,7 @@ class Liaison extends Handler {
 		$link = admin_url( 'admin.php?nlingual-action=convert-terms&_nlnonce=' . $nonce );
 		$message = sprintf( $message, $link );
 		?>
-		<div class="notice">
+		<div class="notice notice-info">
 			<p><?php echo $message; ?></p>
 		</div>
 		<?php
