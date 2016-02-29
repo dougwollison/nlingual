@@ -274,7 +274,6 @@ class Installer extends Handler {
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 */
 	protected static function install_tables() {
-		trigger_error(__FUNCTION__, E_USER_WARNING);
 		global $wpdb;
 
 		// Load dbDelta utility
@@ -327,7 +326,6 @@ class Installer extends Handler {
 	 * @return bool Wether or not an upgrade was performed.
 	 */
 	public static function upgrade() {
-		trigger_error(__FUNCTION__, E_USER_WARNING);
 		global $wpdb;
 
 		// Abort if the site was previously using nLingual 2 or higher
