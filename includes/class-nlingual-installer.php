@@ -173,7 +173,8 @@ class Installer extends Handler {
 		// Attempt to upgrade, in case we're activating after an plugin update
 		if ( ! static::upgrade() ) {
 			// Otherwise just install the options/tables
-			static::install();
+			static::install_options();
+			static::install_tables();
 		}
 	}
 
@@ -230,11 +231,13 @@ class Installer extends Handler {
 	// =========================
 
 	/**
-	 * Install tables the tables.
+	 * Install the default options.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @uses Registry::get_defaults() to get the default option values.
 	 */
-	public static function install() {
+	protected static function install_options() {
 		// Load the language presets
 		$presets = require( NL_PLUGIN_DIR . '/includes/presets-languages.php' );
 
@@ -261,6 +264,18 @@ class Installer extends Handler {
 		// Add the language, save it
 		$languages->add( $language );
 		add_option( 'nlingual_languages', $languages->export() );
+	}
+
+	/**
+	 * Install/upgrade the tables.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global wpdb $wpdb The database abstraction class instance.
+	 */
+	protected static function install_tables() {
+		trigger_error(__FUNCTION__, E_USER_WARNING);
+		global $wpdb;
 
 		// Load dbDelta utility
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
@@ -312,6 +327,7 @@ class Installer extends Handler {
 	 * @return bool Wether or not an upgrade was performed.
 	 */
 	public static function upgrade() {
+		trigger_error(__FUNCTION__, E_USER_WARNING);
 		global $wpdb;
 
 		// Abort if the site was previously using nLingual 2 or higher
@@ -319,21 +335,17 @@ class Installer extends Handler {
 			return false;
 		}
 
-		// If upgrading from nLingual 1, convert tables before updating them
+		// If upgrading from nLingual 1, convert options and tables to new format
 		if ( static::is_upgrading() ) {
+			static::convert_options();
 			static::convert_tables();
 
 			// Flag as having been upgraded
 			add_option( 'nlingual_upgraded', 1, '', 'no' );
 		}
 
-		// Perform regular install
-		static::install();
-
-		// If upgrading from nLingual 1, convert options
-		if ( static::is_upgrading() ) {
-			static::convert_options();
-		}
+		// Install/update the tables
+		static::install_tables();
 
 		// Log the current database version
 		update_option( 'nlingual_database_version', NL_DB_VERSION );
