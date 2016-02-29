@@ -198,7 +198,7 @@ class Registry {
 	 */
 	public static function has( &$option ) {
 		if ( isset( static::$options_deprecated[ $option ] ) ) {
-			$option = $deprecated_options[ $option ];
+			$option = static::$options_deprecated[ $option ];
 		}
 
 		return in_array( $option, static::$options_whitelist );
