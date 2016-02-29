@@ -62,7 +62,7 @@ class Liaison extends Handler {
 		require( NL_PLUGIN_DIR . '/includes/functions-compatibility.php' );
 
 		// Old split-language string support
-		static::add_filter( 'the_title', 'maybe_split_langs_for_title', 10, 2 );
+		add_filter( 'the_title', 'nl_split_langs', 10, 2 );
 		if ( ! get_option( '_nlingual_options_converted' ) ) {
 			// Somehow the options were not converted (not taking chances),
 			// hook nl_split_langs into blogname and blogdescription
@@ -81,30 +81,6 @@ class Liaison extends Handler {
 		// Localizable terms migration utility
 		static::add_action( 'admin_notices', 'compatibility_convert_terms_notice', 10, 0 );
 		static::add_action( 'admin_init', 'compatibility_convert_terms_process', 10, 0 );
-	}
-
-	// =========================
-	// ! - Split-Language
-	// =========================
-
-	/**
-	 * Filter the post title through nl_split_langs if applicable.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param string $title   The title to filter.
-	 * @param int    $post_id Optional. The ID of the post this is for.
-	 *
-	 * @return string The filtered option value.
-	 */
-	public static function maybe_split_langs_for_title( $title, $post_id = null ) {
-		// If a post ID was specified (should have been),
-		// don't bother if it doesn't support translation
-		if ( $post_id && Registry::is_post_type_supported( get_post_type( $post_id ) ) ) {
-			return $title;
-		}
-
-		return nl_split_langs( $title );
 	}
 
 	// =========================
