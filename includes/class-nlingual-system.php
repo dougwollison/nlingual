@@ -404,13 +404,13 @@ class System extends Handler {
 		}
 
 		// Unhook this hook to prevent an infinite loop
-		$priority = static::remove_action( 'save_post', __FUNCTION__ );
+		$priority = static::remove_action( 'edit_post', __FUNCTION__ );
 
 		// Now synchronize the post's translations
 		Synchronizer::sync_post_with_sisters( $post_id, $skip_ids );
 
 		// Rehook now that we're done
-		static::add_action( 'save_post', __FUNCTION__, $priority, 1 );
+		static::add_action( 'edit_post', __FUNCTION__, $priority, 1 );
 	}
 
 	/**
