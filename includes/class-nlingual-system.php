@@ -241,13 +241,13 @@ class System extends Handler {
 		$wpdb->nl_translations = $wpdb->nL_translations = $wpdb->prefix . 'nl_translations';
 		$wpdb->nl_localizations = $wpdb->prefix . 'nl_localizations';
 
-		// Register the Installer stuff
-		Installer::register_hooks();
-
 		// Setup the registry
 		Registry::load();
 
-		// Register own hooks
+		// Register the Installer stuff
+		Installer::register_hooks();
+
+		// Register global hooks
 		static::register_hooks();
 
 		// Register the hooks of the subsystems
