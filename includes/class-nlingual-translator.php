@@ -443,7 +443,7 @@ class Translator {
 	 *
 	 * @param bool Wether or not the association could be done (false if aborted).
 	 */
-	public static function set_object_translations( $object_type, $object_id, $objects ) {
+	public static function set_object_translations( $object_type, $object_id, $translations ) {
 		global $wpdb;
 
 		// Get the group ID for this object
@@ -462,7 +462,7 @@ class Translator {
 
 		// Go through the $objects and handle accordingly
 		$values = array();
-		foreach ( $objects as $language => $object_id ) {
+		foreach ( $translations as $language => $translation_id ) {
 			// Ensure $language is a Language
 			if ( ! validate_language( $language ) ) {
 				// Throw exception if not found
@@ -475,11 +475,11 @@ class Translator {
 			}
 
 			// If $object_id isn't valid, assume we want to unlink it
-			if ( intval( $object_id ) <= 0 ) {
+			if ( intval( $translation_id ) <= 0 ) {
 				static::delete_object_translation( $object_type, $object_id, $language );
 			} else {
 				// Build the row data for the query
-				$values[] = $wpdb->prepare( "(%d, %s, %d, %d)", $group_id, $object_type, $object_id, $language->id );
+				$values[] = $wpdb->prepare( "(%d, %s, %d, %d)", $group_id, $object_type, $translation_id, $language->id );
 			}
 		}
 
