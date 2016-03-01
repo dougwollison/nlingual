@@ -377,12 +377,6 @@ class Translator {
 			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
 		}
 
-		// If the object requested has NO language, or IS the object for that language, return it/false
-		$object_language = static::get_object_language( $object_type, $object_id );
-		if ( ! $object_language || $language->id == $object_language->id ) {
-			return $return_self ? $id : false;
-		}
-
 		// Get the translation group for the object
 		$group = static::get_group( $object_type, $object_id );
 
