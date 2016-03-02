@@ -63,7 +63,7 @@ class Liaison extends Handler {
 
 		// Old split-language string support
 		add_filter( 'the_title', 'nl_split_langs', 10, 2 );
-		if ( ! get_option( '_nlingual_options_converted' ) ) {
+		if ( ! get_option( 'nlingual_upgraded_options' ) ) {
 			// Somehow the options were not converted (not taking chances),
 			// hook nl_split_langs into blogname and blogdescription
 			add_filter( 'option_blogname', 'nl_split_langs', 10, 1 );
