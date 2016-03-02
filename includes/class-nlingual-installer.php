@@ -333,9 +333,8 @@ class Installer extends Handler {
 			return false;
 		}
 
-		// If upgrading from nLingual 1, convert options and tables to new format
+		// If upgrading from nLingual 1, convert tables before upgrading
 		if ( static::is_upgrading() ) {
-			static::convert_options();
 			static::convert_tables();
 
 			// Flag as having been upgraded
@@ -344,6 +343,11 @@ class Installer extends Handler {
 
 		// Install/update the tables
 		static::install_tables();
+
+		// If upgrading from nLingual 1, convert options
+		if ( static::is_upgrading() ) {
+			static::convert_options();
+		}
 
 		// Log the current database version
 		update_option( 'nlingual_database_version', NL_DB_VERSION );
@@ -500,14 +504,8 @@ class Installer extends Handler {
 		Registry::set( 'nav_menu_locations', $menu_locations );
 
 		/**
-		 * Final cleanup
+		 * Convert Blog Name/Description for Localizer
 		 */
-
-		// Auto-enable backwards compatibility
-		Registry::set( 'backwards_compatible', true );
-
-		// Save changes
-		Registry::save();
 
 		// Get the blog name and description values
 		$name = get_option( 'blogname' );
@@ -520,6 +518,16 @@ class Installer extends Handler {
 		// Update values
 		update_option( 'blogname', $unlocalized_name );
 		update_option( 'blogdescription', $unlocalized_description );
+
+		/**
+		 * Final cleanup
+		 */
+
+		// Auto-enable backwards compatibility
+		Registry::set( 'backwards_compatible', true );
+
+		// Save changes
+		Registry::save();
 
 		// Now, drop the old options and the languages table
 		delete_option( 'nLingual-options' );
