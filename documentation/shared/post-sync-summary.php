@@ -9,6 +9,7 @@
 			$post_fields = array();
 			$post_field_names = nLingual\Documenter::post_field_names();
 			// Get the names of each field
+			var_dump($rules['post_fields']);
 			foreach ( $rules['post_fields'] as $post_field ) {
 				$post_fields[] = $post_field_names[ $post_field ];
 			}
@@ -30,7 +31,7 @@
 		<?php if ( $rules['post_meta'] ) : ?>
 		<li><strong><?php _e( 'Meta Data', 'nlingual' ); ?></strong> - <?php
 			if ( in_array( '*', $rules['post_meta'] ) ) {
-				echo _( 'All custom fields found.' );
+				_e( 'All custom fields found.', 'nlingual' );
 			} else {
 				echo implode( ', ', $rules['post_meta'] );
 			}

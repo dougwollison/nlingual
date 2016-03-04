@@ -33,6 +33,7 @@ class Documenter extends Handler {
 		'options' => array(
 			'tabs' => array(
 				'overview' => 'Overview',
+				'management' => 'Translated Content Management',
 				'requests' => 'Request and Redirection Handling',
 			),
 			'sidebar' => true,

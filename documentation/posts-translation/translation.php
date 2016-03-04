@@ -10,7 +10,7 @@ _ef( 'On this screen you can view at a glance what language every post is in, as
 
 <p><?php
 /* Translators: %1$s = The singular name of the post type, %2$s = The plural name of the post type. */
-_ef( 'The <strong>Quick Edit</strong> option will allow you to quickly change the language or assign translations to a %1$s, while Bulk Edit will allow you to change the language of many %2$s at once.', 'nlingual', $singular, $plural ); ?></p>
+_ef( 'The <strong>Quick Edit</strong> option will allow you to quickly change the language or assign translations to a %1$s, while Bulk Edit will allow you to change the language of many %2$s at once. Currently, only the row for the %1$s being updated will change; you will need to refresh if you wish to see the full changes.', 'nlingual', $singular, $plural ); ?></p>
 
 <p><?php
 /* Translators: %1$s = The singular name of the post type, %2$s = The URL for the link. Please preserve the HTML as-is. */
