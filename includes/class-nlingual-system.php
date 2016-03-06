@@ -297,6 +297,10 @@ class System extends Handler {
 		static::add_filter( 'posts_join_request', 'add_post_translations_join_clause', 10, 2 );
 		static::add_filter( 'posts_where_request', 'add_post_translations_where_clause', 10, 2 );
 		static::add_filter( 'get_pages', 'filter_pages', 10, 2 );
+
+		// Miscellaneous Changes
+		static::add_action( 'wp_print_scripts', 'patch_font_stack', 10, 0 );
+		static::add_action( 'admin_print_scripts', 'patch_font_stack', 10, 0 );
 	}
 
 	/**
@@ -813,5 +817,36 @@ class System extends Handler {
 		}
 
 		return $filtered_pages;
+	}
+
+	// =========================
+	// ! Miscellaneous
+	// =========================
+
+	/**
+	 * Patch the font stack in the admin.
+	 *
+	 * Replaces the font stack to use Helvetica and Tahoma
+	 * instead of Open Sans, which has rendering issues in Chrome.
+	 *
+	 * Helvetica because it's the closes websafe match, and Tahoma
+	 * for the sake of less ugly Arabic characters.
+	 *
+	 * @since 2.0.0
+	 */
+	public static function patch_font_stack() {
+		// Only proceed if enabled and Open Sans is in use
+		if ( Registry::get( 'patch_font_stack' )
+		&& wp_style_is( 'open-sans', 'enqueued' ) ) {
+			?>
+			<style id="nlingual-open-sans-fix" type="text/css" media="all">
+				body.wp-admin,
+				#wpadminbar,
+				#wpadminbar * {
+					font-family: 'Helvetica Neueu', Helvetica, Tahoma, Arial, sans-serif;
+				}
+			</style>
+			<?php
+		}
 	}
 }
