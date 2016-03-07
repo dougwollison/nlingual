@@ -17,30 +17,54 @@ use nLingual\Rewriter   as Rewriter;
 // =========================
 
 /**
+ * Alias of Registry::get(), with error handling.
+ *
+ * @since 2.0.0
+ *
+ * @param string $option The name of the option to retrieve.
+ *
+ * @return mixed The value of that option (null if not found).
+ */
+function nL_get_option( $option ) {
+	// Attempt to retrieve the desired option.
+	try {
+		return Registry::get( $option );
+	} catch ( Exception $e ) {
+		// get_var and post_var have been merged into query_var
+		if ( $option == 'get_var' || $option == 'post_var' ) {
+			return nl_get_option( 'query_var' );
+		}
+	}
+
+	// Not found
+	return null;
+}
+
+/**
  * @see Registry::default_language()
  */
-function nl_default_lang() {
+function nL_default_lang() {
 	return Registry::default_language( 'slug' );
 }
 
 /**
  * @see Registry::current_language()
  */
-function nl_current_lang() {
+function nL_current_lang() {
 	return Registry::current_language( 'slug' );
 }
 
 /**
  * @see Registry::is_current_language()
  */
-function nl_is_lang( $language ) {
+function nL_is_lang( $language ) {
 	return Registry::is_current_language( $language );
 }
 
 /**
  * @see Registry::in_default_language()
  */
-function nl_is_default() {
+function nL_is_default() {
 	return Registry::in_default_language();
 }
 
@@ -49,21 +73,21 @@ function nl_is_default() {
  *
  * @see nl_get_option()
  */
-function nl_query_var() {
-	return nl_get_option( 'query_var' );
+function nL_query_var() {
+	return nL_get_option( 'query_var' );
 }
 
 /**
  * @see Translator::get_post_language()
  */
-function nl_get_post_lang( $id ) {
+function nL_get_post_lang( $id ) {
 	return Translator::get_post_language( $id );
 }
 
 /**
  * @see Translator::get_post_translation()
  */
-function nl_get_translation( $id, $language = null, $return_self = true ) {
+function nL_get_translation( $id, $language = null, $return_self = true ) {
 	// Default to current language
 	if ( ! $language ) {
 		$language = Registry::current_language();
@@ -77,7 +101,7 @@ function nl_get_translation( $id, $language = null, $return_self = true ) {
 /**
  * @see Translator::get_post_translations()
  */
-function nl_associated_posts( $id, $include_self = false ) {
+function nL_associated_posts( $id, $include_self = false ) {
 	$translations = Translator::get_post_translations( $id, $include_self );
 
 	return $translations;
@@ -101,7 +125,7 @@ function nl_associated_posts( $id, $include_self = false ) {
  *
  * @return mixed The desired language array or field.
  */
-function nl_get_lang( $field = null, $language = null ) {
+function nL_get_lang( $field = null, $language = null ) {
 	if ( is_null( $language ) ) {
 		$language = Registry::current_language( 'id' );
 	}
@@ -150,7 +174,7 @@ function nL_lang_slug( $lang_id = null ) {
 /**
  * @see Rewriter::get_links()
  */
-function nl_get_lang_links( $skip_current = false ) {
+function nL_get_lang_links( $skip_current = false ) {
 	return Rewriter::get_links( $skip_current, 'slug' );
 }
 
@@ -167,7 +191,7 @@ function nl_get_lang_links( $skip_current = false ) {
  * @param string $sep    Optioanl A separator to use when putting the links together.
  * @param bool   $skip_current Optional. Wether or not to leave out the link for the current language.
  */
-function nl_print_lang_links( $prefix = '', $sep = ' ', $skip_current = false ) {
+function nL_print_lang_links( $prefix = '', $sep = ' ', $skip_current = false ) {
 	$links = nl_get_lang_links( $skip_current );
 
 	foreach ( $links as $slug => &$link ) {
@@ -193,7 +217,7 @@ function nl_print_lang_links( $prefix = '', $sep = ' ', $skip_current = false ) 
  *
  * @return string The part of the text corresponding to the language desired.
  */
-function nl_split_langs( $text, $language = null, $separator = null, $force = false ) {
+function nL_split_langs( $text, $language = null, $separator = null, $force = false ) {
 	if ( is_null( $language ) ) {
 		$language = Registry::current_language();
 	} elseif ( ! is_a( $language, 'nLingual\\Language' ) ) {
