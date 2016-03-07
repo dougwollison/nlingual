@@ -329,7 +329,7 @@ class Liaison extends Handler {
 	 *
 	 * @since 2.0.0
 	 */
-	public static function nl_compatibility_convert_terms_success() {
+	public static function compatibility_convert_terms_success() {
 		// Abort if no indication of terms being converted
 		if ( ! isset( $_GET['notice'] ) || $_GET['notice'] != 'nl-terms-converted' ) {
 			return;
