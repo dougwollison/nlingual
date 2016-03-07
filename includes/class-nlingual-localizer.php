@@ -885,6 +885,7 @@ class Localizer extends Handler {
 		// Determin object ID to use
 		$object_id_keys = array(
 			'post.php'      => 'post_ID',
+			'term.php'      => 'tag_ID',
 			'edit-tags.php' => 'tag_ID',
 			'profile.php'   => 'user_id',
 		);
@@ -965,6 +966,7 @@ class Localizer extends Handler {
 		// Determin object ID to use
 		$object_id_keys = array(
 			'post'      => 'post',
+			'term'      => 'tag_ID',
 			'edit-tags' => 'tag_ID',
 			'user-edit' => 'user_id',
 		);
