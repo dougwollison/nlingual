@@ -32,44 +32,44 @@ class Documenter extends Handler {
 	protected static $directory = array(
 		'options' => array(
 			'tabs' => array(
-				'overview' => 'Overview',
-				'management' => 'Translated Content Management',
-				'requests' => 'Request and Redirection Handling',
+				'overview',
+				'management',
+				'requests',
 			),
 			'sidebar' => true,
 		),
 		'localizables' => array(
 			'tabs' => array(
-				'overview' => 'Overview',
+				'overview',
 			),
 			'sidebar' => true,
 		),
 		'synchronizer' => array(
 			'tabs' => array(
-				'overview' => 'Overview',
-				'cloning' => 'Cloning Rules',
+				'overview',
+				'cloning',
 			),
 			'sidebar' => true,
 		),
 		'languages' => array(
 			'tabs' => array(
-				'overview' => 'Overview',
+				'overview',
 			),
 			'sidebar' => false,
 		),
 		'post-translation' => array(
 			'tabs' => array(
-				'translation' => 'Languages & Translations',
+				'translation',
 			),
 		),
 		'posts-translation' => array(
 			'tabs' => array(
-				'translation' => 'Languages & Translations',
+				'translation',
 			),
 		),
 		'localizer' => array(
 			'tabs' => array(
-				'localize-this' => 'Localize This',
+				'localize-this',
 			),
 		),
 	);
@@ -86,7 +86,6 @@ class Documenter extends Handler {
 	// =========================
 	// ! Dynamic Properties
 	// =========================
-
 	/**
 	 * Get a reference list for names of post fields.
 	 *
@@ -96,13 +95,13 @@ class Documenter extends Handler {
 	 */
 	public static function post_field_names() {
 		return array(
-			'post_author'    => _x( 'Author', 'post field', 'nlingual' ),
-			'post_date'      => _x( 'Date', 'post field', 'nlingual' ),
-			'post_status'    => _x( 'Status', 'post field', 'nlingual' ),
-			'post_parent'    => _x( 'Parent', 'post field', 'nlingual' ),
-			'menu_order'     => _x( 'Menu Order', 'post field', 'nlingual' ),
-			'post_password'  => _x( 'Password', 'post field', 'nlingual' ),
-			'comment_status' => _x( 'Comment Status', 'post field', 'nlingual' ),
+			'post_author'    => _x( 'Author',          'post field', 'nlingual' ),
+			'post_date'      => _x( 'Date',            'post field', 'nlingual' ),
+			'post_status'    => _x( 'Status',          'post field', 'nlingual' ),
+			'post_parent'    => _x( 'Parent',          'post field', 'nlingual' ),
+			'menu_order'     => _x( 'Menu Order',      'post field', 'nlingual' ),
+			'post_password'  => _x( 'Password',        'post field', 'nlingual' ),
+			'comment_status' => _x( 'Comment Status',  'post field', 'nlingual' ),
 			'ping_status'    => _x( 'Pingback Status', 'post field', 'nlingual' ),
 		);
 	}
@@ -243,15 +242,25 @@ class Documenter extends Handler {
 		// Get the help info for this page
 		$help = static::$directory[ $help_id ];
 
+		// Build the list of titles for each tab
+		$tab_titles = array(
+			'overview'      => __( 'Overview',                         'nlingual' ),
+			'management'    => __( 'Translated Content Management',    'nlingual' ),
+			'requests'      => __( 'Request and Redirection Handling', 'nlingual' ),
+			'cloning'       => __( 'Cloning Rules',                    'nlingual' ),
+			'translation'   => __( 'Languages & Translations',         'nlingual' ),
+			'localize-this' => __( 'Localize This',                    'nlingual' ),
+		);
+
 		// Add each tab defined
-		foreach ( $help['tabs'] as $tab => $title ) {
+		foreach ( $help['tabs'] as $tab ) {
 			$content = static::get_tab_content( $tab, $help_id );
 
 			// Only add if there's content
 			if ( $content ) {
 				$screen->add_help_tab( array(
 					'id' => "nlingual-{$help_id}-{$tab}",
-					'title' => __( $title ),
+					'title' => $tab_titles[ $tab ],
 					'content' => $content,
 				) );
 			}
