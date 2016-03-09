@@ -35,27 +35,6 @@ class Exception extends \Exception {
         parent::__construct( $message, $code, $previous );
     }
 
-    /**
-	 * Return the full name of the function from a backtrace step.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param array $step A step in the backtrace.
-	 *
-	 * @return string The full name of the function.
-	 */
-	public static function get_step_function( $step ) {
-		$function = '';
-
-		if ( isset( $step['class'] ) ) {
-			$function .= $step['class'] . $step['type'];
-		}
-
-		$function .=  $step['function'];
-
-		return $function;
-	}
-
 	/**
 	 * Ouput a string representation of the exception.
 	 *
