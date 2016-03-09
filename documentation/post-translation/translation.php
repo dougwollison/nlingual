@@ -4,6 +4,8 @@ $post_type = get_current_screen()->post_type;
 $singular = strtolower( get_post_type_object( $post_type )->labels->singular_name );
 $plural = strtolower( get_post_type_object( $post_type )->labels->name );
 ?>
+<title><?php _e( 'Languages & Translations', 'nlingual' ); ?></title>
+
 <p><?php
 /* Translators: %1$s = The singular name of the post type, %2$s = The URL for the link. Please preserve the HTML as-is. */
 _ef( 'The <strong>Languages & Translation</strong> box allows you to assign a language to this %1$s, from the list of languages that have been registered <a href="%2$s" target="_blank">here</a> for use. Once you assign a language, you can also assign the translated versions of the %1$s in each of the other languages, assuming they exist already.', 'nlingual', $singular, admin_url( 'admin.php?page=nlingual-languages' ) ); ?></p>

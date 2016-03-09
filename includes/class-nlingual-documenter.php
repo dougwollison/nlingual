@@ -162,16 +162,16 @@ class Documenter extends Handler {
 	// =========================
 
 	/**
-	 * Load the HTML for the specified help tab.
+	 * Load the sepecified tab's file and return it's ID/title/content.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @param string $tab     The ID of the tab to get.
 	 * @param string $section Optional. The section the tab belongs to.
 	 *
-	 * @return string The HTML of the help tab.
+	 * @return array The ID, title, and content of the help tab.
 	 */
-	public static function get_tab_content( $tab, $section = null ) {
+	public static function get_tab_data( $tab, $section = null ) {
 		// Sanitize JUST in case...
 		$tab = sanitize_file_name( $tab );
 		$section = sanitize_file_name( $section );
@@ -195,10 +195,17 @@ class Documenter extends Handler {
 		// Get the contents of the file
 		ob_start();
 		include( $path );
-		$content = ob_get_clean();
+		$html = ob_get_clean();
 
-		// Run it through wpautop and return it
-		return wpautop( $content );
+		// Parse the HTML to get the title and content
+		preg_match( '#^(?:<title>(.+?)</title>)?\s*([\s\S]+)$#', $html, $matches );
+
+		// Return the parsed data
+		return array(
+			'id' => "nlingual-{$section}-{$tab}",
+			'title' => $matches[1],
+			'content' => wpautop( $matches[2] ),
+		);
 	}
 
 	// =========================
@@ -215,7 +222,7 @@ class Documenter extends Handler {
 	 *
 	 * @uses Documenter::$registered_screens to get the tab set ID.
 	 * @uses Documenter::$directory to retrieve the help tab settings.
-	 * @uses Documenter::get_tab_content() to get the HTML for the tab.
+	 * @uses Documenter::get_tab_data() to get the ID/title/content for the tab.
 	 *
 	 * @param string $help_id Optional. The ID of the tabset to setup.
 	 */
@@ -242,37 +249,23 @@ class Documenter extends Handler {
 		// Get the help info for this page
 		$help = static::$directory[ $help_id ];
 
-		// Build the list of titles for each tab
-		$tab_titles = array(
-			'overview'      => __( 'Overview',                         'nlingual' ),
-			'management'    => __( 'Translated Content Management',    'nlingual' ),
-			'requests'      => __( 'Request and Redirection Handling', 'nlingual' ),
-			'cloning'       => __( 'Cloning Rules',                    'nlingual' ),
-			'translation'   => __( 'Languages & Translations',         'nlingual' ),
-			'localize-this' => __( 'Localize This',                    'nlingual' ),
-		);
-
 		// Add each tab defined
 		foreach ( $help['tabs'] as $tab ) {
-			$content = static::get_tab_content( $tab, $help_id );
+			$data = static::get_tab_data( $tab, $help_id );
 
-			// Only add if there's content
-			if ( $content ) {
-				$screen->add_help_tab( array(
-					'id' => "nlingual-{$help_id}-{$tab}",
-					'title' => $tab_titles[ $tab ],
-					'content' => $content,
-				) );
+			// Only add if there's data
+			if ( $data ) {
+				$screen->add_help_tab( $data );
 			}
 		}
 
 		// Add sidebar if enabled
 		if ( $help['sidebar'] ) {
-			$content = static::get_tab_content( 'sidebar', $help_id );
+			$data = static::get_tab_data( 'sidebar', $help_id );
 
-			// Only add if there's content
-			if ( $content ) {
-				$screen->set_help_sidebar( $content );
+			// Only add if there's data
+			if ( $data ) {
+				$screen->set_help_sidebar( $data['content'] );
 			}
 		}
 	}

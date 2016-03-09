@@ -4,6 +4,8 @@ $post_type = get_current_screen()->post_type;
 $singular = strtolower( get_post_type_object( $post_type )->labels->singular_name );
 $plural = strtolower( get_post_type_object( $post_type )->labels->name );
 ?>
+<title><?php _e( 'Languages & Translations', 'nlingual' ); ?></title>
+
 <p><?php
 /* Translators: %s = The singular name of the post type. */
 _ef( 'On this screen you can view at a glance what language every post is in, as well as what it’s translations are. You can also filter the list to show only %s of a particular language.', 'nlingual', $plural ); ?></p>

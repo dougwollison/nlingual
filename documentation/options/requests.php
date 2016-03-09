@@ -1,3 +1,5 @@
+<title><?php _e( 'Request and Redirection Handling', 'nlingual' ); ?></title>
+
 <p><?php _e( 'You can customize key to look under for getting the language requested in fetching objects. This can be customized for purposes like conflict prevention with other translation systems, or just personal taste.', 'nlingual' ); ?></p>
 
 <p><?php _e( 'When someone visits the site, the language to be served is determined by the following checks, each overriding the previous if matched:', 'nlingual' ); ?></p>

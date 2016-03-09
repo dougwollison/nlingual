@@ -957,7 +957,7 @@ class Localizer extends Handler {
 	 *
 	 * @uses Localizer::$current_fields to store the fields found.
 	 * @uses Localizer::get_fields_for_screen() to get the fields for the screen.
-	 * @uses Documenter::get_tab_content
+	 * @uses Documenter::setup_help_tabs() to add the Localizer help tab.
 	 */
 	public static function setup_localized_fields() {
 		// Get the current screen

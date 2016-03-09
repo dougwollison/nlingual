@@ -1,3 +1,5 @@
+<title><?php _e( 'Overview', 'nlingual' ); ?></title>
+
 <p><?php _e( 'Here you can select what post types will support localization. Supported post types will include a meta box for setting the language and associated translations. In most instances, all publicly accessible objects should be enabled.', 'nlingual' ); ?></p>
 
 <p><?php _e( 'Supported taxonomies will have "Localize This" buttons added to the name and description fields when editing a term. This will enable you to provide versions of these values for each language.', 'nlingual' ); ?></p>

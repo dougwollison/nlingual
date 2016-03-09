@@ -1,3 +1,5 @@
+<title><?php _e( 'Translated Content Management', 'nlingual' ); ?></title>
+
 <p><?php _e( 'In this section, you can enable certain options pertaining to how translations are handled in the admin.', 'nlingual' ); ?></p>
 
 <p><?php _e( 'By default, posts of all languages are displayed in on the edit screens; you can uncheck the show all box so only those of a particular language show by at a time.', 'nlingual' ); ?></p>

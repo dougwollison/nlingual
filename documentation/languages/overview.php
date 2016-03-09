@@ -1,3 +1,5 @@
+<title><?php _e( 'Overview', 'nlingual' ); ?></title>
+
 <p><?php _e( 'Here you can register the languages to be used by your site. You can select from a list of existing languages, or create a definition from scratch.', 'nlingual' ); ?></p>
 
 <p><?php _e( 'Every language has a number of fields that must be specified:', 'nlingual' ); ?></p>
