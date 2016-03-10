@@ -279,7 +279,8 @@ class Backend extends Handler {
 		$localized_locations = array();
 		foreach ( $list as $id => $data ) {
 			foreach ( Registry::languages() as $language ) {
-				// Check if this location specifically supports localizing
+				// Check if this location specifically supports localizing,
+				// make localized copies
 				if ( Registry::is_location_localizable( $type, $id ) ) {
 					$new_id = $id . '-language' . $language->id;
 					$name_postfix = ' (' . $language->system_name . ')';
@@ -293,6 +294,10 @@ class Backend extends Handler {
 						$new_name = $data . $name_postfix;
 						$localized_locations[ $new_id ] = $new_name;
 					}
+				}
+				// Otherwise, preserve it
+				else {
+					$localized_locations[ $id ] = $data;
 				}
 			}
 		}
