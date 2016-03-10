@@ -1,6 +1,6 @@
 === nLingual ===
 Contributors: dougwollison
-Tags: multilingual, multi, language, admin, bilingual, switcher, translation, nlingual
+Tags: multilingual, language, bilingual, translation
 Requires at least: 4.0
 Tested up to: 4.4.2
 Stable tag: 2.0.0
