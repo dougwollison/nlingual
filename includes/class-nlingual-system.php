@@ -295,6 +295,7 @@ class System extends Handler {
 		// Query Manipulation
 		static::add_action( 'parse_query', 'set_queried_language', 10, 1 );
 		static::add_action( 'parse_comment_query', 'set_queried_language', 10, 1 );
+		static::add_action( 'pre_get_posts', 'translate_excluded_posts', 20, 1 );
 		static::add_filter( 'posts_clauses', 'add_translation_clauses', 10, 2 );
 		static::add_filter( 'comments_clauses', 'add_translation_clauses', 10, 2 );
 		//static::add_filter( 'posts_join_request', 'add_post_translations_join_clause', 10, 2 );
@@ -624,7 +625,7 @@ class System extends Handler {
 	 * @param object $query The query object.
 	 */
 	function set_queried_language( $query ) {
-		// Get the language query_var name, and the queries variables (by reference)
+		// Get the language query_var name, and the query's variables (by reference)
 		$query_var = Registry::get( 'query_var' );
 		$query_vars = &$query->query_vars;
 
@@ -689,6 +690,46 @@ class System extends Handler {
 	}
 
 	/**
+	 * Translated the post__not_in IDs to those for the quereid langauge(s) if needed.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param object $query The query object.
+	 */
+	public static function translate_excluded_posts( $query ) {
+		// Get the language query_var name, and the query's variables (by reference)
+		$query_var = Registry::get( 'query_var' );
+		$query_vars = &$query->query_vars;
+
+		// Abort if no language or exclusions were set
+		if ( ! isset( $query_vars[ $query_var ] ) || empty( $query_vars[ $query_var ] )
+		|| ! isset( $query_vars['post__not_in'] ) || empty( $query_vars['post__not_in'] ) ) {
+			return;
+		}
+
+		// Get the language(s) specified, ensure it's an array, filtered
+		$requested_languages = array_filter( (array) $query_vars[ $query_var ] );
+
+		// Loop through the IDs
+		$exclude_ids = array();
+		foreach ( (array) $query_vars['post__not_in'] as $i => $id ) {
+			// Check if it has a language
+			if ( Translator::get_post_language( $id ) ) {
+				// Add it's translations in each requested language
+				foreach ( $requested_languages as $language ) {
+					$exclude_ids[] = Translator::get_post_translation( $id, $language, true );
+				}
+			}
+			// Preserve it
+			else {
+				$exclude_ids[] = $id;
+			}
+		}
+
+		$query_vars['post__not_in'] = array_filter( $exclude_ids );
+	}
+
+	/**
 	 * Add the translations join clause and language where clause for a query.
 	 *
 	 * @since 2.0.0
@@ -706,7 +747,7 @@ class System extends Handler {
 	public static function add_translation_clauses( $clauses, $query ) {
 		global $wpdb;
 
-		// Get the language query_var name, and the queries variables
+		// Get the language query_var name, and the query's variables
 		$query_var = Registry::get( 'query_var' );
 		$query_vars = &$query->query_vars;
 
@@ -715,11 +756,8 @@ class System extends Handler {
 			return $clause;
 		}
 
-		// Get the language(s) specified
-		$requested_languages = $query_vars[ $query_var ];
-
-		// Ensure it's an array
-		$requested_languages = (array) $requested_languages;
+		// Get the language(s) specified, ensure it's an array
+		$requested_languages = (array) $query_vars[ $query_var ];
 
 		// Get the available languages for valiation purposes
 		$all_languages = Registry::languages();
