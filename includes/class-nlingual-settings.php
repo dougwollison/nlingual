@@ -346,7 +346,11 @@ class Settings {
 			$inputs[] = sprintf( '<label><input type="%s" name="%s" value="%s"%s /> %s</label>', $type, $name, $val, $checked, $label );
 		}
 
-		$html = '<fieldset class="nl-inputlist">' . implode( '<br /> ', $inputs ) . '</fieldset>';
+		// Build the list, including a fallback "none" input
+		$html = '<fieldset class="nl-inputlist">' .
+			sprintf( '<input type="hidden" name="%s" value="" />', $name ) .
+			implode( '<br /> ', $inputs ) .
+		'</fieldset>';
 
 		return $html;
 	}
