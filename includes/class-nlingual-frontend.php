@@ -196,8 +196,8 @@ class Frontend extends Handler {
 				}
 			}
 		}
-		// If the language was already specified, or otherwise it's the default and skip is enabled, do nothing
-		elseif ( defined( 'NL_REQUESTED_LANGUAGE' ) xor ( Registry::in_default_language() && Registry::get( 'skip_default_l10n' ) ) ) {
+		// If it's the default and skip is enabled, do nothing
+		elseif ( Registry::in_default_language() && Registry::get( 'skip_default_l10n' ) ) {
 			return;
 		}
 
