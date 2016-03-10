@@ -87,6 +87,8 @@ class Frontend extends Handler {
 		static::add_filter( 'get_next_post_join', 'add_adjacent_translation_join_clause', 10, 1 );
 		static::add_filter( 'get_previous_post_where', 'add_adjacent_translation_where_clause', 10, 1 );
 		static::add_filter( 'get_next_post_where', 'add_adjacent_translation_where_clause', 10, 1 );
+		static::add_filter( 'getarchives_join', 'add_archives_translation_join_clause', 10, 2 );
+		static::add_filter( 'getarchives_where', 'add_archives_translation_where_clause', 10, 2 );
 
 		// Locale & GetText Rewrites
 		static::add_action( 'wp', 'maybe_patch_wp_locale', 10, 0 );
@@ -287,8 +289,8 @@ class Frontend extends Handler {
 		foreach ( $registered as $slug => $name ) {
 			// Check if this location specifically supports localizing
 			if ( Registry::is_location_localizable( $type, $slug ) ) {
-				$current_id = "{$slug};language={$current_language->id}";
-				$default_id = "{$slug};language={$default_language->id}";
+				$current_id = "{$slug}--language_{$current_language->id}";
+				$default_id = "{$slug}--language_{$default_language->id}";
 
 				// Check if a location is set for the current language
 				if ( isset( $locations[ $current_id ] ) ) {
@@ -517,6 +519,63 @@ class Frontend extends Handler {
 	// =========================
 	// ! Query Filters
 	// =========================
+
+	/**
+	 * Add the translations table to the join clause for get_archives.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global \wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @uses Registry::is_post_type_supported() to check for post type support.
+	 *
+	 * @param string $clause  The join clause to add to.
+	 * @param array  $request The request arguments.
+	 *
+	 * @return string The modified join clause.
+	 */
+	public static function add_archives_translation_join_clause( $clause, $request ) {
+		global $wpdb;
+
+		// Abort if post type is not supported
+		if ( ! Registry::is_post_type_supported( $request['post_type'] ) ) {
+			return $clause;
+		}
+
+		// Add the join for the translations table
+		$clause .= " LEFT JOIN $wpdb->nl_translations AS nl ON ($wpdb->posts.ID = nl.object_id AND nl.object_type = 'post')";
+
+		return $clause;
+	}
+
+	/**
+	 * Add the language condition to the where clause for get_archives.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global \wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @uses Registry::is_post_type_supported() to check for post type support.
+	 * @uses Registry::current_language() to get the current language ID.
+	 *
+	 * @param string $clause The where clause to add to.
+	 * @param array  $request The request arguments.
+	 *
+	 * @return string The modified where clause.
+	 */
+	public static function add_archives_translation_where_clause( $clause, $request ) {
+		global $wpdb;
+
+		// Abort if post type is not supported
+		if ( ! Registry::is_post_type_supported( $request['post_type'] ) ) {
+			return $clause;
+		}
+
+		// Add the language condition
+		$clause .= $wpdb->prepare( " AND nl.language_id = %d", Registry::current_language( 'id' ) );
+
+		return $clause;
+	}
 
 	/**
 	 * Add the translations table to the join clause for adjacent posts.
