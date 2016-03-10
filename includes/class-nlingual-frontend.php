@@ -72,6 +72,7 @@ class Frontend extends Handler {
 		// The Mod rewriting
 		static::add_filter( 'theme_mod_nav_menu_locations', 'localize_nav_menu_locations', 10, 1 );
 		static::add_filter( 'sidebars_widgets', 'localize_sidebar_locations', 10, 1 );
+		static::add_filter( 'wp_get_nav_menu_items', 'localize_menu_items', 10, 3 );
 		static::add_filter( 'wp_nav_menu_objects', 'handle_language_links', 10, 1 );
 
 		// General fitlering
@@ -286,13 +287,16 @@ class Frontend extends Handler {
 		foreach ( $registered as $slug => $name ) {
 			// Check if this location specifically supports localizing
 			if ( Registry::is_location_localizable( $type, $slug ) ) {
+				$current_id = "{$slug};language={$current_language->id}";
+				$default_id = "{$slug};language={$default_language->id}";
+
 				// Check if a location is set for the current language
-				if ( isset( $locations[ "{$slug}-language{$current_language->id}"] ) ) {
-					$locations[ $slug ] = $locations[ "{$slug}-language{$current_language->id}"];
+				if ( isset( $locations[ $current_id ] ) ) {
+					$locations[ $slug ] = $locations[ $current_id ];
 				}
 				// Alternatively check if a location is set for the default one
-				elseif ( isset( $locations[ "{$slug}-language{$default_language->id}"] ) ) {
-					$locations[ $slug ] = $locations[ "{$slug}-language{$default_language->id}"];
+				elseif ( isset( $locations[ $default_id ] ) ) {
+					$locations[ $slug ] = $locations[ $default_id ];
 				}
 			}
 		}
@@ -335,8 +339,46 @@ class Frontend extends Handler {
 	}
 
 	// =========================
-	// ! Langlinks Handler
+	// ! Menu Item Handling
 	// =========================
+
+	/**
+	 * Localize the menu items if applicable.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array  $items The nav menu items.
+	 * @param object $menu  The menu the items belong to.
+	 *
+	 * @return array The modified menu items.
+	 */
+	public static function localize_menu_items( $items, $menu ) {
+		// Get the locations so we can find what this menu belongs to
+		$theme_location = null;
+		foreach ( get_nav_menu_locations() as $location => $menu_id ) {
+			if ( $menu_id == $menu->term_id ) {
+				$theme_location = $location;
+				break;
+			}
+		}
+
+		// Don't bother if the location wasn't found or is already localizable
+		if ( $theme_location && ! Registry::is_location_localizable( 'nav_menu', $theme_location ) ) {
+			// Loop through each item, attempt to localize
+			foreach ( $items as $item ) {
+				// If it's for a post that has a translation (that's not itself),
+				// update the title/link with that of the translation
+				if ( $item->type == 'post_type'
+				&& ( $translation = Translator::get_post_translation( $item->object_id, null ) )
+				&& $translation != $item->object_id ) {
+					$item->object_id = $translation;
+					$item->title = get_the_title( $translation );
+					$item->url = get_permalink( $translation );
+				}
+			}
+		}
+		return $items;
+	}
 
 	/**
 	 * Process any languagelink type menu items into proper links.

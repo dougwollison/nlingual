@@ -490,7 +490,7 @@ class Installer extends Handler {
 					$menu_locations[] = $location;
 
 					// Create the new localized slug for the location
-					$location .= '-language' . $language->id;
+					$location = "{$location}--language_{$language->id}";
 				}
 			}
 

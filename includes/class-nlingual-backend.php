@@ -282,7 +282,7 @@ class Backend extends Handler {
 				// Check if this location specifically supports localizing,
 				// make localized copies
 				if ( Registry::is_location_localizable( $type, $id ) ) {
-					$new_id = $id . '-language' . $language->id;
+					$new_id = "{$id}--language_{$language->id}";
 					$name_postfix = ' (' . $language->system_name . ')';
 					if ( is_array( $data ) ) {
 						$new_name = $data['name'] . $name_postfix;
