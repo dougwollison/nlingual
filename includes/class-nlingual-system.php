@@ -690,7 +690,7 @@ class System extends Handler {
 	}
 
 	/**
-	 * Translated the post__not_in IDs to those for the quereid langauge(s) if needed.
+	 * Translated the post__not_in IDs to those for the quereid language(s) if needed.
 	 *
 	 * @since 2.0.0
 	 *
