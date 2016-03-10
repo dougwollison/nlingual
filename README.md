@@ -46,7 +46,12 @@ Admittedly, this is a feature few will need, but it's a godsend to those that do
 - Text Direction: the text direction the language should be rendered in (Left-to-right or right-to-left). Will override the one specified in the text domain files.
 - Active State: wether or not to allow public access to content in the language.
 
-Third-Party Development
------------------------
+Extensibility and 3rd Party Development
+---------------------------------------
 
 In addition to numerous hooks to modify the functionality of nLingual, this plugin also includes some useful gettext utilities: `_f`, `_ef`, `_fx`, `_efx`, `_a`, and `_xa`, all of which are documented in `includes/functions-gettext.php`.
+
+Backwards Compatibility
+-----------------------
+
+Although nLingual 2 has be rewritten from scratch, most if not all of the functions and filters are still available via the backwards compatibility feature, which is automatically enabled upon upgrading. However, any code that directly queries the database using the old nLingual language and translation tables will need to be updated to reflect the new structure.
