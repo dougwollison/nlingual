@@ -174,37 +174,35 @@ class Frontend extends Handler {
 		// Default the redirect language to the current one
 		$redirect_language = Registry::current_language();
 
-		// First, check if the current language is inactive
-		if ( $redirect_language->active ) {
-			// Now, check if the queried object is a post
-			$queried_object = get_queried_object();
-			if ( is_a( $queried_object, 'WP_Post' ) ) {
-				// Check if it's post type is supported
-				if ( Registry::is_post_type_supported( $queried_object->post_type ) ) {
-					// Get the language
-					$post_language = Translator::get_post_language( $queried_object );
+		// Check if the queried object is a post
+		$queried_object = get_queried_object();
+		if ( is_a( $queried_object, 'WP_Post' ) ) {
+			// Check if it's post type is supported
+			if ( Registry::is_post_type_supported( $queried_object->post_type ) ) {
+				// Get the language
+				$post_language = Translator::get_post_language( $queried_object );
 
-					// If the post has a language, that is active and doesn't match the current one,
-					// and the override is set (or otherwise the language wasn't specified),
-					// or if it doesn't have a translation (and language_is_required is set),
-					// Redirect to the post's language
-					if ( ( $post_language && $post_language->active
-						&& ! Registry::is_language_current( $post_language )
-						&& ( Registry::get( 'post_language_override', false )
-							|| ! defined( 'NL_REQUESTED_LANGUAGE' ) ) )
-					|| ( ! Translator::get_post_translation( $queried_object )
-						&& Registry::get( 'language_is_required' ) ) ) {
-						$redirect_language = $post_language;
-					}
+				// If the post has a language, and doesn't match the current one,
+				// and the override is set (or otherwise the language wasn't specified),
+				// or if it doesn't have a translation (and language_is_required is set),
+				// Redirect to the post's language
+				if ( ( $post_language
+					&& ! Registry::is_language_current( $post_language )
+					&& ( Registry::get( 'post_language_override', false )
+						|| ! defined( 'NL_REQUESTED_LANGUAGE' ) ) )
+				|| ( ! Translator::get_post_translation( $queried_object )
+					&& Registry::get( 'language_is_required' ) ) ) {
+					$redirect_language = $post_language;
 				}
 			}
-			// If the language was already specified, or otherwise it's the default and skip is enabled, do nothing
-			elseif ( defined( 'NL_REQUESTED_LANGUAGE' ) xor ( Registry::in_default_language() && Registry::get( 'skip_default_l10n' ) ) ) {
-				return;
-			}
 		}
-		// If the language is inactive, redirect to accepted or default language
-		else {
+		// If the language was already specified, or otherwise it's the default and skip is enabled, do nothing
+		elseif ( defined( 'NL_REQUESTED_LANGUAGE' ) xor ( Registry::in_default_language() && Registry::get( 'skip_default_l10n' ) ) ) {
+			return;
+		}
+
+		// If the language isn't active, fallback to the accepted or default language
+		if ( ! $redirect_language->active ) {
 			$redirect_language = static::get_accepted_language() ?: Registry::default_language();
 		}
 
