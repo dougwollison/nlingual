@@ -532,8 +532,10 @@ class System extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::current_language() to get the current language.
+	 * @uses Translator::get_post_language() to get the post's language.
+	 * @uses Registry::default_language() to get the default language.
 	 * @uses Translator::get_post_translation() to get the post for that language.
+	 * @uses Rewriter::localize_url() to localize the URL into the post's language.
 	 *
 	 * @param string $permalink The permalink of the post.
 	 * @param int    $post_id   The ID of the post.
@@ -546,11 +548,11 @@ class System extends Handler {
 			// If it's a page, check if it's a home page translation
 			if ( current_filter() == 'page_link' ) {
 				// Get the default language translation
-				$translation = Translator::get_post_translation( $post_id, null, true );
+				$translation = Translator::get_post_translation( $post_id, Registry::default_language(), true );
 
-				// If it's a home page translation, return the localized home url
+				// If it's a home page translation, replace with unlocalized home url
 				if ( $translation == get_option( 'page_on_front' ) ) {
-					return Rewriter::localize_url( get_home_url( null, '', 'unlocalized' ), $language );
+					$permalink = get_home_url( null, '', 'unlocalized' );
 				}
 			}
 
