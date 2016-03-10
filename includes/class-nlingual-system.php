@@ -506,7 +506,6 @@ class System extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses NL_UNLOCALIZED to prevent filter recursion.
 	 * @uses Rewriter::localize_url() to create the new url.
 	 *
 	 * @param string      $url     The complete home URL including scheme and path.
@@ -516,9 +515,8 @@ class System extends Handler {
 	 * @return string The localized home URL.
 	 */
 	public static function localize_home_url( $url, $path, $scheme ) {
-		// Check if we shouldn't actually localize this
-		// (will be indicated by custom $scheme value)
-		if ( $scheme == NL_UNLOCALIZED ) {
+		// Only localize for http/https and scheme-agnostic
+		if ( ! in_array( $scheme, array( null, 'http', 'https' ) ) ) {
 			return $url;
 		}
 
@@ -552,7 +550,7 @@ class System extends Handler {
 
 				// If it's a home page translation, return the localized home url
 				if ( $translation == get_option( 'page_on_front' ) ) {
-					return Rewriter::localize_url( home_url( '', NL_UNLOCALIZED ), $language );
+					return Rewriter::localize_url( get_home_url( null, '', 'unlocalized' ), $language );
 				}
 			}
 

@@ -621,7 +621,7 @@ class Frontend extends Handler {
 		// Only do so if using the domain rewrite method, and if enabled
 		if ( Registry::get( 'url_rewrite_method' ) == 'domain'
 		&& Rewriter::will_do_localization() ) {
-			$find_url = home_url( '', NL_UNLOCALIZED ) . '/wp-content/uploads/';
+			$find_url = get_home_url( null, '', 'unlocalized' ) . '/wp-content/uploads/';
 			$replace_url = Rewriter::localize_url( $find_url );
 			$content = str_replace( $find_url, $replace_url, $content );
 		}

@@ -11,19 +11,6 @@
  */
 
 // =========================
-// ! Functionality Flags
-// =========================
-
-/**
- * Flag the URL as needing to be unlocalized.
- *
- * @since 2.0.0
- *
- * @var string
- */
-define( 'NL_UNLOCALIZED', 'NL_UNLOCALIZED' );
-
-// =========================
 // ! Error Codes
 // =========================
 

@@ -97,7 +97,6 @@ class Rewriter {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses NL_UNLOCALIZED to get the unlocalized home URL.
 	 * @uses Registry::languages() to get the active registered languages.
 	 * @uses Registry::get() to get the query var and redirection method options.
 	 *
@@ -110,7 +109,7 @@ class Rewriter {
 		$language = null;
 
 		// Get the home URL (unlocalized)
-		$home = get_home_url( null, '', NL_UNLOCALIZED );
+		$home = get_home_url( null, '', 'unlocalized' );
 
 		// Get the list of active languages
 		$active_languages = Registry::languages( 'active' );
@@ -249,7 +248,7 @@ class Rewriter {
 		}
 
 		// Get the home URL (unlocalized)
-		$home = get_home_url( null, '', NL_UNLOCALIZED );
+		$home = get_home_url( null, '', 'unlocalized' );
 
 		// Check if it's just a URI,
 		// prefix with domain of home URL if so
