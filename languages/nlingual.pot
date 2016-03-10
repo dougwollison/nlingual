@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nLingual 2.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/nlingual\n"
-"POT-Creation-Date: 2016-02-02 16:40:41+00:00\n"
+"POT-Creation-Date: 2016-03-10 01:48:52+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -12,728 +12,1168 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: doc/languages/overview.php:2
-msgid ""
-"Here you can register the languages that shall be used by your site. You can "
-"select from a list of existing languages, or create a definition from "
-"scratch."
+#: documentation/languages/overview.php:1
+#: documentation/localizables/overview.php:1
+#: documentation/options/overview.php:1
+#: documentation/synchronizer/overview.php:1
+msgid "Overview"
 msgstr ""
 
-#: doc/languages/overview.php:4
+#: documentation/languages/overview.php:3
+msgid "Here you can register the languages to be used by your site. You can select from a list of existing languages, or create a definition from scratch."
+msgstr ""
+
+#: documentation/languages/overview.php:5
 msgid "Every language has a number of fields that must be specified:"
 msgstr ""
 
-#: doc/languages/overview.php:7
+#: documentation/languages/overview.php:8
 msgid "System Name:"
 msgstr ""
 
-#: doc/languages/overview.php:7
-msgid "the name of the language in your native tongue for easy recognition."
+#: documentation/languages/overview.php:8
+msgid "The name of the language in your native tongue for easy recognition."
 msgstr ""
 
-#: doc/languages/overview.php:8
+#: documentation/languages/overview.php:9
 msgid "Native Name:"
 msgstr ""
 
-#: doc/languages/overview.php:8
-msgid "the name of the language as it should appear to a native speaker."
+#: documentation/languages/overview.php:9
+msgid "The name of the language as it should appear to a native speaker."
 msgstr ""
 
-#: doc/languages/overview.php:9
+#: documentation/languages/overview.php:10
 msgid "Short Name:"
 msgstr ""
 
-#: doc/languages/overview.php:9
-msgid ""
-"a shorthand name (usually native) of the language, which may be used by your "
-"custom theme."
+#: documentation/languages/overview.php:10
+msgid "A shorthand name (usually native) of the language, which may be used by your custom theme."
 msgstr ""
 
-#: doc/languages/overview.php:10
+#: documentation/languages/overview.php:11
 msgid "Locale:"
 msgstr ""
 
-#: doc/languages/overview.php:10
-msgid "the name of the GetText localization file to load for this language."
+#: documentation/languages/overview.php:11
+msgid "The name of the GetText localization file to load for this language."
 msgstr ""
 
-#: doc/languages/overview.php:11
+#: documentation/languages/overview.php:12
 msgid "ISO Code:"
 msgstr ""
 
-#: doc/languages/overview.php:11
-msgid "the ISO 639-1 code for the language (two letters)."
+#: documentation/languages/overview.php:12
+msgid "The ISO 639-1 code for the language (two letters)."
 msgstr ""
 
-#: doc/languages/overview.php:12
+#: documentation/languages/overview.php:13
 msgid "Slug:"
 msgstr ""
 
-#: doc/languages/overview.php:12
-msgid ""
-"Used for specifying the language in the URL. Usually the same as the ISO "
-"code but can be different if desired."
+#: documentation/languages/overview.php:13
+msgid "Used for specifying the language in the URL. Usually the same as the ISO code but can be different if desired."
 msgstr ""
 
-#: doc/languages/overview.php:15
-msgid ""
-"Registered languages can be deactivated, hiding them from being publicly "
-"accessible, and excluding them from the All Languages filter in the post "
-"listing. The language will still however be available for assigning posts "
-"and translations to."
+#: documentation/languages/overview.php:14
+msgid "Text Direction:"
 msgstr ""
 
-#: doc/languages/overview.php:17
-msgid ""
-"To delete languages, check off the delete box and and then click Save "
-"Changes."
+#: documentation/languages/overview.php:14
+msgid "The direction of text the language should use (left-to-right or right-to-left)."
 msgstr ""
 
-#: doc/localizables/overview.php:2
-msgid ""
-"Here you can select what post types will support localization. Supported "
-"post types will include a meta box for setting the language and associated "
-"translations. In most instances, all publicly accessible objects should be "
-"enabled."
+#: documentation/languages/overview.php:17
+msgid "Registered languages can be deactivated by unchecking the Active box. This hides them from from being publicly accessible, and excluding them from the All Languages filter in the post listing. The language will still however be available for assigning posts and translations to."
 msgstr ""
 
-#: doc/localizables/overview.php:4
-msgid ""
-"Supported taxonomies will have \"Localize This\" buttons added to the name "
-"and description fields when editing a term. This will enable you to provide "
-"versions of these values for each language."
+#: documentation/languages/overview.php:19
+msgid "To delete languages, check off the delete box and and then click Save Changes."
 msgstr ""
 
-#: doc/localizables/overview.php:6
-msgid ""
-"You can also select which navigation menu and sidebar locations will be "
-"localized. Supported locations will be replaced with versions for each "
-"language, allowing you to assign unique items/widgets to them. It is usually "
-"best to enable this for all locations since they usually contain custom-"
-"written content."
+#: documentation/localizables/overview.php:3
+msgid "Here you can select what post types will support localization. Supported post types will include a meta box for setting the language and associated translations. In most instances, all publicly accessible objects should be enabled."
 msgstr ""
 
-#: doc/localizables/sidebar.php:2
+#: documentation/localizables/overview.php:5
+msgid "Supported taxonomies will have \"Localize This\" buttons added to the name and description fields when editing a term. This will enable you to provide versions of these values for each language."
+msgstr ""
+
+#: documentation/localizables/overview.php:7
+msgid "You can also select which navigation menu and sidebar locations will be localized. Supported locations will be replaced with versions for each language, allowing you to assign unique items/widgets to them. It is usually best to enable this for all locations since they usually contain custom-written content."
+msgstr ""
+
+#: documentation/localizables/sidebar.php:1
 msgid "Manage Locations:"
 msgstr ""
 
-#: doc/localizables/sidebar.php:5
+#: documentation/localizables/sidebar.php:4
 msgid "Navigation Menus"
 msgstr ""
 
-#: doc/localizables/sidebar.php:6
+#: documentation/localizables/sidebar.php:5
 msgid "Sidebars"
 msgstr ""
 
-#: doc/localizer/localize-this.php:2
-msgid ""
-"Use the <i class=\"dashicons dashicons-translation\"></i> widget to add, "
-"view, and edit localized versions of the text in the associated field."
-msgstr ""
-
-#: doc/localizer/localize-this.php:4
-msgid ""
-"When the site is viewed in a particular language and the data controlled by "
-"these fields is displayed, the version for that language will be used "
-"instead, provided it exists (it will fallback to the original value "
-"otherwise)."
-msgstr ""
-
-#: doc/options/overview.php:2
-msgid ""
-"The controls on this screen affect basic functionality of site translation; "
-"namely the URLs for translated versions of pages on the site."
-msgstr ""
-
-#: doc/options/overview.php:4
-msgid ""
-"By default, objects of all languages are visible together in the admin. This "
-"can be turned off if desired, and all objects of the default language (or no "
-"language at all) will be listed unless otherwise specified)."
-msgstr ""
-
-#: doc/options/requests.php:2
-msgid ""
-"You can customize key to look under for getting the language requested in "
-"fetching objects. This can be customized for purposes like conflict "
-"prevention with other translation systems, or just personal taste."
-msgstr ""
-
-#: doc/options/requests.php:4
-msgid ""
-"When someone visits the site, the language to be served is determined by the "
-"following checks, each overriding the previous if matched:"
-msgstr ""
-
-#: doc/options/requests.php:7
-msgid "The visitor’s language according to their browser."
-msgstr ""
-
-#: doc/options/requests.php:8
-msgid ""
-"The language specified in the URL (based on the scheme specified by the "
-"Redirection Method)"
-msgstr ""
-
-#: doc/options/requests.php:9
-msgid "The GET/POST query argument if specified."
-msgstr ""
-
-#: doc/options/requests.php:10
-msgid ""
-"(Optional) The language of the requested object if it differs from the on "
-"previously detected."
-msgstr ""
-
-#: doc/options/requests.php:13
-msgid ""
-"If the language cannot be determined by any of the above means, the language "
-"specified as the default will be used."
-msgstr ""
-
-#: doc/options/requests.php:15
-msgid ""
-"By default, any redirects will be performed as \"temporary\" (HTTP 302). You "
-"can set these to to be \"permanent\" (HTTP 301) instead. <em>This is often "
-"better for SEO, but changes to the settings after the fact or conflicts "
-"caused by other plugins/themes could result in hard-to-undo errors.</em>"
-msgstr ""
-
-#: doc/options/sidebar.php:2
-msgid "Also manageable:"
-msgstr ""
-
-#: doc/options/sidebar.php:5
-msgid "What should be localizable."
-msgstr ""
-
-#: doc/options/sidebar.php:6
-msgid "Synchronizing and cloning options."
-msgstr ""
-
-#: doc/options/sidebar.php:7
-msgid "What languages to use."
-msgstr ""
-
-#: doc/post-translation/translation.php:10
-msgid ""
-"If you don’t have a translated version for a particular language yet, you "
-"can select the option to create a new one; a copy of the current post will "
-"be created automatically for you to work from."
-msgstr ""
-
-#: doc/shared/post-sync-summary.php:7 inc/class-nlingual-settings.php:406
-msgid "Post Data"
-msgstr ""
-
-#: doc/shared/post-sync-summary.php:18 inc/class-nlingual-manager.php:481
-#: inc/class-nlingual-settings.php:415
-msgid "Taxonomies"
-msgstr ""
-
-#: doc/shared/post-sync-summary.php:29 inc/class-nlingual-settings.php:424
-msgid "Meta Data"
-msgstr ""
-
-#: doc/shared/post-sync-summary.php:31
-msgid "All custom fields found."
-msgstr ""
-
-#: doc/sync/cloning.php:2
-msgid ""
-"You can also control rules for what details are copied when creating a new "
-"translation of an existing post; typically, all details should be copied, "
-"since they can easily be altered while updating the post with translated "
-"content."
-msgstr ""
-
-#: doc/sync/overview.php:2
-msgid ""
-"From here you can manage what details are synchronized between posts of the "
-"same translation group. These includes post fields, terms from select "
-"taxonomies, and custom fields you specify. When a post in a group is "
-"updated, any information that is specified here will be copied over to it’s "
-"sister posts. <strong>Caution:</strong> these sync rules cannot be disabled "
-"on a per-post basis; either all posts have these details synchronized or "
-"none of them do."
-msgstr ""
-
-#: doc/sync/sidebar.php:2
-msgid "Related:"
-msgstr ""
-
-#: doc/sync/sidebar.php:5
-msgid "Enable/disable post types for localization."
-msgstr ""
-
-#: inc/class-nlingual-backend.php:180
-msgid "Enter the title for this translation."
-msgstr ""
-
-#: inc/class-nlingual-backend.php:181
-msgid "Translate to %s: %s"
-msgstr ""
-
-#: inc/class-nlingual-backend.php:182
-msgid ""
-"Error creating translation, please try again later or create one manually."
-msgstr ""
-
-#: inc/class-nlingual-backend.php:183
-msgid "No post selected to edit."
-msgstr ""
-
-#: inc/class-nlingual-backend.php:184
-msgid "[New]"
-msgstr ""
-
-#: inc/class-nlingual-backend.php:185
+#: documentation/localizer/localize-this.php:1
+#: includes/class-nlingual-backend.php:1042
 msgid "Localize This"
 msgstr ""
 
-#: inc/class-nlingual-backend.php:186
-msgid "Localize for %s"
+#: documentation/localizer/localize-this.php:3
+msgid "Use the <i class=\"dashicons dashicons-translation\"></i> widget to add, view, and edit localized versions of the text in the associated field."
 msgstr ""
 
-#: inc/class-nlingual-backend.php:301
+#: documentation/localizer/localize-this.php:5
+msgid "When the site is viewed in a particular language and the data controlled by these fields is displayed, the version for that language will be used instead, provided it exists (it will fallback to the original value otherwise)."
+msgstr ""
+
+#: documentation/options/management.php:1
+#: includes/class-nlingual-manager.php:376
+msgid "Translated Content Management"
+msgstr ""
+
+#: documentation/options/management.php:3
+msgid "In this section, you can enable certain options pertaining to how translations are handled in the admin."
+msgstr ""
+
+#: documentation/options/management.php:5
+msgid "By default, posts of all languages are displayed in on the edit screens; you can uncheck the show all box so only those of a particular language show by at a time."
+msgstr ""
+
+#: documentation/options/management.php:7
+msgid "Since translations are intended to be somewhat synchronized, you may want to enable synchronized trashing/deleting of posts, for cleaner management of contnet."
+msgstr ""
+
+#: documentation/options/management.php:9
+msgid "Also, if you or some of your fellow admins/editors use Google Chrome, you may need to enable the Patch Admin Font option. This will replace the use of Open Sans with Helvetica, as a workaround to the issue of arabic and chinese characters appearing as squares under Open Sans."
+msgstr ""
+
+#: documentation/options/overview.php:3
+msgid "The controls here affect the basic functionalities of site translation, both on the front-end and the back-end."
+msgstr ""
+
+#: documentation/options/overview.php:5
+msgid "To control what site the language falls back to in for visitors who prefer and unsupported or undetected language, select a language as the Default Language."
+msgstr ""
+
+#: documentation/options/overview.php:5
+msgid "If your site uses languages that have their own handling of date formats, check off the Localized Date box and/or the Patch WP_Locale box, depending on what your setup is."
+msgstr ""
+
+#: documentation/options/overview.php:8
+msgid "Since you upgraded from nLingual 1, you may need use of the Backwards Compatibility tools. These are various hooks and functions that themes and plugins built for the older version of nLingual may need, and are enabled by default. It is highly recommended you see about getting these updated to use the newer code."
+msgstr ""
+
+#: documentation/options/requests.php:1 includes/class-nlingual-manager.php:470
+msgid "Request and Redirection Handling"
+msgstr ""
+
+#: documentation/options/requests.php:3
+msgid "You can customize key to look under for getting the language requested in fetching objects. This can be customized for purposes like conflict prevention with other translation systems, or just personal taste."
+msgstr ""
+
+#: documentation/options/requests.php:5
+msgid "When someone visits the site, the language to be served is determined by the following checks, each overriding the previous if matched:"
+msgstr ""
+
+#: documentation/options/requests.php:8
+msgid "The visitor’s language according to their browser."
+msgstr ""
+
+#: documentation/options/requests.php:10
+msgid "The language specified in the URL (based on the scheme specified by the Redirection Method)"
+msgstr ""
+
+#: documentation/options/requests.php:12
+msgid "The GET/POST query argument if specified."
+msgstr ""
+
+#: documentation/options/requests.php:13
+msgid "(Optional) The language of the requested object if it differs from the on previously detected."
+msgstr ""
+
+#: documentation/options/requests.php:16
+msgid "If the language cannot be determined by any of the above means, the language specified as the default will be used."
+msgstr ""
+
+#: documentation/options/requests.php:18
+msgid "For SEO purposes, it is recommended you enable the Language is Required option, which will tell the system to treat all unassigned posts as belonging to the default language. Otherwise, posts without a language can be viewed from multiple URLs, causing duplicated content on your site."
+msgstr ""
+
+#: documentation/options/requests.php:20
+msgid "Regarding SEO, nLingual by default uses \"temporary\" (HTTP 302) redirects to handle localized URLs. Best practices suggest using \"permanent\" (HTTP 301) redirects instead. <strong>Caution is advised when using permanent redirects, as they can cause issues if the URLs or the settings responsible for them are changed after the fact.</strong>"
+msgstr ""
+
+#: documentation/options/sidebar.php:1
+msgid "Also manageable:"
+msgstr ""
+
+#: documentation/options/sidebar.php:4
+msgid "What languages to use."
+msgstr ""
+
+#: documentation/options/sidebar.php:5
+msgid "What should be localizable."
+msgstr ""
+
+#: documentation/options/sidebar.php:6
+msgid "What data should be synced between translations."
+msgstr ""
+
+#: documentation/post-translation/translation.php:7
+#: documentation/posts-translation/translation.php:7
+msgid "Languages & Translations"
+msgstr ""
+
+#. Translators: %1$s = The singular name of the post type, %2$s = The URL for
+#. the link. Please preserve the HTML as-is.
+
+#: documentation/post-translation/translation.php:13
+msgid "If you don’t have a translated version for a particular language yet, you can select the option to create a new one; a copy of the current post will be created in draft form for you to work on."
+msgstr ""
+
+#. Translators: %s = The plural name of the post type.
+
+#: documentation/shared/post-sync-summary.php:8
+#: includes/class-nlingual-settings.php:411
+msgid "Post Data"
+msgstr ""
+
+#: documentation/shared/post-sync-summary.php:21
+#: includes/class-nlingual-manager.php:529
+#: includes/class-nlingual-settings.php:421
+msgid "Taxonomies"
+msgstr ""
+
+#: documentation/shared/post-sync-summary.php:32
+#: includes/class-nlingual-settings.php:429
+msgid "Meta Data"
+msgstr ""
+
+#: documentation/shared/post-sync-summary.php:34
+msgid "All custom fields found."
+msgstr ""
+
+#: documentation/synchronizer/cloning.php:1
+msgid "Cloning Rules"
+msgstr ""
+
+#: documentation/synchronizer/cloning.php:3
+msgid "You can also control rules for what details are copied when creating a new translation of an existing post; typically, all details should be copied, since they can easily be altered while updating the post with translated content."
+msgstr ""
+
+#: documentation/synchronizer/overview.php:3
+msgid "From here you can manage what details are synchronized between posts of the same translation group. These includes post fields, terms from select taxonomies, and custom fields you specify. When a post in a group is updated, any information that is specified here will be copied over to it’s sister posts."
+msgstr ""
+
+#: documentation/synchronizer/overview.php:5
+msgid "<strong>Caution:</strong> these sync rules cannot be disabled on a per-post basis; either all post of a particular type have these details synchronized or none of them do."
+msgstr ""
+
+#: documentation/synchronizer/sidebar.php:1
+msgid "Related:"
+msgstr ""
+
+#: documentation/synchronizer/sidebar.php:4
+msgid "Enable/disable post types for localization."
+msgstr ""
+
+#. Translators: %s = The name of the language
+
+#: includes/class-nlingual-backend.php:412
 msgid "All Languages"
 msgstr ""
 
-#: inc/class-nlingual-backend.php:304
+#: includes/class-nlingual-backend.php:415
 msgid "No Language"
 msgstr ""
 
-#: inc/class-nlingual-backend.php:326 inc/class-nlingual-backend.php:415
-#: inc/class-nlingual-backend.php:493 inc/class-nlingual-backend.php:595
+#. Translators: %1$s = The name of the language, %2$s = The title of the post,
+#. wrapped in a link
+
+#: includes/class-nlingual-backend.php:437
+#: includes/class-nlingual-backend.php:533
+#: includes/class-nlingual-backend.php:612
+#: includes/class-nlingual-backend.php:717
 msgid "Language"
 msgstr ""
 
-#: inc/class-nlingual-backend.php:358
+#: includes/class-nlingual-backend.php:472
 msgid "None"
 msgstr ""
 
-#: inc/class-nlingual-backend.php:417 inc/class-nlingual-backend.php:597
+#: includes/class-nlingual-backend.php:536
+#: includes/class-nlingual-backend.php:720
 msgctxt "no language"
 msgid "None"
 msgstr ""
 
-#: inc/class-nlingual-backend.php:436 inc/class-nlingual-backend.php:619
+#. Translators: %s = The name of the language
+
+#: includes/class-nlingual-backend.php:554
+#: includes/class-nlingual-backend.php:743
 msgctxt "no translation"
 msgid "None"
 msgstr ""
 
-#: inc/class-nlingual-backend.php:495
+#: includes/class-nlingual-backend.php:614
 msgid "No Change"
 msgstr ""
 
-#: inc/class-nlingual-backend.php:533
+#: includes/class-nlingual-backend.php:653
 msgid "Language & Translations"
 msgstr ""
 
-#: inc/class-nlingual-backend.php:610
+#: includes/class-nlingual-backend.php:734
 msgid "Translations"
 msgstr ""
 
-#: inc/class-nlingual-backend.php:615
+#: includes/class-nlingual-backend.php:739
 msgid "Edit"
 msgstr ""
 
-#: inc/class-nlingual-backend.php:628
+#. Translators: %1$s = The name of the language, %2$s = The singular name of
+#. the post type.
+
+#: includes/class-nlingual-backend.php:754
 msgid "[Taken]"
 msgstr ""
 
-#: inc/class-nlingual-backend.php:679 inc/class-nlingual-localizer.php:937
-msgid "That language does not exist."
+#: includes/class-nlingual-backend.php:803
+#: includes/class-nlingual-backend.php:865
+msgid "Error assigning language: the selected language does not exist."
 msgstr ""
 
-#: inc/class-nlingual-backend.php:715
-msgid "Error saving translations; one or more languages do not exist."
+#: includes/class-nlingual-backend.php:837
+msgid "Error assigning translations: one or more languages do not exist."
 msgstr ""
 
-#: inc/class-nlingual-backend.php:743
+#: includes/class-nlingual-backend.php:883
+msgid "The translations of this page have been updated accordingly."
+msgstr ""
+
+#: includes/class-nlingual-backend.php:885
+msgid "The translations of this post have been updated accordingly."
+msgstr ""
+
+#: includes/class-nlingual-backend.php:928
+msgid "Any associated translations have been synchronized accordingly."
+msgstr ""
+
+#: includes/class-nlingual-backend.php:929
+msgid "Any associated translations have also been deleted."
+msgstr ""
+
+#: includes/class-nlingual-backend.php:930
+msgid "Any associated translations have also been moved."
+msgstr ""
+
+#: includes/class-nlingual-backend.php:931
+msgid "Any associated translations have also been restored."
+msgstr ""
+
+#: includes/class-nlingual-backend.php:970
 msgid "Language Links"
 msgstr ""
 
-#: inc/class-nlingual-backend.php:761
-msgid ""
-"These links will go to the respective language versions of the current URL."
+#: includes/class-nlingual-backend.php:988
+msgid "These links will go to the respective language versions of the current URL."
 msgstr ""
 
-#: inc/class-nlingual-manager.php:106
+#: includes/class-nlingual-backend.php:1037
+msgid "Enter the title for this translation."
+msgstr ""
+
+#: includes/class-nlingual-backend.php:1038
+msgid "Translate to %1$s: %2$s"
+msgstr ""
+
+#: includes/class-nlingual-backend.php:1039
+msgid "Error creating translation, please try again later or create one manually."
+msgstr ""
+
+#: includes/class-nlingual-backend.php:1040
+msgid "No post selected to edit."
+msgstr ""
+
+#: includes/class-nlingual-backend.php:1041
+msgid "[New]"
+msgstr ""
+
+#: includes/class-nlingual-backend.php:1043
+msgid "Localize for %s"
+msgstr ""
+
+#: includes/class-nlingual-documenter.php:98
+msgctxt "post field"
+msgid "Author"
+msgstr ""
+
+#: includes/class-nlingual-documenter.php:99
+msgctxt "post field"
+msgid "Date"
+msgstr ""
+
+#: includes/class-nlingual-documenter.php:100
+msgctxt "post field"
+msgid "Status"
+msgstr ""
+
+#: includes/class-nlingual-documenter.php:101
+msgctxt "post field"
+msgid "Parent"
+msgstr ""
+
+#: includes/class-nlingual-documenter.php:102
+msgctxt "post field"
+msgid "Menu Order"
+msgstr ""
+
+#: includes/class-nlingual-documenter.php:103
+msgctxt "post field"
+msgid "Password"
+msgstr ""
+
+#: includes/class-nlingual-documenter.php:104
+msgctxt "post field"
+msgid "Comment Status"
+msgstr ""
+
+#: includes/class-nlingual-documenter.php:105
+msgctxt "post field"
+msgid "Pingback Status"
+msgstr ""
+
+#: includes/class-nlingual-liaison.php:236
+msgid "It looks like some of your terms use the old language splitting method. <a href=\"%s\">Click here</a> to convert them to the new localized format."
+msgstr ""
+
+#: includes/class-nlingual-liaison.php:290
+msgid "No terms found needing conversion."
+msgstr ""
+
+#: includes/class-nlingual-liaison.php:340
+msgid "All terms found have been successfully converted, and their taxonomies have been enabled for localization."
+msgstr ""
+
+#. Translators: %s = The (likely plural) name of the post type.
+
+#: includes/class-nlingual-liaison.php:529
+msgid "Your current theme may not display the content you write here."
+msgstr ""
+
+#. translators: weekday
+
+#: includes/class-nlingual-locale.php:31 includes/class-nlingual-locale.php:41
+#: includes/class-nlingual-locale.php:54
+msgid "Sunday"
+msgstr ""
+
+#. translators: weekday
+
+#: includes/class-nlingual-locale.php:32 includes/class-nlingual-locale.php:42
+#: includes/class-nlingual-locale.php:55
+msgid "Monday"
+msgstr ""
+
+#. translators: weekday
+
+#: includes/class-nlingual-locale.php:33 includes/class-nlingual-locale.php:43
+#: includes/class-nlingual-locale.php:56
+msgid "Tuesday"
+msgstr ""
+
+#. translators: weekday
+
+#: includes/class-nlingual-locale.php:34 includes/class-nlingual-locale.php:44
+#: includes/class-nlingual-locale.php:57
+msgid "Wednesday"
+msgstr ""
+
+#. translators: weekday
+
+#: includes/class-nlingual-locale.php:35 includes/class-nlingual-locale.php:45
+#: includes/class-nlingual-locale.php:58
+msgid "Thursday"
+msgstr ""
+
+#. translators: weekday
+
+#: includes/class-nlingual-locale.php:36 includes/class-nlingual-locale.php:46
+#: includes/class-nlingual-locale.php:59
+msgid "Friday"
+msgstr ""
+
+#. translators: weekday
+
+#: includes/class-nlingual-locale.php:37 includes/class-nlingual-locale.php:47
+#: includes/class-nlingual-locale.php:60
+msgid "Saturday"
+msgstr ""
+
+#. translators: one-letter abbreviation of the weekday
+
+#: includes/class-nlingual-locale.php:41
+msgid "S_Sunday_initial"
+msgstr ""
+
+#. translators: one-letter abbreviation of the weekday
+
+#: includes/class-nlingual-locale.php:42
+msgid "M_Monday_initial"
+msgstr ""
+
+#. translators: one-letter abbreviation of the weekday
+
+#: includes/class-nlingual-locale.php:43
+msgid "T_Tuesday_initial"
+msgstr ""
+
+#. translators: one-letter abbreviation of the weekday
+
+#: includes/class-nlingual-locale.php:44
+msgid "W_Wednesday_initial"
+msgstr ""
+
+#. translators: one-letter abbreviation of the weekday
+
+#: includes/class-nlingual-locale.php:45
+msgid "T_Thursday_initial"
+msgstr ""
+
+#. translators: one-letter abbreviation of the weekday
+
+#: includes/class-nlingual-locale.php:46
+msgid "F_Friday_initial"
+msgstr ""
+
+#. translators: one-letter abbreviation of the weekday
+
+#: includes/class-nlingual-locale.php:47
+msgid "S_Saturday_initial"
+msgstr ""
+
+#. translators: three-letter abbreviation of the weekday
+
+#: includes/class-nlingual-locale.php:54
+msgid "Sun"
+msgstr ""
+
+#. translators: three-letter abbreviation of the weekday
+
+#: includes/class-nlingual-locale.php:55
+msgid "Mon"
+msgstr ""
+
+#. translators: three-letter abbreviation of the weekday
+
+#: includes/class-nlingual-locale.php:56
+msgid "Tue"
+msgstr ""
+
+#. translators: three-letter abbreviation of the weekday
+
+#: includes/class-nlingual-locale.php:57
+msgid "Wed"
+msgstr ""
+
+#. translators: three-letter abbreviation of the weekday
+
+#: includes/class-nlingual-locale.php:58
+msgid "Thu"
+msgstr ""
+
+#. translators: three-letter abbreviation of the weekday
+
+#: includes/class-nlingual-locale.php:59
+msgid "Fri"
+msgstr ""
+
+#. translators: three-letter abbreviation of the weekday
+
+#: includes/class-nlingual-locale.php:60
+msgid "Sat"
+msgstr ""
+
+#. translators: month name
+
+#: includes/class-nlingual-locale.php:63 includes/class-nlingual-locale.php:78
+msgid "January"
+msgstr ""
+
+#. translators: month name
+
+#: includes/class-nlingual-locale.php:64 includes/class-nlingual-locale.php:79
+msgid "February"
+msgstr ""
+
+#. translators: month name
+
+#: includes/class-nlingual-locale.php:65 includes/class-nlingual-locale.php:80
+msgid "March"
+msgstr ""
+
+#. translators: month name
+
+#: includes/class-nlingual-locale.php:66 includes/class-nlingual-locale.php:81
+msgid "April"
+msgstr ""
+
+#. translators: month name
+
+#: includes/class-nlingual-locale.php:67 includes/class-nlingual-locale.php:82
+msgid "May"
+msgstr ""
+
+#. translators: month name
+
+#: includes/class-nlingual-locale.php:68 includes/class-nlingual-locale.php:83
+msgid "June"
+msgstr ""
+
+#. translators: month name
+
+#: includes/class-nlingual-locale.php:69 includes/class-nlingual-locale.php:84
+msgid "July"
+msgstr ""
+
+#. translators: month name
+
+#: includes/class-nlingual-locale.php:70 includes/class-nlingual-locale.php:85
+msgid "August"
+msgstr ""
+
+#. translators: month name
+
+#: includes/class-nlingual-locale.php:71 includes/class-nlingual-locale.php:86
+msgid "September"
+msgstr ""
+
+#. translators: month name
+
+#: includes/class-nlingual-locale.php:72 includes/class-nlingual-locale.php:87
+msgid "October"
+msgstr ""
+
+#. translators: month name
+
+#: includes/class-nlingual-locale.php:73 includes/class-nlingual-locale.php:88
+msgid "November"
+msgstr ""
+
+#. translators: month name
+
+#: includes/class-nlingual-locale.php:74 includes/class-nlingual-locale.php:89
+msgid "December"
+msgstr ""
+
+#. translators: three-letter abbreviation of the month
+
+#: includes/class-nlingual-locale.php:78
+msgid "Jan_January_abbreviation"
+msgstr ""
+
+#. translators: three-letter abbreviation of the month
+
+#: includes/class-nlingual-locale.php:79
+msgid "Feb_February_abbreviation"
+msgstr ""
+
+#. translators: three-letter abbreviation of the month
+
+#: includes/class-nlingual-locale.php:80
+msgid "Mar_March_abbreviation"
+msgstr ""
+
+#. translators: three-letter abbreviation of the month
+
+#: includes/class-nlingual-locale.php:81
+msgid "Apr_April_abbreviation"
+msgstr ""
+
+#. translators: three-letter abbreviation of the month
+
+#: includes/class-nlingual-locale.php:82
+msgid "May_May_abbreviation"
+msgstr ""
+
+#. translators: three-letter abbreviation of the month
+
+#: includes/class-nlingual-locale.php:83
+msgid "Jun_June_abbreviation"
+msgstr ""
+
+#. translators: three-letter abbreviation of the month
+
+#: includes/class-nlingual-locale.php:84
+msgid "Jul_July_abbreviation"
+msgstr ""
+
+#. translators: three-letter abbreviation of the month
+
+#: includes/class-nlingual-locale.php:85
+msgid "Aug_August_abbreviation"
+msgstr ""
+
+#. translators: three-letter abbreviation of the month
+
+#: includes/class-nlingual-locale.php:86
+msgid "Sep_September_abbreviation"
+msgstr ""
+
+#. translators: three-letter abbreviation of the month
+
+#: includes/class-nlingual-locale.php:87
+msgid "Oct_October_abbreviation"
+msgstr ""
+
+#. translators: three-letter abbreviation of the month
+
+#: includes/class-nlingual-locale.php:88
+msgid "Nov_November_abbreviation"
+msgstr ""
+
+#. translators: three-letter abbreviation of the month
+
+#: includes/class-nlingual-locale.php:89
+msgid "Dec_December_abbreviation"
+msgstr ""
+
+#: includes/class-nlingual-locale.php:96
+msgid "am"
+msgstr ""
+
+#: includes/class-nlingual-locale.php:97
+msgid "pm"
+msgstr ""
+
+#: includes/class-nlingual-locale.php:98
+msgid "AM"
+msgstr ""
+
+#: includes/class-nlingual-locale.php:99
+msgid "PM"
+msgstr ""
+
+#. translators: $thousands_sep argument for http:php.net/number_format, default
+#. is ,
+
+#: includes/class-nlingual-locale.php:105
+msgid "number_format_thousands_sep"
+msgstr ""
+
+#. translators: $dec_point argument for http:php.net/number_format, default is
+#. .
+
+#: includes/class-nlingual-locale.php:109
+msgid "number_format_decimal_point"
+msgstr ""
+
+#. translators: 'rtl' or 'ltr'. This sets the text direction for WordPress.
+
+#: includes/class-nlingual-locale.php:116
+msgctxt "text direction"
+msgid "ltr"
+msgstr ""
+
+#: includes/class-nlingual-localizer.php:934
+msgid "That language does not exist."
+msgstr ""
+
+#: includes/class-nlingual-manager.php:103
 msgid "Translation Options"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:107
+#: includes/class-nlingual-manager.php:104
 msgctxt "menu title"
 msgid "Translation"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:117
+#: includes/class-nlingual-manager.php:114
 msgid "Manage Languages"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:118
+#: includes/class-nlingual-manager.php:115
 msgctxt "menu title"
 msgid "Languages"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:127
+#: includes/class-nlingual-manager.php:124
 msgid "Manage Localizable Objects"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:128
+#: includes/class-nlingual-manager.php:125
 msgid "Localizables"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:137
-msgid "Post Synchronization"
+#: includes/class-nlingual-manager.php:134
+msgid "Post Synchronizer"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:138
-msgid "Sync Options"
+#: includes/class-nlingual-manager.php:135
+msgid "Synchronizer"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:254
+#: includes/class-nlingual-manager.php:241
 msgid "One or more languages were incomplete and were not saved."
 msgstr ""
 
-#: inc/class-nlingual-manager.php:296
+#: includes/class-nlingual-manager.php:286
 msgid "Languages saved."
 msgstr ""
 
-#: inc/class-nlingual-manager.php:354
+#: includes/class-nlingual-manager.php:319
 msgid "Default Language"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:360
-msgid "Show All Languages?"
-msgstr ""
-
-#: inc/class-nlingual-manager.php:361
-msgid "Should objects of all languages be listed by default in the admin?"
-msgstr ""
-
-#: inc/class-nlingual-manager.php:365
+#: includes/class-nlingual-manager.php:325
 msgid "Localize date format?"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:366
-msgid ""
-"Run localization on the date format defined under General Settings. Useful "
-"if any languages you use require custom date formats."
+#: includes/class-nlingual-manager.php:326
+msgid "Run localization on the date format defined under General Settings. Useful if any languages you use require custom date formats."
 msgstr ""
 
-#: inc/class-nlingual-manager.php:370
+#: includes/class-nlingual-manager.php:330
 msgid "Patch <code>WP_Locale</code>?"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:371
-msgid ""
-"Replaced the Date/Time localization system with one using your Theme’s "
-"translation files instead (front-end only)."
+#: includes/class-nlingual-manager.php:331
+msgid "Replaced the Date/Time localization system with one using your Theme’s translation files instead (front-end only)."
 msgstr ""
 
-#: inc/class-nlingual-manager.php:377
-msgid "Request and Redirection Handling"
+#: includes/class-nlingual-manager.php:339
+msgid "Backwards Compatibility"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:380
+#: includes/class-nlingual-manager.php:340
+msgid "Include support for old template functions, and features like language splitting."
+msgstr ""
+
+#: includes/class-nlingual-manager.php:354
+msgid "Show All Languages?"
+msgstr ""
+
+#: includes/class-nlingual-manager.php:355
+msgid "Should objects of all languages be listed by default in the admin?"
+msgstr ""
+
+#: includes/class-nlingual-manager.php:359
+msgid "Trash Sister Translations?"
+msgstr ""
+
+#: includes/class-nlingual-manager.php:360
+msgid "When trashing or restoring an object, should its translations be trashed/restored as well?"
+msgstr ""
+
+#: includes/class-nlingual-manager.php:364
+msgid "Delete Sister Translations?"
+msgstr ""
+
+#: includes/class-nlingual-manager.php:365
+msgid "When deleting an object (that’s in the Trash), should its translations be deleted as well?"
+msgstr ""
+
+#: includes/class-nlingual-manager.php:369
+msgid "Patch Admin Font?"
+msgstr ""
+
+#: includes/class-nlingual-manager.php:370
+msgid "Replace the font used in the WordPress admin to better display characters like Arabic and Chinese."
+msgstr ""
+
+#: includes/class-nlingual-manager.php:418
 msgid "Query Variable"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:381
-msgid ""
-"The variable name to use for when requesting/filtering by language "
-"(recommended: \"language\")"
+#: includes/class-nlingual-manager.php:419
+msgid "The variable name for <code>WP_Query</code> to use when filtering by language."
 msgstr ""
 
-#: inc/class-nlingual-manager.php:385
+#: includes/class-nlingual-manager.php:423
+#: includes/class-nlingual-manager.php:462
 msgid "URL Scheme"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:386
+#: includes/class-nlingual-manager.php:424
 msgid "What style should be used for the translated URLs?"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:390
-msgid "HTTP query"
-msgstr ""
+#. Translators: %s = The HTML code to be appended
 
-#: inc/class-nlingual-manager.php:391
+#: includes/class-nlingual-manager.php:429
 msgid "Path prefix"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:392
+#: includes/class-nlingual-manager.php:430
 msgid "Subdomain"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:396
+#: includes/class-nlingual-manager.php:434
 msgid "Skip Localization for Default Language?"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:397
+#: includes/class-nlingual-manager.php:435
 msgid "URLs for the default language will be unmodified."
 msgstr ""
 
-#: inc/class-nlingual-manager.php:402
+#. Translators: %s = The HTML code to be appended
+
+#: includes/class-nlingual-manager.php:441
 msgid "Post Language Override"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:403
-msgid ""
-"Should the language of the requested post take precedence in the event of a "
-"language mismatch?"
+#: includes/class-nlingual-manager.php:442
+msgid "Should the language of the requested post take precedence in the event of a language mismatch?"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:408
+#. Translators: %s = The HTML code to be appended
+
+#: includes/class-nlingual-manager.php:448
+msgid "Language is Required"
+msgstr ""
+
+#: includes/class-nlingual-manager.php:449
+msgid "Should all supported objects have a language? (Default will be assumed)"
+msgstr ""
+
+#: includes/class-nlingual-manager.php:453
 msgid "Permanently Redirect URLs?"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:409
-msgid ""
-"Use \"permanent\" (HTTP 301) instead of \"temporary\" (HTTP 302) redirects?"
+#: includes/class-nlingual-manager.php:454
+msgid "Use \"permanent\" (HTTP 301) instead of \"temporary\" (HTTP 302) redirects?"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:418
-msgid "Backwards Compatability"
+#: includes/class-nlingual-manager.php:464
+msgid "You have permalinks disabled; translated URLs will use the HTTP query method, using the <strong>query variable</strong> set above."
 msgstr ""
 
-#: inc/class-nlingual-manager.php:419
-msgid ""
-"Include support for old template functions, and features like language "
-"splitting."
-msgstr ""
-
-#: inc/class-nlingual-manager.php:455
+#: includes/class-nlingual-manager.php:503
 msgid "Post Types"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:456
+#: includes/class-nlingual-manager.php:504
 msgid "What post types should support language and translations?"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:482
+#: includes/class-nlingual-manager.php:530
 msgid "What taxonomies should support name and description localization?"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:498
+#: includes/class-nlingual-manager.php:546
 msgid "Menu Locations"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:499
+#: includes/class-nlingual-manager.php:547
 msgid "Should any navigation menus have versions for each language?"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:518
+#: includes/class-nlingual-manager.php:566
 msgid "Sidebar Locations"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:519
+#: includes/class-nlingual-manager.php:567
 msgid "Should any widget areas have versions for each language?"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:560
+#: includes/class-nlingual-manager.php:608
 msgid "New Translations"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:609
-msgid "Custom Language"
+#: includes/class-nlingual-manager.php:657
+msgid "&mdash; Custom Language &mdash;"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:611
+#: includes/class-nlingual-manager.php:659
 msgid "Add Language"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:616
+#: includes/class-nlingual-manager.php:664
+msgid "List Order"
+msgstr ""
+
+#: includes/class-nlingual-manager.php:665
 msgid "System Name"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:617
+#: includes/class-nlingual-manager.php:666
 msgid "Native Name"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:618
+#: includes/class-nlingual-manager.php:667
 msgid "Short Name"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:619
+#: includes/class-nlingual-manager.php:668
 msgid "Locale"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:620
+#: includes/class-nlingual-manager.php:669
 msgid "ISO"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:621
+#: includes/class-nlingual-manager.php:670
 msgid "Slug"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:622
+#: includes/class-nlingual-manager.php:671
 msgid "Text Direction"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:623
+#: includes/class-nlingual-manager.php:672
 msgid "Active?"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:624
+#: includes/class-nlingual-manager.php:673
 msgid "Delete?"
 msgstr ""
 
-#: inc/class-nlingual-manager.php:679
-msgid ""
-"When creating a new translation of an existing post (i.e. a clone), what "
-"details should be cloned?"
+#: includes/class-nlingual-manager.php:703
+msgid "Left to Right"
 msgstr ""
 
-#: inc/class-nlingual-settings.php:403
+#: includes/class-nlingual-manager.php:704
+msgid "Right to Left"
+msgstr ""
+
+#: includes/class-nlingual-manager.php:731
+msgid "When creating a new translation of an existing post (i.e. a clone), what details should be cloned?"
+msgstr ""
+
+#: includes/class-nlingual-settings.php:408
 msgid "Close Settings"
 msgstr ""
 
-#: inc/class-nlingual-settings.php:403
+#: includes/class-nlingual-settings.php:408
 msgid "Open Settings"
 msgstr ""
 
-#: inc/class-nlingual-settings.php:405 inc/class-nlingual-settings.php:414
+#: includes/class-nlingual-settings.php:410
+#: includes/class-nlingual-settings.php:420
 msgid "Check All/None"
 msgstr ""
 
-#: inc/class-nlingual-settings.php:410
+#: includes/class-nlingual-settings.php:415
 msgid "What post information should be copied?"
 msgstr ""
 
-#: inc/class-nlingual-settings.php:411
+#: includes/class-nlingual-settings.php:416
+msgid "will also apply to trashing and untrashing"
+msgstr ""
+
+#: includes/class-nlingual-settings.php:417
 msgid "will use counterpart translation if found"
 msgstr ""
 
-#: inc/class-nlingual-settings.php:419
+#: includes/class-nlingual-settings.php:425
 msgid "What terms should be copied?"
 msgstr ""
 
-#: inc/class-nlingual-settings.php:420
-msgid "will use counterpart translation(s) if found"
-msgstr ""
-
-#: inc/class-nlingual-settings.php:423
+#: includes/class-nlingual-settings.php:428
 msgid "Match All/None"
 msgstr ""
 
-#: inc/class-nlingual-settings.php:431
+#: includes/class-nlingual-settings.php:436
 msgid "Which custom fields should be copied?"
 msgstr ""
 
-#: inc/class-nlingual-settings.php:432
+#: includes/class-nlingual-settings.php:437
 msgid "One per line. Enter an asterisk (*) to match all fields."
 msgstr ""
 
-#: inc/compatibility-tools.php:50
-msgid ""
-"It looks like some of your terms use the old language splitting method. <a "
-"href=\"%s\">Click here</a> to convert them to the new localized format."
+#: includes/functions-nlingual.php:116
+msgid "Cheatin&#8217; uh?"
 msgstr ""
 
-#: inc/compatibility-tools.php:91
-msgid "No language separator found, unable to convert terms."
-msgstr ""
-
-#: inc/compatibility-tools.php:108
-msgid "No terms found needing conversion."
-msgstr ""
-
-#: inc/compatibility-tools.php:156
-msgid ""
-"All terms found have been successfully converted, and their taxonomies have "
-"been enabled for localization."
-msgstr ""
-
-#: inc/presets-languages.php:15
+#: includes/presets-languages.php:15
 msgid "Arabic"
 msgstr ""
 
-#: inc/presets-languages.php:22
+#: includes/presets-languages.php:22
 msgid "Chinese"
 msgstr ""
 
-#: inc/presets-languages.php:29
+#: includes/presets-languages.php:29
 msgid "Czech"
 msgstr ""
 
-#: inc/presets-languages.php:36
+#: includes/presets-languages.php:36
 msgid "Dutch"
 msgstr ""
 
-#: inc/presets-languages.php:43
+#: includes/presets-languages.php:43
 msgid "English"
 msgstr ""
 
-#: inc/presets-languages.php:50
+#: includes/presets-languages.php:50
 msgid "Finnish"
 msgstr ""
 
-#: inc/presets-languages.php:57
+#: includes/presets-languages.php:57
 msgid "French"
 msgstr ""
 
-#: inc/presets-languages.php:64
+#: includes/presets-languages.php:64
 msgid "German"
 msgstr ""
 
-#: inc/presets-languages.php:71
+#: includes/presets-languages.php:71
 msgid "Greek"
 msgstr ""
 
-#: inc/presets-languages.php:78
+#: includes/presets-languages.php:78
 msgid "Hindi"
 msgstr ""
 
-#: inc/presets-languages.php:85
+#: includes/presets-languages.php:85
 msgid "Hungarian"
 msgstr ""
 
-#: inc/presets-languages.php:92
+#: includes/presets-languages.php:92
 msgid "Italian"
 msgstr ""
 
-#: inc/presets-languages.php:99
+#: includes/presets-languages.php:99
 msgid "Japanese"
 msgstr ""
 
-#: inc/presets-languages.php:106
+#: includes/presets-languages.php:106
 msgid "Korean"
 msgstr ""
 
-#: inc/presets-languages.php:113
+#: includes/presets-languages.php:113
 msgid "Persian"
 msgstr ""
 
-#: inc/presets-languages.php:120
+#: includes/presets-languages.php:120
 msgid "Polish"
 msgstr ""
 
-#: inc/presets-languages.php:127
+#: includes/presets-languages.php:127
 msgid "Portugese"
 msgstr ""
 
-#: inc/presets-languages.php:134
+#: includes/presets-languages.php:134
 msgid "Romanian"
 msgstr ""
 
-#: inc/presets-languages.php:141
+#: includes/presets-languages.php:141
 msgid "Russian"
 msgstr ""
 
-#: inc/presets-languages.php:148
+#: includes/presets-languages.php:148
 msgid "Spanish"
 msgstr ""
 
-#: inc/presets-languages.php:155
+#: includes/presets-languages.php:155
 msgid "Swedish"
 msgstr ""
 
-#: inc/presets-languages.php:162
+#: includes/presets-languages.php:162
 msgid "Vietnamese"
 msgstr ""
-
 #. Plugin Name of the plugin/theme
 msgid "nLingual"
 msgstr ""
@@ -743,9 +1183,7 @@ msgid "https://github.com/dougwollison/nlingual"
 msgstr ""
 
 #. Description of the plugin/theme
-msgid ""
-"Easy to manage Multilingual system, with theme development utilities and "
-"post data synchronization."
+msgid "Easy to manage Multilingual system, with theme development utilities and post data synchronization."
 msgstr ""
 
 #. Author of the plugin/theme
@@ -757,7 +1195,5 @@ msgid "http://dougw.me"
 msgstr ""
 
 #. Tags of the plugin/theme
-msgid ""
-"multilingual, multi, language, admin, bilingual, switcher, translation, "
-"nlingual"
+msgid "multilingual, multi, language, admin, bilingual, switcher, translation, nlingual"
 msgstr ""
