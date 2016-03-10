@@ -383,7 +383,7 @@ class Rewriter {
 		$queried_object = get_queried_object();
 		if ( is_a( $queried_object, 'WP_Post' ) ) {
 			// Get the permalink for the translation in the specified language
-			$translation = Translator::get_post_translation( $queried_object->ID, Registry::default_language(), true );
+			$translation = Translator::get_post_translation( $queried_object->ID, $language, true );
 			$url = get_permalink( $translation );
 
 			// Relocalize the URL
