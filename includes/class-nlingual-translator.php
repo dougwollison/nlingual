@@ -373,8 +373,9 @@ class Translator {
 	public static function get_object_translation( $object_type, $object_id, $language = null, $return_self = false ) {
 		// Ensure $language is a Language, defaulting to current
 		if ( ! validate_language( $language, true ) ) {
-			// Throw exception if not found
-			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
+			// Trigger warning error if not found, return false
+			trigger_error( '[nLingual] Language does not exist: ' . maybe_serialize( $language ) . '; cannot get translation.', E_USER_WARNING );
+			return false;
 		}
 
 		// Get the translation group for the object
