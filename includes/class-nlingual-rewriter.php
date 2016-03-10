@@ -111,8 +111,8 @@ class Rewriter {
 		// Get the home URL (unlocalized)
 		$home = get_home_url( null, '', 'unlocalized' );
 
-		// Get the list of active languages
-		$active_languages = Registry::languages( 'active' );
+		// Get the list of languages
+		$languages = Registry::languages();
 
 		// Copy to $old_url_data for storage
 		$old_url_data = $url_data;
@@ -139,7 +139,7 @@ class Rewriter {
 				case 'domain':
 					// Get the subdirectory if found, see if it matches a language
 					if ( preg_match( '#^([a-z\-]+)\.(.+)#i', $the_url->host, $matches ) ) {
-						if ( $language = $active_languages->get( $matches[1] ) ) {
+						if ( $language = $languages->get( $matches[1] ) ) {
 							// Update language with the matched
 							$the_url->meta['language'] = $language;
 
@@ -163,7 +163,7 @@ class Rewriter {
 
 					// Get the subdirectory if found, see if it matches a language
 					if ( preg_match( '#^([a-z\-]+)(?:/(.*)|$)#i', $path, $matches ) ) {
-						if ( $language = $active_languages->get( $matches[1] ) ) {
+						if ( $language = $languages->get( $matches[1] ) ) {
 							// Update language with the matched
 							$the_url->meta['language'] = $language;
 
