@@ -336,14 +336,15 @@ class Settings {
 		$value = (array) $value;
 
 		// Checkbox field support array value
+		$field_name = $name;
 		if ( $type == 'checkbox' ) {
-			$name .= '[]';
+			$field_name .= '[]';
 		}
 
 		$inputs = array();
 		foreach ( $options as $val => $label ) {
 			$checked = in_array( $val, $value ) ? ' checked' : '';
-			$inputs[] = sprintf( '<label><input type="%s" name="%s" value="%s"%s /> %s</label>', $type, $name, $val, $checked, $label );
+			$inputs[] = sprintf( '<label><input type="%s" name="%s" value="%s"%s /> %s</label>', $type, $field_name, $val, $checked, $label );
 		}
 
 		// Build the list, including a fallback "none" input
