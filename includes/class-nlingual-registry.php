@@ -217,7 +217,7 @@ class Registry {
 	public static function get( $option, $default = null ) {
 		// Trigger notice error if trying to set an unsupported option
 		if ( ! static::has( $option ) ) {
-			trigger_error( "[nLingual] The option '{$option}' is not supported", E_USER_NOTICE );
+			trigger_error( "[nLingual] The option '{$option}' is not supported.", E_USER_NOTICE );
 		}
 
 		// Check if it's set, return it's value.
@@ -259,7 +259,7 @@ class Registry {
 	public static function set( $option, $value = null ) {
 		// Trigger notice error if trying to set an unsupported option
 		if ( ! static::has( $option ) ) {
-			trigger_error( "[nLingual] The option '{$option}' is not supported", E_NOTICE );
+			trigger_error( "[nLingual] The option '{$option}' is not supported.", E_NOTICE );
 		}
 
 		static::$options[ $option ] = $value;
