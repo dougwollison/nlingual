@@ -293,8 +293,8 @@ class System extends Handler {
 		static::add_filter( 'mod_rewrite_rules', 'fix_mod_rewrite_rules', 0, 1 );
 
 		// Query Manipulation
-		static::add_action( 'parse_query', 'maybe_set_queried_language', 10, 1 );
-		static::add_action( 'parse_comment_query', 'maybe_set_queried_language', 10, 1 );
+		static::add_action( 'parse_query', 'set_queried_language', 10, 1 );
+		static::add_action( 'parse_comment_query', 'set_queried_language', 10, 1 );
 		static::add_filter( 'posts_clauses', 'add_translation_clauses', 10, 2 );
 		static::add_filter( 'comments_clauses', 'add_translation_clauses', 10, 2 );
 		//static::add_filter( 'posts_join_request', 'add_post_translations_join_clause', 10, 2 );
@@ -623,13 +623,13 @@ class System extends Handler {
 	 *
 	 * @param object $query The query object.
 	 */
-	function maybe_set_queried_language( $query ) {
+	function set_queried_language( $query ) {
 		// Get the language query_var name, and the queries variables (by reference)
 		$query_var = Registry::get( 'query_var' );
 		$query_vars = &$query->query_vars;
 
 		// Abort if no query var name is set or if it's already declared
-		if ( ! $query_var || ( isset( $query_vars[ $query_var ] ) && ! empty( $query_vars[ $query_var ] ) ) ) {
+		if ( ! $query_var || isset( $query_vars[ $query_var ] ) ) {
 			return;
 		}
 

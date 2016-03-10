@@ -66,7 +66,7 @@ class Frontend extends Handler {
 
 		// Language Detection/Redirection
 		static::add_action( 'plugins_loaded', 'detect_language', 10, 0 );
-		static::add_filter( 'wp', 'maybe_redirect_language', 10, 0 );
+		static::add_filter( 'wp', 'redirect_language', 10, 0 );
 		static::add_filter( 'redirect_canonical', 'localize_canonical', 10, 2 );
 
 		// The Mod rewriting
@@ -149,9 +149,10 @@ class Frontend extends Handler {
 	}
 
 	/**
-	 * Check if the language declared matches that of the queried object.
+	 * Check if a language redirection is needed.
 	 *
-	 * If not, redirect appropriately based on post_language_override option.
+	 * For example, if the language requested doesn't match that of the queried object,
+	 * or if the language requeste is inactive.
 	 *
 	 * @since 2.0.0
 	 *
@@ -163,7 +164,7 @@ class Frontend extends Handler {
 	 * @uses Registry::get() to retrieve the post_language_override option.
 	 * @uses Rewriter::localize_here() to generate the localized URL for the language.
 	 */
-	public static function maybe_redirect_language() {
+	public static function redirect_language() {
 		// Don't do anything on non-HEAD/GET request
 		if ( isset( $_SERVER['REQUEST_METHOD'] ) && ! in_array( strtoupper( $_SERVER['REQUEST_METHOD'] ), array( 'GET', 'HEAD' ) ) ) {
 			return;
