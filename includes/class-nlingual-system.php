@@ -294,8 +294,11 @@ class System extends Handler {
 
 		// Query Manipulation
 		static::add_action( 'parse_query', 'maybe_set_queried_language', 10, 1 );
-		static::add_filter( 'posts_join_request', 'add_post_translations_join_clause', 10, 2 );
-		static::add_filter( 'posts_where_request', 'add_post_translations_where_clause', 10, 2 );
+		static::add_action( 'parse_comment_query', 'maybe_set_queried_language', 10, 1 );
+		static::add_filter( 'posts_clauses', 'add_translation_clauses', 10, 2 );
+		static::add_filter( 'comments_clauses', 'add_translation_clauses', 10, 2 );
+		//static::add_filter( 'posts_join_request', 'add_post_translations_join_clause', 10, 2 );
+		//static::add_filter( 'posts_where_request', 'add_post_translations_where_clause', 10, 2 );
 		static::add_filter( 'get_pages', 'filter_pages', 10, 2 );
 
 		// Miscellaneous Changes
@@ -618,14 +621,15 @@ class System extends Handler {
 	 * @uses Translator::get_post_language() to check if the parent has a language set.
 	 * @uses is_backend() to check if the query is for wp-admin.
 	 *
-	 * @param WP_Query $wp_query The WP_Query instance.
+	 * @param object $query The query object.
 	 */
-	function maybe_set_queried_language( \WP_Query $query ) {
-		// Get the query var name and current language slug
+	function maybe_set_queried_language( $query ) {
+		// Get the language query_var name, and the queries variables (by reference)
 		$query_var = Registry::get( 'query_var' );
+		$query_vars = &$query->query_vars;
 
 		// Abort if no query var name is set or if it's already declared
-		if ( ! $query_var || $query->get( $query_var ) !== '' ) {
+		if ( ! $query_var || ( isset( $query_vars[ $query_var ] ) && ! empty( $query_vars[ $query_var ] ) ) ) {
 			return;
 		}
 
@@ -634,17 +638,17 @@ class System extends Handler {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param mixed    $pre_value The value to set for the query (NULL to proceed).
-		 * @param WP_Query $query     The query being modified.
+		 * @param mixed  $pre_value The value to set for the query (NULL to proceed).
+		 * @param object $query     The query being modified.
 		 */
 		$pre_value = apply_filters( 'nlingual_pre_set_queried_language', null, $query );
 		if ( ! is_null( $pre_value ) ) {
-			$query->set( $query_var, $pre_value );
+			$query_vars[ $query_var ] = $pre_value;
 			return;
 		}
 
-		// If not the admin or some kind of posts feed, abort
-		if ( ! ( is_admin() || $query->is_home() || $query->is_archive() || $query->is_search() ) ) {
+		// If not the admin or some kind of posts/comments feed, abort
+		if ( ! ( is_admin() || $query->is_home() || $query->is_archive() || $query->is_search() || is_a( $query, 'WP_Comment_Query' ) ) ) {
 			return;
 		}
 
@@ -681,7 +685,76 @@ class System extends Handler {
 		}
 
 		// Now set the language to the current one
-		$query->set( $query_var, $value );
+		$query_vars[ $query_var ] = $value;
+	}
+
+	/**
+	 * Add the translations join clause and language where clause for a query.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global \wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @uses Registry::is_post_type_supported() to check for post type support.
+	 * @uses Registry::current_language() to get the current language ID.
+	 *
+	 * @param array  $clauses The clauses to modify.
+	 * @param object $query   The query object this is for.
+	 *
+	 * @return array The modified clauses.
+	 */
+	public static function add_translation_clauses( $clauses, $query ) {
+		global $wpdb;
+
+		// Get the language query_var name, and the queries variables
+		$query_var = Registry::get( 'query_var' );
+		$query_vars = &$query->query_vars;
+
+		// Abort if no language was set
+		if ( ! isset( $query_vars[ $query_var ] ) || empty( $query_vars[ $query_var ] ) ) {
+			return $clause;
+		}
+
+		// Get the language(s) specified
+		$requested_languages = $query_vars[ $query_var ];
+
+		// Ensure it's an array
+		$requested_languages = (array) $requested_languages;
+
+		// Get the available languages for valiation purposes
+		$all_languages = Registry::languages();
+
+		// Alias for the translations table
+		$nl = $wpdb->nl_translations;
+
+		// Loop through each language specified and build the subclause
+		$where_clauses = array();
+		foreach ( $requested_languages as $language ) {
+			// Skip if blank
+			if ( $language === '' ) {
+				continue;
+			}
+
+			// Check if the language specified is "None"
+			if ( $language === '0' ) {
+				$where_clauses[] = "$nl.language_id IS NULL";
+			}
+			// Otherwise check if the language exists
+			elseif ( $language = $all_languages->get( $language ) ) {
+				$where_clauses[] = $wpdb->prepare( "$nl.language_id = %d", $language->id );
+			}
+		}
+
+		// If any where clauses were made, add them
+		if ( $where_clauses ) {
+			// Also add the join for the translations table
+			$clauses['join'] .= " LEFT JOIN $nl ON ($wpdb->posts.ID = $nl.object_id AND $nl.object_type = 'post')";
+
+			// Add the new clause
+			$clauses['where'] .= " AND (" . implode( ' OR ', $where_clauses ) . ")";
+		}
+
+		return $clauses;
 	}
 
 	/**
