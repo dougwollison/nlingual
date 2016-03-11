@@ -54,6 +54,8 @@ class Backend extends Handler {
 		// Theme Location Rewrites
 		static::add_action( 'init', 'register_localized_nav_menus', 999, 0 );
 		static::add_action( 'widgets_init', 'register_localized_sidebars', 999, 0 );
+		static::add_filter( 'pre_set_theme_mod_nav_menu_locations', 'handle_unlocalized_locations', 10, 1 );
+		static::add_filter( 'pre_update_option_sidebars_widgets', 'handle_unlocalized_locations', 10, 1 );
 
 		// Posts Screen Interface
 		static::add_filter( 'query_vars', 'add_language_var' );
@@ -330,6 +332,34 @@ class Backend extends Handler {
 	 */
 	public static function register_localized_sidebars() {
 		static::register_localized_locations( 'sidebar', 'wp_registered_sidebars' );
+	}
+
+	/**
+	 * Handle fallbacks for unlocalized locations.
+	 *
+	 * As a fallback, make sure that the original location is
+	 * set to that of the one for the default language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $locations The locations.
+	 *
+	 * @return array The filtered locations array.
+	 */
+	public static function handle_unlocalized_locations( $locations ) {
+		// Get the default language ID
+		$language_id = Registry::default_language( 'id' );
+
+		// Loop through the locations, check if it's a localized one
+		$new_locations = array();
+		foreach ( $locations as $location => $data ) {
+			if ( preg_match( '/^(.+?)__language_' . $language_id . '$/', $location, $matches ) ) {
+				$new_locations[ $matches[1] ] = $data;
+			}
+			$new_locations[ $location ] = $data;
+		}
+
+		return $new_locations;
 	}
 
 	// =========================
