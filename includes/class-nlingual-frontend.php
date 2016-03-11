@@ -304,8 +304,8 @@ class Frontend extends Handler {
 		foreach ( $registered as $slug => $name ) {
 			// Check if this location specifically supports localizing
 			if ( Registry::is_location_localizable( $type, $slug ) ) {
-				$current_id = "{$slug}--language_{$current_language->id}";
-				$default_id = "{$slug}--language_{$default_language->id}";
+				$current_id = "{$slug}__language_{$current_language->id}";
+				$default_id = "{$slug}__language_{$default_language->id}";
 
 				// Check if a location is set for the current language
 				if ( isset( $locations[ $current_id ] ) ) {

@@ -51,7 +51,7 @@ class Backend extends Handler {
 		// Script/Style Enqueues
 		static::add_action( 'admin_enqueue_scripts', 'enqueue_assets', 10, 0 );
 
-		// Theme Setup Actions
+		// Theme Location Rewrites
 		static::add_action( 'init', 'register_localized_nav_menus', 999, 0 );
 		static::add_action( 'widgets_init', 'register_localized_sidebars', 999, 0 );
 
@@ -282,7 +282,7 @@ class Backend extends Handler {
 				// Check if this location specifically supports localizing,
 				// make localized copies
 				if ( Registry::is_location_localizable( $type, $id ) ) {
-					$new_id = "{$id}--language_{$language->id}";
+					$new_id = "{$id}__language_{$language->id}";
 					$name_postfix = ' (' . $language->system_name . ')';
 					if ( is_array( $data ) ) {
 						$new_name = $data['name'] . $name_postfix;
