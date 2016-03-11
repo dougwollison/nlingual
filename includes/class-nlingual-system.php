@@ -398,6 +398,11 @@ class System extends Handler {
 			return;
 		}
 
+		// Abort if the post's post type isn't supported
+		if ( ! Registry::is_post_type_supported( get_post_type( $post_id ) ) ) {
+			return;
+		}
+
 		$skip_ids = array();
 		// If doing a bulk edit, and this is one of the intended posts,
 		// make sure to skip all listed posts
@@ -448,6 +453,11 @@ class System extends Handler {
 			return;
 		}
 
+		// Abort if the post's post type isn't supported
+		if ( ! Registry::is_post_type_supported( get_post_type( $post_id ) ) ) {
+			return;
+		}
+
 		// Get the current action
 		$action = current_filter();
 
@@ -480,6 +490,11 @@ class System extends Handler {
 	public static function delete_sister_posts( $post_id ) {
 		// Abort if option isn't enabled
 		if ( ! Registry::get( 'delete_sister_posts' ) ) {
+			return;
+		}
+
+		// Abort if the post's post type isn't supported
+		if ( ! Registry::is_post_type_supported( get_post_type( $post_id ) ) ) {
 			return;
 		}
 
