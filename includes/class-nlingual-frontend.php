@@ -125,7 +125,21 @@ class Frontend extends Handler {
 			$mode = 'REQUESTED';
 		}
 		// Failing that, get the language from the url
-		elseif ( $language = Rewriter::process_url( null, 'language' ) ) {
+		elseif ( ( $the_url = Rewriter::process_url() ) && isset( $the_url->meta['language'] ) ) {
+			$language = $the_url->meta['language'];
+			// If the language was determined but skip is enabled, redirect.
+			if ( Registry::is_language_default( $language )
+			&& Registry::get( 'skip_default_l10n' )
+			&& Registry::get( 'url_rewrite_method' ) == 'path' ) {
+				// Determine the status code to use
+				$status = Registry::get( 'redirection_permanent' ) ? 301 : 302;
+
+				// Redirect, exit if successful
+				if ( wp_redirect( $the_url->build(), $status ) ) {
+					exit;
+				}
+			}
+
 			$mode = 'REQUESTED';
 		}
 		// Fallback to finding the first match in the accepted languages list
