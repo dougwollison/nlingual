@@ -130,7 +130,10 @@ class Rewriter {
 		// Check if the language was already part of the arguments
 		$query_var = Registry::get( 'query_var' );
 		if ( isset( $the_url->args[ $query_var ] ) ) {
-			$the_url->meta['language'] = $the_url->args[ $query_var ];
+			// Ensure it is in fact a valid language
+			if ( $language = $languages->get( $the_url->args[ $query_var ] ) ) {
+				$the_url->meta['language'] = $language;
+			}
 
 			return $the_url;
 		} else {
