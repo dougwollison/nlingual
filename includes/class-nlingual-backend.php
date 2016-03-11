@@ -52,7 +52,7 @@ class Backend extends Handler {
 		static::add_action( 'admin_enqueue_scripts', 'enqueue_assets', 10, 0 );
 
 		// Theme Setup Actions
-		static::add_action( 'after_setup_theme', 'register_localized_nav_menus', 999, 0 );
+		static::add_action( 'init', 'register_localized_nav_menus', 999, 0 );
 		static::add_action( 'widgets_init', 'register_localized_sidebars', 999, 0 );
 
 		// Posts Screen Interface
