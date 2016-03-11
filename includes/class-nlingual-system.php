@@ -298,8 +298,6 @@ class System extends Handler {
 		static::add_action( 'pre_get_posts', 'translate_excluded_posts', 20, 1 );
 		static::add_filter( 'posts_clauses', 'add_translation_clauses', 10, 2 );
 		static::add_filter( 'comments_clauses', 'add_translation_clauses', 10, 2 );
-		//static::add_filter( 'posts_join_request', 'add_post_translations_join_clause', 10, 2 );
-		//static::add_filter( 'posts_where_request', 'add_post_translations_where_clause', 10, 2 );
 		static::add_filter( 'get_pages', 'filter_pages', 10, 2 );
 
 		// Miscellaneous Changes
@@ -753,7 +751,7 @@ class System extends Handler {
 
 		// Abort if no language was set
 		if ( ! isset( $query_vars[ $query_var ] ) || empty( $query_vars[ $query_var ] ) ) {
-			return $clause;
+			return $clauses;
 		}
 
 		// Get the language(s) specified, ensure it's an array
