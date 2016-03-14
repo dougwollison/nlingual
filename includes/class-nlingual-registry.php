@@ -27,7 +27,7 @@ namespace nLingual;
  * @method array get_term_clone_rules() Get the clone rules for a taxonomy.
  */
 
-class Registry {
+final class Registry {
 	// =========================
 	// ! Properties
 	// =========================
@@ -43,7 +43,7 @@ class Registry {
 	 *
 	 * @var bool
 	 */
-	protected static $__loaded = false;
+	private static $__loaded = false;
 
 	/**
 	 * The current language id.
@@ -54,7 +54,7 @@ class Registry {
 	 *
 	 * @var int
 	 */
-	protected static $current_language;
+	private static $current_language;
 
 	/**
 	 * The language directory.
@@ -65,7 +65,7 @@ class Registry {
 	 *
 	 * @var Languages
 	 */
-	protected static $languages;
+	private static $languages;
 
 	/**
 	 * The options storage array
@@ -76,7 +76,7 @@ class Registry {
 	 *
 	 * @var array
 	 */
-	protected static $options = array();
+	private static $options = array();
 
 	/**
 	 * The options whitelist/defaults.
@@ -87,7 +87,7 @@ class Registry {
 	 *
 	 * @var array
 	 */
-	protected static $options_whitelist = array(
+	private static $options_whitelist = array(
 		/* General Options */
 
 		// - The default language id
@@ -158,7 +158,7 @@ class Registry {
 	 *
 	 * @var array
 	 */
-	protected static $options_deprecated = array(
+	private static $options_deprecated = array(
 		'default_lang'      => 'default_language',
 		'delete_sisters'    => 'delete_sister_posts',
 		'post_var'          => 'query_var',
@@ -180,7 +180,7 @@ class Registry {
 	 *
 	 * @return array The options whitelist.
 	 */
-	public static function get_defaults() {
+	final public static function get_defaults() {
 		return static::$options_whitelist;
 	}
 
@@ -196,7 +196,7 @@ class Registry {
 	 *
 	 * @return bool Wether or not the option is supported.
 	 */
-	public static function has( &$option ) {
+	final public static function has( &$option ) {
 		if ( isset( static::$options_deprecated[ $option ] ) ) {
 			$option = static::$options_deprecated[ $option ];
 		}
@@ -214,7 +214,7 @@ class Registry {
 	 *
 	 * @return mixed The property value.
 	 */
-	public static function get( $option, $default = null ) {
+	final public static function get( $option, $default = null ) {
 		// Trigger notice error if trying to set an unsupported option
 		if ( ! static::has( $option ) ) {
 			trigger_error( "[nLingual] The option '{$option}' is not supported.", E_USER_NOTICE );
@@ -256,7 +256,7 @@ class Registry {
 	 * @param string $option The option name.
 	 * @param mixed  $value  The value to assign.
 	 */
-	public static function set( $option, $value = null ) {
+	final public static function set( $option, $value = null ) {
 		// Trigger notice error if trying to set an unsupported option
 		if ( ! static::has( $option ) ) {
 			trigger_error( "[nLingual] The option '{$option}' is not supported.", E_NOTICE );
@@ -277,7 +277,7 @@ class Registry {
 	 *
 	 * @return Language The languages collection (optionally filtered).
 	 */
-	public static function languages( $filter = null, $value = null ) {
+	final public static function languages( $filter = null, $value = null ) {
 		return static::$languages->filter( $filter, $value );
 	}
 
@@ -293,7 +293,7 @@ class Registry {
 	 *
 	 * @return array The array of rules, empty if not found.
 	 */
-	public static function get_rules( $rule_type ) {
+	final public static function get_rules( $rule_type ) {
 		// Get the rules
 		$rules = Registry::get( $rule_type . '_rules' );
 
@@ -341,7 +341,7 @@ class Registry {
 	 *
 	 * @return mixed The language or the value of the language's field.
 	 */
-	public static function get_language( $id_or_slug, $field = null ) {
+	final public static function get_language( $id_or_slug, $field = null ) {
 		// Check if id/slug is a value, and that it matches a language
 		if ( $id_or_slug && $language = static::$languages->get( $id_or_slug ) ) {
 			if ( is_null( $field ) ) {
@@ -363,7 +363,7 @@ class Registry {
 	 * @param bool  $lock     Wether or not to lock the selection.
 	 * @param bool  $override Wether or not to override the lock.
 	 */
-	public static function set_language( $language, $lock = false, $override = false ) {
+	final public static function set_language( $language, $lock = false, $override = false ) {
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			// Throw exception if not found
@@ -396,7 +396,7 @@ class Registry {
 	 *
 	 * @param string $field Optional. The field to get from the language.
 	 */
-	public static function default_language( $field = null ) {
+	final public static function default_language( $field = null ) {
 		$language_id = static::get( 'default_language' );
 
 		// If default_language is not set/valid, default to first language
@@ -421,7 +421,7 @@ class Registry {
 	 *
 	 * @param string $field Optional. The field to get from the language.
 	 */
-	public static function current_language( $field = null ) {
+	final public static function current_language( $field = null ) {
 		$language_id = static::$current_language ?: static::default_language( 'id' );
 		return static::get_language( $language_id, $field );
 	}
@@ -440,7 +440,7 @@ class Registry {
 	 *
 	 * @return bool The result of the comparision.
 	 */
-	public static function compare_languages( $language1, $language2 ) {
+	final public static function compare_languages( $language1, $language2 ) {
 		// Ensure $language1 is a Language
 		if ( ! validate_language( $language1 ) ) {
 			return false; // Does not exist
@@ -463,7 +463,7 @@ class Registry {
 	 *
 	 * @return bool The result of compare_languages().
 	 */
-	public static function is_language_default( $language ) {
+	final public static function is_language_default( $language ) {
 		return static::compare_languages( $language, static::default_language() );
 	}
 
@@ -476,7 +476,7 @@ class Registry {
 	 *
 	 * @return bool The result of compare_languages().
 	 */
-	public static function is_language_current( $language ) {
+	final public static function is_language_current( $language ) {
 		return static::compare_languages( $language, static::current_language() );
 	}
 
@@ -487,7 +487,7 @@ class Registry {
 	 *
 	 * @return bool The result of compare_languages().
 	 */
-	public static function in_default_language() {
+	final public static function in_default_language() {
 		return static::compare_languages( static::current_language(), static::default_language() );
 	}
 
@@ -508,7 +508,7 @@ class Registry {
 	 * @param string $item The name of the localizable to check support for.
 	 * @param array  $list The list of registered objects.
 	 */
-	public static function is_feature_localizable( $item, $list ) {
+	final public static function is_feature_localizable( $item, $list ) {
 		// Check if this feature is enabled
 		if ( ! static::get( $item ) ) {
 			return false;
@@ -537,7 +537,7 @@ class Registry {
 	 *
 	 * @return bool Wether or not the location is localizable.
 	 */
-	public static function is_location_localizable( $type, $location ) {
+	final public static function is_location_localizable( $type, $location ) {
 		// Turn $type into proper key name
 		$type .= '_locations';
 
@@ -575,7 +575,7 @@ class Registry {
 	 *
 	 * @return bool Wether or not the post type(s) are supported.
 	 */
-	public static function is_post_type_supported( $post_types ) {
+	final public static function is_post_type_supported( $post_types ) {
 		$post_types = (array) $post_types; // Convert to array
 
 		// Get the supported post types list
@@ -599,7 +599,7 @@ class Registry {
 	 *
 	 * @return bool Wether or not the taxonomy(ies) are supported.
 	 */
-	public static function is_taxonomy_supported( $taxonomies ) {
+	final public static function is_taxonomy_supported( $taxonomies ) {
 		$taxonomies = (array) $taxonomies; // Convert to array
 
 		// Get the supported post types list
@@ -619,7 +619,7 @@ class Registry {
 	 *
 	 * @return bool Wether or not rewriting can be used.
 	 */
-	public static function can_use_rewrites() {
+	final public static function can_use_rewrites() {
 		global $wp_rewrite;
 
 		if ( $wp_rewrite ) {
@@ -646,7 +646,7 @@ class Registry {
 	 *
 	 * @param bool $reload Should we reload the options?
 	 */
-	public static function load( $reload = false ) {
+	final public static function load( $reload = false ) {
 		if ( static::$__loaded && ! $reload ) {
 			// Already did this
 			return;
@@ -684,7 +684,7 @@ class Registry {
 	 *
 	 * @param string $what Optional. Save just options/languages or both (true)?
 	 */
-	public static function save( $what = true ) {
+	final public static function save( $what = true ) {
 		if ( $what == 'options' ) {
 			// Save the options
 			update_option( 'nlingual_options', static::$options );
@@ -710,7 +710,7 @@ class Registry {
 	 *
 	 * @return mixed The result of the target method.
 	 */
-	public static function __callStatic( $name, $args ) {
+	final public static function __callStatic( $name, $args ) {
 		// Check if $name could be a kind of get_rules() alias
 		if ( preg_match( '/^get_(\w+?)_rules$/', $name, $matches ) ) {
 			// This should attempt to handle methods like "get_post_sync_rules"

@@ -21,7 +21,7 @@ namespace nLingual;
  * @since 2.0.0
  */
 
-class System extends Handler {
+final class System extends Handler {
 	// =========================
 	// ! Properties
 	// =========================
@@ -35,7 +35,7 @@ class System extends Handler {
 	 *
 	 * @var array
 	 */
-	protected static $language_stack = array();
+	private static $language_stack = array();
 
 	/**
 	 * The internal text domain cache.
@@ -46,7 +46,7 @@ class System extends Handler {
 	 *
 	 * @var array
 	 */
-	protected static $textdomain_cache = array();
+	private static $textdomain_cache = array();
 
 	/**
 	 * The internal text domain log.
@@ -57,7 +57,7 @@ class System extends Handler {
 	 *
 	 * @var array
 	 */
-	protected static $textdomain_log = array();
+	private static $textdomain_log = array();
 
 	/**
 	 * The last locale text domains were reloaded for.
@@ -68,7 +68,7 @@ class System extends Handler {
 	 *
 	 * @var string
 	 */
-	protected static $last_locale_reloaded = '';
+	private static $last_locale_reloaded = '';
 
 	// =========================
 	// ! Utilities
@@ -83,7 +83,7 @@ class System extends Handler {
 	 *
 	 * @param string $old_local The previous locale.
 	 */
-	public static function reload_textdomains( $old_local ) {
+	final public static function reload_textdomains( $old_local ) {
 		global $l10n;
 
 		// Current locale
@@ -164,7 +164,7 @@ class System extends Handler {
 	 * @param mixed $language           The language object, slug or id.
 	 * @param bool  $reload_textdomains Wether or not to reload text domains.
 	 */
-	public static function switch_language( $language, $reload_textdomains = false ) {
+	final public static function switch_language( $language, $reload_textdomains = false ) {
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			return false; // Does not exist
@@ -194,7 +194,7 @@ class System extends Handler {
 	 * @uses Registry::get() to get the default language id.
 	 * @uses Registry::$current_language to update the current language.
 	 */
-	public static function restore_language() {
+	final public static function restore_language() {
 		$last_language = array_pop( static::$language_stack );
 
 		// If no previous language, go with default
@@ -234,7 +234,7 @@ class System extends Handler {
 	 * @uses Liaison::register_hooks() to setup plugin cross-compatibility.
 	 * @uses is_backend() to check if the query is for wp-admin.
 	 */
-	public static function setup() {
+	final public static function setup() {
 		global $wpdb;
 
 		// Register the database tables (with backwards compatibility for their old nL_ version)
@@ -269,7 +269,7 @@ class System extends Handler {
 	 *
 	 * @since 2.0.0
 	 */
-	public static function register_hooks() {
+	final public static function register_hooks() {
 		// Setup Stuff
 		static::add_action( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
 
@@ -314,7 +314,7 @@ class System extends Handler {
 	 * @uses Localizer::register_option() to register the site title and tagline for localization.
 	 * @uses Localizer::register_taxonomy() to register the enabled taxonomies for localization.
 	 */
-	public static function setup_localizable_fields() {
+	final public static function setup_localizable_fields() {
 		// Register the blogname and blogdescription for localization
 		Localizer::register_option_field( 'blogname', 'options-general', array(
 			'title'  => 'Site Title'
@@ -344,7 +344,7 @@ class System extends Handler {
 	 *
 	 * @return string The locale, untouched.
 	 */
-	public static function log_textdomain_type( $locale, $domain ) {
+	final public static function log_textdomain_type( $locale, $domain ) {
 		// Get the type
 		$type = str_replace( '_locale', '', current_filter() );
 
@@ -369,7 +369,7 @@ class System extends Handler {
 	 * @param string $domain The text domain being loaded.
 	 * @param string $mofile The file being loaded.
 	 */
-	public static function log_textdomain_path( $domain, $mofile ) {
+	final public static function log_textdomain_path( $domain, $mofile ) {
 		// Get the directory
 		$dir = dirname( $mofile );
 
@@ -392,7 +392,7 @@ class System extends Handler {
 	 *
 	 * @param int $post_id The ID of the post being saved.
 	 */
-	public static function synchronize_posts( $post_id ) {
+	final public static function synchronize_posts( $post_id ) {
 		// Abort if doing auto save or it's a revision
 		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || wp_is_post_revision( $post_id ) ) {
 			return;
@@ -433,7 +433,7 @@ class System extends Handler {
 	 *
 	 * @param int $post_id The ID of the post that was deleted.
 	 */
-	public static function delete_post_language( $post_id ) {
+	final public static function delete_post_language( $post_id ) {
 		// Delete the language
 		Translator::delete_post_language( $post_id );
 	}
@@ -447,7 +447,7 @@ class System extends Handler {
 	 *
 	 * @param int $post_id The ID of the post that was deleted.
 	 */
-	public static function trash_or_untrash_sister_posts( $post_id ) {
+	final public static function trash_or_untrash_sister_posts( $post_id ) {
 		// Abort if option isn't enabled
 		if ( ! Registry::get( 'trash_sister_posts' ) ) {
 			return;
@@ -487,7 +487,7 @@ class System extends Handler {
 	 *
 	 * @param int $post_id The ID of the post that was deleted.
 	 */
-	public static function delete_sister_posts( $post_id ) {
+	final public static function delete_sister_posts( $post_id ) {
 		// Abort if option isn't enabled
 		if ( ! Registry::get( 'delete_sister_posts' ) ) {
 			return;
@@ -531,7 +531,7 @@ class System extends Handler {
 	 *
 	 * @return string The localized home URL.
 	 */
-	public static function localize_home_url( $url, $path, $scheme ) {
+	final public static function localize_home_url( $url, $path, $scheme ) {
 		// Only localize for http/https and scheme-agnostic
 		if ( ! in_array( $scheme, array( null, 'http', 'https' ) ) ) {
 			return $url;
@@ -559,7 +559,7 @@ class System extends Handler {
 	 *
 	 * @return string The localized permalink.
 	 */
-	public static function localize_post_link( $permalink, $post_id ) {
+	final public static function localize_post_link( $permalink, $post_id ) {
 		// Check if it has a language
 		if ( $language = Translator::get_post_language( $post_id ) ) {
 			// If it's a page, check if it's a home page translation
@@ -709,7 +709,7 @@ class System extends Handler {
 	 *
 	 * @param object $query The query object.
 	 */
-	public static function translate_excluded_posts( $query ) {
+	final public static function translate_excluded_posts( $query ) {
 		// Get the language query_var name, and the query's variables (by reference)
 		$query_var = Registry::get( 'query_var' );
 		$query_vars = &$query->query_vars;
@@ -757,7 +757,7 @@ class System extends Handler {
 	 *
 	 * @return array The modified clauses.
 	 */
-	public static function add_translation_clauses( $clauses, $query ) {
+	final public static function add_translation_clauses( $clauses, $query ) {
 		global $wpdb;
 
 		// Get the language query_var name, and the query's variables
@@ -823,7 +823,7 @@ class System extends Handler {
 	 *
 	 * @return string The updated JOIN clauses.
 	 */
-	public static function add_post_translations_join_clause( $clause, \WP_Query $query ) {
+	final public static function add_post_translations_join_clause( $clause, \WP_Query $query ) {
 		global $wpdb;
 
 		// Abort if language isn't specified
@@ -854,7 +854,7 @@ class System extends Handler {
 	 *
 	 * @return string The updated WHERE clauses.
 	 */
-	public static function add_post_translations_where_clause( $clause, \WP_Query $query ) {
+	final public static function add_post_translations_where_clause( $clause, \WP_Query $query ) {
 		global $wpdb;
 
 		// Get the language(s) specified
@@ -913,7 +913,7 @@ class System extends Handler {
 	 *
 	 * @return array The filtered list of pages.
 	 */
-	public static function filter_pages( $pages, $args ) {
+	final public static function filter_pages( $pages, $args ) {
 		// Abort if $pages is empty or show_all_languages is set
 		if ( ! $pages || Registry::get( 'show_all_languages' ) ) {
 			return $pages;
@@ -958,7 +958,7 @@ class System extends Handler {
 	 *
 	 * @since 2.0.0
 	 */
-	public static function patch_font_stack() {
+	final public static function patch_font_stack() {
 		// Only proceed if enabled and Open Sans is in use
 		if ( Registry::get( 'patch_font_stack' )
 		&& wp_style_is( 'open-sans', 'enqueued' ) ) {

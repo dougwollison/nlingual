@@ -22,7 +22,7 @@ namespace nLingual;
  * @since 2.0.0
  */
 
-class Backend extends Handler {
+final class Backend extends Handler {
 	// =========================
 	// ! Hook Registration
 	// =========================
@@ -34,7 +34,7 @@ class Backend extends Handler {
 	 *
 	 * @uses Registry::get() to retrieve enabled post types.
 	 */
-	public static function register_hooks() {
+	final public static function register_hooks() {
 		// Don't do anything if not in the backend
 		if ( ! is_backend() ) {
 			return;
@@ -109,7 +109,7 @@ class Backend extends Handler {
 	 *
 	 * @return int The number of posts found.
 	 */
-	public static function language_posts_count( $language_id, $post_type = null, $post_status = null ) {
+	final public static function language_posts_count( $language_id, $post_type = null, $post_status = null ) {
 		global $wpdb;
 
 		$query = "
@@ -151,7 +151,7 @@ class Backend extends Handler {
 	 *
 	 * @since 2.0.0
 	 */
-	public static function load_textdomain() {
+	final public static function load_textdomain() {
 		// Load the textdomain
 		load_plugin_textdomain( 'nlingual', false, dirname( NL_PLUGIN_DIR ) . '/languages' );
 	}
@@ -164,7 +164,7 @@ class Backend extends Handler {
 	 * @uses Registry::get() to retrieve a the post types list.
 	 * @uses Documenter::register_help_tab() to register help tabs for each post type.
 	 */
-	public static function setup_documentation() {
+	final public static function setup_documentation() {
 		// Setup translation help tab for applicable post types
 		$post_types = Registry::get( 'post_types' );
 		foreach ( $post_types as $post_type ) {
@@ -182,7 +182,7 @@ class Backend extends Handler {
 	 *
 	 * @uses Registry::get() to retrieve a the sync/clone rules.
 	 */
-	public static function prepare_rules() {
+	final public static function prepare_rules() {
 		// Get the sync and clone rules, making sure post_type array is present for both
 		$sync_rules = Registry::get_sync_rules();
 		if ( ! isset( $sync_rules['post_type'] ) || ! is_array( $sync_rules['post_type'] ) ) {
@@ -228,7 +228,7 @@ class Backend extends Handler {
 	 *
 	 * @param array $plugin The information about the plugin and the update.
 	 */
-	public static function update_notice( $plugin ) {
+	final public static function update_notice( $plugin ) {
 		// Get the version number that the update is for
 		$version = $plugin['new_version'];
 
@@ -265,7 +265,7 @@ class Backend extends Handler {
 	 * @param string $type   The type of location being localized (singular).
 	 * @param string $global The global variable name to be edited.
 	 */
-	protected static function register_localized_locations( $type, $global ) {
+	final private static function register_localized_locations( $type, $global ) {
 		global $$global;
 		$list =& $$global;
 
@@ -317,7 +317,7 @@ class Backend extends Handler {
 	 *
 	 * @global array $_wp_registered_nav_menus The registered nav menus list.
 	 */
-	public static function register_localized_nav_menus() {
+	final public static function register_localized_nav_menus() {
 		static::register_localized_locations( 'nav_menu', '_wp_registered_nav_menus' );
 	}
 
@@ -330,7 +330,7 @@ class Backend extends Handler {
 	 *
 	 * @global array $wp_registered_sidebars The registered sidebars list.
 	 */
-	public static function register_localized_sidebars() {
+	final public static function register_localized_sidebars() {
 		static::register_localized_locations( 'sidebar', 'wp_registered_sidebars' );
 	}
 
@@ -346,7 +346,7 @@ class Backend extends Handler {
 	 *
 	 * @return array The filtered locations array.
 	 */
-	public static function handle_unlocalized_locations( $locations ) {
+	final public static function handle_unlocalized_locations( $locations ) {
 		// Get the default language ID
 		$language_id = Registry::default_language( 'id' );
 
@@ -377,7 +377,7 @@ class Backend extends Handler {
 	 *
 	 * @return array The updated whitelist.
 	 */
-	public static function add_language_var( array $vars ) {
+	final public static function add_language_var( array $vars ) {
 		if ( $query_var = Registry::get( 'query_var' ) ) {
 			$vars[] = $query_var;
 		}
@@ -394,7 +394,7 @@ class Backend extends Handler {
 	 *
 	 * @return array The filtered post states list.
 	 */
-	public static function flag_translated_pages( array $post_states, \WP_Post $post ) {
+	final public static function flag_translated_pages( array $post_states, \WP_Post $post ) {
 		// Check if it's a page in another language, with a translation
 		$language = Translator::get_post_language( $post->ID );
 		if ( $post->post_type == 'page' && ! Registry::is_language_default( $language )
@@ -424,7 +424,7 @@ class Backend extends Handler {
 	 * @uses Registry::languages() to loop through all registered languages.
 	 * @uses Backend::language_posts_count() to get the post count for each language.
 	 */
-	public static function add_language_filter() {
+	final public static function add_language_filter() {
 		global $typenow, $wp_query;
 
 		// Abort if current post type isn't supported
@@ -468,7 +468,7 @@ class Backend extends Handler {
 	 *
 	 * @return array The modified list of columns.
 	 */
-	public static function add_language_column( $columns ) {
+	final public static function add_language_column( $columns ) {
 		$columns['nlingual'] = __( 'Language', 'nlingual' );
 		return $columns;
 	}
@@ -486,7 +486,7 @@ class Backend extends Handler {
 	 * @param string $column  The ID of the current column.
 	 * @param int    $post_id The current post.
 	 */
-	public static function do_language_column( $column, $post_id ) {
+	final public static function do_language_column( $column, $post_id ) {
 		// Abort if not the right column
 		if ( $column != 'nlingual' ) {
 			return;
@@ -543,7 +543,7 @@ class Backend extends Handler {
 	 * @param string $column    The column this box corresponds to.
 	 * @param string $post_type The post type this is for.
 	 */
-	public static function quick_edit_post_translation( $column, $post_type ) {
+	final public static function quick_edit_post_translation( $column, $post_type ) {
 		global $wpdb;
 
 		// Abort if not the correct column
@@ -624,7 +624,7 @@ class Backend extends Handler {
 	 * @param string $column    The column this box corresponds to.
 	 * @param string $post_type The post type this is for.
 	 */
-	public static function bulk_edit_post_language( $column, $post_type ) {
+	final public static function bulk_edit_post_language( $column, $post_type ) {
 		// Abort if not the correct column
 		if ( $column != 'nlingual' ) {
 			return;
@@ -679,7 +679,7 @@ class Backend extends Handler {
 	 * @uses Registry:get() to retrieve the supported post types.
 	 * @uses Backend::post_meta_box() as the callback to build the metabox.
 	 */
-	public static function add_post_meta_box() {
+	final public static function add_post_meta_box() {
 		$post_types = Registry::get( 'post_types' );
 
 		foreach ( $post_types as $post_type ) {
@@ -708,7 +708,7 @@ class Backend extends Handler {
 	 *
 	 * @param WP_Post $post The post being edited.
 	 */
-	public static function post_meta_box( $post ) {
+	final public static function post_meta_box( $post ) {
 		global $wpdb;
 
 		// Get the language list
@@ -818,7 +818,7 @@ class Backend extends Handler {
 	 *
 	 * @param int $post_id The ID of the post being saved.
 	 */
-	public static function save_post_language( $post_id ) {
+	final public static function save_post_language( $post_id ) {
 		// Abort if doing auto save or it's a revision
 		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || wp_is_post_revision( $post_id ) ) {
 			return;
@@ -850,7 +850,7 @@ class Backend extends Handler {
 	 *
 	 * @param int $post_id The ID of the post being saved.
 	 */
-	public static function save_post_translations( $post_id ) {
+	final public static function save_post_translations( $post_id ) {
 		// Abort if doing auto save or it's a revision
 		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || wp_is_post_revision( $post_id ) ) {
 			return;
@@ -880,7 +880,7 @@ class Backend extends Handler {
 	 *
 	 * @param int $post_id The ID of the post being saved.
 	 */
-	public static function bulk_save_post_language( $post_id ) {
+	final public static function bulk_save_post_language( $post_id ) {
 		// Abort if not a bulk edit (nonce fails), not one of
 		// the intended posts, or no language was provided
 		if ( ! isset( $_REQUEST['bulk_edit'] )
@@ -912,7 +912,7 @@ class Backend extends Handler {
 	 *
 	 * @param \WP_Post $post The current post being edited.
 	 */
-	public static function synced_posts_notice( \WP_Post $post ) {
+	final public static function synced_posts_notice( \WP_Post $post ) {
 		// page or "post"?
 		if ( $post->post_type == 'page' ) {
 			$message = __( 'The translations of this page have been updated accordingly.', 'nlingual' );
@@ -947,7 +947,7 @@ class Backend extends Handler {
 	 *
 	 * @return array The filtered message arrays.
 	 */
-	public static function bulk_updated_sisters_messages( $bulk_notices, $bulk_counts ) {
+	final public static function bulk_updated_sisters_messages( $bulk_notices, $bulk_counts ) {
 		// Get the current screen
 		$screen = get_current_screen();
 
@@ -999,7 +999,7 @@ class Backend extends Handler {
 	 *
 	 * @since 2.0.0
 	 */
-	public static function add_nav_menu_meta_box() {
+	final public static function add_nav_menu_meta_box() {
 		add_meta_box(
 			'add-nl_language_link', // metabox id
 			__( 'Language Links', 'nlingual' ), // title
@@ -1016,7 +1016,7 @@ class Backend extends Handler {
 	 *
 	 * @uses Registry::languages() to loop through all active registered languages.
 	 */
-	public static function do_nav_menu_meta_box() {
+	final public static function do_nav_menu_meta_box() {
 		global $nav_menu_selected_id;
 		?>
 		<div class="posttypediv" id="nl_language_link">
@@ -1060,7 +1060,7 @@ class Backend extends Handler {
 	 *
 	 * @since 2.0.0
 	 */
-	public static function enqueue_assets() {
+	final public static function enqueue_assets() {
 		// Admin styling
 		wp_enqueue_style( 'nlingual-admin', plugins_url( 'css/admin.css', NL_PLUGIN_FILE ), '2.0.0', 'screen' );
 
@@ -1091,7 +1091,7 @@ class Backend extends Handler {
 	 * @uses Registry::get() to retrieve the default language.
 	 * @uses Registry::languages() to get and export the list of languages.
 	 */
-	public static function print_javascript_vars() {
+	final public static function print_javascript_vars() {
 		?>
 		<script>
 			if ( typeof admin_url === 'undefined' ) {

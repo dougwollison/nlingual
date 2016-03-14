@@ -21,7 +21,7 @@ namespace nLingual;
  * @since 2.0.0
  */
 
-class Settings {
+final class Settings {
 	/**
 	 * Add the desired settings field.
 	 *
@@ -42,7 +42,7 @@ class Settings {
 	 * @param string $page    The name of the page to display on.
 	 * @param string $section Optional. The name of the section to display in.
 	 */
-	public static function add_field( $field, $options, $page, $section = 'default' ) {
+	final public static function add_field( $field, $options, $page, $section = 'default' ) {
 		// Parse the options
 		wp_parse_args( $options, array(
 			'title' => '',
@@ -101,7 +101,7 @@ class Settings {
 	 * @param string $page    The name of the page to display on.
 	 * @param string $section Optional. The name of the section to display in.
 	 */
-	public static function add_fields( $fields, $page, $section = 'default' ) {
+	final public static function add_fields( $fields, $page, $section = 'default' ) {
 		foreach ( $fields as $field => $options ) {
 			static::add_field( $field, $options, $page, $section );
 		}
@@ -119,7 +119,7 @@ class Settings {
 	 *
 	 * @return mixed The extracted value.
 	 */
-	protected static function extract_value( array $array, $map ) {
+	final private static function extract_value( array $array, $map ) {
 		// Abort if not an array
 		if ( ! is_array( $array ) ) return $array;
 
@@ -157,7 +157,7 @@ class Settings {
 	 *
 	 * @param string $name The name of the setting to retrieve.
 	 */
-	protected static function get_value( $name ) {
+	final private static function get_value( $name ) {
 		if ( preg_match( '/([\w-]+)\[([\w-]+)\](.*)/', $name, $matches ) ) {
 			// Field is an array map, get the actual key...
 			$name = $matches[1];
@@ -194,7 +194,7 @@ class Settings {
 	 * @param mixed $value Optional. A specifi value to use
 	 *                     instead of dynamically retrieving it.
 	 */
-	public static function build_field( $args, $value = null ) {
+	final public static function build_field( $args, $value = null ) {
 		// Get the value for the field if not provided
 		if ( is_null( $value ) ) {
 			$value = static::get_value( $args['option'] );
@@ -257,7 +257,7 @@ class Settings {
 	 *
 	 * @return string The HTML of the field.
 	 */
-	protected static function build_input_field( $name, $id, $value, $type, $attributes = array() ) {
+	final private static function build_input_field( $name, $id, $value, $type, $attributes = array() ) {
 		$html = '';
 
 		// Ensure $attributes is an array
@@ -308,7 +308,7 @@ class Settings {
 	 * @param mixed  $value   The value of the field.
 	 * @param array  $options The options for the field.
 	 */
-	protected static function build_select_field( $name, $id, $value, $options ) {
+	final private static function build_select_field( $name, $id, $value, $options ) {
 		$html = '';
 
 		$html .= sprintf( '<select name="%s" id="%s">', $name, $id );
@@ -331,7 +331,7 @@ class Settings {
 	 * @param mixed  $value   The value of the field.
 	 * @param array  $options The options for the field.
 	 */
-	protected static function build_inputlist_field( $type, $name, $value, $options ) {
+	final private static function build_inputlist_field( $type, $name, $value, $options ) {
 		// Ensure $value is an array
 		$value = (array) $value;
 
@@ -361,7 +361,7 @@ class Settings {
 	 *
 	 * @see Settings::build_inputlist_field() for what it all does.
 	 */
-	protected static function build_radiolist_field( $name, $value, $options ) {
+	final private static function build_radiolist_field( $name, $value, $options ) {
 		return static::build_inputlist_field( 'radio', $name, $value, $options );
 	}
 
@@ -370,7 +370,7 @@ class Settings {
 	 *
 	 * @see Settings::build_input_list() for what it all does.
 	 */
-	protected static function build_checklist_field( $name, $value, $options ) {
+	final private static function build_checklist_field( $name, $value, $options ) {
 		return static::build_inputlist_field( 'checkbox', $name, $value, $options );
 	}
 
@@ -386,7 +386,7 @@ class Settings {
 	 * @param mixed  $value     The value of the field.
 	 * @param string $post_type The post type in question.
 	 */
-	protected static function build_sync_settings_field( $name, $value, $post_type ) {
+	final private static function build_sync_settings_field( $name, $value, $post_type ) {
 		// Post Data values
 		$post_fields = Documenter::post_field_names();
 		$post_fields['post_status'] .= '<sup>1</sup>'; // flag parent field for note about trashing
@@ -454,7 +454,7 @@ class Settings {
 	 * @param mixed  $value The value of the field.
 	 * @param string $text  The notice text.
 	 */
-	protected static function print_notice( $text ) {
+	final private static function print_notice( $text ) {
 		printf( '<p><span class="nl-settings-notice">%s</span></p>', $text );
 	}
 }

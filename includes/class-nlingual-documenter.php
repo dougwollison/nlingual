@@ -21,7 +21,7 @@ namespace nLingual;
  * @since 2.0.0
  */
 
-class Documenter extends Handler {
+final class Documenter extends Handler {
 	/**
 	 * A directory of all help tabs available.
 	 *
@@ -29,7 +29,7 @@ class Documenter extends Handler {
 	 *
 	 * @var array
 	 */
-	protected static $directory = array(
+	private static $directory = array(
 		'options' => array(
 			'tabs' => array(
 				'overview',
@@ -81,7 +81,7 @@ class Documenter extends Handler {
 	 *
 	 * @var array
 	 */
-	protected static $registered_screens = array();
+	private static $registered_screens = array();
 
 	// =========================
 	// ! Dynamic Properties
@@ -93,7 +93,7 @@ class Documenter extends Handler {
 	 *
 	 * @return array The list of names, localized.
 	 */
-	public static function post_field_names() {
+	final public static function post_field_names() {
 		return array(
 			'post_author'    => _x( 'Author',          'post field', 'nlingual' ),
 			'post_date'      => _x( 'Date',            'post field', 'nlingual' ),
@@ -115,7 +115,7 @@ class Documenter extends Handler {
 	 *
 	 * @since 2.0.0
 	 */
-	public static function register_hooks() {
+	final public static function register_hooks() {
 		// Don't do anything if not in the backend
 		if ( ! is_backend() ) {
 			return;
@@ -138,7 +138,7 @@ class Documenter extends Handler {
 	 * @param string $screen The screen ID to add the tab to.
 	 * @param string $tab    The tab ID to add to the screen.
 	 */
-	public static function register_help_tab( $screen, $tab ) {
+	final public static function register_help_tab( $screen, $tab ) {
 		static::$registered_screens[ $screen ] = $tab;
 	}
 
@@ -151,7 +151,7 @@ class Documenter extends Handler {
 	 *
 	 * @param string $screens An array of screen=>tab IDs to register.
 	 */
-	public static function register_help_tabs( $screens ) {
+	final public static function register_help_tabs( $screens ) {
 		foreach ( $screens as $screen => $tab ) {
 			static::register_help_tab( $screen, $tab );
 		}
@@ -171,7 +171,7 @@ class Documenter extends Handler {
 	 *
 	 * @return array The ID, title, and content of the help tab.
 	 */
-	public static function get_tab_data( $tab, $section = null ) {
+	final public static function get_tab_data( $tab, $section = null ) {
 		// Sanitize JUST in case...
 		$tab = sanitize_file_name( $tab );
 		$section = sanitize_file_name( $section );
@@ -226,7 +226,7 @@ class Documenter extends Handler {
 	 *
 	 * @param string $help_id Optional. The ID of the tabset to setup.
 	 */
-	public static function setup_help_tabs( $help_id = null ) {
+	final public static function setup_help_tabs( $help_id = null ) {
 		// Get the screen object
 		$screen = get_current_screen();
 

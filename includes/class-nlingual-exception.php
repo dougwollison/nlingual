@@ -21,7 +21,7 @@ namespace nLingual;
  * @since 2.0.0
  */
 
-class Exception extends \Exception {
+final class Exception extends \Exception {
 	/**
 	 * The exception constructor, message required.
 	 *

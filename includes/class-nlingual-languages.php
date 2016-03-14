@@ -36,7 +36,7 @@ class Languages implements \Iterator {
 	 *
 	 * @var int
 	 */
-	protected $position = 0;
+	private $position = 0;
 
 	/**
 	 * The last auto-increment ID.
@@ -47,7 +47,7 @@ class Languages implements \Iterator {
 	 *
 	 * @var int
 	 */
-	protected $auto_increment = 0;
+	private $auto_increment = 0;
 
 	/**
 	 * The array of Language objects.
@@ -58,7 +58,7 @@ class Languages implements \Iterator {
 	 *
 	 * @var array
 	 */
-	protected $items = array();
+	private $items = array();
 
 	// =========================
 	// ! Iterator Methods

@@ -23,7 +23,7 @@ namespace nLingual;
  * @since 2.0.0
  */
 
-class Frontend extends Handler {
+final class Frontend extends Handler {
 	// =========================
 	// ! Utilities
 	// =========================
@@ -33,7 +33,7 @@ class Frontend extends Handler {
 	 *
 	 * @return Language|bool The accepted language, false if no match.
 	 */
-	protected static function get_accepted_language() {
+	final private static function get_accepted_language() {
 		$accepted_languages = explode( ',', $_SERVER['HTTP_ACCEPT_LANGUAGE'] );
 		// Loop through them and get the first match
 		foreach ( $accepted_languages as $language_tag ) {
@@ -58,7 +58,7 @@ class Frontend extends Handler {
 	 *
 	 * @since 2.0.0
 	 */
-	public static function register_hooks() {
+	final public static function register_hooks() {
 		// Don't do anything if in the backend
 		if ( is_backend() ) {
 			return;
@@ -117,7 +117,7 @@ class Frontend extends Handler {
 	 * @uses Frontend::get_accepted_language() to determine a perferred language.
 	 * @uses Registry::set_language() to tentatively apply the detected language.
 	 */
-	public static function detect_language() {
+	final public static function detect_language() {
 		// First, check if the language was specified by the GET or POST parameters
 		if ( ( $query_var = Registry::get( 'query_var' ) ) && isset( $_REQUEST[ $query_var ] ) ) {
 			// Even if the language specified is invalid, don't fallback from here.
@@ -178,7 +178,7 @@ class Frontend extends Handler {
 	 * @uses Registry::get() to retrieve the post_language_override option.
 	 * @uses Rewriter::localize_here() to generate the localized URL for the language.
 	 */
-	public static function redirect_language() {
+	final public static function redirect_language() {
 		// Don't do anything on non-HEAD/GET request
 		if ( isset( $_SERVER['REQUEST_METHOD'] ) && ! in_array( strtoupper( $_SERVER['REQUEST_METHOD'] ), array( 'GET', 'HEAD' ) ) ) {
 			return;
@@ -262,7 +262,7 @@ class Frontend extends Handler {
 	 * @return bool|string False if localized versions of both URLs match,
 	 *                     otherwise the intended redirect URL.
 	 */
-	public static function localize_canonical( $redirect_url, $requested_url ) {
+	final public static function localize_canonical( $redirect_url, $requested_url ) {
 		if( Rewriter::localize_url( $redirect_url ) == Rewriter::localize_url( $requested_url ) ) {
 			return false;
 		}
@@ -290,7 +290,7 @@ class Frontend extends Handler {
 	 *
 	 * @return array The modified $locations with unlocalized versions updated.
 	 */
-	protected static function localize_locations( $type, $locations, $registered ) {
+	final private static function localize_locations( $type, $locations, $registered ) {
 		// Abort if not supported
 		if ( ! Registry::is_feature_localizable( "{$type}_locations", true ) ) {
 			return $locations;
@@ -330,7 +330,7 @@ class Frontend extends Handler {
 	 *
 	 * @global array $_wp_registered_nav_menus The registered nav menus list.
 	 */
-	public static function localize_nav_menu_locations( $locations ) {
+	final public static function localize_nav_menu_locations( $locations ) {
 		global $_wp_registered_nav_menus;
 
 		$locations = static::localize_locations( 'nav_menu', $locations, $_wp_registered_nav_menus );
@@ -347,7 +347,7 @@ class Frontend extends Handler {
 	 *
 	 * @global array $wp_registered_sidebars The registered sidebars list.
 	 */
-	public static function localize_sidebar_locations( $locations ) {
+	final public static function localize_sidebar_locations( $locations ) {
 		global $wp_registered_sidebars;
 
 		$locations = static::localize_locations( 'sidebar', $locations, $wp_registered_sidebars );
@@ -369,7 +369,7 @@ class Frontend extends Handler {
 	 *
 	 * @return array The modified menu items.
 	 */
-	public static function localize_menu_items( $items, $menu ) {
+	final public static function localize_menu_items( $items, $menu ) {
 		// Get the locations so we can find what this menu belongs to
 		$theme_location = null;
 		foreach ( get_nav_menu_locations() as $location => $menu_id ) {
@@ -409,7 +409,7 @@ class Frontend extends Handler {
 	 *
 	 * @return array The modified items.
 	 */
-	public static function handle_language_links( $items ) {
+	final public static function handle_language_links( $items ) {
 		foreach ( $items as $i => $item ) {
 			if ( $item->type == 'nl_language_link' ) {
 				// Language link, set URL to the localized version of the current location
@@ -438,7 +438,7 @@ class Frontend extends Handler {
 	 *
 	 * @return string The replaced locale.
 	 */
-	public static function rewrite_locale() {
+	final public static function rewrite_locale() {
 		// Return the current language's locale_name
 		return Registry::current_language( 'locale_name' );
 	}
@@ -454,7 +454,7 @@ class Frontend extends Handler {
 	 *
 	 * @return array The modified list of classes.
 	 */
-	public static function add_body_classes( $classes ) {
+	final public static function add_body_classes( $classes ) {
 		// Add text direction if not already there
 		$direction = is_rtl() ? 'rtl' : 'ltr';
 		if ( ! in_array( $direction, $classes ) ) {
@@ -481,7 +481,7 @@ class Frontend extends Handler {
 	 *
 	 * @return int The ID of the translation.
 	 */
-	public static function default_language_post( $post_id ) {
+	final public static function default_language_post( $post_id ) {
 		$default_language = Registry::default_language();
 
 		$post_id = Translator::get_post_translation( $post_id, $default_language, false );
@@ -503,7 +503,7 @@ class Frontend extends Handler {
 	 *
 	 * @return int The ID of the translation.
 	 */
-	public static function current_language_post( $post_id ) {
+	final public static function current_language_post( $post_id ) {
 		$current_language = Registry::current_language();
 
 		$post_id = Translator::get_post_translation( $post_id, $current_language, true );
@@ -520,7 +520,7 @@ class Frontend extends Handler {
 	 *
 	 * @return string The filtered date format string.
 	 */
-	public static function localize_date_format( $format ) {
+	final public static function localize_date_format( $format ) {
 		// Abort if localize_date option isn't enabled
 		if ( ! Registry::get( 'localize_date' ) ) {
 			return $format;
@@ -548,7 +548,7 @@ class Frontend extends Handler {
 	 *
 	 * @return string The modified join clause.
 	 */
-	public static function add_adjacent_translation_join_clause( $clause ) {
+	final public static function add_adjacent_translation_join_clause( $clause ) {
 		global $wpdb;
 
 		// Get the current post
@@ -579,7 +579,7 @@ class Frontend extends Handler {
 	 *
 	 * @return string The modified where clause.
 	 */
-	public static function add_adjacent_translation_where_clause( $clause ) {
+	final public static function add_adjacent_translation_where_clause( $clause ) {
 		global $wpdb;
 
 		// Get the current post
@@ -615,7 +615,7 @@ class Frontend extends Handler {
 	 *
 	 * @return string The modified join clause.
 	 */
-	public static function add_archives_translation_join_clause( $clause, $request ) {
+	final public static function add_archives_translation_join_clause( $clause, $request ) {
 		global $wpdb;
 
 		// Abort if post type is not supported
@@ -644,7 +644,7 @@ class Frontend extends Handler {
 	 *
 	 * @return string The modified where clause.
 	 */
-	public static function add_archives_translation_where_clause( $clause, $request ) {
+	final public static function add_archives_translation_where_clause( $clause, $request ) {
 		global $wpdb;
 
 		// Abort if post type is not supported
@@ -671,7 +671,7 @@ class Frontend extends Handler {
 	 *
 	 * @uses Registry::get() to check for the patch_wp_locale option.
 	 */
-	public static function maybe_patch_wp_locale() {
+	final public static function maybe_patch_wp_locale() {
 		global $wp_locale;
 
 		// Abort if no patching is wanted
@@ -694,7 +694,7 @@ class Frontend extends Handler {
 	 *
 	 * @return string The filtered value.
 	 */
-	public static function handle_text_direction( $translation, $text, $context ) {
+	final public static function handle_text_direction( $translation, $text, $context ) {
 		// If text direction context, use language's assigned one
 		if ( $context == 'text direction' ) {
 			return Registry::current_language( 'direction' );
@@ -716,7 +716,7 @@ class Frontend extends Handler {
 	 *
 	 * @return string The filtered URI.
 	 */
-	public static function localize_uri( $uri ) {
+	final public static function localize_uri( $uri ) {
 		// Only do so if using the domain rewrite method, and if enabled
 		if ( Registry::get( 'url_rewrite_method' ) == 'domain'
 		&& Rewriter::will_do_localization() ) {
@@ -734,7 +734,7 @@ class Frontend extends Handler {
 	 *
 	 * @return array The filtered URLs.
 	 */
-	public static function localize_dir( $dir ) {
+	final public static function localize_dir( $dir ) {
 		// Only do so if using the domain rewrite method, and if enabled
 		if ( Registry::get( 'url_rewrite_method' ) == 'domain'
 		&& Rewriter::will_do_localization() ) {
@@ -753,7 +753,7 @@ class Frontend extends Handler {
 	 *
 	 * @return string The filtered content.
 	 */
-	public static function localize_attachment_urls( $content ) {
+	final public static function localize_attachment_urls( $content ) {
 		// Only do so if using the domain rewrite method, and if enabled
 		if ( Registry::get( 'url_rewrite_method' ) == 'domain'
 		&& Rewriter::will_do_localization() ) {

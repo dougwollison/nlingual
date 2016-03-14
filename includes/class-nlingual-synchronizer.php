@@ -23,7 +23,7 @@ namespace nLingual;
  * @since 2.0.0
  */
 
-class Synchronizer {
+final class Synchronizer {
 	// =========================
 	// ! Object Synchronizing
 	// =========================
@@ -48,7 +48,7 @@ class Synchronizer {
 	 *
 	 * @return bool TRUE if successful, FALSE if errors occurred.
 	 */
-	public static function sync_posts( $original, $target, $rules = null ) {
+	final public static function sync_posts( $original, $target, $rules = null ) {
 		global $wpdb;
 
 		// Get post objects if not already passed
@@ -149,7 +149,7 @@ class Synchronizer {
 	 * @param int   $post_id  The ID of the post to synchronize with.
 	 * @param array $skip_ids A blacklist of IDs to not sync with.
 	 */
-	public static function sync_post_with_sisters( $post_id, $skip_ids = array() ) {
+	final public static function sync_post_with_sisters( $post_id, $skip_ids = array() ) {
 		// Get the translations
 		$translations = Translator::get_post_translations( $post_id );
 
@@ -186,7 +186,7 @@ class Synchronizer {
 	 *
 	 * @return WP_Post|false The cloned post or false on failure.
 	 */
-	public static function clone_post( $post, $language, $title = null, $_title_is_default = false ) {
+	final public static function clone_post( $post, $language, $title = null, $_title_is_default = false ) {
 		// Validate $post if an ID
 		if ( ! is_a( $post, 'WP_Post' ) ) {
 			$post = get_post( $post );

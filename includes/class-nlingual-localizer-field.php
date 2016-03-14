@@ -22,7 +22,7 @@ namespace nLingual;
  * @since 2.0.0
  */
 
-class Localizer_Field extends Model {
+final class Localizer_Field extends Model {
 	// =========================
 	// ! Properties
 	// =========================

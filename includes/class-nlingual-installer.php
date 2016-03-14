@@ -21,7 +21,7 @@ namespace nLingual;
  * @since 2.0.0
  */
 
-class Installer extends Handler {
+final class Installer extends Handler {
 	// =========================
 	// ! Hook Registration
 	// =========================
@@ -36,7 +36,7 @@ class Installer extends Handler {
 	 * @uses Installer::plugin_deactivate() as the deactivation hook.
 	 * @uses Installer::plugin_uninstall() as the uninstall hook.
 	 */
-	public static function register_hooks() {
+	final public static function register_hooks() {
 		// Plugin hooks
 		register_activation_hook( NL_PLUGIN_FILE, array( __CLASS__, 'plugin_activate' ) );
 		register_deactivation_hook( NL_PLUGIN_FILE, array( __CLASS__, 'plugin_deactivate' ) );
@@ -55,7 +55,7 @@ class Installer extends Handler {
 	 *
 	 * @since 2.0.0
 	 */
-	protected static function plugin_security_check( $check_referer = null ) {
+	final private static function plugin_security_check( $check_referer = null ) {
 		// Make sure they have permisson
 		if ( ! current_user_can( 'activate_plugins' ) ) {
 			return false;
@@ -84,7 +84,7 @@ class Installer extends Handler {
 	 *
 	 * @return bool Wether or not we're upgrading.
 	 */
-	protected static function is_upgrading() {
+	final private static function is_upgrading() {
 		$old_options = get_option( 'nLingual-options' );
 		return is_array( $old_options );
 	}
@@ -111,7 +111,7 @@ class Installer extends Handler {
 	 *
 	 * @return string The unlocalized version found.
 	 */
-	public static function convert_split_string( $value, $string_key, $object_id = 0 ) {
+	final public static function convert_split_string( $value, $string_key, $object_id = 0 ) {
 		global $wpdb;
 
 		// Get the old separator, abort if not found
@@ -165,7 +165,7 @@ class Installer extends Handler {
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
 	 */
-	public static function plugin_activate() {
+	final public static function plugin_activate() {
 		if ( ! static::plugin_security_check( 'activate' ) ) {
 			return;
 		}
@@ -185,7 +185,7 @@ class Installer extends Handler {
 	 *
 	 * @uses Installer::plugin_security_check() to check for deactivation nonce.
 	 */
-	public static function plugin_deactivate() {
+	final public static function plugin_deactivate() {
 		if ( ! static::plugin_security_check( 'deactivate' ) ) {
 			return;
 		}
@@ -202,7 +202,7 @@ class Installer extends Handler {
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
 	 */
-	public static function plugin_uninstall() {
+	final public static function plugin_uninstall() {
 		global $wpdb;
 
 		if ( ! static::plugin_security_check() ) {
@@ -237,7 +237,7 @@ class Installer extends Handler {
 	 *
 	 * @uses Registry::get_defaults() to get the default option values.
 	 */
-	protected static function install_options() {
+	final private static function install_options() {
 		// Load the language presets
 		$presets = require( NL_PLUGIN_DIR . '/includes/presets-languages.php' );
 
@@ -273,7 +273,7 @@ class Installer extends Handler {
 	 *
 	 * @global wpdb $wpdb The database abstraction class instance.
 	 */
-	protected static function install_tables() {
+	final private static function install_tables() {
 		global $wpdb;
 
 		// Load dbDelta utility
@@ -325,7 +325,7 @@ class Installer extends Handler {
 	 *
 	 * @return bool Wether or not an upgrade was performed.
 	 */
-	public static function upgrade() {
+	final public static function upgrade() {
 		global $wpdb;
 
 		// Abort if the site was previously using nLingual 2 or higher
@@ -364,7 +364,7 @@ class Installer extends Handler {
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
 	 */
-	protected static function convert_tables() {
+	final private static function convert_tables() {
 		global $wpdb;
 
 		// Abort if already flagged as converted
@@ -415,7 +415,7 @@ class Installer extends Handler {
 	 * @uses Installer::get_old_option() to fetch/archive general/sync options.
 	 * @uses Installer::convert_split_string() to convert blog name/description.
 	 */
-	protected static function convert_options() {
+	final private static function convert_options() {
 		global $wpdb;
 
 		// Abort if already flagged as converted

@@ -22,7 +22,7 @@ namespace nLingual;
  * @since 2.0.0
  */
 
-class Liaison extends Handler {
+final class Liaison extends Handler {
 	// =========================
 	// ! Hook Registration
 	// =========================
@@ -32,7 +32,7 @@ class Liaison extends Handler {
 	 *
 	 * @since 2.0.0
 	 */
-	public static function register_hooks() {
+	final public static function register_hooks() {
 		// Backwards compatibility
 		static::add_action( 'plugins_loaded', 'add_backwards_compatibility', 10, 0 );
 
@@ -52,7 +52,7 @@ class Liaison extends Handler {
 	 *
 	 * @since 2.0.0
 	 */
-	public static function add_backwards_compatibility() {
+	final public static function add_backwards_compatibility() {
 		// Abort if backwards_compatible isn't enabled
 		if ( ! Registry::get( 'backwards_compatible' ) ) {
 			return;
@@ -98,7 +98,7 @@ class Liaison extends Handler {
 	 *
 	 * @return array The modified list of classes.
 	 */
-	public static function add_body_classes( $classes ) {
+	final public static function add_body_classes( $classes ) {
 		// Add language slug
 		$classes[] = 'lang-' . Registry::current_language( 'slug' );
 
@@ -119,7 +119,7 @@ class Liaison extends Handler {
 	 *
 	 * @return URL The filtered URL object.
 	 */
-	public static function redirect_old_process_url_hook( URL $the_url, $old_url_data ) {
+	final public static function redirect_old_process_url_hook( URL $the_url, $old_url_data ) {
 		// Only apply the old filter if there are hooks registered to it.
 		if ( has_filter( 'nLingual_process_url' ) ) {
 			/**
@@ -151,7 +151,7 @@ class Liaison extends Handler {
 	 *
 	 * @return string The filtered URL.
 	 */
-	public static function redirect_old_localize_url_hook( $url, $old_url, Language $language, $relocalize ) {
+	final public static function redirect_old_localize_url_hook( $url, $old_url, Language $language, $relocalize ) {
 		// Only apply the old filter if there are hooks registered to it.
 		if ( has_filter( 'nLingual_localize_url' ) ) {
 			/**
@@ -181,7 +181,7 @@ class Liaison extends Handler {
 	 *
 	 * @return string The filtered URL.
 	 */
-	public static function redirect_old_localize_here_array_hook( $url, $old_url, Language $language ) {
+	final public static function redirect_old_localize_here_array_hook( $url, $old_url, Language $language ) {
 		// Only apply the old filter if there are hooks registered to it.
 		if ( has_filter( 'nLingual_localize_here_array' ) ) {
 			// Convert to data array
@@ -215,7 +215,7 @@ class Liaison extends Handler {
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
 	 */
-	public static function compatibility_convert_terms_notice() {
+	final public static function compatibility_convert_terms_notice() {
 		global $wpdb;
 
 		// Get the old separator, abort if not found
@@ -255,7 +255,7 @@ class Liaison extends Handler {
 	 *
 	 * @uses Installer::convert_split_string() to handle split term names/descriptions.
 	 */
-	public static function compatibility_convert_terms_process() {
+	final public static function compatibility_convert_terms_process() {
 		global $wpdb;
 
 		// Only proceed if action is correct
@@ -329,7 +329,7 @@ class Liaison extends Handler {
 	 *
 	 * @since 2.0.0
 	 */
-	public static function compatibility_convert_terms_success() {
+	final public static function compatibility_convert_terms_success() {
 		// Abort if no indication of terms being converted
 		if ( ! isset( $_GET['notice'] ) || $_GET['notice'] != 'nl-terms-converted' ) {
 			return;
@@ -353,7 +353,7 @@ class Liaison extends Handler {
 	 *
 	 * @uses Frontend::current_language_post() on the qs_helper_get_index filter.
 	 */
-	public static function add_quickstart_helpers() {
+	final public static function add_quickstart_helpers() {
 		// Abort if QuickStart isn't present
 		if ( ! function_exists( 'QuickStart' ) ) {
 			return;
@@ -393,7 +393,7 @@ class Liaison extends Handler {
 	 *
 	 * @return mixed The default language ot use.
 	 */
-	public static function quickstart_order_manager_language( $pre_value, \WP_Query $query ) {
+	final public static function quickstart_order_manager_language( $pre_value, \WP_Query $query ) {
 		// Get the context and the post type
 		$context = $query->get( 'qs-context' );
 		$post_type = $query->get( 'post_type' );
@@ -427,7 +427,7 @@ class Liaison extends Handler {
 	 *
 	 * @uses Frontend::current_language_post() on the qs_helper_get_index filter.
 	 */
-	public static function add_indexpages_helpers() {
+	final public static function add_indexpages_helpers() {
 		// Abort if IndexPages isn't present
 		if ( ! class_exists( 'IndexPages\System' ) ) {
 			return;
@@ -461,7 +461,7 @@ class Liaison extends Handler {
 	 *
 	 * @return array The filtered post states list.
 	 */
-	public static function indexpages_flag_translations( array $post_states, \WP_Post $post ) {
+	final public static function indexpages_flag_translations( array $post_states, \WP_Post $post ) {
 		// Determine which function to use (IndexPages' Registry::is_index_page() or QuickStart's is_index_page())
 		if ( class_exists( 'IndexPages\Registry' ) ) {
 			$function = array( 'IndexPages\Registry', 'is_index_page' );

@@ -19,7 +19,7 @@ namespace nLingual;
  * @since 2.0.0
  */
 
-class Locale extends \WP_Locale {
+final class Locale extends \WP_Locale {
 	/**
 	 * @see WP_Locale::init()
 	 */
