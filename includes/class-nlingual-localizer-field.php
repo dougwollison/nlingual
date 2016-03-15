@@ -114,8 +114,14 @@ final class Localizer_Field extends Model {
 	 *		@option string "field"    The name of the field the field is tied to.
 	 *		@option string "field_id" The ID of the field the field is tied to.
 	 */
-	public function __construct( $id, $values ) {
-		$values['id'] = $id;
+	public function __construct( $id, array $values ) {
+		$values = array_merge( $values, array(
+			'id' => $id,
+			'key' => null,
+			'field' => null,
+			'field_id' => null,
+			'screen' => array(),
+		) );
 
 		// Assume key is the same as id if not set
 		if ( is_null( $values['key'] ) ) {
