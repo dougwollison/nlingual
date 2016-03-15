@@ -70,7 +70,6 @@ final class Languages implements \Iterator {
 	 * @since 2.0.0
 	 */
 	final public function rewind() {
-		var_dump(__FUNCTION__, 0);
 		$this->position = 0;
 	}
 
@@ -82,7 +81,6 @@ final class Languages implements \Iterator {
 	 * @return mixed The current element.
 	 */
 	final public function current() {
-		var_dump(__FUNCTION__, $this->items[ $this->position ]);
 		return $this->items[ $this->position ];
 	}
 
@@ -94,7 +92,6 @@ final class Languages implements \Iterator {
 	 * @return int|string The current key.
 	 */
 	final public function key() {
-		var_dump(__FUNCTION__, $this->position);
 		return $this->position;
 	}
 
@@ -106,7 +103,6 @@ final class Languages implements \Iterator {
 	 * @return mixed The next element.
 	 */
 	final public function next() {
-		var_dump(__FUNCTION__, $this->position);
 		++$this->position;
 	}
 
@@ -118,7 +114,6 @@ final class Languages implements \Iterator {
 	 * @return bool Wether or not the position is valid.
 	 */
 	final public function valid() {
-		var_dump(__FUNCTION__, isset( $this->items[ $this->position ] ));
 		return isset( $this->items[ $this->position ] );
 	}
 
@@ -130,7 +125,6 @@ final class Languages implements \Iterator {
 	 * @return int The length of the array.
 	 */
 	final public function count() {
-		var_dump(__FUNCTION__, count( $this->items ));
 		return count( $this->items );
 	}
 
@@ -325,7 +319,7 @@ final class Languages implements \Iterator {
 	final public function add( $language, $sort = true ) {
 		// If we have a dummy, remove it now that we're adding a real one
 		if ( isset( $this->items[0] ) && $this->items[0]->id === -1 ) {
-			unset( $this->items[0] );
+			array_shift( $this->items );
 		}
 
 		// Create new Language object from array if needed

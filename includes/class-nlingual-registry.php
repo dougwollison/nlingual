@@ -693,7 +693,6 @@ final class Registry {
 
 		if ( $what == 'languages' ) {
 			// Save the languages
-			var_dump(static::$languages->export());
 			update_option( 'nlingual_languages', static::$languages->export() );
 		}
 	}
