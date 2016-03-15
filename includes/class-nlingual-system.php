@@ -637,7 +637,7 @@ final class System extends Handler {
 	 *
 	 * @param object $query The query object.
 	 */
-	function set_queried_language( $query ) {
+	public static function set_queried_language( $query ) {
 		// Get the language query_var name, and the query's variables (by reference)
 		$query_var = Registry::get( 'query_var' );
 		$query_vars = &$query->query_vars;
