@@ -273,7 +273,7 @@ final class Localizer extends Handler {
 		static::$fields_by_type[ $field->type ][] = $field;
 
 		// Add to the screen index
-		list( $property, $match ) = $field->screen;
+		list( $property, $match ) = array_pad( $field->screen, 2, null );
 		if ( ! isset( static::$fields_by_screen[ $property ] ) ) {
 			static::$fields_by_screen[ $property ] = array();
 		}
