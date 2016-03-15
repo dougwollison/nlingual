@@ -44,7 +44,7 @@ final class Settings {
 	 */
 	final public static function add_field( $field, $options, $page, $section = 'default' ) {
 		// Parse the options
-		wp_parse_args( $options, array(
+		$options = wp_parse_args( $options, array(
 			'title' => '',
 			'label' => '',
 			'help'  => '',
