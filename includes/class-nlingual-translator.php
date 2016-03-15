@@ -212,9 +212,8 @@ final class Translator {
 		if ( $group ) {
 			return Registry::get_language( $group['language_by_object'][ $object_id ] );
 		}
-
 		// If language was not found, and language_is_required is enabled, use default
-		if ( ! $language && Registry::get( 'language_is_required' ) ) {
+		elseif ( Registry::get( 'language_is_required' ) ) {
 			return Registry::default_language();
 		}
 
