@@ -99,13 +99,14 @@ final class Manager extends Handler {
 	 */
 	final public static function add_menu_pages() {
 		// Main Options page
-		$options_page_hook = add_utility_page(
+		$options_page_hook = add_menu_page(
 			__( 'Translation Options', 'nlingual' ), // page title
 			_x( 'Translation', 'menu title', 'nlingual' ), // menu title
 			'manage_options', // capability
 			'nlingual-options', // slug
 			array( get_called_class(), 'settings_page' ), // callback
-			'dashicons-translation' // icon
+			'dashicons-translation', // icon
+			90 // Postion; after settings
 		);
 
 		// Languages manager
