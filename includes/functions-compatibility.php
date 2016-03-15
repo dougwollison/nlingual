@@ -161,14 +161,14 @@ function nL_get_lang( $field = null, $language = null ) {
  * @see nl_get_lang()
  */
 function nL_lang_id( $slug = null ) {
-	return nl_get_lang( 'slug', $slug );
+	return nl_get_lang( 'id', $slug );
 }
 
 /**
  * @see nl_get_lang()
  */
 function nL_lang_slug( $lang_id = null ) {
-	return nl_get_lang( 'id', $lang_id );
+	return nl_get_lang( 'slug', $lang_id );
 }
 
 /**
