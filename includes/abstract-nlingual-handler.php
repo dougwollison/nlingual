@@ -96,5 +96,7 @@ abstract class Handler {
 	 *
 	 * @since 2.0.0
 	 */
-	abstract public static function register_hooks();
+	public static function register_hooks() {
+		// To be written by extending class
+	}
 }
