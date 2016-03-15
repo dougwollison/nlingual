@@ -798,104 +798,20 @@ final class System extends Handler {
 
 		// If any where clauses were made, add them
 		if ( $where_clauses ) {
+			// Determine the ID field to use
+			$id_field = "$wpdb->posts.ID";
+			if ( is_a( $query, 'WP_Comment_Query' ) ) {
+				$id_field = "$wpdb->comments.comment_post_ID";
+			}
+
 			// Also add the join for the translations table
-			$clauses['join'] .= " LEFT JOIN $nl ON ($wpdb->posts.ID = $nl.object_id AND $nl.object_type = 'post')";
+			$clauses['join'] .= " LEFT JOIN $nl ON ($id_field = $nl.object_id AND $nl.object_type = 'post')";
 
 			// Add the new clause
 			$clauses['where'] .= " AND (" . implode( ' OR ', $where_clauses ) . ")";
 		}
 
 		return $clauses;
-	}
-
-	/**
-	 * Adds JOIN clause for the translations table if needed.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Registry::is_post_type_supported() to check if clause editing is needed.
-	 * @uses Registry::get() to get the query var option.
-	 *
-	 * @global \wpdb $wpdb The database abstraction class instance.
-	 *
-	 * @param string   $clause The JOIN clause.
-	 * @param WP_Query $query  The WP_Query instance.
-	 *
-	 * @return string The updated JOIN clauses.
-	 */
-	final public static function add_post_translations_join_clause( $clause, \WP_Query $query ) {
-		global $wpdb;
-
-		// Abort if language isn't specified
-		if ( $query->get( Registry::get( 'query_var' ) ) === '' ) {
-			return $clause;
-		}
-
-		// Add the join for the translations table
-		$clause .= " LEFT JOIN $wpdb->nl_translations ON ($wpdb->posts.ID = $wpdb->nl_translations.object_id AND $wpdb->nl_translations.object_type = 'post')";
-
-		return $clause;
-	}
-
-	/**
-	 * Adds WHERE clause for the translation language id if needed.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Registry::is_post_type_supported() to check if clause editing is needed.
-	 * @uses Registry::get() to get the query var option.
-	 * @uses Registry::languages() to get the available languages.
-	 * @uses Languages::get() to get a specific language by slug/ID.
-	 *
-	 * @global \wpdb $wpdb The database abstraction class instance.
-	 *
-	 * @param string   $clause The WHERE clause.
-	 * @param WP_Query $query  The WP_Query instance.
-	 *
-	 * @return string The updated WHERE clauses.
-	 */
-	final public static function add_post_translations_where_clause( $clause, \WP_Query $query ) {
-		global $wpdb;
-
-		// Get the language(s) specified
-		$languages = $query->get( Registry::get( 'query_var' ) );
-
-		// Abort if not set
-		if ( $languages === '' ) {
-			return $clause;
-		}
-
-		// Ensure it's an array
-		$languages = (array) $languages;
-
-		// Get the available languages for valiation purposes
-		$all_languages = Registry::languages();
-
-		// Loop through each language specified and build the subclause
-		$subclauses = array();
-		foreach ( $languages as $language ) {
-			// Skip if blank
-			if ( $language === '' ) {
-				continue;
-			}
-
-			// Check if the language specified is "None"
-			if ( $language === '0' ) {
-				$subclauses[] = "$wpdb->nl_translations.language_id IS NULL";
-			}
-			// Otherwise check if the language exists
-			elseif ( $language = $all_languages->get( $language ) ) {
-				$subclauses[] = $wpdb->prepare( "$wpdb->nl_translations.language_id = %d", $language->id );
-			}
-		}
-
-		// If any subclauses were made, add them
-		if ( $subclauses ) {
-			// Add the new clause
-			$clause .= " AND (" . implode( ' OR ', $subclauses ) . ")";
-		}
-
-		return $clause;
 	}
 
 	/**
