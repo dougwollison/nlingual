@@ -393,7 +393,12 @@ final class Liaison extends Handler {
 	 *
 	 * @return mixed The default language ot use.
 	 */
-	final public static function quickstart_order_manager_language( $pre_value, \WP_Query $query ) {
+	final public static function quickstart_order_manager_language( $pre_value, $query ) {
+		// Don't bother on comment queries
+		if ( is_a( $query, 'WP_Comment_Query' ) ) {
+			return $pre_value;
+		}
+
 		// Get the context and the post type
 		$context = $query->get( 'qs-context' );
 		$post_type = $query->get( 'post_type' );
