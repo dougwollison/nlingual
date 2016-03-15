@@ -22,7 +22,7 @@ namespace nLingual;
  * @since 2.0.0
  */
 
-class Languages implements \Iterator {
+final class Languages implements \Iterator {
 	// =========================
 	// ! Properties
 	// =========================
@@ -69,7 +69,7 @@ class Languages implements \Iterator {
 	 *
 	 * @since 2.0.0
 	 */
-	public function rewind() {
+	final public function rewind() {
 		$this->position = 0;
 	}
 
@@ -80,7 +80,7 @@ class Languages implements \Iterator {
 	 *
 	 * @return mixed The current element.
 	 */
-	public function current() {
+	final public function current() {
 		return $this->items[ $this->position ];
 	}
 
@@ -91,7 +91,7 @@ class Languages implements \Iterator {
 	 *
 	 * @return int|string The current key.
 	 */
-	public function key() {
+	final public function key() {
 		return $this->position;
 	}
 
@@ -102,7 +102,7 @@ class Languages implements \Iterator {
 	 *
 	 * @return mixed The next element.
 	 */
-	public function next() {
+	final public function next() {
 		++$this->position;
 	}
 
@@ -113,7 +113,7 @@ class Languages implements \Iterator {
 	 *
 	 * @return bool Wether or not the position is valid.
 	 */
-	public function valid() {
+	final public function valid() {
 		return isset( $this->items[ $this->position ] );
 	}
 
@@ -124,7 +124,7 @@ class Languages implements \Iterator {
 	 *
 	 * @return int The length of the array.
 	 */
-	public function count() {
+	final public function count() {
 		return count( $this->items );
 	}
 
@@ -140,7 +140,7 @@ class Languages implements \Iterator {
 	 * @param array $languages      Optional. A list of languages to add.
 	 * @param int   $auto_increment Optional. An explicit auto_increment value to use.
 	 */
-	public function __construct( $languages = array(), $auto_increment = 1 ) {
+	final public function __construct( $languages = array(), $auto_increment = 1 ) {
 		if ( is_array( $languages ) && ! empty ( $languages ) ) {
 			foreach ( $languages as $language ) {
 				$this->add( $language, false );
@@ -172,7 +172,7 @@ class Languages implements \Iterator {
 	 *
 	 * @return self.
 	 */
-	public function sort( $field = 'list_order', $order = 'asc' ) {
+	final public function sort( $field = 'list_order', $order = 'asc' ) {
 		usort( $this->items, function( $a, $b ) use ( $field ) {
 			if ( $a->$field == $b->$field ) {
 				return 0;
@@ -199,7 +199,7 @@ class Languages implements \Iterator {
 	 *
 	 * @return nLingual\Languages A new collection of languages
 	 */
-	public function filter( $filter = null, $value = null ) {
+	final public function filter( $filter = null, $value = null ) {
 		// No filter? Return original
 		if ( is_null( $filter ) ) {
 			return $this;
@@ -230,7 +230,7 @@ class Languages implements \Iterator {
 	 *
 	 * @return bool|Language The language if found (false if not).
 	 */
-	public function get( $value, $field = null ) {
+	final public function get( $value, $field = null ) {
 		// Guess $field based on nature of $language if not provided
 		if ( is_null( $field ) ) {
 			// Slug by default
@@ -268,7 +268,7 @@ class Languages implements \Iterator {
 	 *
 	 * @return bool|Language The language if found (false if not).
 	 */
-	public function nth( $index ) {
+	final public function nth( $index ) {
 		return $this->get( $index, '@' );
 	}
 
@@ -281,7 +281,7 @@ class Languages implements \Iterator {
 	 *
 	 * @return int|bool The index if found, false otherwise.
 	 */
-	public function find( $language ) {
+	final public function find( $language ) {
 		// Get the language object
 		if ( ! is_a( $language, __NAMESPACE__ . '\Language' ) ) {
 			$language = $this->get( $language );
@@ -310,7 +310,7 @@ class Languages implements \Iterator {
 	 *
 	 * @return self.
 	 */
-	public function add( $language, $sort = true ) {
+	final public function add( $language, $sort = true ) {
 		// Create new Language object from array if needed
 		if ( is_array( $language ) ) {
 			$language = new Language( $language );
@@ -347,7 +347,7 @@ class Languages implements \Iterator {
 	 *
 	 * @return self.
 	 */
-	public function remove( $language ) {
+	final public function remove( $language ) {
 		// Get the object's index
 		$index = $this->find( $language );
 		if ( $index !== false ) {
@@ -367,7 +367,7 @@ class Languages implements \Iterator {
 	 *
 	 * @return bool|Language The language object if found, false otherwise.
 	 */
-	public function match_tag( $language_tag ) {
+	final public function match_tag( $language_tag ) {
 		// Sanitize for looser comparison
 		$language_tag = sanitize_tag( $language_tag );
 
@@ -395,7 +395,7 @@ class Languages implements \Iterator {
 	 *
 	 * @return array An array of the languages.
 	 */
-	public function dump() {
+	final public function dump() {
 		$data = array();
 
 		foreach ( $this as $language ) {
@@ -415,7 +415,7 @@ class Languages implements \Iterator {
 	 *
 	 * @return array An array of the the selected language properties.
 	 */
-	public function pluck( $val_field, $key_field = 'id' ) {
+	final public function pluck( $val_field, $key_field = 'id' ) {
 		$data = array();
 
 		foreach ( $this as $i => $language ) {
@@ -436,7 +436,7 @@ class Languages implements \Iterator {
 	 *
 	 * @return array An array with a dump of $items and the $auto_increment.
 	 */
-	public function export() {
+	final public function export() {
 		$data = array(
 			'entries' => $this->dump(),
 			'auto_increment' => $this->auto_increment,

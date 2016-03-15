@@ -21,7 +21,7 @@ namespace nLingual;
  * @since 2.0.0
  */
 
-class Language extends Model {
+final class Language extends Model {
 	// =========================
 	// ! Properties
 	// =========================
@@ -159,7 +159,7 @@ class Language extends Model {
 	 *		@option string "direction"   The text direction of the language (ltr or rtl).
 	 *		@option int    "list_order"  The disired order of the language.
 	 */
-	public function __construct( $values ) {
+	final public function __construct( $values ) {
 		// Setup the object with the provided values
 		parent::__construct( $values );
 

@@ -20,7 +20,7 @@ namespace nLingual;
  * @since 2.0.0
  */
 
-class URL extends Model {
+final class URL extends Model {
 	// =========================
 	// ! Properties
 	// =========================
@@ -138,7 +138,7 @@ class URL extends Model {
 	 * @param string|array $url      The URL to process.
 	 * @param array        $defaults Optional. The default property values.
 	 */
-	public function parse( $url, $defaults = array() ) {
+	final public function parse( $url, $defaults = array() ) {
 		// If it's a string, parse it
 		if ( is_string( $url ) ) {
 			$url_data = parse_url( $url );
@@ -168,7 +168,7 @@ class URL extends Model {
 	 *
 	 * @return string $url The URL in string form.
 	 */
-	public function build() {
+	final public function build() {
 		$url = '';
 
 		// Build the query string if args are present
@@ -239,7 +239,7 @@ class URL extends Model {
 	 *
 	 * @see URL::parse()
 	 */
-	public function __construct( $url = null, $defaults = array() ) {
+	final public function __construct( $url = null, $defaults = array() ) {
 		// If a URL is provided, parse it
 		if ( ! is_null( $url ) ) {
 			$this->parse( $url, $defaults );
@@ -251,7 +251,7 @@ class URL extends Model {
 	 *
 	 * @see URL::build()
 	 */
-	public function __toString() {
+	final public function __toString() {
 		return $this->build();
 	}
 }
