@@ -34,6 +34,11 @@ final class Frontend extends Handler {
 	 * @return Language|bool The accepted language, false if no match.
 	 */
 	final private static function get_accepted_language() {
+		// Abort if no accept-language entry is present
+		if ( ! isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
+			return false;
+		}
+
 		$accepted_languages = explode( ',', $_SERVER['HTTP_ACCEPT_LANGUAGE'] );
 		// Loop through them and get the first match
 		foreach ( $accepted_languages as $language_tag ) {
