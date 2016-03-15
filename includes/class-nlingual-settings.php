@@ -169,7 +169,7 @@ final class Settings {
 		$value = Registry::get( $name );
 
 		// Process the value via the map if necessary
-		if ( $map ) {
+		if ( ! empty( $map ) ) {
 			$value = static::extract_value( $value, $map );
 		}
 
