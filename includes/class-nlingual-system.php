@@ -85,6 +85,9 @@ final class System extends Handler {
 	 */
 	final public static function reload_textdomains( $old_local ) {
 		global $l10n;
+		if ( ! is_array( $l10n ) ) {
+			$l10n = array();
+		}
 
 		// Current locale
 		$new_locale = get_locale();
