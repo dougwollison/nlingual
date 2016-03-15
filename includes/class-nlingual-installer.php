@@ -459,9 +459,9 @@ final class Installer extends Handler {
 		$new_sync_rules = array( 'post_type' => array() );
 		foreach ( $old_sync_rules as $post_type => $rules ) {
 			$new_sync_rules['post_type'][ $post_type ] = array(
-				'post_fields' => $rules['data'],
-				'post_terms' => $rules['tax'],
-				'post_meta' => $rules['meta'],
+				'post_fields' => isset( $rules['data'] ) ? $rules['data'] : array(),
+				'post_terms' => isset( $rules['tax'] ) ? $rules['tax'] : array(),
+				'post_meta' => isset( $rules['meta'] ) ? $rules['meta'] : array(),
 			);
 		}
 
