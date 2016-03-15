@@ -381,8 +381,9 @@ final class Translator {
 		// Get the translation group for the object
 		$group = static::get_group( $object_type, $object_id );
 
-		// If no translation group exists, return false
-		if ( ! $group ) {
+		// If no translation group exists, or the language entry doesn't,
+		// return false or the original object id
+		if ( ! $group || ! isset( $group['object_by_language'][ $language->id ] ) ) {
 			return $return_self ? $object_id : false;
 		}
 
