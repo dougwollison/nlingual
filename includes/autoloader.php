@@ -74,22 +74,6 @@ function find_abstract( $class ) {
 	find( 'abstract', $class );
 }
 
-/**
- * Find/load an nLingual trait.
- *
- * @internal
- *
- * @since 2.0.0
- *
- * @uses find() to find and load the trait if it exists.
- *
- * @param string $trait The name of the trait being requested.
- */
-function find_trait( $trait ) {
-	find( 'trait', $trait );
-}
-
 // Register the find
 spl_autoload_register( __NAMESPACE__ . '\\find_class' );
 spl_autoload_register( __NAMESPACE__ . '\\find_abstract' );
-spl_autoload_register( __NAMESPACE__ . '\\find_trait' );
