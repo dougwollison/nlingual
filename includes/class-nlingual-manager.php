@@ -164,7 +164,7 @@ final class Manager extends Handler {
 	final public static function register_settings() {
 		foreach ( array( 'options', 'localizables', 'synchronizer' ) as $group ) {
 			register_setting( 'nlingual-' . $group, 'nlingual_options', array( __CLASS__, 'update_options' ) );
-			static::{'setup_' . $group . '_fields'}();
+			call_user_func( array( __CLASS__, "setup_{$group}_fields" ) );
 		}
 	}
 

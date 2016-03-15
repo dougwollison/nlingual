@@ -624,10 +624,11 @@ final class Registry {
 
 		if ( $wp_rewrite ) {
 			// Use WP_Rewrite's check
-			return ! empty( $wp_rewrite->using_permalinks() );
+			return $wp_rewrite->using_permalinks();
 		} else {
 			// Does not exist yet, check permalink_structure option
-			return ! empty( get_option( 'permalink_structure' ) );
+			$permalink_structure = get_option( 'permalink_structure' );
+			return ! empty( $permalink_structure );
 		}
 	}
 
