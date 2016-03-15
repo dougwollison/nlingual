@@ -247,6 +247,14 @@ final class System extends Handler {
 		// Setup the registry
 		Registry::load();
 
+		var_dump(Registry::languages()->dump());
+
+		Registry::languages()->add(array('id'=>1), false);
+		Registry::languages()->add(array('id'=>2), false);
+
+		var_dump(Registry::languages()->dump());
+		exit;
+
 		// Register the Installer stuff
 		Installer::register_hooks();
 

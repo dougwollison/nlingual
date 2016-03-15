@@ -70,6 +70,7 @@ final class Languages implements \Iterator {
 	 * @since 2.0.0
 	 */
 	final public function rewind() {
+		var_dump(__FUNCTION__, 0);
 		$this->position = 0;
 	}
 
@@ -81,6 +82,7 @@ final class Languages implements \Iterator {
 	 * @return mixed The current element.
 	 */
 	final public function current() {
+		var_dump(__FUNCTION__, $this->items[ $this->position ]);
 		return $this->items[ $this->position ];
 	}
 
@@ -92,6 +94,7 @@ final class Languages implements \Iterator {
 	 * @return int|string The current key.
 	 */
 	final public function key() {
+		var_dump(__FUNCTION__, $this->position);
 		return $this->position;
 	}
 
@@ -103,6 +106,7 @@ final class Languages implements \Iterator {
 	 * @return mixed The next element.
 	 */
 	final public function next() {
+		var_dump(__FUNCTION__, $this->position);
 		++$this->position;
 	}
 
@@ -114,6 +118,7 @@ final class Languages implements \Iterator {
 	 * @return bool Wether or not the position is valid.
 	 */
 	final public function valid() {
+		var_dump(__FUNCTION__, isset( $this->items[ $this->position ] ));
 		return isset( $this->items[ $this->position ] );
 	}
 
@@ -125,6 +130,7 @@ final class Languages implements \Iterator {
 	 * @return int The length of the array.
 	 */
 	final public function count() {
+		var_dump(__FUNCTION__, count( $this->items ));
 		return count( $this->items );
 	}
 
@@ -137,10 +143,11 @@ final class Languages implements \Iterator {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param array $languages      Optional. A list of languages to add.
-	 * @param int   $auto_increment Optional. An explicit auto_increment value to use.
+	 * @param array $languages      Optional. A list of languages to add. (default empty array)
+	 * @param int   $auto_increment Optional. An explicit auto_increment value to use. (default 1)
+	 * @param bool  $use_dummy      Optional. Add dummy entry if none were provided. (default False)
 	 */
-	final public function __construct( $languages = array(), $auto_increment = 1 ) {
+	final public function __construct( $languages = array(), $auto_increment = 1, $add_dummy = false ) {
 		if ( is_array( $languages ) && ! empty ( $languages ) ) {
 			foreach ( $languages as $language ) {
 				$this->add( $language, false );
@@ -150,6 +157,11 @@ final class Languages implements \Iterator {
 		// If $auto_increment was 0 but we have items, use the max ID + 1
 		if ( $auto_increment == 1 && $this->count() > 0 ) {
 			$auto_increment = $this->sort( 'id', 'desc' )->nth( 0 )->id + 1;
+		}
+
+		// If we have no items but need a dummy at least, add it
+		if ( $this->count() == 0 && $add_dummy ) {
+			$this->items[] = new Language( array( 'id' => -1 ) );
 		}
 
 		// Sort the collection
@@ -294,7 +306,7 @@ final class Languages implements \Iterator {
 
 		// Loop through all languages and return index of first match
 		foreach ( $this->items as $index => $item ) {
-			if ( $item->id == $language->id ) {
+			if ( $item->id === $language->id ) {
 				return $index;
 			}
 		}
@@ -311,6 +323,11 @@ final class Languages implements \Iterator {
 	 * @return self.
 	 */
 	final public function add( $language, $sort = true ) {
+		// If we have a dummy, remove it now that we're adding a real one
+		if ( isset( $this->items[0] ) && $this->items[0]->id === -1 ) {
+			unset( $this->items[0] );
+		}
+
 		// Create new Language object from array if needed
 		if ( is_array( $language ) ) {
 			$language = new Language( $language );

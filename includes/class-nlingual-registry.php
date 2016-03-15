@@ -672,7 +672,7 @@ final class Registry {
 			'entries' => array(),
 			'auto_increment' => 1,
 		) );
-		static::$languages = new Languages( $data['entries'], $data['auto_increment'] );
+		static::$languages = new Languages( $data['entries'], $data['auto_increment'], 'add dummy' );
 
 		// Flag that we've loaded everything
 		static::$__loaded = true;
@@ -693,6 +693,7 @@ final class Registry {
 
 		if ( $what == 'languages' ) {
 			// Save the languages
+			var_dump(static::$languages->export());
 			update_option( 'nlingual_languages', static::$languages->export() );
 		}
 	}
