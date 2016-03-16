@@ -102,7 +102,6 @@ final class Documenter extends Handler {
 			'menu_order'     => _x( 'Menu Order',      'post field', 'nlingual' ),
 			'post_password'  => _x( 'Password',        'post field', 'nlingual' ),
 			'comment_status' => _x( 'Comment Status',  'post field', 'nlingual' ),
-			'ping_status'    => _x( 'Pingback Status', 'post field', 'nlingual' ),
 		);
 	}
 
@@ -260,7 +259,7 @@ final class Documenter extends Handler {
 		}
 
 		// Add sidebar if enabled
-		if ( $help['sidebar'] ) {
+		if ( isset( $help['sidebar'] ) ) {
 			$data = static::get_tab_data( 'sidebar', $help_id );
 
 			// Only add if there's data
