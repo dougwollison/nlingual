@@ -25,7 +25,6 @@ namespace nLingual;
  * @method void  register_*_meta_field( field $meta_key, array $args )
  *               localize a metadata field for an object type.
  */
-
 final class Localizer extends Handler {
 	// =========================
 	// ! Properties

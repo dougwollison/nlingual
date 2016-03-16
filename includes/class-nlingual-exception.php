@@ -56,7 +56,6 @@ define( 'NL_ERR_UNSUPPORTED', 405 );
  *
  * @since 2.0.0
  */
-
 final class Exception extends \Exception {
 	/**
 	 * The exception constructor, message required.

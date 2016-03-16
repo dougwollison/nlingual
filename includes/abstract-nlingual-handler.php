@@ -27,7 +27,6 @@ namespace nLingual;
  *
  * @since 2.0.0
  */
-
 abstract class Handler {
 	/**
 	 * Add an internal method to a filter hook.

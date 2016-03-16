@@ -29,7 +29,6 @@ namespace nLingual;
  * @method bool|array    get_*_translations() get an object's translations.
  * @method bool          set_*_translations() set an object's translations.
  */
-
 final class Translator {
 	// =========================
 	// ! Utilities

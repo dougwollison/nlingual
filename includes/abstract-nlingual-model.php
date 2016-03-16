@@ -22,7 +22,6 @@ namespace nLingual;
  *
  * @since 2.0.0
  */
-
 abstract class Model {
 	/**
 	 * Setup the property values.

@@ -26,7 +26,6 @@ namespace nLingual;
  * @method array get_term_sync_rules()  Get the sync rules for a taxonomy.
  * @method array get_term_clone_rules() Get the clone rules for a taxonomy.
  */
-
 final class Registry {
 	// =========================
 	// ! Properties

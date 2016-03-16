@@ -20,7 +20,6 @@ namespace nLingual;
  *
  * @since 2.0.0
  */
-
 final class Manager extends Handler {
 	// =========================
 	// ! Hook Registration

@@ -21,7 +21,6 @@ namespace nLingual;
  *
  * @since 2.0.0
  */
-
 final class Liaison extends Handler {
 	// =========================
 	// ! Hook Registration

@@ -20,7 +20,6 @@ namespace nLingual;
  *
  * @since 2.0.0
  */
-
 final class AJAX extends Handler {
 	// =========================
 	// ! Hook Registration
