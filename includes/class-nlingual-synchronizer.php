@@ -25,6 +25,42 @@ namespace nLingual;
 
 final class Synchronizer {
 	// =========================
+	// ! Utilities
+	// =========================
+
+	/**
+	 * Handle the post sync/clone rules for the Synchronizer.
+	 *
+	 * Ensures fields/terms/meta are present, and handle
+	 * the aliases dictated by existing values.
+	 *
+	 * @param array $rules The rules to prepare.
+	 *
+	 * @return array The prepared rules.
+	 */
+	final private static function prepare_post_rules( array $rules ) {
+		// Ensure the rule sets are present
+		$rules = wp_parse_args( array(
+			'post_fields' => array(),
+			'post_terms'  => array(),
+			'post_meta'   => array(),
+		), $rules );
+
+		// Handle the post_field aliases
+		if ( in_array( 'post_date', $rules['post_fields'] ) ) {
+			$rules['post_fields'][] = 'post_date_gmt';
+			$rules['post_fields'][] = 'post_modified';
+			$rules['post_fields'][] = 'post_modified_gmt';
+		}
+		if ( in_array( 'comment_status', $rules['post_fields'] ) ) {
+			$rules['post_fields'][] = 'ping_status';
+		}
+		$rules['post_fields'] = array_unique( $rules['post_fields'] );
+
+		return $rules;
+	}
+
+	// =========================
 	// ! Object Synchronizing
 	// =========================
 
@@ -69,6 +105,9 @@ final class Synchronizer {
 			$rules = Registry::get_post_sync_rules( $original->post_type );
 		}
 
+		// Prepare the rules
+		$rules = static::prepare_post_rules( $rules );
+
 		/**
 		 * Filter the post sync rules.
 		 *
@@ -81,7 +120,7 @@ final class Synchronizer {
 		$rules = apply_filters( 'nlingual_post_sync_rules', $rules, $original, $target );
 
 		// Post Fields
-		if ( isset( $rules['post_fields'] ) && $rules['post_fields'] ) {
+		if ( isset( $rules['post_field'] ) && $rules['post_fields'] ) {
 			// Build the list of fields to change
 			$changes = array();
 			foreach ( $rules['post_fields'] as $field ) {
@@ -105,7 +144,7 @@ final class Synchronizer {
 			$taxonomies = get_object_taxonomies( $post->post_type );
 			foreach ( $taxonomies as $taxonomy ) {
 				// Skip if not a whilelisted taxonomy
-				if ( is_array( $rules['post_terms'] ) && in_array( $taxonomy, $rules['post_terms'] ) ) {
+				if ( is_array( $rules['post_terms'] ) && ! in_array( $taxonomy, $rules['post_terms'] ) ) {
 					continue;
 				}
 
@@ -127,7 +166,7 @@ final class Synchronizer {
 			// Loop through and add to the translation
 			foreach ( $meta_data as $meta ) {
 				// Skip if not a whilelisted field
-				if ( is_array( $rules['post_meta'] ) && in_array( $meta->meta_key, $rules['post_meta'] ) ) {
+				if ( is_array( $rules['post_meta'] ) && ! in_array( $meta->meta_key, $rules['post_meta'] ) ) {
 					continue;
 				}
 
@@ -237,15 +276,11 @@ final class Synchronizer {
 			return false;
 		}
 
-		// Get the post object
-		$translation = get_post( $translation );
-
-		// Set the language of the translation and it's associate it with the original
-		Translator::set_post_language( $translation->ID, $language );
-		Translator::set_post_translation( $post->ID, $language, $translation->ID );
-
 		// Get the cloning rules
 		$rules = Registry::get_post_clone_rules();
+
+		// Prepare the rules
+		$rules = static::prepare_post_rules( $rules );
 
 		/**
 		 * Filter the post sync rules.
@@ -257,6 +292,13 @@ final class Synchronizer {
 		 * @param Language $language The language being cloned for.
 		 */
 		$rules = apply_filters( 'nlingual_post_clone_rules', $rules, $post, $language );
+
+		// Get the post object
+		$translation = get_post( $translation );
+
+		// Set the language of the translation and it's associate it with the original
+		Translator::set_post_language( $translation->ID, $language );
+		Translator::set_post_translation( $post->ID, $language, $translation->ID );
 
 		// Synchronize the two posts
 		static::sync_posts( $post->ID, $translation->ID, $rules );
