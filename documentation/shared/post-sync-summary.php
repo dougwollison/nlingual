@@ -5,7 +5,7 @@
 	_ef( 'The following details will be synchronized between sister %s', 'nlingual', $plural ); ?></strong>
 	<ul>
 		<?php if ( $rules['post_fields'] ) : ?>
-		<li><strong><?php _e( 'Post Data', 'nlingual' ); ?></strong> - <?php
+		<li><strong><?php _e( 'Post Data', 'nlingual' ); ?></strong>: <?php
 			$post_fields = array();
 			$post_field_names = nLingual\Documenter::post_field_names();
 			// Get the names of each field
@@ -19,7 +19,7 @@
 		<?php endif; ?>
 
 		<?php if ( $rules['post_terms'] ) : ?>
-		<li><strong><?php _e( 'Taxonomies', 'nlingual' ); ?></strong> - <?php
+		<li><strong><?php _e( 'Taxonomies', 'nlingual' ); ?></strong>: <?php
 			$taxonomies = array();
 			// Get the names of each field
 			foreach ( $rules['post_terms'] as $taxonomy ) {
@@ -30,7 +30,7 @@
 		<?php endif; ?>
 
 		<?php if ( $rules['post_meta'] ) : ?>
-		<li><strong><?php _e( 'Meta Data', 'nlingual' ); ?></strong> - <?php
+		<li><strong><?php _e( 'Meta Data', 'nlingual' ); ?></strong>: <?php
 			if ( in_array( '*', $rules['post_meta'] ) ) {
 				_e( 'All custom fields found.', 'nlingual' );
 			} else {
