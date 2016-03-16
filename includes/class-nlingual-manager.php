@@ -136,7 +136,7 @@ final class Manager extends Handler {
 			__( 'Synchronizer', 'nlingual' ), // menu title
 			'manage_options', // capability
 			'nlingual-synchronizer', // slug
-			array( get_called_class(), 'settings_page' ) // callback
+			array( get_called_class(), 'settings_page_synchronizer' ) // callback
 		);
 
 		// Setup the help tabs for each page
@@ -716,6 +716,34 @@ final class Manager extends Handler {
 					<?php $presets = require( NL_PLUGIN_DIR . '/includes/presets-languages.php' ); ?>
 					nLingual.presets = <?php echo json_encode( $presets ); ?>
 				</script>
+				<?php submit_button(); ?>
+			</form>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Output for generic settings page.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global $plugin_page The slug of the current admin page.
+	 */
+	final public static function settings_page_synchronizer() {
+		global $plugin_page;
+?>
+		<div class="wrap">
+			<h2><?php echo get_admin_page_title(); ?></h2>
+			<?php settings_errors(); ?>
+			<form method="post" action="options.php" id="<?php echo $plugin_page; ?>-form">
+				<?php settings_fields( $plugin_page ); ?>
+				<?php do_settings_sections( $plugin_page ); ?>
+				<p><small>
+					<sup>1</sup> <?php _e( 'includes creation/publication date, modified date, and their GMT versions', 'nlingual' ); ?><br />
+					<sup>2</sup> <?php _e( 'will also apply to trashing and untrashing', 'nlingual' ); ?><br />
+					<sup>3</sup> <?php _e( 'will use counterpart translation if found', 'nlingual' ); ?><br />
+					<sup>4</sup> <?php _e( 'includes pingback status', 'nlingual' ); ?>
+				</small></p>
 				<?php submit_button(); ?>
 			</form>
 		</div>
