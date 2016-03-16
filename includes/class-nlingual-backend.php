@@ -43,7 +43,7 @@ final class Backend extends Handler {
 		// Setup stuff
 		static::add_action( 'plugins_loaded', 'load_textdomain', 10, 0 );
 		static::add_action( 'plugins_loaded', 'setup_documentation', 10, 0 );
-		static::add_action( 'plugins_loaded', 'prepare_rules', 10, 0 );
+		static::add_action( 'plugins_loaded', 'parse_default_rules', 10, 0 );
 
 		// Plugin information
 		static::add_action( 'in_plugin_update_message-' . plugin_basename( NL_PLUGIN_FILE ), 'update_notice', 10, 1 );
@@ -174,7 +174,7 @@ final class Backend extends Handler {
 	}
 
 	/**
-	 * Prepare the sync/clone rules.
+	 * Prepare the sync/clone rules and default values.
 	 *
 	 * Defaults sync rules to "none" and clone rules to "all" for each post type.
 	 *
@@ -182,7 +182,7 @@ final class Backend extends Handler {
 	 *
 	 * @uses Registry::get() to retrieve a the sync/clone rules.
 	 */
-	final public static function prepare_rules() {
+	final public static function parse_default_rules() {
 		// Get the sync and clone rules, making sure post_type array is present for both
 		$sync_rules = Registry::get_sync_rules();
 		if ( ! isset( $sync_rules['post_type'] ) || ! is_array( $sync_rules['post_type'] ) ) {
