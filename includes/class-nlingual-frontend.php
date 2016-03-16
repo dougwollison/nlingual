@@ -122,6 +122,8 @@ final class Frontend extends Handler {
 	 * @uses Registry::set_language() to tentatively apply the detected language.
 	 */
 	final public static function detect_language() {
+		$language = false;
+
 		// First, check if the language was specified by the GET or POST parameters
 		if ( ( $query_var = Registry::get( 'query_var' ) ) && isset( $_REQUEST[ $query_var ] ) ) {
 			// Even if the language specified is invalid, don't fallback from here.
@@ -150,6 +152,15 @@ final class Frontend extends Handler {
 		elseif ( $language = static::get_accepted_language() ) {
 			$mode = 'ACCEPTED';
 		}
+
+		/**
+		 * Filter the detected language.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param Language $language The language detected.
+		 */
+		$language = apply_filters( 'nlingual_detected_language', $language );
 
 		if ( $language ) {
 			/**
