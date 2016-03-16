@@ -279,7 +279,9 @@
 		var $localizer = $( '<span class="nl-localizer"></span>' ).html( function() {
 			var html = '<span class="nl-localizer-toggle" title="' + nlingualL10n.LocalizeThis + '"></span>';
 			Languages.each( function( language ) {
-				html += '<span class="nl-localizer-option" title="' + nlingualL10n.LocalizeFor.replace( '%s', language.get( 'system_name' ) ) + '" data-nl_language="' + language.id + '"><i class="nl-option-text">' + language.get( 'system_name' ) + '</i></span>';
+				html += '<span class="nl-localizer-option" title="' + nlingualL10n.LocalizeFor.replace( '%s', language.get( 'system_name' ) ) + '" data-nl_language="' + language.id + '">' +
+					'<i class="nl-option-text" data-slug="' + language.get( 'slug' ) + '">' + language.get( 'system_name' ) + '</i>' +
+				'</span>';
 			} );
 			return html;
 		} );
