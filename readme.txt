@@ -15,17 +15,9 @@ The nLingual system allows for flexible multilingual support and translation man
 
 **nLingual 2 offers more robust control of translation management, better extensibility, and fixes to numerous core issues with the previous incarnation.**
 
-= Flexible Language Detection/Switching =
+= Translation for Almost Anything =
 
-When the public-facing side of the site is loaded, nLingual will attempt to detect what language to serve the page in, using the following process:
-
-1. Use the language code in the `$_REQUEST` array for the specified key, if present.
-2. Use the language code in either the subdomain or directory path, depending on method specified.
-3. Use the browser's preferred language setting and find the closest match, falling back to the default language.
-
-Once the language is set, it can be overridden by the language belonging to the requested post. This override is an configurable option.
-
-In addition, the language can temporarily be switched to another by 3rd party theme or plugin code, similar to switching blogs in a multisite installation. When the language is switched, all text domain files will be reloaded in the desired language (the originals cached for when it's restored), so any gettext translations will reflect the current language.
+When setting up, you have control over what content supports translation. Any UI-enabled post types or taxonomies will be available for enabling, along with any navigation menus or sidebar locations registered. In addition, nLingual includes a LocalizeThis API that can be enabled on nearly any text field found in the admin, allowing just about any option or meta field to support separate values in each language.
 
 = Simple Translation Creation and Management =
 
@@ -51,6 +43,18 @@ Admittedly, this is a feature few will need, but it's a godsend to those that do
 - Slug: the value to use when localizing a URL for the language (typically the same as the ISO code).
 - Text Direction: the text direction the language should be rendered in (Left-to-right or right-to-left). Will override the one specified in the text domain files.
 - Active State: wether or not to allow public access to content in the language.
+
+= Flexible Language Detection/Switching =
+
+When the public-facing side of the site is loaded, nLingual will attempt to detect what language to serve the page in, using the following process:
+
+1. Use the language code in the `$_REQUEST` array for the specified key, if present.
+2. Use the language code in either the subdomain or directory path, depending on method specified.
+3. Use the browser's preferred language setting and find the closest match, falling back to the default language.
+
+Once the language is set, it can be overridden by the language belonging to the requested post. This override is an configurable option.
+
+In addition, the language can temporarily be switched to another by 3rd party theme or plugin code, similar to switching blogs in a multisite installation. When the language is switched, all text domain files will be reloaded in the desired language (the originals cached for when it's restored), so any gettext translations will reflect the current language.
 
 = Extensibility and 3rd Party Development =
 
