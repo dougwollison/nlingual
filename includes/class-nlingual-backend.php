@@ -55,6 +55,7 @@ final class Backend extends Handler {
 		static::add_action( 'widgets_init', 'register_localized_sidebars', 999, 0 );
 		static::add_filter( 'pre_set_theme_mod_nav_menu_locations', 'handle_unlocalized_locations', 10, 1 );
 		static::add_filter( 'pre_update_option_sidebars_widgets', 'handle_unlocalized_locations', 10, 1 );
+		static::add_filter( 'sidebars_widgets', 'hide_unlocalized_locations', 10, 1 );
 
 		// Posts Screen Interface
 		static::add_filter( 'query_vars', 'add_language_var' );
@@ -359,6 +360,39 @@ final class Backend extends Handler {
 		}
 
 		return $new_locations;
+	}
+
+	/**
+	 * Clean up localized and unlocalized sidebars as needed.
+	 *
+	 * This will prevent the originals for localized sidebars or the versions
+	 * of no-longer-localized sidebars from showing up as inactive sidebars.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $sidebars_widgets The sidebars and their widgets.
+	 *
+	 * @return array The filtered sidebars.
+	 */
+	final public static function hide_unlocalized_locations( $sidebars_widgets ) {
+		// Get the default language ID
+		$language_id = Registry::default_language( 'id' );
+
+		$new_sidebars = array();
+		foreach ( $sidebars_widgets as $sidebar => $widgets ) {
+			if ( Registry::is_location_localizable( 'sidebar', $sidebar ) ) {
+				// Sidebar is localizable, skip the original
+				continue;
+			} elseif ( preg_match( '/^(.+?)__language_\d+/', $sidebar, $matches )
+			&& ! Registry::is_location_localizable( 'sidebar', $matches[1] ) ) {
+				// Original sidebar no longer localizable, skip localized versions
+				continue;
+			}
+
+			$new_sidebars[ $sidebar ] = $widgets;
+		}
+
+		return $new_sidebars;
 	}
 
 	// =========================
