@@ -318,12 +318,8 @@ final class System extends Handler {
 	 */
 	final public static function setup_localizable_fields() {
 		// Register the blogname and blogdescription for localization
-		Localizer::register_option_field( 'blogname', 'options-general', array(
-			'title'  => 'Site Title'
-		) );
-		Localizer::register_option_field( 'blogdescription', 'options-general', array(
-			'title'  => 'Tagline'
-		) );
+		Localizer::register_option_field( 'blogname', 'options-general' );
+		Localizer::register_option_field( 'blogdescription', 'options-general' );
 
 		// Register supported taxonomies for localization
 		$taxonomies = Registry::get( 'taxonomies' );
