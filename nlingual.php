@@ -59,7 +59,6 @@ define( 'NL_ORIGINAL_URL', ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTT
 require( NL_PLUGIN_DIR . '/includes/autoloader.php' );
 require( NL_PLUGIN_DIR . '/includes/functions-nlingual.php' );
 require( NL_PLUGIN_DIR . '/includes/functions-gettext.php' );
-require( NL_PLUGIN_DIR . '/includes/functions-alias.php' );
 
 // =========================
 // ! Setup
