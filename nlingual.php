@@ -12,7 +12,6 @@ Text Domain: nLingual
 Domain Path: /languages
 */
 
-
 // =========================
 // ! Constants
 // =========================
@@ -57,7 +56,6 @@ define( 'NL_ORIGINAL_URL', ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTT
 // ! Includes
 // =========================
 
-require( NL_PLUGIN_DIR . '/includes/flags.php' );
 require( NL_PLUGIN_DIR . '/includes/autoloader.php' );
 require( NL_PLUGIN_DIR . '/includes/functions-nlingual.php' );
 require( NL_PLUGIN_DIR . '/includes/functions-gettext.php' );
