@@ -506,7 +506,7 @@ final class Liaison extends Handler {
 	 *
 	 * Unlike WordPress for the Posts page, it will not disabled the editor.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 *
 	 * @param WP_Post $post The post in question.
 	 */

@@ -38,7 +38,7 @@ final class Registry {
 	 *
 	 * @internal
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 *
 	 * @var bool
 	 */
