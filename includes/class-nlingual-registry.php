@@ -166,6 +166,17 @@ final class Registry {
 		'separator'         => '_old_separator',
 	);
 
+	/**
+	 * The current-state option overrides.
+	 *
+	 * @internal
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var array
+	 */
+	private static $option_overrides = array();
+
 	// =========================
 	// ! Property Accessing
 	// =========================
@@ -208,12 +219,14 @@ final class Registry {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $option  The option name.
-	 * @param mixed  $default Optional. The default value to return.
+	 * @param string $option       The option name.
+	 * @param mixed  $default      Optional. The default value to return.
+	 * @param bool   $true_value   Optional. Get the true value, bypassing any overrides.
+	 * @param bool   $has_override Optional. By-reference boolean to identify if an override exists.
 	 *
 	 * @return mixed The property value.
 	 */
-	final public static function get( $option, $default = null ) {
+	final public static function get( $option, $default = null, $true_value = false, &$has_override = null ) {
 		// Trigger notice error if trying to set an unsupported option
 		if ( ! static::has( $option ) ) {
 			trigger_error( "[nLingual] The option '{$option}' is not supported.", E_USER_NOTICE );
@@ -221,7 +234,13 @@ final class Registry {
 
 		// Check if it's set, return it's value.
 		if ( isset( static::$options[ $option ] ) ) {
-			$value = static::$options[ $option ];
+			// Check if it's been overriden, use that unless otherwise requested
+			$has_override = isset( static::$option_overrides[ $option ] );
+			if ( $has_override && ! $true_value ) {
+				$value = static::$option_overrides[ $option ];
+			} else {
+				$value = static::$options[ $option ];
+			}
 		} else {
 			$value = $default;
 		}
@@ -246,7 +265,7 @@ final class Registry {
 	}
 
 	/**
-	 * Override a option value.
+	 * Update a option value.
 	 *
 	 * Will not work for $languages, that has it's own method.
 	 *
@@ -262,6 +281,25 @@ final class Registry {
 		}
 
 		static::$options[ $option ] = $value;
+	}
+
+	/**
+	 * Temporarily override an option value.
+	 *
+	 * These options will be retrieved when using get(), but will not be saved.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $option The option name.
+	 * @param mixed  $value  The value to override with.
+	 */
+	final public static function override( $option, $value ) {
+		// Trigger notice error if trying to set an unsupported option
+		if ( ! static::has( $option ) ) {
+			trigger_error( "[nLingual] The option '{$option}' is not supported.", E_NOTICE );
+		}
+
+		static::$options_override[ $option ] = $value;
 	}
 
 	/**
