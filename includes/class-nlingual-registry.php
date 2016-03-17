@@ -277,7 +277,7 @@ final class Registry {
 	final public static function set( $option, $value = null ) {
 		// Trigger notice error if trying to set an unsupported option
 		if ( ! static::has( $option ) ) {
-			trigger_error( "[nLingual] The option '{$option}' is not supported.", E_NOTICE );
+			trigger_error( "[nLingual] The option '{$option}' is not supported.", E_USER_NOTICE );
 		}
 
 		static::$options[ $option ] = $value;
@@ -296,7 +296,7 @@ final class Registry {
 	final public static function override( $option, $value ) {
 		// Trigger notice error if trying to set an unsupported option
 		if ( ! static::has( $option ) ) {
-			trigger_error( "[nLingual] The option '{$option}' is not supported.", E_NOTICE );
+			trigger_error( "[nLingual] The option '{$option}' is not supported.", E_USER_NOTICE );
 		}
 
 		static::$options_override[ $option ] = $value;
