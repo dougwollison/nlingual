@@ -258,9 +258,8 @@ final class Backend extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::is_feature_localizable() to check for support.
+	 * @uses Registry::is_location_supported() to check for support.
 	 * @uses Registry::languages() to loop through all registered languages.
-	 * @uses Registry::is_location_localizable() to check for support.
 	 *
 	 * @param string $type   The type of location being localized (singular).
 	 * @param string $global The global variable name to be edited.
@@ -272,8 +271,8 @@ final class Backend extends Handler {
 		// Cache the old version of the menus for reference
 		wp_cache_set( $global, $list, 'nlingual:vars' );
 
-		// Abort if not supported
-		if ( ! Registry::is_feature_localizable( "{$type}_locations", $list ) ) {
+		// Abort if not at all supported or none exist
+		if ( ! Registry::is_location_supported( "{$type}_locations" ) || empty( $list ) ) {
 			return;
 		}
 
@@ -283,7 +282,7 @@ final class Backend extends Handler {
 			foreach ( Registry::languages() as $language ) {
 				// Check if this location specifically supports localizing,
 				// make localized copies
-				if ( Registry::is_location_localizable( $type, $id ) ) {
+				if ( Registry::is_location_supported( $type, $id ) ) {
 					$new_id = "{$id}__language_{$language->id}";
 					$name_postfix = ' (' . $language->system_name . ')';
 					if ( is_array( $data ) ) {
@@ -380,11 +379,11 @@ final class Backend extends Handler {
 
 		$new_sidebars = array();
 		foreach ( $sidebars_widgets as $sidebar => $widgets ) {
-			if ( Registry::is_location_localizable( 'sidebar', $sidebar ) ) {
+			if ( Registry::is_location_supported( 'sidebar', $sidebar ) ) {
 				// Sidebar is localizable, skip the original
 				continue;
 			} elseif ( preg_match( '/^(.+?)__language_\d+/', $sidebar, $matches )
-			&& ! Registry::is_location_localizable( 'sidebar', $matches[1] ) ) {
+			&& ! Registry::is_location_supported( 'sidebar', $matches[1] ) ) {
 				// Original sidebar no longer localizable, skip localized versions
 				continue;
 			}

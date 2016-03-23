@@ -533,35 +533,7 @@ final class Registry {
 	// =========================
 
 	/**
-	 * Check if localizable feature is supported.
-	 *
-	 * @internal
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Registry::get() to get the matching localizable list.
-	 * @uses Registry::languages() to get the registered languages.
-	 *
-	 * @param string $item The name of the localizable to check support for.
-	 * @param array  $list The list of registered objects.
-	 */
-	final public static function is_feature_localizable( $item, $list ) {
-		// Check if this feature is enabled
-		if ( ! static::get( $item ) ) {
-			return false;
-		}
-
-		// Check if there are items registered and languages are present
-		$languages = static::languages();
-		if ( ! $list || ! $languages->count() ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Check if a specific location is localizable.
+	 * Check if a location supports localization.
 	 *
 	 * @internal
 	 *
@@ -570,31 +542,37 @@ final class Registry {
 	 * @uses Registry::get() to get the matching localizable list.
 	 *
 	 * @param string $type     The type of location to check for.
-	 * @param string $location The ID of the location to check.
+	 * @param string $location Optional. The ID of a specific location to check.
 	 *
 	 * @return bool Wether or not the location is localizable.
 	 */
-	final public static function is_location_localizable( $type, $location ) {
+	final public static function is_location_supported( $type, $location = null ) {
 		// Turn $type into proper key name
 		$type .= '_locations';
+		$result = false;
 
 		// Check if type is present in localizables list
 		$localizables = static::get( $type );
-		if ( ! $localizables ) {
-			return false;
+		if ( $localizables = static::get( $type ) ) {
+			$result = true;
+			// If a location is specified, test if it's listed, or otherwise ANY/ALL are supported
+			if ( $location ) {
+				$result = in_array( $location, $localizables ) || $localizables === true;
+			}
+		} else {
+			$result = false;
 		}
 
-		// Check if any under $type should be localizable
-		if ( $localizables === true ) {
-			return true;
-		}
-
-		// Check if specified location is localizable
-		if ( in_array( $location, $localizables ) ) {
-			return true;
-		}
-
-		return false;
+		/**
+		 * Filter the result.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param bool   $result   The result of the test.
+		 * @param string $type     The type of location to check for.
+		 * @param string $location The ID of the location to check.
+		 */
+		return apply_filters( 'nlingual_is_location_supported', $result, $type, $location );
 	}
 
 	/**
@@ -618,7 +596,17 @@ final class Registry {
 		// Get the supported post types list
 		$supported = static::get( 'post_types' );
 
-		return (bool) array_intersect( $supported, $post_types );
+		$result = (bool) array_intersect( $supported, $post_types );
+
+		/**
+		 * Filter the result.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param bool         $result     The result of the test.
+		 * @param string|array $post_types The post type(s) being checked.
+		 */
+		return apply_filters( 'nlingual_is_post_type_supported', $result, $post_types );
 	}
 
 	/**
@@ -642,7 +630,17 @@ final class Registry {
 		// Get the supported post types list
 		$supported = static::get( 'taxonomies' );
 
-		return (bool) array_intersect( $supported, $taxonomies );
+		$result = (bool) array_intersect( $supported, $taxonomies );
+
+		/**
+		 * Filter the result.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param bool         $result     The result of the test.
+		 * @param string|array $taxonomies The taxonomy(ies) being checked.
+		 */
+		return apply_filters( 'nlingual_is_taxonomy_supported', $result, $taxonomies );
 	}
 
 	/**

@@ -294,10 +294,9 @@ final class Frontend extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::is_feature_localizable() to check for support.
+	 * @uses Registry::is_location_supported() to check for support.
 	 * @uses Registry::default_language() to get the default language ID.
 	 * @uses Registry::current_language() to get the current language ID.
-	 * @uses Registry::is_location_localizable() to check for support.
 	 *
 	 * @param string $type       The type of location.
 	 * @param array  $locations  The list of locations to filter.
@@ -306,8 +305,8 @@ final class Frontend extends Handler {
 	 * @return array The modified $locations with unlocalized versions updated.
 	 */
 	final private static function localize_locations( $type, $locations, $registered ) {
-		// Abort if not supported
-		if ( ! Registry::is_feature_localizable( "{$type}_locations", true ) ) {
+		// Abort if not at all supported
+		if ( ! Registry::is_location_supported( "{$type}_locations" ) ) {
 			return $locations;
 		}
 
@@ -318,7 +317,7 @@ final class Frontend extends Handler {
 		// Ensure the unlocalized locations are set to the appropriate version.
 		foreach ( $registered as $slug => $name ) {
 			// Check if this location specifically supports localizing
-			if ( Registry::is_location_localizable( $type, $slug ) ) {
+			if ( Registry::is_location_supported( $type, $slug ) ) {
 				$current_id = "{$slug}__language_{$current_language->id}";
 				$default_id = "{$slug}__language_{$default_language->id}";
 
@@ -395,7 +394,7 @@ final class Frontend extends Handler {
 		}
 
 		// Don't bother if the location wasn't found or is already localizable
-		if ( $theme_location && ! Registry::is_location_localizable( 'nav_menu', $theme_location ) ) {
+		if ( $theme_location && ! Registry::is_location_supported( 'nav_menu', $theme_location ) ) {
 			// Loop through each item, attempt to localize
 			foreach ( $items as $item ) {
 				// If it's for a post that has a translation (that's not itself),
