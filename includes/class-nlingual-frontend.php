@@ -306,7 +306,7 @@ final class Frontend extends Handler {
 	 */
 	final private static function localize_locations( $type, $locations, $registered ) {
 		// Abort if not at all supported
-		if ( ! Registry::is_location_supported( "{$type}_locations" ) ) {
+		if ( ! Registry::is_location_supported( $type ) ) {
 			return $locations;
 		}
 

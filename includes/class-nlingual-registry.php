@@ -552,7 +552,6 @@ final class Registry {
 		$result = false;
 
 		// Check if type is present in localizables list
-		$localizables = static::get( $type );
 		if ( $localizables = static::get( $type ) ) {
 			$result = true;
 			// If a location is specified, test if it's listed, or otherwise ANY/ALL are supported

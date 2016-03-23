@@ -272,7 +272,7 @@ final class Backend extends Handler {
 		wp_cache_set( $global, $list, 'nlingual:vars' );
 
 		// Abort if not at all supported or none exist
-		if ( ! Registry::is_location_supported( "{$type}_locations" ) || empty( $list ) ) {
+		if ( ! Registry::is_location_supported( $type ) || empty( $list ) ) {
 			return;
 		}
 
