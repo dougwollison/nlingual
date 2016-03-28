@@ -1,89 +1,85 @@
 === nLingual ===
 Contributors: dougwollison
-Tags: multilingual, multi, language, admin, bilingual, switcher, translation, nlingual
-Requires at least: 3.5
+Tags: multilingual, language, bilingual, translation
+Requires at least: 4.0
 Tested up to: 4.4.2
-Stable tag: 1.3.1
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A simple but flexible multilingual system. Features custom langauge management, post data synchronization and theme/plugin development utilities.
+A simple but flexible multilingual system. Features custom language management, post data synchronization and theme/plugin development utilities.
 
 == Description ==
 
-**NOTICE: The function `nL_lang_links` is being depreciated; please use `nL_get_lang_links` or `nL_print_lang_links` instead. This function is still valid, but shall be removed entirely by version 1.5.0.**
+The nLingual system allows for flexible multilingual support and translation management for WordPress. The system handles translations on a per-post basis, and can be set to be synchronized so changes to certain details on one are copied to the others. It offers you control over what can be translated and how, with a number of utilities available for 3rd party themes and plugins to utilize.
 
-nLingual is a simple and flexible multilingual system for WordPress. It operates on a one language per post basis, allowing you to keep different languages separate, and for the custom fields and other metadata to be translated easily as well. It also comes with a host of general utilities that expand on the built-in localization functions. What's more, it gives you complete control over the languages the system uses, and allows for the synchronization of sister posts.
+**nLingual 2 offers more robust control of translation management, better extensibility, and fixes to numerous core issues with the previous incarnation.**
 
-### Features
+= Translation for Almost Anything =
 
-#### 1 Post : 1 Translation
+When setting up, you have control over what content supports translation. Any UI-enabled post types or taxonomies will be available for enabling, along with any navigation menus or sidebar locations registered. In addition, nLingual includes a LocalizeThis API that can be enabled on nearly any text field found in the admin, allowing just about any option or meta field to support separate values in each language.
 
-There are typically two ways of tackling multilingual in WordPress (shy of a multisite solution; but let's not talk about that). You can usually either have the translations separate as independent posts, or merged together as a single post. The latter can result in bugs and can potentially break stuff, and, depending on the solution, has very limited control; nLingual uses the former method.
+= Simple Translation Creation and Management =
 
-By going this route, you have more control over each translation. If you wanted, you can have different authors for the different languages, or have custom fields be translated, or use different terms for them.
+Assigning a language and translations to a post can be done on either the post editor screen or the posts management screen via Quick Edit (language can also be set for multiple post via Bulk Edit). You can also easily create new translations for existing posts on the fly; select "New \[language\] \[post type\]", provide a translated title if you wish, and a new draft post will be created that is an exact copy of the original, ready for translation.
 
-Having said that, there will of course be plenty of instances where you'll want some information to be kept the same across versions; nLingual has post synchronization for that ([more on that later](#post-data-synchronization)).
+Translations are stored as independent posts, associated with their counterparts via a custom table. This allows you to translate the custom fields and other metadata associated with a post, and can assign them their own separate terms if desired. However, since there are plenty of occasions where you want the same information used between posts, nLingual offers *post synchronization*.
 
-#### Two Step Language Detection
+= Post Synchronization =
 
-When detecting the language your site should be displayed in, nLingual has 3 options:
+Each post type has it's own rules for what data is synchronized between translations. When changes are saved to a post, it's translations will be updated with to have the same data in the approved fields. This covers post data (e.g. date, status, and menu order), terms of specified taxonomies, and any meta fields you specify (e.g. the thumbnail image used, or a custom field value).
 
-- Subdomain method (e.g. `fr.mydomain.com`)
-- Path Prefix method (e.g. `mydomain.com/fr/`)
-- Plain old GET/POST arguments (e.g. `?lang=fr`) as well as detecting the visitors browser language.
+**Note: Currently, there is no per-post basis override for the synchronization rules**
 
-This detection is run as soon as possible, however, this can be overridden should the actual post being loaded be of a different language (and redirect to the proper URL for SEO purposes).
+= Free-form Language Management =
 
-As mentioned, nLingual will make sure to reload any text domains when the language is changed, so any localization will reflect the new language. (Note: this functionality is not guaranteed; it works by logging all text domains loaded AFTER the plugin itself is loaded, though steps have been taken to make sure just about any domain loading is caught).
+Admittedly, this is a feature few will need, but it's a godsend to those that do. When setting up the languages nLingual will use, you can define you own languages from scratch or based on numerous presets. Each language has a number of fields:
 
-#### Easy Translation Creation and Management
+- System Name: the name to use when referring to the language within the admin.
+- Native Name: the name of the language as it appears to native speakers on the site.
+- Short Name: a shorthand version of the native name, if applicable.
+- Locale: the language/country code to represent this language, as well identify the .mo file to load for text domains.
+- ISO Code: the official ISO 639-1 code for the language (2 letters)
+- Slug: the value to use when localizing a URL for the language (typically the same as the ISO code).
+- Text Direction: the text direction the language should be rendered in (Left-to-right or right-to-left). Will override the one specified in the text domain files.
+- Active State: wether or not to allow public access to content in the language.
 
-Managing translations is available within each post, offering a list of existing posts in each language to select as the translated version. What's better, creating a new translation of the current post you're editing is easy: click the "Create new [language] [post type]" button to generate a new post in the selected language with all the data copied over and open for editing in a new tab.
+= Flexible Language Detection/Switching =
 
-For already existing posts, nLingual adds a Language select input to the Quick and Bulk edit interfaces on the editor screens.
+When the public-facing side of the site is loaded, nLingual will attempt to detect what language to serve the page in, using the following process:
 
-#### Post Data Synchronization
+1. Use the language code in the `$_REQUEST` array for the specified key, if present.
+2. Use the language code in either the subdomain or directory path, depending on method specified.
+3. Use the browser's preferred language setting and find the closest match, falling back to the default language.
 
-There will of course be some bits of data for posts that you'll want to keep the same between translations; perhaps the status, the page template, and/or the categories/tags. nLingual allows you to set which post columns, metadata fields, and terms are kept synchronized, and will update the sister posts when one translation is saved.
+Once the language is set, it can be overridden by the language belonging to the requested post. This override is an configurable option.
 
-The synchronization rules are managed on a per post type basis, allowing you to have different sync settings between, say, posts and pages. (Note: Currently, there is no override on an individual post basis).
+In addition, the language can temporarily be switched to another by 3rd party theme or plugin code, similar to switching blogs in a multisite installation. When the language is switched, all text domain files will be reloaded in the desired language (the originals cached for when it's restored), so any gettext translations will reflect the current language.
 
-#### Flexible Language Management
+= Extensibility and 3rd Party Development =
 
-This is admittedly a feature few will need, but it's a godsend for those that do. When configuring what languages nLingual uses, you can define your own or modify existing ones. Each language in the system has 6 important fields:
+In addition to numerous hooks to modify the functionality of nLingual, this plugin also includes some useful gettext utilities: `_f`, `_ef`, `_fx`, `_efx`, `_a`, and `_xa`, all of which are documented in `includes/functions-gettext.php`.
 
-1. System Name: the name use to refer to the language within the admin.
-2. Native Name: the name in the actual language, for use mostly on the front end.
-3. Short Name: a shorthand version of the native name, if applicable.
-4. ISO Code: the official ISO 639-1 code for the language (two letters).
-5. Slug: normally the same as the ISO, but can be different (used for identifying the language in URLs).
-6. Locale: the locale to use with this language, used for loading the appropriate .mo files.
+= Backwards Compatibility =
 
-nLingual comes preloaded with a number of languages to choose from, and in most cases you won't need to customize any. For the sake of argument though, let's say you have a site that's written in English and both forms of Chinese (simplified and traditional). For a site like this to work, you'd need two copies of the Chinese language registered for the sytem to use, with slugs and locale names different from the expected "zh" one.
-
-#### Toolkit for Theme Development
-
-Included in this plugin are a number of functions that will be quite useful for theme development.
-
-##### Extra Localization Functions
-
-WordPress itself comes with a number of short and sweet localization functions; `__`, `_e`, `_x`, `_ex`, etc. nLingual however adds a few of its own: `_f`, `_ef`, `_fx`, `_efx`, `_a`, and `_xa`. Details about these functions and how to use them can be found in `php/utilities.php`.
-
-##### The nLingual Class
-
-The nLingual class is a static class with a host of functions for getting and manipulating language and translation data in the system. Included are alias functions: `nLingual::get_post_lang` can be called through `nL_get_post_lang`. Details about these functions and how to use them can be found in `php/nLingual.class.php` and `php/nLingual.aliases.php`.
+Although nLingual 2 has be rewritten from scratch, most if not all of the functions and filters are still available via the backwards compatibility feature, which is automatically enabled upon upgrading. However, any code that directly queries the database using the old nLingual language and translation tables will need to be updated to reflect the new structure.
 
 == Installation ==
 
-1. Upload the contents of `nLingual.tar.gz` to your `/wp-content/plugins/` directory
+1. Upload the contents of `nlingual.tar.gz` to your `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go into the plugin settings page under Settings > Langauges to configure your options and registered languages
-4. Start assigning languages to posts and linking translations.
+3. Register the language to use under Translations > Languages
+4. Select what content you want to support translation/localization under Translations > Localizables
+5. Define your desired synchronization rules under Translations > Synchronizer
+6. Configure your translation options under Translations.
+7. Start assigning languages and translations to your content.
 
 == Changelog ==
 
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
+
+= 2.0.0 =
+Complete and utter overhaul. Improved API, UI, UX, AWES, and OME.
 
 = 1.3.1 =
 Minor restructuring, prepping for 2.0 release.
@@ -101,7 +97,7 @@ Coding improvements and language table adjustments (props vianney).
 Bug fix with languages table creation (props vianney)
 
 = 1.2.1 =
-Bug fixes and ACF compatability improvements.
+Bug fixes and ACF compatibility improvements.
 
 = 1.2.0 =
 Admin-only feature, numerous bug fixes, doc updates; a lot of stuff.

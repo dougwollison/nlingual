@@ -1,0 +1,298 @@
+@import 'compass/utilities/general/clearfix';
+@import 'compass/css3/transition';
+@import "compass/css3/inline-block";
+@import "compass/css3/box-shadow";
+
+.fixed .column-nlingual {
+	width: 15%;
+
+	ul {
+		margin: 5px 0 0;
+	}
+		li {
+			margin: 0 0 3px;
+		}
+}
+
+.nl-heading {
+	font-size: 1em;
+	margin: 1em 0 .5em;
+}
+
+.nl-field {
+	label {
+		@include pie-clearfix;
+		display: block;
+		padding: 3px 0;
+		margin: 0 0 5px;
+	}
+		.button {
+			float: right;
+			margin: -3px 0;
+		}
+	select {
+		clear: both;
+		display: block;
+		width: 100%;
+	}
+}
+
+.nl-language-field {
+	label {
+		font-weight: bold;
+	}
+}
+
+.nl-translation-field {
+	margin: 10px 0 5px;
+}
+
+.nl-settings-field {
+	h4 {
+		color: #666;
+		margin: 5px 0 .5em;
+	}
+	.description {
+		font-weight: 300;
+	}
+}
+
+.nl-settings-notice {
+	display: inline-block;
+	background: #eee;
+	padding: 5px 10px;
+	border: 1px solid #ddd;
+}
+
+.nl-section-content {
+	h4 {
+		padding-top: 15px;
+
+		input[type="checkbox"] {
+			margin-left: .5em;
+			opacity: .25;
+			-webkit-transition: opacity .2s;
+			transition: opacity .2s;
+		}
+
+		&:hover input[type="checkbox"] {
+			opacity: 1;
+		}
+	}
+}
+
+.nl-previews {
+	display: inline-block;
+	padding: 2px 5px;
+	margin: .5em 0 0;
+	border: 1px solid #ddd;
+	background: #f7f7f7;
+	font-style: normal;
+}
+	.nl-preview {
+		color: #0073aa;
+	}
+
+.nl-localizable {
+	.form-field & {
+		display: block;
+
+		input[type="text"],
+		input[type="password"],
+		input[type="email"],
+		input[type="number"],
+		input[type="tel"],
+		input[type="url"],
+		input[type="search"],
+		textarea {
+			display: block;
+		}
+		.nl-localizer {
+			float: left;
+		}
+		+ p {
+			clear: left;
+		}
+	}
+}
+
+.nl-localizer {
+	margin: 1px;
+	display: inline-block;
+	vertical-align: top;
+	background: #eee;
+	color: #555;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	overflow: hidden;
+	@include pie-clearfix;
+	@include box-shadow( inset 0 1px 0 #fff, 0 1px 0 rgba( #000, .08 ) );
+
+	&:hover {
+		border-color: #999;
+	}
+}
+	.nl-localizer-toggle,
+	.nl-localizer-option {
+		cursor: pointer;
+		float: left;
+		height: 21px;
+		line-height: 21px;
+		text-align: center;
+		white-space: nowrap;
+		overflow: hidden;
+		padding: 2px 0;
+		@include transition( color .3s, background .3s, max-width .3s ease-out );
+	}
+	.nl-localizer-toggle {
+		width: 28px;
+		color: #555;
+
+		&:before {
+			-webkit-font-smoothing: antialiased;
+			content: '\f326';
+			font-family: 'dashicons';
+			font-size: 20px;
+			line-height: 20px;
+		}
+	}
+	.nl-localizer-option {
+		font-size: 14px;
+		max-width: 0;
+		@include box-shadow( inset 1px 0 0 #ccc );
+
+		.nl-option-text {
+			font-style: normal;
+			padding: 0 5px 0 6px;
+		}
+
+		&:hover,
+		&.nl-current {
+			color: #32373c;
+		}
+
+		&:hover {
+			background: #f7f7f7;
+		}
+
+		.nl-localizer:hover &.nl-current {
+			color: #00a0d2;
+		}
+
+		.nl-localizer:hover &,
+		&.nl-current {
+			max-width: 150px;
+		}
+	}
+
+.nl-translations-manager,
+.nl-bulk-language-manager {
+	padding: 5px 0 0;
+}
+
+.nl-set-language {
+	.title {
+		font-weight: bold;
+	}
+}
+
+#nlingual-synchronizer-form {
+	.nl-inputlist {
+		@include pie-clearfix;
+
+		label {
+			margin-right: 1.5em !important;
+		}
+
+		br {
+			display: none;
+		}
+	}
+}
+
+#nl_language_controls {
+	margin: 2em 0 1em;
+
+	select, button {
+		margin: 0;
+	}
+}
+
+#nlingual_languages {
+	tr {
+		opacity: 1;
+		@include transition( opacity .2s );
+
+		&.todelete {
+			opacity: 0.5;
+		}
+	}
+
+	th {
+		white-space: nowrap;
+
+		&.nl-language-list_order {
+			font: 0/0 a;
+		}
+	}
+
+	input[type="text"] {
+		display: block;
+		width: 100%;
+		height: 27px;
+	}
+	input[type="checkbox"] {
+		margin: 6px 0;
+	}
+
+	.nl-language-list_order,
+	.nl-language-slug,
+	.nl-language-locale_name,
+	.nl-language-iso_code,
+	.nl-language-active,
+	.nl-language-delete {
+		text-align: center;
+	}
+
+	.nl-language-locale_name,
+	.nl-language-iso_code,
+	.nl-language-slug {
+		input {
+			font-family: 'Courier New', monospace;
+			text-align: center;
+		}
+	}
+
+	.nl-language-list_order {
+		width: 30px;
+		padding: 0;
+
+		.handle {
+			cursor: pointer;
+			padding: 12px 10px;
+		}
+	}
+	.nl-language-iso_code {
+		width: 30px;
+	}
+	.nl-language-slug,
+	.nl-language-short_name {
+		width: 100px;
+	}
+	.nl-language-locale_name {
+		width: 60px;
+	}
+	.nl-language-direction {
+		width: 100px;
+		text-align: center;
+
+		label {
+			margin: 4px 4px 0 0;
+			@include inline-block;
+		}
+	}
+	.nl-language-active,
+	.nl-language-delete {
+		width: 60px;
+	}
+}
