@@ -142,7 +142,7 @@ final class Localizer extends Handler {
 	 *
 	 * @return Localizer_Field|bool The retreived field, FALSE on failure.
 	 */
-	final public static function get_field( $id ) {
+	public static function get_field( $id ) {
 		if ( isset( static::$registered_fields[ $id ] ) ) {
 			return static::$registered_fields[ $id ];
 		}
@@ -159,7 +159,7 @@ final class Localizer extends Handler {
 	 *
 	 * @return array A list of fields for the specified index value.
 	 */
-	final public static function get_fields_by( $index, $value ) {
+	public static function get_fields_by( $index, $value ) {
 		$property = "fields_by_{$index}";
 		$list = static::$$property;
 
@@ -179,7 +179,7 @@ final class Localizer extends Handler {
 	 *
 	 * @return array The fields found for the screen provided.
 	 */
-	final public static function get_fields_for_screen( $screen ) {
+	public static function get_fields_for_screen( $screen ) {
 		$list = static::$fields_by_screen;
 
 		$fields = array();
@@ -208,7 +208,7 @@ final class Localizer extends Handler {
 	 *
 	 * @since 2.0.0
 	 */
-	final public static function register_hooks() {
+	public static function register_hooks() {
 		// Backend-only hooks
 		if ( is_backend() ) {
 			// Saving localized fields
@@ -247,7 +247,7 @@ final class Localizer extends Handler {
 	 *
 	 * @return Localizer_Field the registered field object.
 	 */
-	final public static function register_field( $id, array $options ) {
+	public static function register_field( $id, array $options ) {
 		// Abort if the screen isn't set
 		if ( ! isset( $options['screen'] ) ) {
 			return;
@@ -296,7 +296,7 @@ final class Localizer extends Handler {
 	 * 		@option string       "field"       The name of the input that handles this field.
 	 * 		@option string       "field_id"    The id of the HTML input to target. (Defaults to input name)
 	 */
-	final public static function register_option_field( $option, $page, $args = array() ) {
+	public static function register_option_field( $option, $page, $args = array() ) {
 		// Build the args for the field and register it
 		$args = wp_parse_args( $args, array(
 			'type'   => 'option',
@@ -331,7 +331,7 @@ final class Localizer extends Handler {
 	 * 		@option string "field"       The name of the input that handles this field.
 	 * 		@option string "field_id"    The id of the HTML input to target (Defaults to input name).
 	 */
-	final public static function register_post_field( $post_type, $field_name, $args = array() ) {
+	public static function register_post_field( $post_type, $field_name, $args = array() ) {
 		// Abort if the field name isn't allowed
 		if ( ! in_array( $field_name, static::$localizable_post_fields ) ) {
 			return;
@@ -374,7 +374,7 @@ final class Localizer extends Handler {
 	 * 		@option string       "field"       The name of the input that handles this field.
 	 * 		@option string       "field_id"    The id of the HTML input to target (Defaults to input name).
 	 */
-	final public static function register_metadata_field( $meta_type, $meta_key, $args = array() ) {
+	public static function register_metadata_field( $meta_type, $meta_key, $args = array() ) {
 		// Guess the screen based on available information
 		if ( ! isset( $args['screen'] ) ) {
 			// For posts, check for post_type
@@ -428,7 +428,7 @@ final class Localizer extends Handler {
 	 *
 	 * @param string $taxonomy The taxonomy to localize term names for.
 	 */
-	final public static function register_taxonomy( $taxonomy ) {
+	public static function register_taxonomy( $taxonomy ) {
 		// Register the name and description fields as normal
 		$page = "edit-{$taxonomy}";
 
@@ -472,7 +472,7 @@ final class Localizer extends Handler {
 	 *
 	 * @return field|bool The localized version, false if nothing found.
 	 */
-	final public static function get_field_value( $key, $language_id, $object_id = 0, $check_reg = true ) {
+	public static function get_field_value( $key, $language_id, $object_id = 0, $check_reg = true ) {
 		global $wpdb;
 
 		// Abort if check isn't bypassed and fails
@@ -518,7 +518,7 @@ final class Localizer extends Handler {
 	 *
 	 * @return array The localized versions of the specified field.
 	 */
-	final public static function get_field_values( $key, $object_id = 0, $check_reg = true ) {
+	public static function get_field_values( $key, $object_id = 0, $check_reg = true ) {
 		global $wpdb;
 
 		// Abort if check isn't bypassed and fails
@@ -563,7 +563,7 @@ final class Localizer extends Handler {
 	 * @param string $value       The localized value of the field.
 	 * @param bool   $check_reg   Optional. Wether or not to check if the field is regsitered before fetching (default TRUE).
 	 */
-	final public static function save_field_value( $key, $language_id, $object_id, $value, $check_reg = true ) {
+	public static function save_field_value( $key, $language_id, $object_id, $value, $check_reg = true ) {
 		global $wpdb;
 
 		// Abort if check isn't bypassed and fails
@@ -599,7 +599,7 @@ final class Localizer extends Handler {
 	 *
 	 * @return field The localized version of the option.
 	 */
-	final public static function handle_localized_option_field( $pre_option ) {
+	public static function handle_localized_option_field( $pre_option ) {
 		// Get the current filter and the option based on it
 		$filter = current_filter();
 		$option = preg_replace( '/^pre_option_/', '', $filter );
@@ -628,7 +628,7 @@ final class Localizer extends Handler {
 	 * @param mixed $old_value The old value of the option (unused).
 	 * @param mixed $value     The new value of the option.
 	 */
-	final public static function update_unlocalized_option_field( $old_value, $value ) {
+	public static function update_unlocalized_option_field( $old_value, $value ) {
 		// Get the current filter and the option based on it
 		$filter = current_filter();
 		$option = preg_replace( '/^update_option_/', '', $filter );
@@ -655,7 +655,7 @@ final class Localizer extends Handler {
 	 *
 	 * @param WP_Post $post The post object to filter.
 	 */
-	final public static function handle_localized_post_fields( $post ) {
+	public static function handle_localized_post_fields( $post ) {
 		// Abort if no post is specified
 		if ( ! $post ) return;
 
@@ -691,7 +691,7 @@ final class Localizer extends Handler {
 	 * @param int $post_id The ID of the post being updated.
 	 * @param WP_Post $post The updated post object.
 	 */
-	final public static function update_unlocalized_post_fields( $post_id, $post ) {
+	public static function update_unlocalized_post_fields( $post_id, $post ) {
 		// Abort if no post is specified
 		if ( ! $post ) return;
 
@@ -731,7 +731,7 @@ final class Localizer extends Handler {
 	 *
 	 * @return field The localized version of the value.
 	 */
-	final public static function handle_localized_metadata_field( $pre_value, $object_id, $meta_key ) {
+	public static function handle_localized_metadata_field( $pre_value, $object_id, $meta_key ) {
 		// Get the meta type based on the current filter name
 		$filter = current_filter();
 		$meta_type = preg_replace( '/^get_(.+?)_metadata$/', '$1', $filter );
@@ -762,7 +762,7 @@ final class Localizer extends Handler {
 	 * @param string $meta_key  The metadata key to retrieve data for.
 	 * @param string $meta_value The update meta value.
 	 */
-	final public static function update_unlocalized_metadata_field( $meta_id, $object_id, $meta_key, $meta_value ) {
+	public static function update_unlocalized_metadata_field( $meta_id, $object_id, $meta_key, $meta_value ) {
 		// Get the meta type based on the current filter name
 		$filter = current_filter();
 		$meta_type = preg_replace( '/^update_(.+?)_metadata$/', '$1', $filter );
@@ -790,7 +790,7 @@ final class Localizer extends Handler {
 	 *
 	 * @return object The term with localized name and description.
 	 */
-	final public static function handle_localized_term_fields( $term ) {
+	public static function handle_localized_term_fields( $term ) {
 		// Get the current language
 		$language = Registry::current_language();
 
@@ -818,7 +818,7 @@ final class Localizer extends Handler {
 	 *
 	 * @return array The modified list of terms.
 	 */
-	final public static function handle_localized_terms_fields( $terms ) {
+	public static function handle_localized_terms_fields( $terms ) {
 		foreach ( $terms as &$term ) {
 			$term = static::handle_localized_term_fields( $term );
 		}
@@ -839,7 +839,7 @@ final class Localizer extends Handler {
 	 * @param int $tt_id       The term taxonomy ID of the term (unused).
 	 * @param string $taxonomy The taxonomy of the term being updated.
 	 */
-	final public static function update_unlocalized_term_fields( $term_id, $tt_id, $taxonomy ) {
+	public static function update_unlocalized_term_fields( $term_id, $tt_id, $taxonomy ) {
 		// Get the udpated term, since we aren't provided with the updated values
 		$term = get_term( $term_id, $taxonomy );
 
@@ -873,7 +873,7 @@ final class Localizer extends Handler {
 	 * @uses Localizer::$registered_fields to loop through all registered fields.
 	 * @uses Localizer::save_field_value() to save the localized values.
 	 */
-	final public static function save_localized_fields() {
+	public static function save_localized_fields() {
 		global $pagenow;
 
 		// Check if the localize fields collection and nonces are set
@@ -958,7 +958,7 @@ final class Localizer extends Handler {
 	 * @uses Localizer::get_fields_for_screen() to get the fields for the screen.
 	 * @uses Documenter::setup_help_tabs() to add the Localizer help tab.
 	 */
-	final public static function setup_localized_fields() {
+	public static function setup_localized_fields() {
 		// Get the current screen
 		$screen = get_current_screen();
 
@@ -1011,7 +1011,7 @@ final class Localizer extends Handler {
 	 * @uses Localizer::$current_fields to get the stored fields.
 	 * @uses Localizer::get_field_values() to get the localized values of each field.
 	 */
-	final public static function do_localized_fields() {
+	public static function do_localized_fields() {
 		// Abort if no fields are found
 		if ( ! $fields = static::$current_fields ) {
 			return;
@@ -1056,7 +1056,7 @@ final class Localizer extends Handler {
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
 	 */
-	final public static function preload_localized_fields() {
+	public static function preload_localized_fields() {
 		global $wpdb;
 
 		$language = Registry::current_language();
@@ -1085,7 +1085,7 @@ final class Localizer extends Handler {
 	 *
 	 * @return mixed The result of the redirected method.
 	 */
-	final public static function __callStatic( $name, $args ) {
+	public static function __callStatic( $name, $args ) {
 		// Check if it's a get_fields_by alias
 		if ( preg_match( '/^get_fields_by_(\w+)$/', $name, $matches ) ) {
 			$index = $matches[1];

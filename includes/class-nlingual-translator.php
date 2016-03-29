@@ -46,7 +46,7 @@ final class Translator {
 	 * @param int $group_id     Optional The ID of the group (will get using type/id if not provided).
 	 * @param int $new_group_id Optional The ID of the new group.
 	 */
-	final private static function flush_cache( $object_type, $object_id, $group_id = null, $new_group_id = null ) {
+	private static function flush_cache( $object_type, $object_id, $group_id = null, $new_group_id = null ) {
 		// Get the group if not provided
 		if ( is_null( $group_id ) ) {
 			$group_id = static::get_group_id( $object_type, $object_id );
@@ -76,7 +76,7 @@ final class Translator {
 	 *
 	 * @return int The new group ID.
 	 */
-	final private static function new_group_id() {
+	private static function new_group_id() {
 		global $wpdb;
 
 		$group_id = $wpdb->get_var( "SELECT MAX(group_id) FROM $wpdb->nl_translations" );
@@ -99,7 +99,7 @@ final class Translator {
 	 *
 	 * @return int The existing or new group ID.
 	 */
-	final private static function get_group_id( $object_type, $object_id ) {
+	private static function get_group_id( $object_type, $object_id ) {
 		global $wpdb;
 
 		$cache_id = "{$object_type}/{$object_id}";
@@ -133,7 +133,7 @@ final class Translator {
 	 *
 	 * @return bool|array The list of entries in the group, with object_id and language_id indexes (false if not found).
 	 */
-	final private static function get_group( $object_type, $object_id ) {
+	private static function get_group( $object_type, $object_id ) {
 		global $wpdb;
 
 		$cache_id = "{$object_type}/{$object_id}";
@@ -203,7 +203,7 @@ final class Translator {
 	 *
 	 * @return bool|Language The language of the object (false if not found).
 	 */
-	final public static function get_object_language( $object_type, $object_id ) {
+	public static function get_object_language( $object_type, $object_id ) {
 		// Get the translation group for the object
 		$group = static::get_group( $object_type, $object_id );
 
@@ -237,7 +237,7 @@ final class Translator {
 	 *
 	 * @return bool If the assignment worked or not.
 	 */
-	final public static function set_object_language( $object_type, $object_id, $language ) {
+	public static function set_object_language( $object_type, $object_id, $language ) {
 		global $wpdb;
 
 		// Redirect to delete_object_language() if $language is false-ish
@@ -306,7 +306,7 @@ final class Translator {
 	 *
 	 * @return bool If the deletion worked or not.
 	 */
-	final public static function delete_object_language( $object_type, $object_id ) {
+	public static function delete_object_language( $object_type, $object_id ) {
 		global $wpdb;
 
 		// Insert a new one
@@ -332,7 +332,7 @@ final class Translator {
 	 *
 	 * @param mixed  $language The language to remove the association for.
 	 */
-	final public static function delete_language( $language ) {
+	public static function delete_language( $language ) {
 		global $wpdb;
 
 		// Ensure $language is a Language
@@ -368,7 +368,7 @@ final class Translator {
 	 *
 	 * @return bool|int The id of the translation.
 	 */
-	final public static function get_object_translation( $object_type, $object_id, $language = null, $return_self = false ) {
+	public static function get_object_translation( $object_type, $object_id, $language = null, $return_self = false ) {
 		// Ensure $language is a Language, defaulting to current
 		if ( ! validate_language( $language, true ) ) {
 			// Trigger warning error if not found, return false
@@ -401,7 +401,7 @@ final class Translator {
 	 *
 	 * @return array An associative array of objects in language_id => object_id format.
 	 */
-	final public static function get_object_translations( $object_type, $object_id, $include_self = false ) {
+	public static function get_object_translations( $object_type, $object_id, $include_self = false ) {
 		// Get the translation group for the object
 		$group = static::get_group( $object_type, $object_id );
 
@@ -443,7 +443,7 @@ final class Translator {
 	 *
 	 * @param bool Wether or not the association could be done (false if aborted).
 	 */
-	final public static function set_object_translations( $object_type, $object_id, $translations ) {
+	public static function set_object_translations( $object_type, $object_id, $translations ) {
 		global $wpdb;
 
 		// Get the group ID for this object
@@ -513,7 +513,7 @@ final class Translator {
 	 *
 	 * @param bool Wether or not the association could be done.
 	 */
-	final public static function set_object_translation( $object_type, $object_id, $language, $object ) {
+	public static function set_object_translation( $object_type, $object_id, $language, $object ) {
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			// Throw exception if not found
@@ -544,7 +544,7 @@ final class Translator {
 	 *
 	 * @return bool Wether or not a deletion was performed (false = nothing to delete).
 	 */
-	final public static function delete_object_translation( $object_type, $object_id, $language ) {
+	public static function delete_object_translation( $object_type, $object_id, $language ) {
 		global $wpdb;
 
 		// Ensure $language is a Language
@@ -598,7 +598,7 @@ final class Translator {
 	 *
 	 * @return mixed The result of the target method.
 	 */
-	final public static function __callStatic( $name, $args ) {
+	public static function __callStatic( $name, $args ) {
 		// Check if $name matches an existing method with $object_type instead of object
 		if ( preg_match( '/^(get|set|delete)_(\w+?)_(language|translations?)$/', $name, $matches ) ) {
 			// Get the parts

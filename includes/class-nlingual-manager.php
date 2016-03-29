@@ -30,7 +30,7 @@ final class Manager extends Handler {
 	 *
 	 * @since 2.0.0
 	 */
-	final public static function register_hooks() {
+	public static function register_hooks() {
 		// Don't do anything if not in the backend
 		if ( ! is_backend() ) {
 			return;
@@ -57,7 +57,7 @@ final class Manager extends Handler {
 	 *
 	 * @return array The sanitized rules.
 	 */
-	final public static function sanitize_rules( $rules ) {
+	public static function sanitize_rules( $rules ) {
 		// Loop through each object type
 		foreach ( $rules as $object_type => $type_rules ) {
 			// Loop through each object subtype
@@ -96,7 +96,7 @@ final class Manager extends Handler {
 	 * @uses Manager::settings_page_strings() for strings editor output.
 	 * @uses Documenter::register_help_tabs() to register help tabs for all screens.
 	 */
-	final public static function add_menu_pages() {
+	public static function add_menu_pages() {
 		// Main Options page
 		$options_page_hook = add_menu_page(
 			__( 'Translation Options', 'nlingual' ), // page title
@@ -161,7 +161,7 @@ final class Manager extends Handler {
 	 * @uses Manager::setup_localizables_fields() to add fields to the localizlables page.
 	 * @uses Manager::setup_sync_fields() to add fields to the sync options page.
 	 */
-	final public static function register_settings() {
+	public static function register_settings() {
 		foreach ( array( 'options', 'localizables', 'synchronizer' ) as $group ) {
 			register_setting( 'nlingual-' . $group, 'nlingual_options', array( __CLASS__, 'update_options' ) );
 			call_user_func( array( __CLASS__, "setup_{$group}_fields" ) );
@@ -181,7 +181,7 @@ final class Manager extends Handler {
 	 *
 	 * @return mixed The merged/sanitized options.
 	 */
-	final public static function update_options( $updated_options ) {
+	public static function update_options( $updated_options ) {
 		$all_options = get_option( 'nlingual_options', array() );
 
 		return array_merge( $all_options, $updated_options );
@@ -194,7 +194,7 @@ final class Manager extends Handler {
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
 	 */
-	final public static function save_languages() {
+	public static function save_languages() {
 		global $wpdb;
 
 		// Abort if not saving for the language manager page
@@ -308,7 +308,7 @@ final class Manager extends Handler {
 	 * @uses Languages::export() to export the language list to an array.
 	 * @uses Settings::add_fields() to define the controls on the page.
 	 */
-	final private static function setup_options_fields() {
+	private static function setup_options_fields() {
 		global $wp_rewrite;
 
 		/**
@@ -478,7 +478,7 @@ final class Manager extends Handler {
 	 *
 	 * @uses Settings::add_fields() to define the controls on the page.
 	 */
-	final private static function setup_localizables_fields() {
+	private static function setup_localizables_fields() {
 		add_settings_section( 'default', null, null, 'nlingual-localizables' );
 
 		/**
@@ -582,7 +582,7 @@ final class Manager extends Handler {
 	 * @uses Registry::get() to retrieve the enabled post types.
 	 * @uses Registry::add_fields() to add the sycn/clone controls for the page.
 	 */
-	final private static function setup_synchronizer_fields() {
+	private static function setup_synchronizer_fields() {
 		// Abort if no post types are registered
 		$post_types = Registry::get( 'post_types' );
 		if ( ! $post_types ) {
@@ -620,7 +620,7 @@ final class Manager extends Handler {
 	 *
 	 * @global $plugin_page The slug of the current admin page.
 	 */
-	final public static function settings_page() {
+	public static function settings_page() {
 		global $plugin_page;
 ?>
 		<div class="wrap">
@@ -644,7 +644,7 @@ final class Manager extends Handler {
 	 *
 	 * @uses inc/presets.php For loading the preset languages.
 	 */
-	final public static function settings_page_languages() {
+	public static function settings_page_languages() {
 		global $plugin_page;
 		?>
 		<div class="wrap">
@@ -728,7 +728,7 @@ final class Manager extends Handler {
 	 *
 	 * @global $plugin_page The slug of the current admin page.
 	 */
-	final public static function settings_page_synchronizer() {
+	public static function settings_page_synchronizer() {
 		global $plugin_page;
 ?>
 		<div class="wrap">
@@ -754,7 +754,7 @@ final class Manager extends Handler {
 	 *
 	 * @since 2.0.0
 	 */
-	final public static function settings_section_cloning() {
+	public static function settings_section_cloning() {
 		?>
 		<p><?php _e( 'When creating a new translation of an existing post (i.e. a clone), what details should be cloned?', 'nlingual' ); ?></p>
 		<?php

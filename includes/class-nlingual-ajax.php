@@ -30,7 +30,7 @@ final class AJAX extends Handler {
 	 *
 	 * @since 2.0.0
 	 */
-	final public static function register_hooks() {
+	public static function register_hooks() {
 		// Don't do anything if not doing an AJAX request
 		if ( ! defined( 'DOING_AJAX' ) || DOING_AJAX !== true ) {
 			return;
@@ -52,7 +52,7 @@ final class AJAX extends Handler {
 	 * @uses Registry::languages() to validate the language requested.
 	 * @uses Synchronizer::clone_post() to create the cloned post.
 	 */
-	final public static function new_translation() {
+	public static function new_translation() {
 		// Fail if no post/language id or title is passed
 		if ( ! isset( $_REQUEST['post_id'] ) || ! isset( $_REQUEST['language_id'] ) || ! isset( $_REQUEST['title'] ) ) {
 			return;

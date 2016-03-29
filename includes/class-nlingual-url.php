@@ -137,7 +137,7 @@ final class URL extends Model {
 	 * @param string|array $url      The URL to process.
 	 * @param array        $defaults Optional. The default property values.
 	 */
-	final public function parse( $url, $defaults = array() ) {
+	public function parse( $url, $defaults = array() ) {
 		// If it's a string, parse it
 		if ( is_string( $url ) ) {
 			$url_data = parse_url( $url );
@@ -167,7 +167,7 @@ final class URL extends Model {
 	 *
 	 * @return string $url The URL in string form.
 	 */
-	final public function build() {
+	public function build() {
 		$url = '';
 
 		// Build the query string if args are present
@@ -238,7 +238,7 @@ final class URL extends Model {
 	 *
 	 * @see URL::parse()
 	 */
-	final public function __construct( $url = null, $defaults = array() ) {
+	public function __construct( $url = null, $defaults = array() ) {
 		// If a URL is provided, parse it
 		if ( ! is_null( $url ) ) {
 			$this->parse( $url, $defaults );
@@ -250,7 +250,7 @@ final class URL extends Model {
 	 *
 	 * @see URL::build()
 	 */
-	final public function __toString() {
+	public function __toString() {
 		return $this->build();
 	}
 }

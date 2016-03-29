@@ -37,7 +37,7 @@ final class Synchronizer {
 	 *
 	 * @return array The prepared rules.
 	 */
-	final private static function prepare_post_rules( array $rules ) {
+	private static function prepare_post_rules( array $rules ) {
 		// Ensure the rule sets are present
 		$rules = wp_parse_args( array(
 			'post_fields' => array(),
@@ -83,7 +83,7 @@ final class Synchronizer {
 	 *
 	 * @return bool TRUE if successful, FALSE if errors occurred.
 	 */
-	final public static function sync_posts( $original, $target, $rules = null ) {
+	public static function sync_posts( $original, $target, $rules = null ) {
 		global $wpdb;
 
 		// Get post objects if not already passed
@@ -187,7 +187,7 @@ final class Synchronizer {
 	 * @param int   $post_id  The ID of the post to synchronize with.
 	 * @param array $skip_ids A blacklist of IDs to not sync with.
 	 */
-	final public static function sync_post_with_sisters( $post_id, $skip_ids = array() ) {
+	public static function sync_post_with_sisters( $post_id, $skip_ids = array() ) {
 		// Get the translations
 		$translations = Translator::get_post_translations( $post_id );
 
@@ -224,7 +224,7 @@ final class Synchronizer {
 	 *
 	 * @return WP_Post|false The cloned post or false on failure.
 	 */
-	final public static function clone_post( $post, $language, $title = null, $_title_is_default = false ) {
+	public static function clone_post( $post, $language, $title = null, $_title_is_default = false ) {
 		// Validate $post if an ID
 		if ( ! is_a( $post, 'WP_Post' ) ) {
 			$post = get_post( $post );
