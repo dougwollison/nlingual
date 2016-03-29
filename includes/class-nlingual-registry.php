@@ -200,6 +200,7 @@ final class Registry {
 	 * Will also udpate the option value if it was deprecated
 	 * but has a sufficient alternative.
 	 *
+	 * @since 2.0.1 Fixed to use isset(), not in_array()
 	 * @since 2.0.0
 	 *
 	 * @param string &$option The option name.
@@ -211,7 +212,7 @@ final class Registry {
 			$option = static::$options_deprecated[ $option ];
 		}
 
-		return in_array( $option, static::$options_whitelist );
+		return isset( static::$options_whitelist[ $option ] );
 	}
 
 	/**
