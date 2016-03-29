@@ -3,7 +3,7 @@ Contributors: dougwollison
 Tags: multilingual, language, bilingual, translation
 Requires at least: 4.0
 Tested up to: 4.4.2
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 == Changelog ==
 
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
+
+= 2.0.1 =
+Fixed overlooked bug with Registry's option whitelist testing.
 
 = 2.0.0 =
 Complete and utter overhaul. Improved API, UI, UX, AWES, and OME.
