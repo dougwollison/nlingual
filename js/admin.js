@@ -368,7 +368,7 @@
 				// Add to the wrapper
 				$localized.appendTo( $wrap );
 
-				if ( '' === localized && null === localized ) {
+				if ( '' !== localized && null !== localized ) {
 					hasLocalized = true;
 				}
 			} );
