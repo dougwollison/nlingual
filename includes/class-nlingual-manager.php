@@ -474,6 +474,7 @@ final class Manager extends Handler {
 	/**
 	 * Fields for the Localizables page.
 	 *
+	 * @since 2.0.2 Removed attachment skip from taxonomy loop.
 	 * @since 2.0.0
 	 *
 	 * @uses Settings::add_fields() to define the controls on the page.
@@ -516,10 +517,6 @@ final class Manager extends Handler {
 		foreach ( get_taxonomies( array(
 			'show_ui' => true,
 		), 'objects' ) as $taxonomy ) {
-			// Automatically skip attachments
-			if ( $taxonomy->name == 'attachment' ) {
-				continue;
-			}
 			$taxonomies[ $taxonomy->name ] = $taxonomy->labels->name;
 		}
 
