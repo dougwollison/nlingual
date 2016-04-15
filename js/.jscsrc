@@ -1,0 +1,9 @@
+{
+	"preset": "wordpress",
+
+	// We want to have aligned object values for neatness
+	"disallowSpaceAfterObjectKeys": false,
+
+	// Some variables share names with PHP counterparts
+	"requireCamelCaseOrUpperCaseIdentifiers": false
+}
