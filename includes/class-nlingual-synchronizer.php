@@ -33,17 +33,29 @@ final class Synchronizer {
 	 * Ensures fields/terms/meta are present, and handle
 	 * the aliases dictated by existing values.
 	 *
+	 * @since 2.1.0 Made sure all entries were arrays, including
+	 *              splitting up post_meta at the line breaks.
+	 * @since 2.0.0
+	 *
 	 * @param array $rules The rules to prepare.
 	 *
 	 * @return array The prepared rules.
 	 */
-	private static function prepare_post_rules( array $rules ) {
+	final private static function prepare_post_rules( array $rules ) {
 		// Ensure the rule sets are present
-		$rules = wp_parse_args( array(
+		$rules = wp_parse_args( $rules, array(
 			'post_fields' => array(),
 			'post_terms'  => array(),
 			'post_meta'   => array(),
-		), $rules );
+		) );
+
+		// Ensure each is an array
+		$rules['post_fields'] = (array) $rules['post_fields'];
+		$rules['post_terms'] = (array) $rules['post_terms'];
+
+		if ( ! is_array( $rules['post_meta'] ) ) {
+			$rules['post_meta'] = preg_split( '/[\r\n]+/', $rules['post_meta'] );
+		}
 
 		// Handle the post_field aliases
 		if ( in_array( 'post_date', $rules['post_fields'] ) ) {
@@ -66,8 +78,9 @@ final class Synchronizer {
 	/**
 	 * Copy desired post fields, meta data, and terms from the original to target.
 	 *
-	 * @since 2.1.0 Fixed typo causing term/meta synchronization to fail,
-	 *              added filter for synchronized post_terms and post_meta values.
+	 * @since 2.1.0 Fixed various bugs causing sync to fail, added filters for
+	 *              each post field, term list, and meta value list,
+	 *              moving post_parent localizing to System filter.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
@@ -127,13 +140,24 @@ final class Synchronizer {
 		if ( isset( $rules['post_field'] ) && $rules['post_fields'] ) {
 			// Build the list of fields to change
 			$changes = array();
-			foreach ( $rules['post_fields'] as $field ) {
-				if ( $field == 'post_parent' ) {
-					// In the case of the parent, try the parent's translation
-					$changes[ $field ] = Translator::get_post_translation( $original->$field, $language, true );
-				} else {
-					$changes[ $field ] = $original->$field;
-				}
+			foreach ( $rules['post_fields'] as $field_name ) {
+				$field_value = $original->$field_name;
+
+				/**
+				 * Filter the meta values for the translation.
+				 *
+				 * Namely for replacing with translated counterparts.
+				 *
+				 * @since 2.1.0
+				 *
+				 * @param string|int $field_value The field value.
+				 * @param Language   $language    The language of the post this will be assigned to.
+				 * @param int        $target_id   The ID of the post this will be assigned to.
+				 * @param int        $original_id The ID of the post the value is from.
+				 */
+				$field_value = apply_filters( "nlingual_sync_post_field-{$field}", $field_value, $language, $target->ID, $original->ID );
+
+				$changes[ $field_name ] = $field_value;
 			}
 
 			// Apply the updates
@@ -143,28 +167,27 @@ final class Synchronizer {
 
 		// Post Terms
 		if ( isset( $rules['post_terms'] ) && $rules['post_terms'] ) {
-			// Assign to all the same terms
-			$taxonomies = get_object_taxonomies( $post->post_type );
-			foreach ( $taxonomies as $taxonomy ) {
-				// Skip if not a whilelisted taxonomy
-				if ( is_array( $rules['post_terms'] ) && ! in_array( $taxonomy, $rules['post_terms'] ) ) {
-					continue;
-				}
-
-				// Get the terms of the post
-				$term_ids = wp_get_object_terms( $post->ID, $taxonomy, array( 'fields' => 'ids' ) );
+			// Assign all the same meta values
+			foreach ( $rules['post_terms'] as $taxonomy ) {
+				// Get the terms of the original
+				$term_ids = wp_get_object_terms( $original->ID, $taxonomy, array( 'fields' => 'ids' ) );
 
 				/**
-				 * Filter the meta value for the translation.
+				 * Filter the meta values for the translation.
 				 *
 				 * Namely for replacing with translated counterparts.
 				 *
 				 * @since 2.1.0
 				 *
-				 * @param mixed $meta_value The value of the meta data.
-				 * @param int   $post_id    The ID of the post this will be assigned to.
+				 * @param array    $term_ids    The list of terms.
+				 * @param Language $language    The language of the post this will be assigned to.
+				 * @param int      $target_id   The ID of the post this will be assigned to.
+				 * @param int      $original_id The ID of the post the value is from.
 				 */
-				$meta_value = apply_filters( "nlingual_synchronize_post_terms-{$taxonomy}", $term_ids, $target->ID );
+				$term_ids = apply_filters( "nlingual_sync_post_terms-{$taxonomy}", $meta_value, $language, $target->ID, $original->ID );
+
+				// Ensure they're integers
+				$term_ids = array_map( 'intval', $term_ids );
 
 				wp_set_object_terms( $target->ID, $term_ids, $taxonomy );
 			}
@@ -172,32 +195,37 @@ final class Synchronizer {
 
 		// Meta Data
 		if ( isset( $rules['post_meta'] ) && $rules['post_meta'] ) {
-			// Copy over all meta data found
-			$meta_data = $wpdb->get_results( $wpdb->prepare( "SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id = %d", $post->ID ) );
+			// If wildcard, get all possible meta_key values from the original
+			if ( $rules['post_meta'][0] == '*' ) {
+				$rules['post_meta'] = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT meta_key FROM $wpdb->postmeta WHERE post_id = %d", $original->ID ) );
+			}
 
-			// Loop through and add to the translation
-			foreach ( $meta_data as $meta ) {
-				// Skip if not a whilelisted field
-				if ( is_array( $rules['post_meta'] ) && ! in_array( $meta->meta_key, $rules['post_meta'] ) ) {
-					continue;
-				}
+			// Assign all the same meta values
+			foreach ( $rules['post_meta'] as $meta_key ) {
+				// Delete the target's value(s)
+				delete_post_meta( $target->ID, $meta_key );
 
-				// Unserialize the value for adding
-				$meta_value = maybe_unserialize( $meta->meta_value );
+				// Get the original's value(s)
+				$meta_values = get_post_meta( $original->ID, $meta_key );
 
 				/**
-				 * Filter the meta value for the translation.
+				 * Filter the meta values for the translation.
 				 *
 				 * Namely for replacing with translated counterparts.
 				 *
 				 * @since 2.1.0
 				 *
-				 * @param mixed $meta_value The value of the meta data.
-				 * @param int   $post_id    The ID of the post this will be assigned to.
+				 * @param array    $meta_values The values for the meta key (individual entries are unserialized).
+				 * @param Language $language    The language of the post this will be assigned to.
+				 * @param int      $target_id   The ID of the post this will be assigned to.
+				 * @param int      $original_id The ID of the post the value is from.
 				 */
-				$meta_value = apply_filters( "nlingual_synchronize_post_meta-{$meta->meta_key}", $meta_value, $target->ID );
+				$meta_values = apply_filters( "nlingual_sync_post_meta-{$meta->meta_key}", $meta_values, $language, $target->ID, $original->ID );
 
-				add_post_meta( $target->ID, $meta->meta_key, $meta->meta_value );
+				// Re-add each value
+				foreach ( $meta_values as $meta_value ) {
+					add_post_meta( $target->ID, $meta_key, maybe_unserialize( $meta_value ) );
+				}
 			}
 		}
 

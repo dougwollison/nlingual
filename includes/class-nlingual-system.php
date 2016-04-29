@@ -286,6 +286,7 @@ final class System extends Handler {
 		static::add_filter( 'untrashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
 		static::add_filter( 'deleted_post', 'delete_sister_posts', 10, 1 );
 		static::add_filter( 'deleted_post', 'delete_post_language', 11, 1 );
+		static::add_filter( 'nlingual_sync_post_field-post_parent', 'translate_post_parent', 10, 2 );
 
 		// URL Rewriting
 		static::add_filter( 'home_url', 'localize_home_url', 10, 3 );
@@ -510,6 +511,22 @@ final class System extends Handler {
 
 		// Rehook now that we're done
 		static::add_action( 'deleted_post', __FUNCTION__, $priority, 1 );
+	}
+
+	/**
+	 * Replace the post ID with that of it's translation.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @uses Translator::get_post_translation() To get the translation's ID.
+	 *
+	 * @param int      $post_id  The ID of the post to find a translation of.
+	 * @param Language $language The language to find a translation for.
+	 *
+	 * @return int The original ID or it's translation's if found.
+	 */
+	public static function find_translated_post( $post_id, Language $language ) {
+		return Translator::get_post_translation( $post_id, $language, 'return_self' );
 	}
 
 	// =========================
