@@ -66,6 +66,8 @@ final class Synchronizer {
 	/**
 	 * Copy desired post fields, meta data, and terms from the original to target.
 	 *
+	 * @since 2.1.0 Fixed typo causing term/meta synchronization to fail,
+	 *              added filter for synchronized post_terms and post_meta values.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
@@ -104,6 +106,9 @@ final class Synchronizer {
 			$rules = Registry::get_post_sync_rules( $original->post_type );
 		}
 
+		// Get the target's language
+		$language = Translator::get_post_language( $target->ID );
+
 		// Prepare the rules
 		$rules = static::prepare_post_rules( $rules );
 
@@ -125,7 +130,6 @@ final class Synchronizer {
 			foreach ( $rules['post_fields'] as $field ) {
 				if ( $field == 'post_parent' ) {
 					// In the case of the parent, try the parent's translation
-					$language = Translator::get_post_language( $target->ID );
 					$changes[ $field ] = Translator::get_post_translation( $original->$field, $language, true );
 				} else {
 					$changes[ $field ] = $original->$field;
@@ -147,13 +151,22 @@ final class Synchronizer {
 					continue;
 				}
 
-				$terms = wp_get_object_terms( $post->ID, $taxonomy, array( 'fields' => 'ids' ) );
-				$term_ids = array();
-				foreach ( $terms as $term ) {
-					$term_ids[] = Translator::get_term_translation( $term->term_id, $language, true );
-				}
+				// Get the terms of the post
+				$term_ids = wp_get_object_terms( $post->ID, $taxonomy, array( 'fields' => 'ids' ) );
 
-				wp_set_object_terms( $translation->ID, $term_ids, $taxonomy );
+				/**
+				 * Filter the meta value for the translation.
+				 *
+				 * Namely for replacing with translated counterparts.
+				 *
+				 * @since 2.1.0
+				 *
+				 * @param mixed $meta_value The value of the meta data.
+				 * @param int   $post_id    The ID of the post this will be assigned to.
+				 */
+				$meta_value = apply_filters( "nlingual_synchronize_post_terms-{$taxonomy}", $term_ids, $target->ID );
+
+				wp_set_object_terms( $target->ID, $term_ids, $taxonomy );
 			}
 		}
 
@@ -169,7 +182,22 @@ final class Synchronizer {
 					continue;
 				}
 
-				add_post_meta( $translation->ID, $meta->meta_key, $meta->meta_value );
+				// Unserialize the value for adding
+				$meta_value = maybe_unserialize( $meta->meta_value );
+
+				/**
+				 * Filter the meta value for the translation.
+				 *
+				 * Namely for replacing with translated counterparts.
+				 *
+				 * @since 2.1.0
+				 *
+				 * @param mixed $meta_value The value of the meta data.
+				 * @param int   $post_id    The ID of the post this will be assigned to.
+				 */
+				$meta_value = apply_filters( "nlingual_synchronize_post_meta-{$meta->meta_key}", $meta_value, $target->ID );
+
+				add_post_meta( $target->ID, $meta->meta_key, $meta->meta_value );
 			}
 		}
 
