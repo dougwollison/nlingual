@@ -865,7 +865,7 @@ final class Backend extends Handler {
 
 		// Assign the post to the language, fail if there's an error
 		try {
-			Translator::set_post_language( $post_id, $_REQUEST['nlingual_language'] );
+			Translator::set_post_language( $post_id, $_POST['nlingual_language'] );
 		} catch ( Exception $e ) {
 			wp_die( __( 'Error assigning language: the selected language does not exist.', 'nlingual' ) );
 		}
