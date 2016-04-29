@@ -192,6 +192,7 @@ final class Translator {
 	/**
 	 * Get an object's language.
 	 *
+	 * @since 2.1.0 Added $true_value argument.
 	 * @since 2.0.0
 	 *
 	 * @uses Translator::get_translation_group() to retrieve the object's translation group.
@@ -200,10 +201,11 @@ final class Translator {
 	 *
 	 * @param string $object_type The type of object.
 	 * @param int    $object_id   The ID of the object.
+	 * @param bool   $true_value  Wether or not to bypass language_is_requried fallback.
 	 *
 	 * @return bool|Language The language of the object (false if not found).
 	 */
-	public static function get_object_language( $object_type, $object_id ) {
+	public static function get_object_language( $object_type, $object_id, $true_value = false ) {
 		// Get the translation group for the object
 		$group = static::get_group( $object_type, $object_id );
 
@@ -211,8 +213,8 @@ final class Translator {
 		if ( $group ) {
 			return Registry::get_language( $group['language_by_object'][ $object_id ] );
 		}
-		// If language was not found, and language_is_required is enabled, use default
-		elseif ( Registry::get( 'language_is_required' ) ) {
+		// If language was not found, and language_is_required is enabled, use default unless bypassing
+		elseif ( Registry::get( 'language_is_required' ) && ! $true_value ) {
 			return Registry::default_language();
 		}
 
@@ -222,6 +224,7 @@ final class Translator {
 	/**
 	 * Set an object's language.
 	 *
+	 * @since 2.1.0 Added use of new $true_value argument on get_object_language().
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
@@ -251,8 +254,8 @@ final class Translator {
 			throw new Exception( 'The language specified does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
 		}
 
-		// Check the old language
-		$old_language = static::get_object_language( $object_type, $object_id );
+		// Check the old language (bypass language_is_required fallback)
+		$old_language = static::get_object_language( $object_type, $object_id, 'true_value' );
 		// If it has one and is the same, abort
 		if ( $old_language && $old_language->id == $language->id ) {
 			return true;
