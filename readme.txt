@@ -79,7 +79,7 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
 
 = 2.1.0 =
-Fixed issues with Synchronizer and Translator systems. Code cleanup.
+Fixed issues with post synchronization and handling of `language_is_required` option.
 
 = 2.0.1 =
 Fixed overlooked bug with Registry's option whitelist testing.
