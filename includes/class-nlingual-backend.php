@@ -509,6 +509,7 @@ final class Backend extends Handler {
 	/**
 	 * Print the content of the language/translations column.
 	 *
+	 * @since 2.1.0 Added bypass of langauge_is_required.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::is_post_type_supported() to check for support.
@@ -534,7 +535,7 @@ final class Backend extends Handler {
 		printf( '<input type="hidden" class="nl-nonce" value="%s" />', wp_create_nonce( 'update-post_' . $post_id ) );
 
 		// Start by printing out the language
-		$language = Translator::get_post_language( $post_id );
+		$language = Translator::get_post_language( $post_id, 'true_value' );
 		if ( ! $language ) {
 			echo '<input type="hidden" class="nl-language" value="0" />';
 			_e( 'None', 'nlingual', 'no language' );
@@ -730,6 +731,7 @@ final class Backend extends Handler {
 	/**
 	 * Output the content of the translations meta box.
 	 *
+	 * @since 2.1.0 Added bypass of langauge_is_required.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
@@ -748,7 +750,7 @@ final class Backend extends Handler {
 		$languages = Registry::languages();
 
 		// Get the post's language
-		$post_language = Translator::get_post_language( $post->ID );
+		$post_language = Translator::get_post_language( $post->ID, 'true_value' );
 
 		// Get the post's translations
 		$translations = Translator::get_post_translations( $post->ID );
