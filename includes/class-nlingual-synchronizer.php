@@ -33,7 +33,7 @@ final class Synchronizer {
 	 * Ensures fields/terms/meta are present, and handle
 	 * the aliases dictated by existing values.
 	 *
-	 * @since 2.1.0 Made sure all entries were arrays, including
+	 * @since 2.1.0 Made sure all entries were array|bool, including
 	 *              splitting up post_meta at the line breaks.
 	 * @since 2.0.0
 	 *
@@ -49,12 +49,15 @@ final class Synchronizer {
 			'post_meta'   => array(),
 		) );
 
-		// Ensure each is an array
-		$rules['post_fields'] = (array) $rules['post_fields'];
-		$rules['post_terms'] = (array) $rules['post_terms'];
-
-		if ( ! is_array( $rules['post_meta'] ) ) {
-			$rules['post_meta'] = preg_split( '/[\r\n]+/', $rules['post_meta'] );
+		// Ensure each is an array or boolean
+		if ( ! is_array( $rules['post_fields'] ) && ! is_bool( $rules['post_fields'] ) ) {
+			$rules['post_fields'] = (array) $rules['post_fields'];
+		}
+		if ( ! is_array( $rules['post_terms'] ) && ! is_bool( $rules['post_terms'] ) ) {
+			$rules['post_terms'] = (array) $rules['post_terms'];
+		}
+		if ( ! is_array( $rules['post_meta'] ) && ! is_bool( $rules['post_meta'] ) ) {
+			$rules['post_meta'] = preg_split( '/[\r\n]+/', trim( $rules['post_meta'] ), 0, PREG_SPLIT_NO_EMPTY );
 		}
 
 		// Handle the post_field aliases
@@ -114,6 +117,12 @@ final class Synchronizer {
 			return false;
 		}
 
+		// Throw exception if the post types don't match
+		if ( $original->post_type != $target->post_type ) {
+			/* Translators: %1$d = The ID number of the original post, %2$d = The ID number of the target post. */
+			throw new Exception( _f( 'The requested posts (%1$d & %2$d) cannot be synchronized because they are of different types.', 'nlingual', $original->ID, $target->ID ), NL_ERR_BADREQUEST );
+		}
+
 		// Load general sync rules by default
 		if ( is_null( $rules ) ) {
 			$rules = Registry::get_post_sync_rules( $original->post_type );
@@ -138,6 +147,11 @@ final class Synchronizer {
 
 		// Post Fields
 		if ( isset( $rules['post_field'] ) && $rules['post_fields'] ) {
+			// If TRUE, use all possible fields, as defined in the Documenter
+			if ( $rules['post_fields'] === true ) {
+				$rules['post_fields'] = array_keys( Documenter::post_field_names() );
+			}
+
 			// Build the list of fields to change
 			$changes = array();
 			foreach ( $rules['post_fields'] as $field_name ) {
@@ -167,6 +181,11 @@ final class Synchronizer {
 
 		// Post Terms
 		if ( isset( $rules['post_terms'] ) && $rules['post_terms'] ) {
+			// If TRUE, use all taxonomies for the post's type
+			if ( $rules['post_terms'] === true ) {
+				$rules['post_terms'] = get_object_taxonomies( $original, 'names' );
+			}
+
 			// Assign all the same meta values
 			foreach ( $rules['post_terms'] as $taxonomy ) {
 				// Get the terms of the original
@@ -195,8 +214,8 @@ final class Synchronizer {
 
 		// Meta Data
 		if ( isset( $rules['post_meta'] ) && $rules['post_meta'] ) {
-			// If wildcard, get all possible meta_key values from the original
-			if ( $rules['post_meta'][0] == '*' ) {
+			// If TRUE or wildcard exists, get all possible meta_key values from the original
+			if ( $rules['post_meta'] === true || in_array( '*', $rules['post_meta'] ) ) {
 				$rules['post_meta'] = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT meta_key FROM $wpdb->postmeta WHERE post_id = %d", $original->ID ) );
 			}
 
