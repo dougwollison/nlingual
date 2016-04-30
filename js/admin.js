@@ -464,19 +464,20 @@
 
 		// Handle creating new translation
 		$( '.nl-translation-input' ).change( function( e ) {
-			var $input, value, post_id, language_id, title, placeholder, translation_title;
+			var $input, value, post_id, post_language_id, translation_language_id, title, placeholder, translation_title;
 
 			$input = $( this );
 			value = $input.val();
 			post_id = $( '#post_ID' ).val();
-			language_id = $input.parents( '.nl-field' ).data( 'nl_language' );
+			post_language_id = $( '#nl_language' ).val();
+			translation_language_id = $input.parents( '.nl-field' ).data( 'nl_language' );
 
 			// If creating a new one, ask for a title for the translation
 			if ( 'new' === value ) {
 				title = $( '#title' ).val();
 
 				placeholder = nlingualL10n.TranslationTitlePlaceholder
-					.replace( '%1$s', Languages.get( language_id ).get( 'system_name' ) )
+					.replace( '%1$s', Languages.get( translation_language_id ).get( 'system_name' ) )
 					.replace( '%2$s', title );
 
 				translation_title = prompt( nlingualL10n.TranslationTitle, placeholder );
@@ -491,11 +492,12 @@
 				$.ajax( {
 					url: ajaxurl,
 					data: {
-						action       : 'nl_new_translation',
-						post_id      : post_id,
-						language_id  : language_id,
-						title        : translation_title,
-						custom_title : translation_title === placeholder
+						action                  : 'nl_new_translation',
+						post_id                 : post_id,
+						post_language_id        : post_language_id,
+						translation_language_id : translation_language_id,
+						title                   : translation_title,
+						custom_title            : translation_title === placeholder
 					},
 					type: 'post',
 					dataType: 'json',

@@ -47,6 +47,7 @@ final class AJAX extends Handler {
 	/**
 	 * Create a clone of the requested post in the requested language.
 	 *
+	 * @since 2.1.0 Add capabiltiy to set the post language before cloning.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::languages() to validate the language requested.
@@ -54,7 +55,8 @@ final class AJAX extends Handler {
 	 */
 	public static function new_translation() {
 		// Fail if no post/language id or title is passed
-		if ( ! isset( $_REQUEST['post_id'] ) || ! isset( $_REQUEST['language_id'] ) || ! isset( $_REQUEST['title'] ) ) {
+		if ( ! isset( $_REQUEST['post_id'] ) || ! isset( $_REQUEST['post_language_id'] )
+		|| ! isset( $_REQUEST['translation_language_id'] ) || ! isset( $_REQUEST['title'] ) ) {
 			return;
 		}
 
@@ -64,14 +66,23 @@ final class AJAX extends Handler {
 			return;
 		}
 
-		// Fail if language does not exist
-		$language = Registry::get_language( $_REQUEST['language_id'] );
-		if ( ! $language ) {
+		// Fail if post language does not exist
+		$post_language = Registry::get_language( $_REQUEST['post_language_id'] );
+		if ( ! $post_language ) {
 			return;
 		}
 
+		// Fail if translation language does not exist
+		$translation_language = Registry::get_language( $_REQUEST['translation_language_id'] );
+		if ( ! $translation_language ) {
+			return;
+		}
+
+		// Ensure the post is in the correct language
+		Translator::set_post_language( $post, $post_language );
+
 		// Create the translated clone
-		$translation = Synchronizer::clone_post( $post, $language, $_REQUEST['title'], isset( $_REQUEST['custom_title'] ) && $_REQUEST['custom_title'] );
+		$translation = Synchronizer::clone_post( $post, $translation_language, $_REQUEST['title'], isset( $_REQUEST['custom_title'] ) && $_REQUEST['custom_title'] );
 
 		// Fail if error creating translation
 		if ( ! $translation ) {
