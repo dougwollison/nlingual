@@ -67,7 +67,7 @@ final class Manager extends Handler {
 					// If values is a string...
 					if ( is_string( $values ) ) {
 						// Split it by line
-						$values = (array) preg_split( '/[\n\r]+/', trim( $values ), 0, PREG_SPLIT_NO_EMPTY );
+						$values = preg_split( '/[\n\r]+/', trim( $values ), 0, PREG_SPLIT_NO_EMPTY );
 						// Convert to TRUE if it contains * wildcard
 						if ( in_array( '*', $values ) ) {
 							$values = true;
