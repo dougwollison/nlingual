@@ -169,7 +169,7 @@ final class Synchronizer {
 				 * @param int        $target_id   The ID of the post this will be assigned to.
 				 * @param int        $original_id The ID of the post the value is from.
 				 */
-				$field_value = apply_filters( "nlingual_sync_post_field-{$field}", $field_value, $language, $target->ID, $original->ID );
+				$field_value = apply_filters( "nlingual_sync_post_field-{$field_name}", $field_value, $language, $target->ID, $original->ID );
 
 				$changes[ $field_name ] = $field_value;
 			}
