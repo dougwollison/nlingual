@@ -239,7 +239,7 @@ final class Synchronizer {
 				 * @param int      $target_id   The ID of the post this will be assigned to.
 				 * @param int      $original_id The ID of the post the value is from.
 				 */
-				$meta_values = apply_filters( "nlingual_sync_post_meta-{$meta->meta_key}", $meta_values, $language, $target->ID, $original->ID );
+				$meta_values = apply_filters( "nlingual_sync_post_meta-{$meta_key}", $meta_values, $language, $target->ID, $original->ID );
 
 				// Re-add each value
 				foreach ( $meta_values as $meta_value ) {
