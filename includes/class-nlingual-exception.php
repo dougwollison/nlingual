@@ -11,7 +11,7 @@
 namespace nLingual;
 
 /**
- * Error code for a n invalid action.
+ * Error code for an invalid action.
  *
  * @since 2.0.0
  *
