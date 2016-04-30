@@ -474,7 +474,7 @@ final class Manager extends Handler {
 	/**
 	 * Fields for the Localizables page.
 	 *
-	 * @since 2.0.2 Removed attachment skip from taxonomy loop.
+	 * @since 2.1.0 Removed attachment skip from taxonomy loop.
 	 * @since 2.0.0
 	 *
 	 * @uses Settings::add_fields() to define the controls on the page.
