@@ -286,7 +286,7 @@ final class System extends Handler {
 		static::add_filter( 'untrashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
 		static::add_filter( 'deleted_post', 'delete_sister_posts', 10, 1 );
 		static::add_filter( 'deleted_post', 'delete_post_language', 11, 1 );
-		static::add_filter( 'nlingual_sync_post_field-post_parent', 'translate_post_parent', 10, 2 );
+		static::add_filter( 'nlingual_sync_post_field-post_parent', 'use_translated_post', 10, 2 );
 
 		// URL Rewriting
 		static::add_filter( 'home_url', 'localize_home_url', 10, 3 );
@@ -525,7 +525,7 @@ final class System extends Handler {
 	 *
 	 * @return int The original ID or it's translation's if found.
 	 */
-	public static function find_translated_post( $post_id, Language $language ) {
+	public static function use_translated_post( $post_id, Language $language ) {
 		return Translator::get_post_translation( $post_id, $language, 'return_self' );
 	}
 
