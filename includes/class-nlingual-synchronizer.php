@@ -126,6 +126,17 @@ final class Synchronizer {
 		// Load general sync rules by default
 		if ( is_null( $rules ) ) {
 			$rules = Registry::get_post_sync_rules( $original->post_type );
+
+			/**
+			 * Filter the post sync rules.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param array    $rules    The sync rules for this post's type.
+			 * @param \WP_Post $original The post being synchronized from.
+			 * @param \WP_Post $target   The post being synchronized to.
+			 */
+			$rules = apply_filters( 'nlingual_post_sync_rules', $rules, $original, $target );
 		}
 
 		// Get the target's language
@@ -133,17 +144,6 @@ final class Synchronizer {
 
 		// Prepare the rules
 		$rules = static::prepare_post_rules( $rules );
-
-		/**
-		 * Filter the post sync rules.
-		 *
-		 * @since 2.0.0
-		 *
-		 * @param array    $rules    The sync rules for this post's type.
-		 * @param \WP_Post $original The post being synchronized from.
-		 * @param \WP_Post $target   The post being synchronized to.
-		 */
-		$rules = apply_filters( 'nlingual_post_sync_rules', $rules, $original, $target );
 
 		// Post Fields
 		if ( isset( $rules['post_field'] ) && $rules['post_fields'] ) {
@@ -351,7 +351,7 @@ final class Synchronizer {
 		}
 
 		// Get the cloning rules
-		$rules = Registry::get_post_clone_rules();
+		$rules = Registry::get_post_clone_rules( $post->post_type );
 
 		// Prepare the rules
 		$rules = static::prepare_post_rules( $rules );
