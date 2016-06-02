@@ -269,6 +269,7 @@ final class System extends Handler {
 	/**
 	 * Register hooks.
 	 *
+	 * @since 2.2.0 Reassigned synchronize_posts to wp_insert_post (better hook to use).
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {

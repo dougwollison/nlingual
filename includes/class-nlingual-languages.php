@@ -228,6 +228,7 @@ final class Languages implements \Iterator {
 	/**
 	 * Retrieve a language from the index.
 	 *
+	 * @since 2.2.0 Now case-insensitive.
 	 * @since 2.0.0
 	 *
 	 * @param int|string $value A value to retrieve the language by.
@@ -254,7 +255,7 @@ final class Languages implements \Iterator {
 
 		// Loop through all languages and return the first match
 		foreach ( $this->items as $language ) {
-			if ( strtolower( $language->$field) == strtolower( $value ) ) {
+			if ( strtolower( $language->$field ) == strtolower( $value ) ) {
 				return $language;
 			}
 		}
@@ -371,6 +372,7 @@ final class Languages implements \Iterator {
 	/**
 	 * Try to find a language whose locale_name/iso_code matches the language tag specified.
 	 *
+	 * @sicne 2.2.0 Changed to check all locales before checking ISO codes.
 	 * @since 2.0.0
 	 *
 	 * @param string $language_tag The language tag to try and find a match for.
