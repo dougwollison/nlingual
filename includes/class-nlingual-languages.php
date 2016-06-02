@@ -381,14 +381,17 @@ final class Languages implements \Iterator {
 		// Sanitize for looser comparison
 		$language_tag = sanitize_tag( $language_tag );
 
-		// Loop through all languages and return the first match
+		// Loop through all languages, try matching locale
 		foreach ( $this->items as $language ) {
 			// Try the full locale...
-			if ( sanitize_tag( $language->locale_name ) == $language_tag ) {
+			if ( sanitize_tag( $language->locale_name, '_' ) == $language_tag ) {
 				return $language;
 			}
-			// Failing that, try the ISO code
-			elseif ( sanitize_tag( $language->iso_code ) == $language_tag ) {
+		}
+
+		// Loop through all languages, try matching just ISO code
+		foreach ( $this->items as $language ) {
+			if ( strtolower( $language->iso_code ) == substr( $language_tag, 0, 2 ) ) {
 				return $language;
 			}
 		}
