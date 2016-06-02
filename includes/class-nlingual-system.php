@@ -282,7 +282,7 @@ final class System extends Handler {
 		static::add_action( 'load_textdomain', 'log_textdomain_path', 10, 2 );
 
 		// Post Changes
-		static::add_action( 'wp_insert_post', 'synchronize_posts', 20, 1 );
+		static::add_action( 'wp_insert_post', 'synchronize_posts', 10, 3 );
 		static::add_filter( 'trashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
 		static::add_filter( 'untrashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
 		static::add_filter( 'deleted_post', 'delete_sister_posts', 10, 1 );
@@ -387,14 +387,18 @@ final class System extends Handler {
 	/**
 	 * Handle any synchronization with sister posts.
 	 *
+	 * @since 2.2.0 Added $post & $update args; moved to wp_insert_post hook.
 	 * @since 2.0.0
+	 *
 	 * @uses Synchronizer::sync_post_with_sister() to handle post synchronizing.
 	 *
-	 * @param int $post_id The ID of the post being saved.
+	 * @param int     $post_id The ID of the post being updated.
+	 * @param WP_Post $post    The post being updated.
+	 * @param bool    $update  Whether this is an existing post being updated or not.
 	 */
-	public static function synchronize_posts( $post_id ) {
-		// Abort if doing auto save or it's a revision
-		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || wp_is_post_revision( $post_id ) ) {
+	public static function synchronize_posts( $post_id, $post, $update ) {
+		// Abort if doing auto save, a revision, or not an update
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || wp_is_post_revision( $post_id ) || ! $update ) {
 			return;
 		}
 
@@ -415,13 +419,13 @@ final class System extends Handler {
 		}
 
 		// Unhook this hook to prevent an infinite loop
-		$priority = static::remove_action( 'edit_post', __FUNCTION__ );
+		$priority = static::remove_action( 'wp_insert_post', __FUNCTION__ );
 
 		// Now synchronize the post's translations
 		Synchronizer::sync_post_with_sisters( $post_id, $skip_ids );
 
 		// Rehook now that we're done
-		static::add_action( 'edit_post', __FUNCTION__, $priority, 1 );
+		static::add_action( 'wp_insert_post', __FUNCTION__, $priority, 1 );
 	}
 
 	/**
