@@ -254,7 +254,7 @@ final class Languages implements \Iterator {
 
 		// Loop through all languages and return the first match
 		foreach ( $this->items as $language ) {
-			if ( $language->$field == $value ) {
+			if ( strtolower( $language->$field) == strtolower( $value ) ) {
 				return $language;
 			}
 		}
