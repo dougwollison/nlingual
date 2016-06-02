@@ -281,7 +281,7 @@ final class System extends Handler {
 		static::add_action( 'load_textdomain', 'log_textdomain_path', 10, 2 );
 
 		// Post Changes
-		static::add_action( 'edit_post', 'synchronize_posts', 20, 1 );
+		static::add_action( 'wp_insert_post', 'synchronize_posts', 20, 1 );
 		static::add_filter( 'trashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
 		static::add_filter( 'untrashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
 		static::add_filter( 'deleted_post', 'delete_sister_posts', 10, 1 );
