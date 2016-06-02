@@ -89,6 +89,17 @@ final class AJAX extends Handler {
 			return;
 		}
 
+		/**
+		 * Fires when a translation clone is successfully created.
+		 *
+		 * @since 2.2.0
+		 *
+		 * @param WP_Post  $translation          The translation clone of the post.
+		 * @param WP_Post  $post                 The original post.
+		 * @param Language $translation_language The language the clone is for.
+		 */
+		do_action( 'nlingual_new_translation', $translation, $post, $translation_language );
+
 		// Return the details
 		echo json_encode( array(
 			'id'    => $translation->ID,
