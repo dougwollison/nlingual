@@ -163,6 +163,7 @@ final class URL extends Model {
 	/**
 	 * Export the URL back into a string.
 	 *
+	 * @since 2.2.0 Ensure / path is included.
 	 * @since 2.0.0
 	 *
 	 * @return string $url The URL in string form.
