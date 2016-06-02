@@ -172,6 +172,13 @@ function nL_lang_slug( $lang_id = null ) {
 }
 
 /**
+ * @see Registry::set_language()
+ */
+function nl_set_lang( $lang, $lock = false ) {
+	return Registry::set_language( $lang, $lock );
+}
+
+/**
  * @see Rewriter::get_links()
  */
 function nL_get_lang_links( $skip_current = false ) {
