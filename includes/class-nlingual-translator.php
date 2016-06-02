@@ -644,6 +644,8 @@ final class Translator {
 				}
 				// Otherwise, return false
 				else {
+					/* Translators: %d = The ID number of the object. */
+					trigger_error( '[nLingual] ' . _f( 'The requested post (ID: %d) does not belong to a supported post type.', 'nlingual', $object_id ), E_USER_NOTICE );
 					return false;
 				}
 			}
