@@ -175,7 +175,7 @@ final class Registry {
 	 *
 	 * @var array
 	 */
-	private static $option_overrides = array();
+	private static $options_override = array();
 
 	// =========================
 	// ! Property Accessing
