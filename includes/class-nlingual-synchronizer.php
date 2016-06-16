@@ -99,6 +99,8 @@ final class Synchronizer {
 	 *		@option bool|array "post_meta"   A whitelist of meta fields (TRUE for all).
 	 *		@option bool|array "post_terms"  A whitelist of taxonomies (TRUE for all).
 	 *
+	 * @throws Exception If the requested posts aren't of the same type.
+	 *
 	 * @return bool TRUE if successful, FALSE if errors occurred.
 	 */
 	public static function sync_posts( $original, $target, $rules = null ) {
@@ -296,6 +298,9 @@ final class Synchronizer {
 	 * @param string       $title             Optional. The custom title for the clone.
 	 * @param bool         $_title_is_default Optional. Was $title the default "Translate to..."?
 	 *                                        Internal use only by Backend::ajax_new_translation()
+	 *
+	 * @throws Exception If the post specified does not exist.
+	 * @throws Exception If the language specified does not exist.
 	 *
 	 * @return WP_Post|false The cloned post or false on failure.
 	 */

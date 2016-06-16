@@ -1083,6 +1083,8 @@ final class Localizer extends Handler {
 	 * @param string $name The name of the method being called.
 	 * @param array  $args The arguments for the method.
 	 *
+	 * @throws Exception If the method alias cannot be determined.
+	 *
 	 * @return mixed The result of the redirected method.
 	 */
 	public static function __callStatic( $name, $args ) {

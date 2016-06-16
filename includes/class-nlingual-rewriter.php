@@ -216,6 +216,8 @@ final class Rewriter {
 	 * @param mixed  $language   Optional. The desired language to localize to.
 	 * @param bool   $relocalize Optional. Wether or not to relocalize the url if it already is.
 	 *
+	 * @throws Exception If the language requested does not exist.
+	 *
 	 * @return string The new localized URL.
 	 */
 	public static function localize_url( $url, $language = null, $relocalize = false ) {
@@ -371,6 +373,8 @@ final class Rewriter {
 	 * @uses Translator::get_post_translation() to get the page/post's translation.
 	 *
 	 * @param mixed $language The language to localize the current page for.
+	 *
+	 * @throws Exception If the language requested does not exist.
 	 *
 	 * @return string The localized URL.
 	 */

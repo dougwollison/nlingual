@@ -238,6 +238,8 @@ final class Translator {
 	 * @param int    $object_id   The ID of the object.
 	 * @param mixed  $language    The language of the object.
 	 *
+	 * @throws Exception If the language specified does not exist.
+	 *
 	 * @return bool If the assignment worked or not.
 	 */
 	public static function set_object_language( $object_type, $object_id, $language ) {
@@ -334,6 +336,8 @@ final class Translator {
 	 * @uses validate_language() to validate the language and get the Language object.
 	 *
 	 * @param mixed  $language The language to remove the association for.
+	 *
+	 * @throws Exception If the language specified does not exist.
 	 */
 	public static function delete_language( $language ) {
 		global $wpdb;
@@ -444,6 +448,8 @@ final class Translator {
 	 * @param int    $object_id   The ID of the primary object.
 	 * @param array  $objects     A list of objects to associate (id => language_id format).
 	 *
+	 * @throws Exception If the language specified does not exist.
+	 *
 	 * @param bool Wether or not the association could be done (false if aborted).
 	 */
 	public static function set_object_translations( $object_type, $object_id, $translations ) {
@@ -514,6 +520,8 @@ final class Translator {
 	 * @param mixed  $language    The language to add a translation for.
 	 * @param int    $object      The object to add as the translation.
 	 *
+	 * @throws Exception If the language specified does not exist.
+	 *
 	 * @param bool Wether or not the association could be done.
 	 */
 	public static function set_object_translation( $object_type, $object_id, $language, $object ) {
@@ -544,6 +552,8 @@ final class Translator {
 	 * @param string $object_type The type of object.
 	 * @param int    $object_id   The ID of the object.
 	 * @param mixed  $language    The language to remove the association for.
+	 *
+	 * @throws Exception If the language specified does not exist.
 	 *
 	 * @return bool Wether or not a deletion was performed (false = nothing to delete).
 	 */
@@ -599,6 +609,9 @@ final class Translator {
 	 *
 	 * @param string $name The name of the method being called.
 	 * @param array  $args The list of arguments for the method.
+	 *
+	 * @throws Exception If the method alias cannot be determined.
+	 * @throws Exception If a post is called belonging to an unsupported post type.
 	 *
 	 * @return mixed The result of the target method.
 	 */

@@ -400,6 +400,10 @@ final class Registry {
 	 * @param mixed $language The desired language.
 	 * @param bool  $lock     Wether or not to lock the selection.
 	 * @param bool  $override Wether or not to override the lock.
+	 *
+	 * @throws Exception If the language specified does not exist.
+	 *
+	 * @return bool Wether or not the language could be changed.
 	 */
 	public static function set_language( $language, $lock = false, $override = false ) {
 		// Ensure $language is a Language
@@ -743,6 +747,8 @@ final class Registry {
 	 *
 	 * @param string $name The name of the method being called.
 	 * @param array  $args The list of arguments for the method.
+	 *
+	 * @throws Exception If the method alias cannot be determined.
 	 *
 	 * @return mixed The result of the target method.
 	 */

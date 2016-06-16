@@ -136,6 +136,8 @@ final class URL extends Model {
 	 *
 	 * @param string|array $url      The URL to process.
 	 * @param array        $defaults Optional. The default property values.
+	 *
+	 * @throws Exception If $url is not an string or array.
 	 */
 	public function parse( $url, $defaults = array() ) {
 		// If it's a string, parse it
