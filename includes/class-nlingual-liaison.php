@@ -506,6 +506,7 @@ final class Liaison extends Handler {
 	 *
 	 * Unlike WordPress for the Posts page, it will not disabled the editor.
 	 *
+	 * @since 2.1.1 Fixed namespace scope typo accessing IndexPages\Registry.
 	 * @since 2.0.0
 	 *
 	 * @param WP_Post $post The post in question.
@@ -521,7 +522,7 @@ final class Liaison extends Handler {
 		$translation = Translator::get_post_translation( $post->ID, Registry::default_language() );
 
 		// Abort if the original is not an index page
-		if ( ! $post_type = IndexPages\Registry::is_index_page( $translation ) ) {
+		if ( ! $post_type = \IndexPages\Registry::is_index_page( $translation ) ) {
 			return;
 		}
 
