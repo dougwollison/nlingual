@@ -648,6 +648,7 @@ final class System extends Handler {
 	/**
 	 * Set the queried language to the current one if applicable
 	 *
+	 * @since 2.1.1 Fixed post type and taxonomy checks to be more less picky.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to get the query_var, show_all_languages options.
@@ -687,12 +688,12 @@ final class System extends Handler {
 		}
 
 		// If it's a post type archive, check if the post type is supported
-		if ( $query->is_post_type_archive() && ! Registry::is_post_type_supported( $query->get( 'post_type' ) ) ) {
+		if ( ( $post_type = $query->get( 'post_type' ) ) && ! Registry::is_post_type_supported( $post_type ) ) {
 			return;
 		}
 
 		// If it's a taxonomy, check if the object types are supported
-		if ( $query->is_tax() && $query->queried_object->taxonomy ) {
+		if ( property_exists( $query->queried_object, 'taxonomy' ) ) {
 			$object_types = get_taxonomy( $query->queried_object->taxonomy )->object_type;
 
 			if ( ! Registry::is_post_type_supported( $object_types ) ) {
