@@ -688,16 +688,18 @@ final class System extends Handler {
 		}
 
 		// If it's a post type archive, check if the post type is supported
-		if ( ( $post_type = $query->get( 'post_type' ) ) && ! Registry::is_post_type_supported( $post_type ) ) {
+		$post_type = $query->get( 'post_type' ) ?: 'post';
+		if ( ! Registry::is_post_type_supported( $post_type ) ) {
 			return;
 		}
 
-		// If it's a taxonomy, check if the object types are supported
-		if ( property_exists( $query->queried_object, 'taxonomy' ) ) {
-			$object_types = get_taxonomy( $query->queried_object->taxonomy )->object_type;
-
-			if ( ! Registry::is_post_type_supported( $object_types ) ) {
-				return;
+		// If we're querying by taxonomy, check if it's object type is supported
+		if ( $query->tax_query ) {
+			foreach ( $query->tax_query->queries as $tax_query ) {
+				$taxonomy = get_taxonomy( $tax_query->taxonomy );
+				if ( $taxonomy && ! Registry::is_post_type_supported( $taxonomy->object_types ) ) {
+					return;
+				}
 			}
 		}
 
