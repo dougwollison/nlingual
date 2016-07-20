@@ -236,9 +236,9 @@ final class Registry {
 		// Check if it's set, return it's value.
 		if ( isset( static::$options[ $option ] ) ) {
 			// Check if it's been overriden, use that unless otherwise requested
-			$has_override = isset( static::$option_overrides[ $option ] );
+			$has_override = isset( static::$options_override[ $option ] );
 			if ( $has_override && ! $true_value ) {
-				$value = static::$option_overrides[ $option ];
+				$value = static::$options_override[ $option ];
 			} else {
 				$value = static::$options[ $option ];
 			}
