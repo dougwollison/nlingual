@@ -61,7 +61,7 @@ final class Liaison extends Handler {
 		require( NL_PLUGIN_DIR . '/includes/functions-compatibility.php' );
 
 		// Old split-language string support
-		add_filter( 'the_title', 'nl_split_langs', 10, 2 );
+		add_filter( 'the_title', 'nl_split_langs', 10, 1 );
 		if ( ! get_option( 'nlingual_upgraded_options' ) ) {
 			// Somehow the options were not converted (not taking chances),
 			// hook nl_split_langs into blogname and blogdescription
