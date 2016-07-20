@@ -874,7 +874,7 @@ final class System extends Handler {
 		foreach ( $pages as $page ) {
 			// If the language isn't set or is the current one, include it
 			$language = Translator::get_post_language( $page->ID );
-			if ( ! $language || $language->id == $filter_language ) {
+			if ( ! $language || $language->id == $filter_language->id ) {
 				$filtered_pages[] = $page;
 			}
 		}
