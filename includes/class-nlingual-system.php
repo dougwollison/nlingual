@@ -291,9 +291,9 @@ final class System extends Handler {
 
 		// URL Rewriting
 		static::add_filter( 'home_url', 'localize_home_url', 10, 3 );
-		static::add_filter( 'page_link', 'localize_post_link', 10, 2 );
-		static::add_filter( 'post_link', 'localize_post_link', 10, 2 );
-		static::add_filter( 'post_type_link', 'localize_post_link', 10, 2 );
+		static::add_filter( 'page_link', 'localize_post_link', 10, 3 );
+		static::add_filter( 'post_link', 'localize_post_link', 10, 3 );
+		static::add_filter( 'post_type_link', 'localize_post_link', 10, 3 );
 		static::add_filter( 'mod_rewrite_rules', 'fix_mod_rewrite_rules', 0, 1 );
 
 		// Query Manipulation
@@ -541,6 +541,7 @@ final class System extends Handler {
 	/**
 	 * Localize the home URL.
 	 *
+	 * @since 2.1.0 No longer localizes draft URLs while in the admin.
 	 * @since 2.0.0
 	 *
 	 * @uses Rewriter::localize_url() to create the new url.
@@ -557,6 +558,11 @@ final class System extends Handler {
 			return $url;
 		}
 
+		// Don't localize draft paths in the admin
+		if ( is_backend() && preg_match( '/^\?(p|page_id|post_type)=/', $path ) ) {
+			return $url;
+		}
+
 		// Return the localized version of the URL
 		return Rewriter::localize_url( $url );
 	}
@@ -567,6 +573,8 @@ final class System extends Handler {
 	 * Namely, localize it for it's assigned language.
 	 * Also checks for localizing a home page translation.
 	 *
+	 * @since 2.1.0 Modified to explicitly handle post object vs ID.
+	 *              Will no longer localize for draft/pending posts.
 	 * @since 2.0.0
 	 *
 	 * @uses Translator::get_post_language() to get the post's language.
@@ -574,12 +582,27 @@ final class System extends Handler {
 	 * @uses Translator::get_post_translation() to get the post for that language.
 	 * @uses Rewriter::localize_url() to localize the URL into the post's language.
 	 *
-	 * @param string $permalink The permalink of the post.
-	 * @param int    $post_id   The ID of the post.
+	 * @param string      $permalink The permalink of the post.
+	 * @param int|WP_Post $post      The post ID or object.
+	 * @param bool        $sample    Is this a sample permalink? (Defaults to FALSE).
 	 *
 	 * @return string The localized permalink.
 	 */
-	public static function localize_post_link( $permalink, $post_id ) {
+	public static function localize_post_link( $permalink, $post, $sample = false ) {
+		// If $post is an object, get the ID
+		if ( is_object( $post ) ) {
+			$post_id = $post->ID;
+		} else {
+			$post_id = $post;
+		}
+
+		// If the post is non published, don't bother
+		$status = get_post_status( $post_id );
+		$draft_or_pending = in_array( $status, array( 'draft', 'pending', 'auto-draft', 'future' ) );
+		if ( $draft_or_pending && ! $sample ) {
+			return $permalink;
+		}
+
 		// Check if it has a language
 		if ( $language = Translator::get_post_language( $post_id ) ) {
 			// If it's a page, check if it's a home page translation
