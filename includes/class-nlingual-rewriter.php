@@ -362,6 +362,7 @@ final class Rewriter {
 	/**
 	 * Attempt to localize the current page URL.
 	 *
+	 * @since 2.1.0 Now uses get_search_link() to create the search URL.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to check for backwards compatibility.
@@ -402,7 +403,7 @@ final class Rewriter {
 
 			// Front page? just use home_url()
 			if ( is_front_page() ) {
-				$url = home_url();
+				$url = home_url( '/' );
 			}
 			// Term page? Get the term link
 			elseif ( is_tax() || is_tag() || is_category() ) {
@@ -430,7 +431,7 @@ final class Rewriter {
 			}
 			// Search page? Rebuild the link
 			elseif ( is_search() ) {
-				$url = home_url( '/?s=' . get_query_var( 's' ) );
+				$url = get_search_link( get_query_var( 's' ) );
 			}
 			// Give up and just get the orginally requested URL, relocalized
 			else {
