@@ -183,6 +183,7 @@ final class Frontend extends Handler {
 	 * For example, if the language requested doesn't match that of the queried object,
 	 * or if the language requeste is inactive.
 	 *
+	 * @since 2.2.0 Regigged post language redirecting to account for untranslated homepage.
 	 * @since 2.0.0
 	 *
 	 * @uses NL_REQUESTED_LANGUAGE to check if the language was specifically requested.
@@ -212,20 +213,26 @@ final class Frontend extends Handler {
 		if ( is_a( $queried_object, 'WP_Post' ) ) {
 			// Check if it's post type is supported
 			if ( Registry::is_post_type_supported( $queried_object->post_type ) ) {
-				// Get the language
+				// Get the post's language
 				$post_language = Translator::get_post_language( $queried_object );
 
-				// If the post has a language, and doesn't match the current one,
-				// and the override is set (or otherwise the language wasn't specified),
-				// or if it doesn't have a translation (and language_is_required is set),
-				// Redirect to the post's language
-				if ( ( $post_language
-					&& ! Registry::is_language_current( $post_language )
-					&& ( Registry::get( 'post_language_override', false )
-						|| ! defined( 'NL_REQUESTED_LANGUAGE' ) ) )
-				|| ( ! Translator::get_post_translation( $queried_object )
-					&& Registry::get( 'language_is_required' ) ) ) {
-					$redirect_language = $post_language;
+				// If not set, but language_is_required is set, use the default language
+				if ( ! $post_language && Registry::get( 'language_is_required' ) ) {
+					$post_language = Registry::default_language();
+				}
+
+				// If there is a language to test, proceed
+				if ( $post_language ) {
+					// Now, check if it's different from the current language
+					if ( ! Registry::is_language_current( $post_language ) ) {
+						// Check if post_language_override is set, or otherwise no language was specified
+						if ( Registry::get( 'post_language_override', false ) || ! defined( 'NL_REQUESTED_LANGUAGE' ) ) {
+							// Finally, check if the homepage is being requested when there's no translation
+							if ( ! ( is_front_page() && ! Translator::get_post_translation( $queried_object ) ) ) {
+								$redirect_language = $post_language;
+							}
+						}
+					}
 				}
 			}
 		}
