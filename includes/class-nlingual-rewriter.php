@@ -362,7 +362,7 @@ final class Rewriter {
 	/**
 	 * Attempt to localize the current page URL.
 	 *
-	 * @since 2.1.0 Now uses get_search_link() to create the search URL.
+	 * @since 2.2.0 Now uses get_search_link() to create the search URL.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to check for backwards compatibility.

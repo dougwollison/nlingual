@@ -47,7 +47,7 @@ final class AJAX extends Handler {
 	/**
 	 * Create a clone of the requested post in the requested language.
 	 *
-	 * @since 2.1.0 Add capabiltiy to set the post language before cloning.
+	 * @since 2.2.0 Add capabiltiy to set the post language before cloning.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::languages() to validate the language requested.

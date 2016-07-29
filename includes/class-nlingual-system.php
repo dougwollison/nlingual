@@ -541,7 +541,7 @@ final class System extends Handler {
 	/**
 	 * Localize the home URL.
 	 *
-	 * @since 2.1.0 No longer localizes draft URLs while in the admin.
+	 * @since 2.2.0 No longer localizes draft URLs while in the admin.
 	 * @since 2.0.0
 	 *
 	 * @uses Rewriter::localize_url() to create the new url.
@@ -573,7 +573,7 @@ final class System extends Handler {
 	 * Namely, localize it for it's assigned language.
 	 * Also checks for localizing a home page translation.
 	 *
-	 * @since 2.1.0 Modified to explicitly handle post object vs ID.
+	 * @since 2.2.0 Modified to explicitly handle post object vs ID.
 	 *              Will no longer localize for draft/pending posts.
 	 * @since 2.0.0
 	 *
