@@ -450,6 +450,7 @@ final class Backend extends Handler {
 	/**
 	 * Add <select> for filtering posts by language.
 	 *
+	 * @since 2.2.0 Fixed handling of string vs array for $current.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::is_post_type_supported() to check for support.
@@ -474,7 +475,9 @@ final class Backend extends Handler {
 		$current = $wp_query->get( $query_var );
 
 		// If current is an array, use the first one
-		$current = reset( $current );
+		if ( is_array( $current ) ) {
+			$current = reset( $current );
+		}
 		?>
 		<select name="<?php echo $query_var; ?>" class="postform">
 			<option value="-1"><?php _e( 'All Languages', 'nlingual' ); ?></option>
