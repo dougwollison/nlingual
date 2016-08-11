@@ -341,7 +341,7 @@ final class Synchronizer {
 			'post_parent'    => Translator::get_post_translation( $post->post_parent, $language, true ),
 			'menu_order'     => $post->menu_order,
 			'post_type'      => $post->post_type,
-			'comment_count'  => $post->comment_count
+			'comment_count'  => $post->comment_count,
 		);
 
 		// If using default title, create a default post_name

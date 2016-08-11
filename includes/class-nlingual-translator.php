@@ -585,7 +585,7 @@ final class Translator {
 			),
 			array(
 				'group_id'    => $group_id,
-				'language_id' => $language->id
+				'language_id' => $language->id,
 			),
 			array( '%d' ),
 			array( '%d', '%d' )
