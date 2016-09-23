@@ -154,7 +154,7 @@ final class Languages implements \Iterator {
 
 		// If we have no items but need a dummy at least, add it
 		if ( $this->count() == 0 && $add_dummy ) {
-			$this->items[] = new Language( array( 'id' => -1 ) );
+			$this->items[] = new Language( array( 'id' => 0 ) );
 		}
 
 		// Sort the collection
