@@ -314,6 +314,9 @@ final class Installer extends Handler {
 			static::convert_options();
 		}
 
+		// Add the default options
+		static::install_options();
+
 		// Log the current database version
 		update_option( 'nlingual_database_version', NL_DB_VERSION );
 
