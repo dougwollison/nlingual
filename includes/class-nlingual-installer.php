@@ -13,7 +13,7 @@ namespace nLingual;
 /**
  * The Plugin Installer
  *
- * Registers activate/deactivate/uninstall hooks, and handle
+ * Registers activate/deactivate hooks, and handle
  * any necessary upgrading from an existing install.
  *
  * @internal Used by the System.
@@ -28,18 +28,17 @@ final class Installer extends Handler {
 	/**
 	 * Register the plugin hooks
 	 *
+	 * @since 2.3.0 Removed the uninstall hook, using uninstall.php method.
 	 * @since 2.0.0
 	 *
 	 * @uses NL_PLUGIN_FILE to identify the plugin file.
 	 * @uses Installer::plugin_activate() as the activation hook.
 	 * @uses Installer::plugin_deactivate() as the deactivation hook.
-	 * @uses Installer::plugin_uninstall() as the uninstall hook.
 	 */
 	public static function register_hooks() {
 		// Plugin hooks
 		register_activation_hook( NL_PLUGIN_FILE, array( __CLASS__, 'plugin_activate' ) );
 		register_deactivation_hook( NL_PLUGIN_FILE, array( __CLASS__, 'plugin_deactivate' ) );
-		register_uninstall_hook( NL_PLUGIN_FILE, array( __CLASS__, 'plugin_uninstall' ) );
 
 		// Upgrade logic
 		static::add_action( 'plugins_loaded', 'upgrade', 10, 0 );
@@ -190,39 +189,6 @@ final class Installer extends Handler {
 		}
 
 		// To be written
-	}
-
-	/**
-	 * Delete database tables and any options.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Installer::plugin_security_check() to check for WP_UNINSTALL_PLUGIN.
-	 *
-	 * @global \wpdb $wpdb The database abstraction class instance.
-	 */
-	public static function plugin_uninstall() {
-		global $wpdb;
-
-		if ( ! static::plugin_security_check() ) {
-			return;
-		}
-
-		// Delete the object and string translation tables
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_translations" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}nl_localizations" );
-
-		// And delete all options that may exist
-		foreach ( array(
-			'options',
-			'languages',
-			'database_version',
-			'upgraded',
-			'upgraded_options',
-			'upgraded_tables',
-		) as $option ) {
-			delete_option( "nlingual_{$option}" );
-		}
 	}
 
 	// =========================
