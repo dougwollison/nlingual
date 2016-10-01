@@ -134,6 +134,7 @@ final class Languages implements \Iterator {
 	/**
 	 * Setup the collection and add any languages passed.
 	 *
+	 * @since 2.3.0 Changed dummy language's ID from -1 to 0.
 	 * @since 2.0.0
 	 *
 	 * @param array $languages      Optional. A list of languages to add. (default empty array)

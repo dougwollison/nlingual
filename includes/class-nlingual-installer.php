@@ -279,6 +279,7 @@ final class Installer extends Handler {
 	/**
 	 * Install/Upgrade the database tables, converting them if needed.
 	 *
+	 * @since 2.3.0 Added missing install_options() call.
 	 * @since 2.0.0
 	 *
 	 * @uses Installer::is_upgrading() to check if upgrading from nLingual 1.

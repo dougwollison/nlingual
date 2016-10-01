@@ -16,7 +16,7 @@ namespace nLingual;
  *
  * @internal Automatically called within this file.
  *
- * @since 2.0.0
+ * @since 2.3.0
  */
 final class Uninstaller {
 	/**
