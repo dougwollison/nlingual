@@ -26,7 +26,7 @@ final class Installer extends Handler {
 	// =========================
 
 	/**
-	 * Register the plugin hooks
+	 * Register the plugin hooks.
 	 *
 	 * @since 2.3.0 Removed the uninstall hook, using uninstall.php method.
 	 * @since 2.0.0
