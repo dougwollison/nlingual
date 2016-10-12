@@ -119,7 +119,7 @@ final class Documenter extends Handler {
 			return;
 		}
 
-		static::add_action( 'admin_head', 'setup_help_tabs', 10, 0 );
+		self::add_action( 'admin_head', 'setup_help_tabs', 10, 0 );
 	}
 
 	// =========================
@@ -137,7 +137,7 @@ final class Documenter extends Handler {
 	 * @param string $tab    The tab ID to add to the screen.
 	 */
 	public static function register_help_tab( $screen, $tab ) {
-		static::$registered_screens[ $screen ] = $tab;
+		self::$registered_screens[ $screen ] = $tab;
 	}
 
 	/**
@@ -151,7 +151,7 @@ final class Documenter extends Handler {
 	 */
 	public static function register_help_tabs( $screens ) {
 		foreach ( $screens as $screen => $tab ) {
-			static::register_help_tab( $screen, $tab );
+			self::register_help_tab( $screen, $tab );
 		}
 	}
 
@@ -231,25 +231,25 @@ final class Documenter extends Handler {
 		// If no help tab ID is passed, see if one is registered for the screen.
 		if ( is_null( $help_id ) ) {
 			// Abort if no help tab is registered for this screen
-			if ( ! isset( static::$registered_screens[ $screen->id ] ) ) {
+			if ( ! isset( self::$registered_screens[ $screen->id ] ) ) {
 				return;
 			}
 
 			// Get the help tabset
-			$help_id = static::$registered_screens[ $screen->id ];
+			$help_id = self::$registered_screens[ $screen->id ];
 		}
 
 		// Fail if no matching help tab exists
-		if ( ! isset( static::$directory[ $help_id ] ) ) {
+		if ( ! isset( self::$directory[ $help_id ] ) ) {
 			return;
 		}
 
 		// Get the help info for this page
-		$help = static::$directory[ $help_id ];
+		$help = self::$directory[ $help_id ];
 
 		// Add each tab defined
 		foreach ( $help['tabs'] as $tab ) {
-			$data = static::get_tab_data( $tab, $help_id );
+			$data = self::get_tab_data( $tab, $help_id );
 
 			// Only add if there's data
 			if ( $data ) {
@@ -259,7 +259,7 @@ final class Documenter extends Handler {
 
 		// Add sidebar if enabled
 		if ( isset( $help['sidebar'] ) ) {
-			$data = static::get_tab_data( 'sidebar', $help_id );
+			$data = self::get_tab_data( 'sidebar', $help_id );
 
 			// Only add if there's data
 			if ( $data ) {

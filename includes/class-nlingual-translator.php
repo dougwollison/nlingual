@@ -49,7 +49,7 @@ final class Translator {
 	private static function flush_cache( $object_type, $object_id, $group_id = null, $new_group_id = null ) {
 		// Get the group if not provided
 		if ( is_null( $group_id ) ) {
-			$group_id = static::get_group_id( $object_type, $object_id );
+			$group_id = self::get_group_id( $object_type, $object_id );
 		}
 
 		// Delete the cached group data
@@ -207,7 +207,7 @@ final class Translator {
 	 */
 	public static function get_object_language( $object_type, $object_id, $true_value = false ) {
 		// Get the translation group for the object
-		$group = static::get_group( $object_type, $object_id );
+		$group = self::get_group( $object_type, $object_id );
 
 		// If translation group exists, get the language
 		if ( $group ) {
@@ -247,7 +247,7 @@ final class Translator {
 
 		// Redirect to delete_object_language() if $language is false-ish
 		if ( ! $language ) {
-			return static::delete_object_language( $object_type, $object_id );
+			return self::delete_object_language( $object_type, $object_id );
 		}
 
 		// Ensure $language is a Language
@@ -257,14 +257,14 @@ final class Translator {
 		}
 
 		// Check the old language (bypass language_is_required fallback)
-		$old_language = static::get_object_language( $object_type, $object_id, 'true_value' );
+		$old_language = self::get_object_language( $object_type, $object_id, 'true_value' );
 		// If it has one and is the same, abort
 		if ( $old_language && $old_language->id == $language->id ) {
 			return true;
 		}
 
 		// Get a group ID for the object, a new on if necessary
-		$group_id = static::get_group_id( $object_type, $object_id );
+		$group_id = self::get_group_id( $object_type, $object_id );
 
 		// Save the old group ID
 		$old_group_id = $group_id;
@@ -279,10 +279,10 @@ final class Translator {
 			// Check if it exists (and isn't the same object; it shouldn't)
 			if ( $current_object && $current_object != $object_id ) {
 				// Get a new group ID if so
-				$group_id = static::new_group_id();
+				$group_id = self::new_group_id();
 			}
 		} else {
-			$group_id = static::new_group_id();
+			$group_id = self::new_group_id();
 		}
 
 		// Insert a new one
@@ -294,7 +294,7 @@ final class Translator {
 		), array( '%d', '%s', '%d', '%d' ) );
 
 		// Flush and update the relevant cache
-		static::flush_cache( $object_type, $object_id, $old_group_id, $group_id );
+		self::flush_cache( $object_type, $object_id, $old_group_id, $group_id );
 
 		return true;
 	}
@@ -321,7 +321,7 @@ final class Translator {
 		) );
 
 		// Flush the relevant cache
-		static::flush_cache( $object_type, $object_id );
+		self::flush_cache( $object_type, $object_id );
 
 		return true;
 	}
@@ -384,7 +384,7 @@ final class Translator {
 		}
 
 		// Get the translation group for the object
-		$group = static::get_group( $object_type, $object_id );
+		$group = self::get_group( $object_type, $object_id );
 
 		// If no translation group exists, or the language entry doesn't,
 		// return false or the original object id
@@ -410,7 +410,7 @@ final class Translator {
 	 */
 	public static function get_object_translations( $object_type, $object_id, $include_self = false ) {
 		// Get the translation group for the object
-		$group = static::get_group( $object_type, $object_id );
+		$group = self::get_group( $object_type, $object_id );
 
 		// If no translation group exists, return empty array
 		if ( ! $group ) {
@@ -456,7 +456,7 @@ final class Translator {
 		global $wpdb;
 
 		// Get the group ID for this object
-		$group_id = static::get_group_id( $object_type, $object_id );
+		$group_id = self::get_group_id( $object_type, $object_id );
 
 		// If none was found, abort
 		if ( ! $group_id ) {
@@ -464,7 +464,7 @@ final class Translator {
 		}
 
 		// Also get the language for this object
-		$the_language = static::get_object_language( $object_type, $object_id );
+		$the_language = self::get_object_language( $object_type, $object_id );
 
 		// Start the query
 		$query = "REPLACE INTO $wpdb->nl_translations (group_id, object_type, object_id, language_id) VALUES ";
@@ -485,7 +485,7 @@ final class Translator {
 
 			// If $object_id isn't valid, assume we want to unlink it
 			if ( intval( $translation_id ) <= 0 ) {
-				static::delete_object_translation( $object_type, $object_id, $language );
+				self::delete_object_translation( $object_type, $object_id, $language );
 			} else {
 				// Build the row data for the query
 				$values[] = $wpdb->prepare( "(%d, %s, %d, %d)", $group_id, $object_type, $translation_id, $language->id );
@@ -502,7 +502,7 @@ final class Translator {
 		}
 
 		// Flush the relevant cache
-		static::flush_cache( $object_type, $object_id, $group_id );
+		self::flush_cache( $object_type, $object_id, $group_id );
 
 		return true;
 	}
@@ -532,7 +532,7 @@ final class Translator {
 		}
 
 		// Alias to set_object_translations method
-		return static::set_object_translations( $object_type, $object_id, array( $language->id => $object ) );
+		return self::set_object_translations( $object_type, $object_id, array( $language->id => $object ) );
 	}
 
 	/**
@@ -567,7 +567,7 @@ final class Translator {
 		}
 
 		// Get the group ID for this object
-		$group_id = static::get_group_id( $object_type, $object_id );
+		$group_id = self::get_group_id( $object_type, $object_id );
 
 		// If none was found, abort
 		if ( ! $group_id ) {
@@ -575,7 +575,7 @@ final class Translator {
 		}
 
 		// Get a new group ID for the sister object
-		$new_group_id = static::new_group_id();
+		$new_group_id = self::new_group_id();
 
 		// Update the group ID for the translation
 		$wpdb->update(
@@ -592,7 +592,7 @@ final class Translator {
 		);
 
 		// Flush and update the relevant cache
-		static::flush_cache( $object_type, $object_id, $group_id, $new_group_id );
+		self::flush_cache( $object_type, $object_id, $group_id, $new_group_id );
 
 		return true;
 	}

@@ -191,7 +191,7 @@ final class Registry {
 	 * @return array The options whitelist.
 	 */
 	public static function get_defaults() {
-		return static::$options_whitelist;
+		return self::$options_whitelist;
 	}
 
 	/**
@@ -208,11 +208,11 @@ final class Registry {
 	 * @return bool Wether or not the option is supported.
 	 */
 	public static function has( &$option ) {
-		if ( isset( static::$options_deprecated[ $option ] ) ) {
-			$option = static::$options_deprecated[ $option ];
+		if ( isset( self::$options_deprecated[ $option ] ) ) {
+			$option = self::$options_deprecated[ $option ];
 		}
 
-		return isset( static::$options_whitelist[ $option ] );
+		return isset( self::$options_whitelist[ $option ] );
 	}
 
 	/**
@@ -229,18 +229,18 @@ final class Registry {
 	 */
 	public static function get( $option, $default = null, $true_value = false, &$has_override = null ) {
 		// Trigger notice error if trying to set an unsupported option
-		if ( ! static::has( $option ) ) {
+		if ( ! self::has( $option ) ) {
 			trigger_error( "[nLingual] The option '{$option}' is not supported.", E_USER_NOTICE );
 		}
 
 		// Check if it's set, return it's value.
-		if ( isset( static::$options[ $option ] ) ) {
+		if ( isset( self::$options[ $option ] ) ) {
 			// Check if it's been overriden, use that unless otherwise requested
-			$has_override = isset( static::$options_override[ $option ] );
+			$has_override = isset( self::$options_override[ $option ] );
 			if ( $has_override && ! $true_value ) {
-				$value = static::$options_override[ $option ];
+				$value = self::$options_override[ $option ];
 			} else {
-				$value = static::$options[ $option ];
+				$value = self::$options[ $option ];
 			}
 		} else {
 			$value = $default;
@@ -250,7 +250,7 @@ final class Registry {
 		switch ( $option ) {
 			case 'url_rewrite_method':
 				// If rewrites can be used, must be path or domain
-				if ( static::can_use_rewrites() ) {
+				if ( self::can_use_rewrites() ) {
 					if ( $value != 'domain' ) {
 						$value = 'path';
 					}
@@ -277,11 +277,11 @@ final class Registry {
 	 */
 	public static function set( $option, $value = null ) {
 		// Trigger notice error if trying to set an unsupported option
-		if ( ! static::has( $option ) ) {
+		if ( ! self::has( $option ) ) {
 			trigger_error( "[nLingual] The option '{$option}' is not supported.", E_USER_NOTICE );
 		}
 
-		static::$options[ $option ] = $value;
+		self::$options[ $option ] = $value;
 	}
 
 	/**
@@ -296,11 +296,11 @@ final class Registry {
 	 */
 	public static function override( $option, $value ) {
 		// Trigger notice error if trying to set an unsupported option
-		if ( ! static::has( $option ) ) {
+		if ( ! self::has( $option ) ) {
 			trigger_error( "[nLingual] The option '{$option}' is not supported.", E_USER_NOTICE );
 		}
 
-		static::$options_override[ $option ] = $value;
+		self::$options_override[ $option ] = $value;
 	}
 
 	/**
@@ -316,7 +316,7 @@ final class Registry {
 	 * @return Language The languages collection (optionally filtered).
 	 */
 	public static function languages( $filter = null, $value = null ) {
-		return static::$languages->filter( $filter, $value );
+		return self::$languages->filter( $filter, $value );
 	}
 
 	/**
@@ -381,7 +381,7 @@ final class Registry {
 	 */
 	public static function get_language( $id_or_slug, $field = null ) {
 		// Check if id/slug is a value, and that it matches a language
-		if ( $id_or_slug && $language = static::$languages->get( $id_or_slug ) ) {
+		if ( $id_or_slug && $language = self::$languages->get( $id_or_slug ) ) {
 			if ( is_null( $field ) ) {
 				return $language;
 			}
@@ -417,7 +417,7 @@ final class Registry {
 			return false;
 		}
 
-		static::$current_language = $language->id;
+		self::$current_language = $language->id;
 
 		if ( $lock ) {
 			// Lock the language from being changed again
@@ -439,16 +439,16 @@ final class Registry {
 	 * @param string $field Optional. The field to get from the language.
 	 */
 	public static function default_language( $field = null ) {
-		$language_id = static::get( 'default_language' );
+		$language_id = self::get( 'default_language' );
 
 		// If default_language is not set/valid, default to first language
-		if ( ! $language_id || ! static::$languages->get( $language_id ) ) {
-			$language_id = static::$languages->sort()->nth( 0 )->id;
+		if ( ! $language_id || ! self::$languages->get( $language_id ) ) {
+			$language_id = self::$languages->sort()->nth( 0 )->id;
 			// Also update it for future calls
-			static::set( 'default_language', $language_id );
+			self::set( 'default_language', $language_id );
 		}
 
-		return static::get_language( $language_id, $field );
+		return self::get_language( $language_id, $field );
 	}
 
 	/**
@@ -464,8 +464,8 @@ final class Registry {
 	 * @param string $field Optional. The field to get from the language.
 	 */
 	public static function current_language( $field = null ) {
-		$language_id = static::$current_language ?: static::default_language( 'id' );
-		return static::get_language( $language_id, $field );
+		$language_id = self::$current_language ?: self::default_language( 'id' );
+		return self::get_language( $language_id, $field );
 	}
 
 	// =========================
@@ -506,7 +506,7 @@ final class Registry {
 	 * @return bool The result of compare_languages().
 	 */
 	public static function is_language_default( $language ) {
-		return static::compare_languages( $language, static::default_language() );
+		return self::compare_languages( $language, self::default_language() );
 	}
 
 	/**
@@ -519,7 +519,7 @@ final class Registry {
 	 * @return bool The result of compare_languages().
 	 */
 	public static function is_language_current( $language ) {
-		return static::compare_languages( $language, static::current_language() );
+		return self::compare_languages( $language, self::current_language() );
 	}
 
 	/**
@@ -530,7 +530,7 @@ final class Registry {
 	 * @return bool The result of compare_languages().
 	 */
 	public static function in_default_language() {
-		return static::compare_languages( static::current_language(), static::default_language() );
+		return self::compare_languages( self::current_language(), self::default_language() );
 	}
 
 	// =========================
@@ -557,7 +557,7 @@ final class Registry {
 		$result = false;
 
 		// Check if type is present in localizables list
-		if ( $localizables = static::get( $type ) ) {
+		if ( $localizables = self::get( $type ) ) {
 			$result = true;
 			// If a location is specified, test if it's listed, or otherwise ANY/ALL are supported
 			if ( $location ) {
@@ -598,7 +598,7 @@ final class Registry {
 		$post_types = (array) $post_types; // Convert to array
 
 		// Get the supported post types list
-		$supported = static::get( 'post_types' );
+		$supported = self::get( 'post_types' );
 
 		$result = (bool) array_intersect( $supported, $post_types );
 
@@ -632,7 +632,7 @@ final class Registry {
 		$taxonomies = (array) $taxonomies; // Convert to array
 
 		// Get the supported post types list
-		$supported = static::get( 'taxonomies' );
+		$supported = self::get( 'taxonomies' );
 
 		$result = (bool) array_intersect( $supported, $taxonomies );
 
@@ -687,14 +687,14 @@ final class Registry {
 	 * @param bool $reload Should we reload the options?
 	 */
 	public static function load( $reload = false ) {
-		if ( static::$__loaded && ! $reload ) {
+		if ( self::$__loaded && ! $reload ) {
 			// Already did this
 			return;
 		}
 
 		// Load the options
 		$options = get_option( 'nlingual_options' );
-		foreach ( static::$options_whitelist as $option => $default ) {
+		foreach ( self::$options_whitelist as $option => $default ) {
 			$value = $default;
 			if ( isset( $options[ $option ] ) ) {
 				$value = $options[ $option ];
@@ -703,7 +703,7 @@ final class Registry {
 				settype( $value, gettype( $default ) );
 			}
 
-			static::set( $option, $value );
+			self::set( $option, $value );
 		}
 
 		// Load the languages
@@ -711,10 +711,10 @@ final class Registry {
 			'entries' => array(),
 			'auto_increment' => 1,
 		) );
-		static::$languages = new Languages( $data['entries'], $data['auto_increment'], 'add dummy' );
+		self::$languages = new Languages( $data['entries'], $data['auto_increment'], 'add dummy' );
 
 		// Flag that we've loaded everything
-		static::$__loaded = true;
+		self::$__loaded = true;
 	}
 
 	/**
@@ -727,12 +727,12 @@ final class Registry {
 	public static function save( $what = true ) {
 		if ( $what == 'options' ) {
 			// Save the options
-			update_option( 'nlingual_options', static::$options );
+			update_option( 'nlingual_options', self::$options );
 		}
 
 		if ( $what == 'languages' ) {
 			// Save the languages
-			update_option( 'nlingual_languages', static::$languages->export() );
+			update_option( 'nlingual_languages', self::$languages->export() );
 		}
 	}
 

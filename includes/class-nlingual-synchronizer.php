@@ -145,7 +145,7 @@ final class Synchronizer {
 		$language = Translator::get_post_language( $target->ID );
 
 		// Prepare the rules
-		$rules = static::prepare_post_rules( $rules );
+		$rules = self::prepare_post_rules( $rules );
 
 		// Post Fields
 		if ( isset( $rules['post_field'] ) && $rules['post_fields'] ) {
@@ -270,7 +270,7 @@ final class Synchronizer {
 
 		foreach ( $translations as $translation ) {
 			if ( ! in_array( $translation, $skip_ids ) ) {
-				static::sync_posts( $post_id, $translation );
+				self::sync_posts( $post_id, $translation );
 			}
 		}
 	}
@@ -359,7 +359,7 @@ final class Synchronizer {
 		$rules = Registry::get_post_clone_rules( $post->post_type );
 
 		// Prepare the rules
-		$rules = static::prepare_post_rules( $rules );
+		$rules = self::prepare_post_rules( $rules );
 
 		/**
 		 * Filter the post sync rules.
@@ -380,7 +380,7 @@ final class Synchronizer {
 		Translator::set_post_translation( $post->ID, $language, $translation->ID );
 
 		// Synchronize the two posts
-		static::sync_posts( $post->ID, $translation->ID, $rules );
+		self::sync_posts( $post->ID, $translation->ID, $rules );
 
 		return $translation;
 	}

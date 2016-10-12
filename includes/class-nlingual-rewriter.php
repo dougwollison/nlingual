@@ -47,7 +47,7 @@ final class Rewriter {
 	 * @return bool The value.
 	 */
 	public static function will_do_localization() {
-		return static::$do_localization;
+		return self::$do_localization;
 	}
 
 	/**
@@ -58,8 +58,8 @@ final class Rewriter {
 	 * @return bool The old value.
 	 */
 	public static function toggle_localization( $value ) {
-		$old_value = static::$do_localization;
-		static::$do_localization = $value;
+		$old_value = self::$do_localization;
+		self::$do_localization = $value;
 		return $old_value;
 	}
 
@@ -71,7 +71,7 @@ final class Rewriter {
 	 * @return bool The old value.
 	 */
 	public static function enable_localization() {
-		return static::toggle_localization( true );
+		return self::toggle_localization( true );
 	}
 
 	/**
@@ -82,7 +82,7 @@ final class Rewriter {
 	 * @return bool The old value.
 	 */
 	public static function disable_localization() {
-		return static::toggle_localization( false );
+		return self::toggle_localization( false );
 	}
 
 	// =========================
@@ -222,7 +222,7 @@ final class Rewriter {
 	 */
 	public static function localize_url( $url, $language = null, $relocalize = false ) {
 		// If localization is disabled, abort
-		if ( ! static::$do_localization ) {
+		if ( ! self::$do_localization ) {
 			return $url;
 		}
 
@@ -277,7 +277,7 @@ final class Rewriter {
 		if ( strpos( $url, $home ) === 0 ) {
 			// If $relocalize, delocalize first
 			if ( $relocalize ) {
-				$url = static::delocalize_url( $url );
+				$url = self::delocalize_url( $url );
 			}
 
 			// Process
@@ -349,7 +349,7 @@ final class Rewriter {
 	 */
 	public static function delocalize_url( $url ) {
 		// Parse and process the url
-		$the_url = static::process_url( $url );
+		$the_url = self::process_url( $url );
 
 		// If a language was extracted, rebuild the $url
 		if ( isset( $the_url->meta['language'] ) ) {
@@ -394,7 +394,7 @@ final class Rewriter {
 			$url = get_permalink( $translation );
 
 			// Relocalize the URL
-			$url = static::localize_url( $url, $language, true );
+			$url = self::localize_url( $url, $language, true );
 		} else {
 			// Switch to the language (redundant for current one but doesn't matter)
 			System::switch_language( $language );
@@ -435,7 +435,7 @@ final class Rewriter {
 			}
 			// Give up and just get the orginally requested URL, relocalized
 			else {
-				$url = static::localize_url( NL_ORIGINAL_URL, null, true );
+				$url = self::localize_url( NL_ORIGINAL_URL, null, true );
 			}
 
 			// Switch back to the current language
@@ -495,7 +495,7 @@ final class Rewriter {
 		}
 
 		// Get the translation counterpart
-		$translation_id = static::get_post_translation( $post_id, $language );
+		$translation_id = self::get_post_translation( $post_id, $language );
 
 		// Return the translations permalink
 		return get_permalink( $translation_id );
@@ -529,7 +529,7 @@ final class Rewriter {
 		}
 
 		// Get the translation's permalink
-		return static::get_permalink( $post->ID, $language );
+		return self::get_permalink( $post->ID, $language );
 	}
 
 	// =========================

@@ -102,7 +102,7 @@ final class Settings {
 	 */
 	public static function add_fields( $fields, $page, $section = 'default' ) {
 		foreach ( $fields as $field => $options ) {
-			static::add_field( $field, $options, $page, $section );
+			self::add_field( $field, $options, $page, $section );
 		}
 	}
 
@@ -135,7 +135,7 @@ final class Settings {
 		if ( isset( $array[ $key ] ) ) {
 			// See if we need to go deeper
 			if ( $map ) {
-				return static::extract_value( $array[ $key ], $map );
+				return self::extract_value( $array[ $key ], $map );
 			}
 
 			return $array[ $key ];
@@ -169,7 +169,7 @@ final class Settings {
 
 		// Process the value via the map if necessary
 		if ( ! empty( $map ) ) {
-			$value = static::extract_value( $value, $map );
+			$value = self::extract_value( $value, $map );
 		}
 
 		return $value;
@@ -196,7 +196,7 @@ final class Settings {
 	public static function build_field( $args, $value = null ) {
 		// Get the value for the field if not provided
 		if ( is_null( $value ) ) {
-			$value = static::get_value( $args['option'] );
+			$value = self::get_value( $args['option'] );
 		}
 
 		switch ( $args['type'] ) {
@@ -361,7 +361,7 @@ final class Settings {
 	 * @see Settings::build_inputlist_field() for what it all does.
 	 */
 	private static function build_radiolist_field( $name, $value, $options ) {
-		return static::build_inputlist_field( 'radio', $name, $value, $options );
+		return self::build_inputlist_field( 'radio', $name, $value, $options );
 	}
 
 	/**
@@ -370,7 +370,7 @@ final class Settings {
 	 * @see Settings::build_input_list() for what it all does.
 	 */
 	private static function build_checklist_field( $name, $value, $options ) {
-		return static::build_inputlist_field( 'checkbox', $name, $value, $options );
+		return self::build_inputlist_field( 'checkbox', $name, $value, $options );
 	}
 
 	/**
@@ -417,7 +417,7 @@ final class Settings {
 					<?php _e( 'Post Data', 'nlingual' ); ?>
 					<input type="checkbox" class="nl-checkall" data-name="<?php echo "{$name}[post_fields]"; ?>" />
 				</label></h4>
-				<?php echo static::build_checklist_field( "{$name}[post_fields]", $value['post_fields'], $post_fields ); ?>
+				<?php echo self::build_checklist_field( "{$name}[post_fields]", $value['post_fields'], $post_fields ); ?>
 				<p class="description"><?php _e( 'What post information should be copied?', 'nlingual' ); ?></p>
 
 				<?php if ( $post_taxs ) : ?>
@@ -425,7 +425,7 @@ final class Settings {
 						<?php _e( 'Taxonomies', 'nlingual' ); ?>
 						<input type="checkbox" class="nl-checkall" data-name="<?php echo "{$name}[post_terms]"; ?>" />
 					</label></h4>
-					<?php echo static::build_checklist_field( "{$name}[post_terms]", $value['post_terms'], $post_taxs ); ?>
+					<?php echo self::build_checklist_field( "{$name}[post_terms]", $value['post_terms'], $post_taxs ); ?>
 					<p class="description"><?php _e( 'What terms should be copied?', 'nlingual' ); ?></p>
 				<?php endif; ?>
 
@@ -433,7 +433,7 @@ final class Settings {
 					<?php _e( 'Meta Data', 'nlingual' ); ?>
 					<input type="checkbox" class="nl-matchall" data-name="<?php echo "{$name}[post_meta]"; ?>" />
 				</label></h4>
-				<?php echo static::build_input_field( "{$name}[post_meta]", "{$name}_post_meta", implode( "\n", (array) $value['post_meta'] ), 'textarea', array(
+				<?php echo self::build_input_field( "{$name}[post_meta]", "{$name}_post_meta", implode( "\n", (array) $value['post_meta'] ), 'textarea', array(
 					'class' => 'widefat',
 					'rows' => 5,
 				) ); ?>

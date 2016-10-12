@@ -143,8 +143,8 @@ final class Localizer extends Handler {
 	 * @return Localizer_Field|bool The retreived field, FALSE on failure.
 	 */
 	public static function get_field( $id ) {
-		if ( isset( static::$registered_fields[ $id ] ) ) {
-			return static::$registered_fields[ $id ];
+		if ( isset( self::$registered_fields[ $id ] ) ) {
+			return self::$registered_fields[ $id ];
 		}
 		return false;
 	}
@@ -161,7 +161,7 @@ final class Localizer extends Handler {
 	 */
 	public static function get_fields_by( $index, $value ) {
 		$property = "fields_by_{$index}";
-		$list = static::$$property;
+		$list = self::$$property;
 
 		if ( isset( $list[ $value ] ) ) {
 			return $list[ $value ];
@@ -180,7 +180,7 @@ final class Localizer extends Handler {
 	 * @return array The fields found for the screen provided.
 	 */
 	public static function get_fields_for_screen( $screen ) {
-		$list = static::$fields_by_screen;
+		$list = self::$fields_by_screen;
 
 		$fields = array();
 
@@ -212,18 +212,18 @@ final class Localizer extends Handler {
 		// Backend-only hooks
 		if ( is_backend() ) {
 			// Saving localized fields
-			static::add_action( 'admin_init', 'save_localized_fields', 10, 0 );
+			self::add_action( 'admin_init', 'save_localized_fields', 10, 0 );
 
 			// Setup the fields for the screen and add the Help tab
-			static::add_action( 'admin_head', 'setup_localized_fields', 10, 0 );
+			self::add_action( 'admin_head', 'setup_localized_fields', 10, 0 );
 
 			// Do the call to the nLingual.localizeFields utility
-			static::add_action( 'admin_footer', 'do_localized_fields', 10, 0 );
+			self::add_action( 'admin_footer', 'do_localized_fields', 10, 0 );
 		}
 		// Frontend-only hooks
 		else {
 			// Setup preloading of all localized options
-			static::add_action( 'init', 'preload_localized_fields', 10, 0 );
+			self::add_action( 'init', 'preload_localized_fields', 10, 0 );
 		}
 	}
 
@@ -257,29 +257,29 @@ final class Localizer extends Handler {
 		$field = new Localizer_Field( $id, $options );
 
 		// Add to the registry
-		static::$registered_fields[ $id ] = $field;
+		self::$registered_fields[ $id ] = $field;
 
 		// Add to the key index
-		if ( ! isset( static::$fields_by_key[ $field->key ] ) ) {
-			static::$fields_by_key[ $field->key ] = array();
+		if ( ! isset( self::$fields_by_key[ $field->key ] ) ) {
+			self::$fields_by_key[ $field->key ] = array();
 		}
-		static::$fields_by_key[ $field->key ][] = $field;
+		self::$fields_by_key[ $field->key ][] = $field;
 
 		// Add to the type index
-		if ( ! isset( static::$fields_by_type[ $field->type ] ) ) {
-			static::$fields_by_type[ $field->type ] = array();
+		if ( ! isset( self::$fields_by_type[ $field->type ] ) ) {
+			self::$fields_by_type[ $field->type ] = array();
 		}
-		static::$fields_by_type[ $field->type ][] = $field;
+		self::$fields_by_type[ $field->type ][] = $field;
 
 		// Add to the screen index
 		list( $property, $match ) = array_pad( $field->screen, 2, null );
-		if ( ! isset( static::$fields_by_screen[ $property ] ) ) {
-			static::$fields_by_screen[ $property ] = array();
+		if ( ! isset( self::$fields_by_screen[ $property ] ) ) {
+			self::$fields_by_screen[ $property ] = array();
 		}
-		if ( ! isset( static::$fields_by_screen[ $property ][ $match ] ) ) {
-			static::$fields_by_screen[ $property ][ $match ] = array();
+		if ( ! isset( self::$fields_by_screen[ $property ][ $match ] ) ) {
+			self::$fields_by_screen[ $property ][ $match ] = array();
 		}
-		static::$fields_by_screen[ $property ][ $match ][] = $field;
+		self::$fields_by_screen[ $property ][ $match ][] = $field;
 
 		return $field;
 	}
@@ -303,15 +303,15 @@ final class Localizer extends Handler {
 			'screen' => array( 'id', $page ),
 			'field'  => $option,
 		) );
-		static::register_field( "option:{$option}", $args );
+		self::register_field( "option:{$option}", $args );
 
 		// Add the filter to handle retrieval (frontend only)
 		if ( ! is_backend() ) {
-			static::add_filter( "pre_option_{$option}", 'handle_localized_option_field', 10, 1 );
+			self::add_filter( "pre_option_{$option}", 'handle_localized_option_field', 10, 1 );
 		}
 
 		// Add action to handle updating
-		static::add_action( "update_option_{$option}", 'update_unlocalized_option_field', 10, 2 );
+		self::add_action( "update_option_{$option}", 'update_unlocalized_option_field', 10, 2 );
 	}
 
 	/**
@@ -333,7 +333,7 @@ final class Localizer extends Handler {
 	 */
 	public static function register_post_field( $post_type, $field_name, $args = array() ) {
 		// Abort if the field name isn't allowed
-		if ( ! in_array( $field_name, static::$localizable_post_fields ) ) {
+		if ( ! in_array( $field_name, self::$localizable_post_fields ) ) {
 			return;
 		}
 
@@ -346,15 +346,15 @@ final class Localizer extends Handler {
 		) );
 
 		// Register the field as normal
-		static::register_field( "post_field.{$post_type}:{$field_name}", $args );
+		self::register_field( "post_field.{$post_type}:{$field_name}", $args );
 
 		if ( ! is_backend() ) {
 			// Setup filtering if needed (frontend only)
-			static::add_action( 'the_post', 'handle_localized_post_fields', 10, 1 );
+			self::add_action( 'the_post', 'handle_localized_post_fields', 10, 1 );
 		}
 
 		// Add action to handle updating
-		static::add_action( 'post_updated', 'update_unlocalized_post_fields', 10, 2 );
+		self::add_action( 'post_updated', 'update_unlocalized_post_fields', 10, 2 );
 	}
 
 	/**
@@ -407,15 +407,15 @@ final class Localizer extends Handler {
 		) );
 
 		// Register the field as normal
-		static::register_field( "meta.{$meta_type}:{$meta_key}", $args );
+		self::register_field( "meta.{$meta_type}:{$meta_key}", $args );
 
 		if ( ! is_backend() ) {
 			// Setup filtering (if not already)
-			static::add_filter( "get_{$meta_type}_metadata", 'handle_localized_metadata_field', 10, 4 );
+			self::add_filter( "get_{$meta_type}_metadata", 'handle_localized_metadata_field', 10, 4 );
 		}
 
 		// Add action to handle updating
-		static::add_action( "update_{$meta_type}_metadata", 'update_unlocalized_metadata_field', 10, 4 );
+		self::add_action( "update_{$meta_type}_metadata", 'update_unlocalized_metadata_field', 10, 4 );
 	}
 
 	/**
@@ -432,13 +432,13 @@ final class Localizer extends Handler {
 		// Register the name and description fields as normal
 		$page = "edit-{$taxonomy}";
 
-		static::register_field( "term.{$taxonomy}:term_name", array(
+		self::register_field( "term.{$taxonomy}:term_name", array(
 			'key'      => "term_name",
 			'type'     => 'term_field',
 			'screen'   => array( 'id', $page ),
 			'field'    => 'name',
 		) );
-		static::register_field( "term.{$taxonomy}:term_description", array(
+		self::register_field( "term.{$taxonomy}:term_description", array(
 			'key'      => "term_description",
 			'type'     => 'term_field',
 			'screen'   => array( 'id', $page ),
@@ -447,12 +447,12 @@ final class Localizer extends Handler {
 
 		// Add the filters to handle it (frontend only)
 		if ( ! is_backend() ) {
-			static::add_filter( "get_{$taxonomy}", 'handle_localized_term_fields', 10, 2 );
-			static::add_filter( 'get_terms', 'handle_localized_terms_fields', 10, 2 );
+			self::add_filter( "get_{$taxonomy}", 'handle_localized_term_fields', 10, 2 );
+			self::add_filter( 'get_terms', 'handle_localized_terms_fields', 10, 2 );
 		}
 
 		// Add action to handle updating
-		static::add_action( "edited_term", 'update_unlocalized_term_fields', 10, 3 );
+		self::add_action( "edited_term", 'update_unlocalized_term_fields', 10, 3 );
 	}
 
 	// =========================
@@ -476,7 +476,7 @@ final class Localizer extends Handler {
 		global $wpdb;
 
 		// Abort if check isn't bypassed and fails
-		if ( $check_reg && ! isset( static::$fields_by_key[ $key ] ) ) {
+		if ( $check_reg && ! isset( self::$fields_by_key[ $key ] ) ) {
 			return null;
 		}
 
@@ -522,7 +522,7 @@ final class Localizer extends Handler {
 		global $wpdb;
 
 		// Abort if check isn't bypassed and fails
-		if ( $check_reg && ! isset( static::$fields_by_key[ $key ] ) ) {
+		if ( $check_reg && ! isset( self::$fields_by_key[ $key ] ) ) {
 			return array();
 		}
 
@@ -567,7 +567,7 @@ final class Localizer extends Handler {
 		global $wpdb;
 
 		// Abort if check isn't bypassed and fails
-		if ( $check_reg && ! isset( static::$fields_by_key[ $key ] ) ) {
+		if ( $check_reg && ! isset( self::$fields_by_key[ $key ] ) ) {
 			return;
 		}
 
@@ -608,7 +608,7 @@ final class Localizer extends Handler {
 		$language = Registry::current_language();
 
 		// Get the localized version of the field if it exists
-		if ( $value = static::get_field_value( "option:{$option}", $language->id ) ) {
+		if ( $value = self::get_field_value( "option:{$option}", $language->id ) ) {
 			return $value;
 		}
 
@@ -637,7 +637,7 @@ final class Localizer extends Handler {
 		$language = Registry::default_language();
 
 		// Store this value as the version for the default language
-		static::save_field_value( "option:{$option}", $language->id, 0, $value );
+		self::save_field_value( "option:{$option}", $language->id, 0, $value );
 	}
 
 	// ! - Posts
@@ -660,7 +660,7 @@ final class Localizer extends Handler {
 		if ( ! $post ) return;
 
 		// Check if there are fields registered for this post's type, abort if not
-		$fields = static::get_fields_for_screen( array( 'post_type' => $post->post_type ) );
+		$fields = self::get_fields_for_screen( array( 'post_type' => $post->post_type ) );
 		if ( ! $fields ) {
 			return;
 		}
@@ -669,9 +669,9 @@ final class Localizer extends Handler {
 		$language = Registry::current_language();
 
 		// Loop through each localizable field and replace as needed
-		foreach ( static::$localizable_post_fields as $field_name ) {
+		foreach ( self::$localizable_post_fields as $field_name ) {
 			// Get the localized version, replace it if found
-			if ( $localized = static::get_field_value( "post_field:{$field_name}", $language->id, $post->ID ) ) {
+			if ( $localized = self::get_field_value( "post_field:{$field_name}", $language->id, $post->ID ) ) {
 				$post->$field_name = $localized;
 			}
 		}
@@ -696,7 +696,7 @@ final class Localizer extends Handler {
 		if ( ! $post ) return;
 
 		// Check if there are fields registered for this post's type, abort if not
-		$fields = static::get_fields_for_screen( array( 'post_type' => $post->post_type ) );
+		$fields = self::get_fields_for_screen( array( 'post_type' => $post->post_type ) );
 		if ( ! $fields ) {
 			return;
 		}
@@ -708,7 +708,7 @@ final class Localizer extends Handler {
 		foreach ( $fields as $field ) {
 			if ( property_exists( $post, $field->field ) ) {
 				// Store this value as the version for the default language
-				static::save_field_value( $field->key, $language->id, $post_id, $post->{$field->field} );
+				self::save_field_value( $field->key, $language->id, $post_id, $post->{$field->field} );
 			}
 		}
 	}
@@ -740,7 +740,7 @@ final class Localizer extends Handler {
 		$language = Registry::current_language();
 
 		// Get the localized version of the field if it exists
-		if ( $value = static::get_field_value( "meta.{$meta_type}:{$meta_key}", $language->id, $object_id ) ) {
+		if ( $value = self::get_field_value( "meta.{$meta_type}:{$meta_key}", $language->id, $object_id ) ) {
 			return $value;
 		}
 
@@ -771,7 +771,7 @@ final class Localizer extends Handler {
 		$language = Registry::default_language();
 
 		// Store this value as the version for the default language
-		static::save_field_value( "meta.{$meta_type}:{$meta_key}", $language->id, $object_id, $meta_value );
+		self::save_field_value( "meta.{$meta_type}:{$meta_key}", $language->id, $object_id, $meta_value );
 	}
 
 	// ! - Terms
@@ -795,10 +795,10 @@ final class Localizer extends Handler {
 		$language = Registry::current_language();
 
 		// Get the localized version of the field if it exists
-		if ( $name = static::get_field_value( "term_name", $language->id, $term->term_id ) ) {
+		if ( $name = self::get_field_value( "term_name", $language->id, $term->term_id ) ) {
 			$term->name = $name;
 		}
-		if ( $description = static::get_field_value( "term_description", $language->id, $term->term_id ) ) {
+		if ( $description = self::get_field_value( "term_description", $language->id, $term->term_id ) ) {
 			$term->description = $description;
 		}
 
@@ -820,7 +820,7 @@ final class Localizer extends Handler {
 	 */
 	public static function handle_localized_terms_fields( $terms ) {
 		foreach ( $terms as &$term ) {
-			$term = static::handle_localized_term_fields( $term );
+			$term = self::handle_localized_term_fields( $term );
 		}
 		return $terms;
 	}
@@ -852,8 +852,8 @@ final class Localizer extends Handler {
 		$language = Registry::default_language();
 
 		// Store this value as the version for the default language
-		static::save_field_value( "term_name", $language->id, $term_id, $term->name );
-		static::save_field_value( "term_description", $language->id, $term_id, $term->description );
+		self::save_field_value( "term_name", $language->id, $term_id, $term->name );
+		self::save_field_value( "term_description", $language->id, $term_id, $term->description );
 	}
 
 	// =========================
@@ -915,7 +915,7 @@ final class Localizer extends Handler {
 		$to_save = array();
 
 		// Loop through registered fields
-		foreach ( static::$registered_fields as $field ) {
+		foreach ( self::$registered_fields as $field ) {
 			// Check if set, skip otherwise
 			if ( ! isset( $localized[ $field->field ] ) ) {
 				continue;
@@ -986,7 +986,7 @@ final class Localizer extends Handler {
 		}
 
 		// Now get the fields registered to this screen (by id or base)
-		$fields = static::get_fields_for_screen( $screen );
+		$fields = self::get_fields_for_screen( $screen );
 
 		// If no fields are found, abort
 		if ( ! $fields ) {
@@ -994,8 +994,8 @@ final class Localizer extends Handler {
 		}
 
 		// Store the fields and object id
-		static::$current_fields = $fields;
-		static::$current_object_id = $object_id;
+		self::$current_fields = $fields;
+		self::$current_object_id = $object_id;
 
 		// Add the help tab to this screen
 		Documenter::setup_help_tabs( 'localizer' );
@@ -1013,18 +1013,18 @@ final class Localizer extends Handler {
 	 */
 	public static function do_localized_fields() {
 		// Abort if no fields are found
-		if ( ! $fields = static::$current_fields ) {
+		if ( ! $fields = self::$current_fields ) {
 			return;
 		}
 
 		// Get the current object id
-		$object_id = static::$current_object_id;
+		$object_id = self::$current_object_id;
 
 		// Create the entries for each fields
 		$data = array();
 		foreach ( $fields as $field ) {
 			// Get the localized values for this field if available
-			$values = static::get_field_values( $field->key, $object_id );
+			$values = self::get_field_values( $field->key, $object_id );
 
 			// Create the nonce
 			$nonce = wp_create_nonce( "nlingual_localize_{$field->key}" );

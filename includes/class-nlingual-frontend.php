@@ -69,41 +69,41 @@ final class Frontend extends Handler {
 		}
 
 		// Language Detection/Redirection
-		static::add_action( 'plugins_loaded', 'detect_language', 10, 0 );
-		static::add_filter( 'wp', 'redirect_language', 10, 0 );
-		static::add_filter( 'redirect_canonical', 'localize_canonical', 10, 2 );
+		self::add_action( 'plugins_loaded', 'detect_language', 10, 0 );
+		self::add_filter( 'wp', 'redirect_language', 10, 0 );
+		self::add_filter( 'redirect_canonical', 'localize_canonical', 10, 2 );
 
 		// The Mod rewriting
-		static::add_filter( 'theme_mod_nav_menu_locations', 'localize_nav_menu_locations', 10, 1 );
-		static::add_filter( 'sidebars_widgets', 'localize_sidebar_locations', 10, 1 );
-		static::add_filter( 'wp_get_nav_menu_items', 'localize_menu_items', 10, 3 );
-		static::add_filter( 'wp_nav_menu_objects', 'handle_language_links', 10, 1 );
+		self::add_filter( 'theme_mod_nav_menu_locations', 'localize_nav_menu_locations', 10, 1 );
+		self::add_filter( 'sidebars_widgets', 'localize_sidebar_locations', 10, 1 );
+		self::add_filter( 'wp_get_nav_menu_items', 'localize_menu_items', 10, 3 );
+		self::add_filter( 'wp_nav_menu_objects', 'handle_language_links', 10, 1 );
 
 		// General fitlering
-		static::add_filter( 'locale', 'rewrite_locale', 10, 0 );
-		static::add_filter( 'body_class', 'add_body_classes', 10, 1 );
-		static::add_filter( 'option_page_on_front', 'current_language_post', 10, 1 );
-		static::add_filter( 'option_page_for_posts', 'current_language_post', 10, 1 );
-		static::add_filter( 'option_date_format', 'localize_date_format', 10, 1 );
+		self::add_filter( 'locale', 'rewrite_locale', 10, 0 );
+		self::add_filter( 'body_class', 'add_body_classes', 10, 1 );
+		self::add_filter( 'option_page_on_front', 'current_language_post', 10, 1 );
+		self::add_filter( 'option_page_for_posts', 'current_language_post', 10, 1 );
+		self::add_filter( 'option_date_format', 'localize_date_format', 10, 1 );
 
 		// Frontend-Only Query Rewrites
-		static::add_filter( 'get_previous_post_join', 'add_adjacent_translation_join_clause', 10, 1 );
-		static::add_filter( 'get_next_post_join', 'add_adjacent_translation_join_clause', 10, 1 );
-		static::add_filter( 'get_previous_post_where', 'add_adjacent_translation_where_clause', 10, 1 );
-		static::add_filter( 'get_next_post_where', 'add_adjacent_translation_where_clause', 10, 1 );
-		static::add_filter( 'getarchives_join', 'add_archives_translation_join_clause', 10, 2 );
-		static::add_filter( 'getarchives_where', 'add_archives_translation_where_clause', 10, 2 );
+		self::add_filter( 'get_previous_post_join', 'add_adjacent_translation_join_clause', 10, 1 );
+		self::add_filter( 'get_next_post_join', 'add_adjacent_translation_join_clause', 10, 1 );
+		self::add_filter( 'get_previous_post_where', 'add_adjacent_translation_where_clause', 10, 1 );
+		self::add_filter( 'get_next_post_where', 'add_adjacent_translation_where_clause', 10, 1 );
+		self::add_filter( 'getarchives_join', 'add_archives_translation_join_clause', 10, 2 );
+		self::add_filter( 'getarchives_where', 'add_archives_translation_where_clause', 10, 2 );
 
 		// Locale & GetText Rewrites
-		static::add_action( 'wp', 'maybe_patch_wp_locale', 10, 0 );
-		static::add_filter( 'gettext_with_context', 'handle_text_direction', 10, 4 );
+		self::add_action( 'wp', 'maybe_patch_wp_locale', 10, 0 );
+		self::add_filter( 'gettext_with_context', 'handle_text_direction', 10, 4 );
 
 		// Frontend-Only URL Rewrites
-		static::add_filter( 'site_url', 'localize_uri', 10, 1 );
-		static::add_filter( 'stylesheet_directory_uri', 'localize_uri', 10, 1 );
-		static::add_filter( 'template_directory_uri', 'localize_uri', 10, 1 );
-		static::add_filter( 'upload_dir', 'localize_dir', 10, 1 );
-		static::add_filter( 'the_content', 'localize_attachment_urls', 10, 1 );
+		self::add_filter( 'site_url', 'localize_uri', 10, 1 );
+		self::add_filter( 'stylesheet_directory_uri', 'localize_uri', 10, 1 );
+		self::add_filter( 'template_directory_uri', 'localize_uri', 10, 1 );
+		self::add_filter( 'upload_dir', 'localize_dir', 10, 1 );
+		self::add_filter( 'the_content', 'localize_attachment_urls', 10, 1 );
 	}
 
 	// =========================
@@ -149,7 +149,7 @@ final class Frontend extends Handler {
 			$mode = 'REQUESTED';
 		}
 		// Fallback to finding the first match in the accepted languages list
-		elseif ( $language = static::get_accepted_language() ) {
+		elseif ( $language = self::get_accepted_language() ) {
 			$mode = 'ACCEPTED';
 		}
 
@@ -243,7 +243,7 @@ final class Frontend extends Handler {
 
 		// If the language isn't active, fallback to the accepted or default language
 		if ( ! $redirect_language->active ) {
-			$redirect_language = static::get_accepted_language() ?: Registry::default_language();
+			$redirect_language = self::get_accepted_language() ?: Registry::default_language();
 		}
 
 		// Get the new URL localized for the redirect language
@@ -354,7 +354,7 @@ final class Frontend extends Handler {
 	public static function localize_nav_menu_locations( $locations ) {
 		global $_wp_registered_nav_menus;
 
-		$locations = static::localize_locations( 'nav_menu', $locations, $_wp_registered_nav_menus );
+		$locations = self::localize_locations( 'nav_menu', $locations, $_wp_registered_nav_menus );
 
 		return $locations;
 	}
@@ -371,7 +371,7 @@ final class Frontend extends Handler {
 	public static function localize_sidebar_locations( $locations ) {
 		global $wp_registered_sidebars;
 
-		$locations = static::localize_locations( 'sidebar', $locations, $wp_registered_sidebars );
+		$locations = self::localize_locations( 'sidebar', $locations, $wp_registered_sidebars );
 
 		return $locations;
 	}

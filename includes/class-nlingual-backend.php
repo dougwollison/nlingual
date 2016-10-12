@@ -40,54 +40,54 @@ final class Backend extends Handler {
 		}
 
 		// Setup stuff
-		static::add_action( 'plugins_loaded', 'load_textdomain', 10, 0 );
-		static::add_action( 'plugins_loaded', 'setup_documentation', 10, 0 );
-		static::add_action( 'plugins_loaded', 'parse_default_rules', 10, 0 );
+		self::add_action( 'plugins_loaded', 'load_textdomain', 10, 0 );
+		self::add_action( 'plugins_loaded', 'setup_documentation', 10, 0 );
+		self::add_action( 'plugins_loaded', 'parse_default_rules', 10, 0 );
 
 		// Plugin information
-		static::add_action( 'in_plugin_update_message-' . plugin_basename( NL_PLUGIN_FILE ), 'update_notice', 10, 1 );
+		self::add_action( 'in_plugin_update_message-' . plugin_basename( NL_PLUGIN_FILE ), 'update_notice', 10, 1 );
 
 		// Script/Style Enqueues
-		static::add_action( 'admin_enqueue_scripts', 'enqueue_assets', 10, 0 );
+		self::add_action( 'admin_enqueue_scripts', 'enqueue_assets', 10, 0 );
 
 		// Theme Location Rewrites
-		static::add_action( 'init', 'register_localized_nav_menus', 999, 0 );
-		static::add_action( 'widgets_init', 'register_localized_sidebars', 999, 0 );
-		static::add_filter( 'pre_set_theme_mod_nav_menu_locations', 'handle_unlocalized_locations', 10, 1 );
-		static::add_filter( 'pre_update_option_sidebars_widgets', 'handle_unlocalized_locations', 10, 1 );
-		static::add_filter( 'sidebars_widgets', 'hide_unlocalized_locations', 10, 1 );
+		self::add_action( 'init', 'register_localized_nav_menus', 999, 0 );
+		self::add_action( 'widgets_init', 'register_localized_sidebars', 999, 0 );
+		self::add_filter( 'pre_set_theme_mod_nav_menu_locations', 'handle_unlocalized_locations', 10, 1 );
+		self::add_filter( 'pre_update_option_sidebars_widgets', 'handle_unlocalized_locations', 10, 1 );
+		self::add_filter( 'sidebars_widgets', 'hide_unlocalized_locations', 10, 1 );
 
 		// Posts Screen Interface
-		static::add_filter( 'query_vars', 'add_language_var' );
-		static::add_filter( 'display_post_states', 'flag_translated_pages', 10, 2 );
-		static::add_action( 'restrict_manage_posts', 'add_language_filter', 10, 0 );
+		self::add_filter( 'query_vars', 'add_language_var' );
+		self::add_filter( 'display_post_states', 'flag_translated_pages', 10, 2 );
+		self::add_action( 'restrict_manage_posts', 'add_language_filter', 10, 0 );
 		$post_types = Registry::get( 'post_types' );
 		foreach ( $post_types as $post_type ) {
-			static::add_filter( "manage_{$post_type}_posts_columns", 'add_language_column', 15, 1 );
-			static::add_action( "manage_{$post_type}_posts_custom_column", 'do_language_column', 10, 2 );
+			self::add_filter( "manage_{$post_type}_posts_columns", 'add_language_column', 15, 1 );
+			self::add_action( "manage_{$post_type}_posts_custom_column", 'do_language_column', 10, 2 );
 		}
 
 		// Quick/Bulk Edit Interfaces
-		static::add_action( 'quick_edit_custom_box', 'quick_edit_post_translation', 20, 2 );
-		static::add_action( 'bulk_edit_custom_box', 'bulk_edit_post_language', 20, 2 );
+		self::add_action( 'quick_edit_custom_box', 'quick_edit_post_translation', 20, 2 );
+		self::add_action( 'bulk_edit_custom_box', 'bulk_edit_post_language', 20, 2 );
 
 		// Post Editor Interfaces
-		static::add_action( 'add_meta_boxes', 'add_post_meta_box', 10, 1 );
+		self::add_action( 'add_meta_boxes', 'add_post_meta_box', 10, 1 );
 
 		// Admin Notices
-		static::add_action( 'edit_form_top', 'synced_posts_notice', 10, 1 );
-		static::add_filter( 'bulk_post_updated_messages', 'bulk_updated_sisters_messages', 20, 2 );
+		self::add_action( 'edit_form_top', 'synced_posts_notice', 10, 1 );
+		self::add_filter( 'bulk_post_updated_messages', 'bulk_updated_sisters_messages', 20, 2 );
 
 		// Saving Post Data
-		static::add_action( 'save_post', 'save_post_language', 10, 1 );
-		static::add_action( 'save_post', 'save_post_translations', 10, 1 );
-		static::add_action( 'edit_post', 'bulk_save_post_language', 10, 1 );
+		self::add_action( 'save_post', 'save_post_language', 10, 1 );
+		self::add_action( 'save_post', 'save_post_translations', 10, 1 );
+		self::add_action( 'edit_post', 'bulk_save_post_language', 10, 1 );
 
 		// Menu Editor Meta Box
-		static::add_action( 'admin_head', 'add_nav_menu_meta_box', 10, 0 );
+		self::add_action( 'admin_head', 'add_nav_menu_meta_box', 10, 0 );
 
 		// JavaScript Variables
-		static::add_action( 'admin_footer', 'print_javascript_vars', 10, 0 );
+		self::add_action( 'admin_footer', 'print_javascript_vars', 10, 0 );
 	}
 
 	// =========================
@@ -317,7 +317,7 @@ final class Backend extends Handler {
 	 * @global array $_wp_registered_nav_menus The registered nav menus list.
 	 */
 	public static function register_localized_nav_menus() {
-		static::register_localized_locations( 'nav_menu', '_wp_registered_nav_menus' );
+		self::register_localized_locations( 'nav_menu', '_wp_registered_nav_menus' );
 	}
 
 	/**
@@ -330,7 +330,7 @@ final class Backend extends Handler {
 	 * @global array $wp_registered_sidebars The registered sidebars list.
 	 */
 	public static function register_localized_sidebars() {
-		static::register_localized_locations( 'sidebar', 'wp_registered_sidebars' );
+		self::register_localized_locations( 'sidebar', 'wp_registered_sidebars' );
 	}
 
 	/**

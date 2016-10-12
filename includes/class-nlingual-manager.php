@@ -37,11 +37,11 @@ final class Manager extends Handler {
 		}
 
 		// Settings & Pages
-		static::add_action( 'admin_init', 'register_settings', 10, 0 );
-		static::add_action( 'admin_menu', 'add_menu_pages', 10, 0 );
+		self::add_action( 'admin_init', 'register_settings', 10, 0 );
+		self::add_action( 'admin_menu', 'add_menu_pages', 10, 0 );
 
 		// Custom settings saving
-		static::add_action( 'admin_init', 'save_languages', 10, 0 );
+		self::add_action( 'admin_init', 'save_languages', 10, 0 );
 	}
 
 	// =========================

@@ -33,13 +33,13 @@ final class Liaison extends Handler {
 	 */
 	public static function register_hooks() {
 		// Backwards compatibility
-		static::add_action( 'plugins_loaded', 'add_backwards_compatibility', 10, 0 );
+		self::add_action( 'plugins_loaded', 'add_backwards_compatibility', 10, 0 );
 
 		// QuickStart compatibility
-		static::add_action( 'after_setup_theme', 'add_quickstart_helpers', 10, 0 );
+		self::add_action( 'after_setup_theme', 'add_quickstart_helpers', 10, 0 );
 
 		// IndexPages compatibility
-		static::add_action( 'after_setup_theme', 'add_indexpages_helpers', 10, 0 );
+		self::add_action( 'after_setup_theme', 'add_indexpages_helpers', 10, 0 );
 	}
 
 	// =========================
@@ -70,16 +70,16 @@ final class Liaison extends Handler {
 		}
 
 		// Old body classes
-		static::add_filter( 'body_class', 'add_body_classes', 10, 1 );
+		self::add_filter( 'body_class', 'add_body_classes', 10, 1 );
 
 		// Redirects for old filters, running them at the very end
-		static::add_filter( 'nlingual_process_url', 'redirect_old_process_url_hook', PHP_INT_MAX, 2 );
-		static::add_filter( 'nlingual_localize_url', 'redirect_old_localize_url_hook', PHP_INT_MAX, 4 );
-		static::add_filter( 'nlingual_localize_here', 'redirect_old_localize_here_array_hook', PHP_INT_MAX, 3 );
+		self::add_filter( 'nlingual_process_url', 'redirect_old_process_url_hook', PHP_INT_MAX, 2 );
+		self::add_filter( 'nlingual_localize_url', 'redirect_old_localize_url_hook', PHP_INT_MAX, 4 );
+		self::add_filter( 'nlingual_localize_here', 'redirect_old_localize_here_array_hook', PHP_INT_MAX, 3 );
 
 		// Localizable terms migration utility
-		static::add_action( 'admin_notices', 'compatibility_convert_terms_notice', 10, 0 );
-		static::add_action( 'admin_init', 'compatibility_convert_terms_process', 10, 0 );
+		self::add_action( 'admin_notices', 'compatibility_convert_terms_notice', 10, 0 );
+		self::add_action( 'admin_init', 'compatibility_convert_terms_process', 10, 0 );
 	}
 
 	// =========================
@@ -364,7 +364,7 @@ final class Liaison extends Handler {
 			if ( is_backend() ) {
 				// Flag translations of index pages
 				// (uses same as IndexPage's one but it can handle both implementations)
-				static::add_filter( 'display_post_states', 'indexpages_flag_translations', 10, 2 );
+				self::add_filter( 'display_post_states', 'indexpages_flag_translations', 10, 2 );
 			} else {
 				// Replace the retrieved index page's ID with it's translation counterpart
 				Frontend::add_filter( 'qs_helper_get_index', 'current_language_post', 10, 1 );
@@ -374,7 +374,7 @@ final class Liaison extends Handler {
 		// Order manager feature adjustments
 		if ( current_theme_supports( 'quickstart-order_manager' ) ) {
 			// Set language appropriately
-			static::add_filter( 'nlingual_pre_set_queried_language', 'quickstart_order_manager_language', 10, 2 );
+			self::add_filter( 'nlingual_pre_set_queried_language', 'quickstart_order_manager_language', 10, 2 );
 		}
 	}
 
@@ -440,10 +440,10 @@ final class Liaison extends Handler {
 		// Only run these on the frontend
 		if ( is_backend() ) {
 			// Flag translations of index pages
-			static::add_filter( 'display_post_states', 'indexpages_flag_translations', 10, 2 );
+			self::add_filter( 'display_post_states', 'indexpages_flag_translations', 10, 2 );
 
 			// Add notice of the page being a translation of an index page
-			static::add_action( 'edit_form_after_title', 'indexpages_translation_notice', 10, 1 );
+			self::add_action( 'edit_form_after_title', 'indexpages_translation_notice', 10, 1 );
 		} else {
 			// Replace the retrieved index page's ID with it's current language counterpart
 			Frontend::add_filter( 'indexpages_get_index_page', 'current_language_post', 10, 1 );

@@ -37,7 +37,7 @@ final class AJAX extends Handler {
 		}
 
 		// Translation creation
-		static::add_action( 'wp_ajax_nl_new_translation', 'new_translation', 10, 0 );
+		self::add_action( 'wp_ajax_nl_new_translation', 'new_translation', 10, 0 );
 	}
 
 	// =========================

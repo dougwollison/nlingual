@@ -92,19 +92,19 @@ final class System extends Handler {
 		$new_locale = get_locale();
 
 		// Abort if $new_locale matches the previous reload locale
-		if ( $new_locale == static::$last_locale_reloaded ) {
+		if ( $new_locale == self::$last_locale_reloaded ) {
 			return;
 		}
 
 		// Record the new locale
-		static::$last_locale_reloaded = $new_locale;
+		self::$last_locale_reloaded = $new_locale;
 
 		// Cache the current list
-		static::$textdomain_cache[ $old_local ] = $l10n;
+		self::$textdomain_cache[ $old_local ] = $l10n;
 
 		// If a list exists for the new local, us it
-		if ( isset( static::$textdomain_cache[ $new_locale ] ) ) {
-			$l10n = static::$textdomain_cache[ $new_locale ];
+		if ( isset( self::$textdomain_cache[ $new_locale ] ) ) {
+			$l10n = self::$textdomain_cache[ $new_locale ];
 		}
 		// Otherwise, go through each one and reload it
 		else {
@@ -115,7 +115,7 @@ final class System extends Handler {
 			// Loop through all old domains
 			foreach ( $old_textdomains as $domain => $mo ) {
 				// If it wasn't logged, skip it (99% chance it's a filler NOOP)
-				if ( ! isset( static::$textdomain_log[ $domain ] ) ) {
+				if ( ! isset( self::$textdomain_log[ $domain ] ) ) {
 					continue;
 				}
 
@@ -126,8 +126,8 @@ final class System extends Handler {
 				}
 
 				// Get the type and path(s) from the log
-				$type = static::$textdomain_log[ $domain ]['type'];
-				$paths = static::$textdomain_log[ $domain ]['paths'];
+				$type = self::$textdomain_log[ $domain ]['type'];
+				$paths = self::$textdomain_log[ $domain ]['paths'];
 
 				// The new mo file name
 				$mofile = $the_locale . '.mo';
@@ -176,14 +176,14 @@ final class System extends Handler {
 		$old_local = get_locale();
 
 		// Log the current language
-		static::$language_stack[] = Registry::current_language( 'id' );
+		self::$language_stack[] = Registry::current_language( 'id' );
 
 		// Set to the desired language
 		Registry::set_language( $language->id, false, 'override' );
 
 		if ( $reload_textdomains ) {
 			// Reload the text domains
-			static::reload_textdomains( $old_local );
+			self::reload_textdomains( $old_local );
 		}
 	}
 
@@ -197,7 +197,7 @@ final class System extends Handler {
 	 * @uses Registry::$current_language to update the current language.
 	 */
 	public static function restore_language() {
-		$last_language = array_pop( static::$language_stack );
+		$last_language = array_pop( self::$language_stack );
 
 		// If no previous language, go with default
 		if ( ! $last_language ) {
@@ -211,7 +211,7 @@ final class System extends Handler {
 		Registry::set_language( $last_language, false, 'override' );
 
 		// Reload the text domains
-		static::reload_textdomains( $old_local );
+		self::reload_textdomains( $old_local );
 	}
 
 	// =========================
@@ -250,7 +250,7 @@ final class System extends Handler {
 		Installer::register_hooks();
 
 		// Register global hooks
-		static::register_hooks();
+		self::register_hooks();
 
 		// Register the hooks of the subsystems
 		Frontend::register_hooks();
@@ -274,39 +274,39 @@ final class System extends Handler {
 	 */
 	public static function register_hooks() {
 		// Setup Stuff
-		static::add_action( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
+		self::add_action( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
 
 		// Text Domain Manipulation
-		static::add_filter( 'theme_locale', 'log_textdomain_type', 10, 2 );
-		static::add_filter( 'plugin_locale', 'log_textdomain_type', 10, 2 );
-		static::add_action( 'load_textdomain', 'log_textdomain_path', 10, 2 );
+		self::add_filter( 'theme_locale', 'log_textdomain_type', 10, 2 );
+		self::add_filter( 'plugin_locale', 'log_textdomain_type', 10, 2 );
+		self::add_action( 'load_textdomain', 'log_textdomain_path', 10, 2 );
 
 		// Post Changes
-		static::add_action( 'wp_insert_post', 'synchronize_posts', 10, 3 );
-		static::add_filter( 'trashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
-		static::add_filter( 'untrashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
-		static::add_filter( 'deleted_post', 'delete_sister_posts', 10, 1 );
-		static::add_filter( 'deleted_post', 'delete_post_language', 11, 1 );
-		static::add_filter( 'nlingual_sync_post_field-post_parent', 'use_translated_post', 10, 2 );
+		self::add_action( 'wp_insert_post', 'synchronize_posts', 10, 3 );
+		self::add_filter( 'trashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
+		self::add_filter( 'untrashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
+		self::add_filter( 'deleted_post', 'delete_sister_posts', 10, 1 );
+		self::add_filter( 'deleted_post', 'delete_post_language', 11, 1 );
+		self::add_filter( 'nlingual_sync_post_field-post_parent', 'use_translated_post', 10, 2 );
 
 		// URL Rewriting
-		static::add_filter( 'home_url', 'localize_home_url', 10, 3 );
-		static::add_filter( 'page_link', 'localize_post_link', 10, 3 );
-		static::add_filter( 'post_link', 'localize_post_link', 10, 3 );
-		static::add_filter( 'post_type_link', 'localize_post_link', 10, 3 );
-		static::add_filter( 'mod_rewrite_rules', 'fix_mod_rewrite_rules', 0, 1 );
+		self::add_filter( 'home_url', 'localize_home_url', 10, 3 );
+		self::add_filter( 'page_link', 'localize_post_link', 10, 3 );
+		self::add_filter( 'post_link', 'localize_post_link', 10, 3 );
+		self::add_filter( 'post_type_link', 'localize_post_link', 10, 3 );
+		self::add_filter( 'mod_rewrite_rules', 'fix_mod_rewrite_rules', 0, 1 );
 
 		// Query Manipulation
-		static::add_action( 'parse_query', 'set_queried_language', 10, 1 );
-		static::add_action( 'parse_comment_query', 'set_queried_language', 10, 1 );
-		static::add_action( 'pre_get_posts', 'translate_excluded_posts', 20, 1 );
-		static::add_filter( 'posts_clauses', 'add_translation_clauses', 10, 2 );
-		static::add_filter( 'comments_clauses', 'add_translation_clauses', 10, 2 );
-		static::add_filter( 'get_pages', 'filter_pages', 10, 2 );
+		self::add_action( 'parse_query', 'set_queried_language', 10, 1 );
+		self::add_action( 'parse_comment_query', 'set_queried_language', 10, 1 );
+		self::add_action( 'pre_get_posts', 'translate_excluded_posts', 20, 1 );
+		self::add_filter( 'posts_clauses', 'add_translation_clauses', 10, 2 );
+		self::add_filter( 'comments_clauses', 'add_translation_clauses', 10, 2 );
+		self::add_filter( 'get_pages', 'filter_pages', 10, 2 );
 
 		// Miscellaneous Changes
-		static::add_action( 'wp_print_scripts', 'patch_font_stack', 10, 0 );
-		static::add_action( 'admin_print_scripts', 'patch_font_stack', 10, 0 );
+		self::add_action( 'wp_print_scripts', 'patch_font_stack', 10, 0 );
+		self::add_action( 'admin_print_scripts', 'patch_font_stack', 10, 0 );
 	}
 
 	/**
@@ -349,10 +349,10 @@ final class System extends Handler {
 		$type = str_replace( '_locale', '', current_filter() );
 
 		// Add/update it in the list
-		if ( ! isset( static::$textdomain_log[ $domain ] ) ) {
-			static::$textdomain_log[ $domain ] = array();
+		if ( ! isset( self::$textdomain_log[ $domain ] ) ) {
+			self::$textdomain_log[ $domain ] = array();
 		}
-		static::$textdomain_log[ $domain ]['type'] = $type;
+		self::$textdomain_log[ $domain ]['type'] = $type;
 
 		return $locale;
 	}
@@ -374,10 +374,10 @@ final class System extends Handler {
 		$dir = dirname( $mofile );
 
 		// Add/update it in the list
-		if ( ! isset( static::$textdomain_log[ $domain ] ) ) {
-			static::$textdomain_log[ $domain ] = array();
+		if ( ! isset( self::$textdomain_log[ $domain ] ) ) {
+			self::$textdomain_log[ $domain ] = array();
 		}
-		static::$textdomain_log[ $domain ]['paths'][] = $dir;
+		self::$textdomain_log[ $domain ]['paths'][] = $dir;
 	}
 
 	// =========================
@@ -419,13 +419,13 @@ final class System extends Handler {
 		}
 
 		// Unhook this hook to prevent an infinite loop
-		$priority = static::remove_action( 'wp_insert_post', __FUNCTION__ );
+		$priority = self::remove_action( 'wp_insert_post', __FUNCTION__ );
 
 		// Now synchronize the post's translations
 		Synchronizer::sync_post_with_sisters( $post_id, $skip_ids );
 
 		// Rehook now that we're done
-		static::add_action( 'wp_insert_post', __FUNCTION__, $priority, 1 );
+		self::add_action( 'wp_insert_post', __FUNCTION__, $priority, 1 );
 	}
 
 	/**
@@ -469,7 +469,7 @@ final class System extends Handler {
 		$function = 'wp_' . str_replace( 'ed_post', '', $action ) . '_post';
 
 		// Unhook to prevent loop
-		$priority = static::remove_action( $action, __FUNCTION__ );
+		$priority = self::remove_action( $action, __FUNCTION__ );
 
 		// Get the translations of the post
 		$translations = Translator::get_post_translations( $post_id );
@@ -479,7 +479,7 @@ final class System extends Handler {
 		}
 
 		// Rehook now that we're done
-		static::add_action( $action, __FUNCTION__, $priority, 1 );
+		self::add_action( $action, __FUNCTION__, $priority, 1 );
 	}
 
 	/**
@@ -503,7 +503,7 @@ final class System extends Handler {
 		}
 
 		// Unhook to prevent loop
-		$priority = static::remove_action( 'deleted_post', __FUNCTION__ );
+		$priority = self::remove_action( 'deleted_post', __FUNCTION__ );
 
 		// Get the translations of the post
 		$translations = Translator::get_post_translations( $post_id );
@@ -515,7 +515,7 @@ final class System extends Handler {
 		}
 
 		// Rehook now that we're done
-		static::add_action( 'deleted_post', __FUNCTION__, $priority, 1 );
+		self::add_action( 'deleted_post', __FUNCTION__, $priority, 1 );
 	}
 
 	/**
@@ -647,7 +647,7 @@ final class System extends Handler {
 		}
 
 		// Unhook to prevent infinite loop
-		$priority = static::remove_filter( 'mod_rewrite_rules', __FUNCTION__ );
+		$priority = self::remove_filter( 'mod_rewrite_rules', __FUNCTION__ );
 
 		// Turn off URL localization, getting the old setting
 		$status = Rewriter::disable_localization();
@@ -659,7 +659,7 @@ final class System extends Handler {
 		Rewriter::enable_localization( $status );
 
 		// Rehook now that we're done
-		static::add_filter( 'mod_rewrite_rules', __FUNCTION__, $priority, 1 );
+		self::add_filter( 'mod_rewrite_rules', __FUNCTION__, $priority, 1 );
 
 		return $rules;
 	}

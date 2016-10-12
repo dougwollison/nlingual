@@ -41,7 +41,7 @@ final class Installer extends Handler {
 		register_deactivation_hook( NL_PLUGIN_FILE, array( __CLASS__, 'plugin_deactivate' ) );
 
 		// Upgrade logic
-		static::add_action( 'plugins_loaded', 'upgrade', 10, 0 );
+		self::add_action( 'plugins_loaded', 'upgrade', 10, 0 );
 	}
 
 	// =========================
@@ -164,15 +164,15 @@ final class Installer extends Handler {
 	 * @global \wpdb $wpdb The database abstraction class instance.
 	 */
 	public static function plugin_activate() {
-		if ( ! static::plugin_security_check( 'activate' ) ) {
+		if ( ! self::plugin_security_check( 'activate' ) ) {
 			return;
 		}
 
 		// Attempt to upgrade, in case we're activating after an plugin update
-		if ( ! static::upgrade() ) {
+		if ( ! self::upgrade() ) {
 			// Otherwise just install the options/tables
-			static::install_options();
-			static::install_tables();
+			self::install_options();
+			self::install_tables();
 		}
 	}
 
@@ -184,7 +184,7 @@ final class Installer extends Handler {
 	 * @uses Installer::plugin_security_check() to check for deactivation nonce.
 	 */
 	public static function plugin_deactivate() {
-		if ( ! static::plugin_security_check( 'deactivate' ) ) {
+		if ( ! self::plugin_security_check( 'deactivate' ) ) {
 			return;
 		}
 
@@ -300,23 +300,23 @@ final class Installer extends Handler {
 		}
 
 		// If upgrading from nLingual 1, convert tables before upgrading
-		if ( static::is_upgrading() ) {
-			static::convert_tables();
+		if ( self::is_upgrading() ) {
+			self::convert_tables();
 
 			// Flag as having been upgraded
 			add_option( 'nlingual_upgraded', 1, '', 'no' );
 		}
 
 		// Install/update the tables
-		static::install_tables();
+		self::install_tables();
 
 		// If upgrading from nLingual 1, convert options
-		if ( static::is_upgrading() ) {
-			static::convert_options();
+		if ( self::is_upgrading() ) {
+			self::convert_options();
 		}
 
 		// Add the default options
-		static::install_options();
+		self::install_options();
 
 		// Log the current database version
 		update_option( 'nlingual_database_version', NL_DB_VERSION );
@@ -481,8 +481,8 @@ final class Installer extends Handler {
 		$description = get_option( 'blogdescription' );
 
 		// Convert the name and description (if using language splitting), get the unlocalized versions
-		$unlocalized_name = static::convert_split_string( $name, 'option:blogname' );
-		$unlocalized_description = static::convert_split_string( $description, 'option:blogdescription' );
+		$unlocalized_name = self::convert_split_string( $name, 'option:blogname' );
+		$unlocalized_description = self::convert_split_string( $description, 'option:blogdescription' );
 
 		// Update values
 		update_option( 'blogname', $unlocalized_name );
