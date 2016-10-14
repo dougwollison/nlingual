@@ -512,10 +512,15 @@ final class Liaison extends Handler {
 	 * @param WP_Post $post The post in question.
 	 */
 	public static function indexpages_translation_notice( \WP_Post $post ) {
+		// Abort if not a page
+		if ( $post->post_type != 'page' ) {
+			return;
+		}
+
 		$language = Translator::get_post_language( $post->ID );
 
 		// Abort if not a page, or in the default language
-		if ( $post->post_type != 'page' || Registry::is_language_default( $language ) ) {
+		if ( Registry::is_language_default( $language ) ) {
 			return;
 		}
 

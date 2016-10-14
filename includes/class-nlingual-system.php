@@ -596,6 +596,11 @@ final class System extends Handler {
 			$post_id = $post;
 		}
 
+		// If it doesn't belong to a supported post type, abort
+		if ( ! Registry::is_post_type_supported( get_post_type( $post_id ) ) ) {
+			return $permalink;
+		}
+
 		// If the post is non published, don't bother
 		$status = get_post_status( $post_id );
 		$draft_or_pending = in_array( $status, array( 'draft', 'pending', 'auto-draft', 'future' ) );
