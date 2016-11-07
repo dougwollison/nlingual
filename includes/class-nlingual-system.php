@@ -642,7 +642,7 @@ final class System extends Handler {
 	 *
 	 * @return string The filtered rewrite block.
 	 */
-	public function fix_mod_rewrite_rules( $rules ) {
+	public static function fix_mod_rewrite_rules( $rules ) {
 		global $wp_rewrite;
 
 		// Only bother if using the path rewrite method
