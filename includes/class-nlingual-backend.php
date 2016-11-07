@@ -978,6 +978,7 @@ final class Backend extends Handler {
 	/**
 	 * Print notice about any sister posts being updated/trashed/deleted.
 	 *
+	 * @since 2.3.1 Added check for NULL screen.
 	 * @since 2.0.0
 	 *
 	 * @param array $bulk_messages Arrays of messages per post type.
@@ -989,8 +990,8 @@ final class Backend extends Handler {
 		// Get the current screen
 		$screen = get_current_screen();
 
-		// Abort if current post type is not supported
-		if ( ! Registry::is_post_type_supported( $screen->post_type ) ) {
+		// Abort if no screen or current post type is not supported
+		if ( ! $screen || ! Registry::is_post_type_supported( $screen->post_type ) ) {
 			return $bulk_notices;
 		}
 

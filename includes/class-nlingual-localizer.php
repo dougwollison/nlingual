@@ -952,6 +952,7 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
+	 * @since 2.3.1 Added check for NULL screen.
 	 * @since 2.0.0
 	 *
 	 * @uses Localizer::$current_fields to store the fields found.
@@ -961,6 +962,11 @@ final class Localizer extends Handler {
 	public static function setup_localized_fields() {
 		// Get the current screen
 		$screen = get_current_screen();
+
+		// Abort if no screen
+		if ( ! $screen ) {
+			return;
+		}
 
 		// Determin object ID to use
 		$object_id_keys = array(

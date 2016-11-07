@@ -216,6 +216,7 @@ final class Documenter extends Handler {
 	 * A specific tab set ID can be specified, otherwise, it will
 	 * search for a tab set registered already for the screen.
 	 *
+	 * @since 2.3.1 Added check for NULL screen.
 	 * @since 2.0.0
 	 *
 	 * @uses Documenter::$registered_screens to get the tab set ID.
@@ -227,6 +228,11 @@ final class Documenter extends Handler {
 	public static function setup_help_tabs( $help_id = null ) {
 		// Get the screen object
 		$screen = get_current_screen();
+
+		// Abort if no screen is set
+		if ( ! $screen ) {
+			return;
+		}
 
 		// If no help tab ID is passed, see if one is registered for the screen.
 		if ( is_null( $help_id ) ) {
