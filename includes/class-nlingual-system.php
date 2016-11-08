@@ -387,6 +387,7 @@ final class System extends Handler {
 	/**
 	 * Handle any synchronization with sister posts.
 	 *
+	 * @since 2.3.1 Fixed number of accepted arguments for rehooking.
 	 * @since 2.2.0 Added $post & $update args; moved to wp_insert_post hook.
 	 * @since 2.0.0
 	 *
@@ -425,7 +426,7 @@ final class System extends Handler {
 		Synchronizer::sync_post_with_sisters( $post_id, $skip_ids );
 
 		// Rehook now that we're done
-		self::add_action( 'wp_insert_post', __FUNCTION__, $priority, 1 );
+		self::add_action( 'wp_insert_post', __FUNCTION__, $priority, 3 );
 	}
 
 	/**
