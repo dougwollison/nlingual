@@ -205,7 +205,7 @@ final class Synchronizer {
 				 * @param int      $target_id   The ID of the post this will be assigned to.
 				 * @param int      $original_id The ID of the post the value is from.
 				 */
-				$term_ids = apply_filters( "nlingual_sync_post_terms-{$taxonomy}", $meta_value, $language, $target->ID, $original->ID );
+				$term_ids = apply_filters( "nlingual_sync_post_terms-{$taxonomy}", $term_ids, $language, $target->ID, $original->ID );
 
 				// Ensure they're integers
 				$term_ids = array_map( 'intval', $term_ids );
