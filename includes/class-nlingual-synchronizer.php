@@ -81,6 +81,7 @@ final class Synchronizer {
 	/**
 	 * Copy desired post fields, meta data, and terms from the original to target.
 	 *
+	 * @since 2.3.2 Fixed typo causing terms to be erased when trying to sync.
 	 * @since 2.1.0 Fixed various bugs causing sync to fail, added filters for
 	 *              each post field, term list, and meta value list,
 	 *              moving post_parent localizing to System filter.
