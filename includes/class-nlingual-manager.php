@@ -574,6 +574,7 @@ final class Manager extends Handler {
 	/**
 	 * Fields for the Sync/Clone Rules page.
 	 *
+	 * @since 2.3.3 Added check for post type's existence.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to retrieve the enabled post types.
@@ -588,13 +589,16 @@ final class Manager extends Handler {
 
 		// Build the fields list based on the supported post types
 		foreach ( $post_types as $post_type ) {
-			$field = array(
-				'title' => get_post_type_object( $post_type )->labels->name,
-				'type'  => 'sync_settings',
-				'data'  => $post_type,
-			);
-			$sync_fields[ "sync_rules[post_type][{$post_type}]" ] = $field;
-			$clone_fields[ "clone_rules[post_type][{$post_type}]" ] = $field;
+			// Ensure post type exists
+			if ( post_type_exists( $post_type ) ) {
+				$field = array(
+					'title' => get_post_type_object( $post_type )->labels->name,
+					'type'  => 'sync_settings',
+					'data'  => $post_type,
+				);
+				$sync_fields[ "sync_rules[post_type][{$post_type}]" ] = $field;
+				$clone_fields[ "clone_rules[post_type][{$post_type}]" ] = $field;
+			}
 		}
 
 		// The post synchronizing setting fields
