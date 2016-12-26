@@ -221,6 +221,8 @@ final class System extends Handler {
 	/**
 	 * Register hooks and load options.
 	 *
+	 * @since 2.3.3 Redid table registration for multisite support,
+	 *              dropped support for old nL_translations alias.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
@@ -239,9 +241,10 @@ final class System extends Handler {
 	public static function setup() {
 		global $wpdb;
 
-		// Register the database tables (with backwards compatibility for their old nL_ version)
-		$wpdb->nl_translations = $wpdb->nL_translations = $wpdb->prefix . 'nl_translations';
-		$wpdb->nl_localizations = $wpdb->prefix . 'nl_localizations';
+		// Register the database tables, regenerate
+		$wpdb->tables[] = 'nl_translations';
+		$wpdb->tables[] = 'nl_localizations';
+		$wpdb->set_blog_id( $wpdb->blogid );
 
 		// Setup the registry
 		Registry::load();
