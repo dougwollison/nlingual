@@ -374,8 +374,9 @@ final class Settings {
 	}
 
 	/**
-	 * Build a sync settings interface
+	 * Build a sync settings interface.
 	 *
+	 * @since 2.4.0 Ensure post_fields/terms/meta entries are present.
 	 * @since 2.0.0
 	 *
 	 * @uses Documenter::post_field_names() to get the post field names.
@@ -386,6 +387,12 @@ final class Settings {
 	 * @param string $post_type The post type in question.
 	 */
 	private static function build_sync_settings_field( $name, $value, $post_type ) {
+		$value = wp_parse_args( $value, array(
+			'post_fields' => array(),
+			'post_terms' => array(),
+			'post_meta' => array(),
+		) );
+
 		// Post Data values
 		$post_fields = Documenter::post_field_names();
 		$post_fields['post_date']      .= '<sup>1</sup>'; // flag date field for note about modified and gmt versions
