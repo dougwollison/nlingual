@@ -316,11 +316,18 @@
 			if ( 0 === $field.length || ! $field.is( 'input, textarea' ) ) {
 				return;
 			}
+
 			$field.addClass( 'nl-localizable-input' );
 
-			// Wrap the field in a container
-			$field.wrap( '<span class="nl-localizable"></span>' );
-			$wrap = $field.parent();
+			// Check if it's a tinymce editor field
+			if ( $field.hasClass( 'wp-editor-area' ) ) {
+				// Use the editor wrapper as the container
+				$wrap = $field.parents( '.wp-editor-wrap' );
+			} else {
+				// Wrap the field in a container
+				$field.wrap( '<span class="nl-localizable"></span>' );
+				$wrap = $field.parent();
+			}
 
 			// Create the control
 			$control = $localizerTemplate.clone();
@@ -419,16 +426,11 @@
 			$field.val( value ).attr( 'name', name );
 
 			// Trigger a change event, for potential extensibility
-			$field.trigger( 'input', nlLocalizerSkipUpdate );
+			$field.trigger( 'nl:localizer:change' );
 		} );
 
-		$( 'body' ).on( 'input nl:localizer:update', '.nl-localizable-input', function( event, extra ) {
+		$( 'body' ).on( 'input nl:localizer:update nl:localizer:save', '.nl-localizable-input', function( e ) {
 			var $control, $localized, language;
-
-			// Skip if this was a change event triggered by the update above
-			if ( 'input' === event.type && extra === nlLocalizerSkipUpdate ) {
-				return;
-			}
 
 			// Get the control reference and it's current language
 			$control = $( this ).data( '$nl_localizer' );
@@ -437,9 +439,54 @@
 			// Get the localized storage field
 			$localized = $control.data( '$nl_localized_' + language );
 
+			console.log( this.value );
+
 			// Update it with the current value
 			$localized.val( this.value );
 		} );
+
+		// =========================
+		// ! - TinyMCE Extensions
+		// =========================
+
+		if ( typeof tinymce === 'object' ) {
+			tinymce.on( 'SetupEditor', function( editor ) {
+				var $field = $( editor.getElement() ),
+					$control = $field.data( '$nl_localizer' );
+
+				if ( ! $control ) {
+					return;
+				}
+
+				editor.on( 'init', function() {
+					$( editor.getContainer() ).parent().after( $control );
+				} );
+
+				$field.on( 'nl:localizer:update', function(e) {
+					// Get the content, clean it
+					var content = editor.getContent();
+						content = wp.editor.removep( content );
+
+					$field.val( content );
+				} );
+
+				$field.on( 'nl:localizer:change', function() {
+					// Get the value, process it
+					var content = $field.val();
+						content = wp.editor.autop( content );
+
+					editor.setContent( content );
+				} );
+			} );
+
+			var oldEditorSave = tinymce.Editor.prototype.save;
+			tinymce.Editor.prototype.save = function() {
+				oldEditorSave.apply( this, arguments );
+
+				this.fire( 'SavedContent' );
+				$( this.getElement() ).trigger( 'nl:localizer:save' );
+			};
+		}
 
 		// =========================
 		// ! Meta Box and Quick/Bulk Edit
