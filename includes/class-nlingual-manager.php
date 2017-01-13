@@ -300,6 +300,8 @@ final class Manager extends Handler {
 	/**
 	 * Fields for the Translations page.
 	 *
+	 * @since 2.4.0 Only list active languages as options for Default Language,
+	 *              also deprecate patch_font_stack option.
 	 * @since 2.0.0
 	 *
 	 * @global \WP_Rewrite $wp_rewrite The rewrite API.

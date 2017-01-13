@@ -450,6 +450,7 @@ final class Backend extends Handler {
 	/**
 	 * Add <select> for filtering posts by language.
 	 *
+	 * @since 2.4.0 Show all languages as filtering options.
 	 * @since 2.2.0 Fixed handling of string vs array for $current.
 	 * @since 2.0.0
 	 *
