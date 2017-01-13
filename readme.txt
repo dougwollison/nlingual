@@ -78,6 +78,9 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
 
+= 2.4.0 =
+Tweaked handling of inactive languages, deprecated font patching option, added TinyMCE support to LocalizeThis tool.
+
 = 2.3.3 =
 Fixed multisite-specific database query problems.
 
