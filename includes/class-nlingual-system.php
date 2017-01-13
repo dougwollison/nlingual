@@ -272,6 +272,7 @@ final class System extends Handler {
 	/**
 	 * Register hooks.
 	 *
+	 * @since 2.4.0 Only add patch_font_stack hook if before 4.6.
 	 * @since 2.2.0 Reassigned synchronize_posts to wp_insert_post (better hook to use).
 	 * @since 2.0.0
 	 */
@@ -307,9 +308,11 @@ final class System extends Handler {
 		self::add_filter( 'comments_clauses', 'add_translation_clauses', 10, 2 );
 		self::add_filter( 'get_pages', 'filter_pages', 10, 2 );
 
-		// Miscellaneous Changes
-		self::add_action( 'wp_print_scripts', 'patch_font_stack', 10, 0 );
-		self::add_action( 'admin_print_scripts', 'patch_font_stack', 10, 0 );
+		// Apply font patching (if needed)
+		if ( is_patch_font_stack_needed() ) {
+			self::add_action( 'wp_print_scripts', 'patch_font_stack', 10, 0 );
+			self::add_action( 'admin_print_scripts', 'patch_font_stack', 10, 0 );
+		}
 	}
 
 	/**
