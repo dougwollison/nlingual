@@ -37,6 +37,18 @@ function is_backend() {
 	return is_admin() || in_array( $pagenow, array( 'wp-login.php', 'wp-register.php' ) );
 }
 
+/**
+ * Check if the patch font option is necessary.
+ *
+ * @internal
+ *
+ * @since 2.4.0
+ */
+function is_patch_font_stack_needed() {
+	// Only needed prior to 4.6
+	return version_compare( $GLOBALS['wp_version'], '4.6', '<' );
+}
+
 // =========================
 // ! Sanitizing Tools
 // =========================
