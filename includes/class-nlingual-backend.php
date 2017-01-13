@@ -484,7 +484,7 @@ final class Backend extends Handler {
 			<?php
 			$count = Backend::language_posts_count( 0, $post_type, $post_status );
 			printf( '<option value="%s" %s>%s (%s)</option>', 0, $current == '0' ? 'selected' : '', __( 'No Language', 'nlingual' ), $count );
-			foreach ( Registry::languages( 'active' ) as $language ) {
+			foreach ( Registry::languages() as $language ) {
 				$selected = $current == $language->slug;
 				$count = Backend::language_posts_count( $language->id, $post_type, $post_status );
 				printf( '<option value="%s" %s>%s (%d)</option>', $language->slug, $selected ? 'selected' : '', $language->system_name, $count );

@@ -319,7 +319,7 @@ final class Manager extends Handler {
 				'title' => __( 'Default Language', 'nlingual' ),
 				'help'  => null,
 				'type'  => 'select',
-				'data'  => Registry::languages()->pluck( 'system_name' ),
+				'data'  => Registry::languages( 'active' )->pluck( 'system_name' ),
 			),
 			'localize_date' => array(
 				'title' => __( 'Localize date format?', 'nlingual' ),
