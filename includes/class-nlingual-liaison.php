@@ -29,7 +29,7 @@ final class Liaison extends Handler {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 2.4.1 Added WooCommerce compatibility.
+	 * @since 2.5.0 Added WooCommerce compatibility.
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
@@ -551,7 +551,7 @@ final class Liaison extends Handler {
 	/**
 	 * Check if WooCommerce is active, setup necessary helpers.
 	 *
-	 * @since 2.4.1
+	 * @since 2.5.0
 	 */
 	public static function add_woocommerce_helpers() {
 		// Abort if QuickStart isn't present
@@ -572,7 +572,7 @@ final class Liaison extends Handler {
 	/**
 	 * Fix localization of pages with WC endpoints
 	 *
-	 * @since 2.4.1
+	 * @since 2.5.0
 	 *
 	 * @global WP $wp The WordPress environment object.
 	 *
