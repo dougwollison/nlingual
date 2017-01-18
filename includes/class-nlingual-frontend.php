@@ -262,7 +262,7 @@ final class Frontend extends Handler {
 		// Determine the status code to use
 		$status = Registry::get( 'redirection_permanent' ) ? 301 : 302;
 
-		// Redirect,but don't allow a loop; make sure they're different (trailing slash agnostic)
+		// Redirect, but don't allow a loop; make sure they're different (trailing slash agnostic)
 		if ( $redirect_url && untrailingslashit( NL_ORIGINAL_URL ) != untrailingslashit( $redirect_url ) ) {
 			// Exit if redirect was successful
 			if ( wp_redirect( $redirect_url, $status ) ) {
