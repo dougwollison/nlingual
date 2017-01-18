@@ -79,7 +79,7 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
 
 = 2.4.1 =
-Added support for WooCommerce endpoints when localizing the current URL.
+Added support for WooCommerce pages and endpoints when localizing the current URL.
 
 = 2.4.0 =
 Tweaked handling of inactive languages, deprecated font patching option, added TinyMCE support to LocalizeThis tool.
