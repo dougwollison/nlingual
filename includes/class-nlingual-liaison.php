@@ -561,6 +561,12 @@ final class Liaison extends Handler {
 
 		// Add WC endpoint support to localize_here
 		self::add_filter( 'nlingual_localize_here', 'woocommerce_localize_endpoint', 10, 1 );
+
+		// Replace the retrieved WC page's ID with it's current language counterpart
+		$pages = array( 'shop', 'cart', 'checkout', 'terms', 'myaccount' );
+		foreach ( $pages as $page ) {
+			Frontend::add_filter( 'woocommerce_get_' . $page . '_page_id', 'current_language_post', 10, 1 );
+		}
 	}
 
 	/**
