@@ -29,6 +29,7 @@ final class Liaison extends Handler {
 	/**
 	 * Register hooks.
 	 *
+	 * @since 2.4.1 Added WooCommerce compatibility.
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
@@ -40,6 +41,9 @@ final class Liaison extends Handler {
 
 		// IndexPages compatibility
 		self::add_action( 'after_setup_theme', 'add_indexpages_helpers', 10, 0 );
+
+		// WooCommerce compatibility
+		self::add_filter( 'plugins_loaded', 'add_woocommerce_helpers', 10, 0 );
 	}
 
 	// =========================
@@ -538,5 +542,49 @@ final class Liaison extends Handler {
 			_fx( 'You are currently editing a translation of the page that shows your latest %s.', 'index page translation', 'nlingual', $label ) .
 			' <em>' . __( 'Your current theme may not display the content you write here.', 'nlingual', 'index-pages' ) . '</em>' .
 		'</p></div>';
+	}
+
+	// =========================
+	// ! WooCommerce Helpers
+	// =========================
+
+	/**
+	 * Check if WooCommerce is active, setup necessary helpers.
+	 *
+	 * @since 2.4.1
+	 */
+	public static function add_woocommerce_helpers() {
+		// Abort if QuickStart isn't present
+		if ( ! function_exists( 'WC' ) ) {
+			return;
+		}
+
+		// Add WC endpoint support to localize_here
+		self::add_filter( 'nlingual_localize_here', 'woocommerce_localize_endpoint', 10, 1 );
+	}
+
+	/**
+	 * Fix localization of pages with WC endpoints
+	 *
+	 * @since 2.4.1
+	 *
+	 * @global WP $wp The WordPress environment object.
+	 *
+	 * @param string $url The new URL.
+	 */
+	public static function woocommerce_localize_endpoint( $url ) {
+		global $wp;
+
+		// Get the available endpoints
+		$wc_endpoints = WC()->query->get_query_vars();
+
+		foreach ( $wc_endpoints as $query_var => $endpoint ) {
+			if ( isset( $wp->query_vars[ $query_var ] ) ) {
+				$url = wc_get_endpoint_url( $endpoint, $wp->query_vars[ $query_var ], $url );
+				break;
+			}
+		}
+
+		return $url;
 	}
 }
