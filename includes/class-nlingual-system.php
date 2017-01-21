@@ -26,6 +26,17 @@ final class System extends Handler {
 	// =========================
 
 	/**
+	 * The Querying-Disabled status flag.
+	 *
+	 * @internal
+	 *
+	 * @since 2.6.0
+	 *
+	 * @var bool
+	 */
+	private static $disable_querying = false;
+
+	/**
 	 * Language switching log.
 	 *
 	 * @internal
@@ -72,6 +83,17 @@ final class System extends Handler {
 	// =========================
 	// ! Utilities
 	// =========================
+
+	/**
+	 * Check if querying is enabled or disabled.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @return bool Wether or not querying is enabled.
+	 */
+	private static function querying_disabled() {
+		return self::$disable_querying;
+	}
 
 	/**
 	 * Cache the text domains and re-load them.
@@ -279,6 +301,7 @@ final class System extends Handler {
 	public static function register_hooks() {
 		// Setup Stuff
 		self::add_action( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
+		self::add_action( 'switch_blog', 'check_blog_for_support', 10, 0 );
 
 		// Text Domain Manipulation
 		self::add_filter( 'theme_locale', 'log_textdomain_type', 10, 2 );
@@ -333,6 +356,23 @@ final class System extends Handler {
 		$taxonomies = Registry::get( 'taxonomies' );
 		foreach ( $taxonomies as $taxonomy ) {
 			Localizer::register_taxonomy( $taxonomy );
+		}
+	}
+
+	/**
+	 * Check if the new blog supports nLingual; disable querying if not.
+	 *
+	 * @since 2.5.0
+	 */
+	public static function check_blog_for_support() {
+		// Reload the registry
+		Registry::load( 'reload' );
+
+		// Check if the plugin runs on this site and isn't outdated
+		if ( version_compare( get_option( 'nlingual_database_version', '2.0.0' ), NL_DB_VERSION, '>=' ) ) {
+			self::$disable_querying = false;
+		} else {
+			self::$disable_querying = true;
 		}
 	}
 
