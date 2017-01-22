@@ -290,7 +290,6 @@ final class System extends Handler {
 	public static function register_hooks() {
 		// Setup Stuff
 		self::add_hook( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
-		self::add_hook( 'switch_blog', 'check_blog_for_support', 10, 0 );
 
 		// Text Domain Manipulation
 		self::add_hook( 'theme_locale', 'log_textdomain_type', 10, 2 );
@@ -325,6 +324,9 @@ final class System extends Handler {
 			self::add_hook( 'wp_print_scripts', 'patch_font_stack', 10, 0 );
 			self::add_hook( 'admin_print_scripts', 'patch_font_stack', 10, 0 );
 		}
+
+		// Finally, add the blog switching handler
+		add_action( 'switch_blog', array( __CLASS__, 'check_blog_for_support' ), 10, 0 );
 	}
 
 	/**
