@@ -44,18 +44,29 @@ abstract class Handler {
 	 * @param int    $priority      Optional. The priority to use for this particular callback.
 	 * @param int    $accepted_args Optional. The number of arguments the callback accepts.
 	 */
-	final public static function add_filter( $tag, $method, $priority = 10, $accepted_args = 1 ) {
+	final public static function add_hook( $tag, $method, $priority = 10, $accepted_args = 1 ) {
+		$class = get_called_class();
+
 		// Only add the filter if it hasn't already been added to the hook
-		if ( has_filter( $tag, array( get_called_class(), $method ) ) === false ) {
-			add_filter( $tag, array( get_called_class(), $method ), $priority, $accepted_args );
+		if ( has_filter( $tag, array( $class, $method ) ) === false ) {
+			add_filter( $tag, array( $class, $method ), $priority, $accepted_args );
+
+			static::$implemented_hooks[ "$tag/$method" ] = array( $tag, $method, $priority, $accepted_args );
 		}
 	}
 
 	/**
-	 * @see Handler::add_filter()
+	 * @see Handler::add_hook()
+	 */
+	final public static function add_filter() {
+		call_user_func_array( 'self::add_hook', func_get_args() );
+	}
+
+	/**
+	 * @see Handler::add_hook()
 	 */
 	final public static function add_action() {
-		call_user_func_array( 'self::add_filter', func_get_args() );
+		call_user_func_array( 'self::add_hook', func_get_args() );
 	}
 
 	/**
@@ -72,20 +83,76 @@ abstract class Handler {
 	 *
 	 * @return bool|int The priority it originally had (false if wasn't added).
 	 */
-	final public static function remove_filter( $tag, $method ) {
+	final public static function remove_hook( $tag, $method ) {
+		$class = get_called_class();
+
 		// Get old priority, only remove if it had one
-		$priority = has_filter( $tag, array( get_called_class(), $method ) );
+		$priority = has_filter( $tag, array( $class, $method ) );
 		if ( $priority !== false ) {
-			remove_filter( $tag, array( get_called_class(), $method ), $priority );
+			remove_filter( $tag, array( $class, $method ), $priority );
 			return $priority;
 		}
 	}
 
 	/**
-	 * @see Handler::remove_filter()
+	 * @see Handler::remove_hook()
+	 */
+	final public static function remove_filter() {
+		return call_user_func_array( 'self::remove_hook', func_get_args() );
+	}
+
+	/**
+	 * @see Handler::remove_hook()
 	 */
 	final public static function remove_action() {
-		return call_user_func_array( 'self::remove_filter', func_get_args() );
+		return call_user_func_array( 'self::remove_hook', func_get_args() );
+	}
+
+	/**
+	 * Remove all implemented hooks.
+	 *
+	 * @api
+	 *
+	 * @since 2.6.0
+	 */
+	public static function remove_all_hooks() {
+		foreach ( static::$implemented_hooks as $hook ) {
+			list( $tag, $method ) = $hook;
+			self::remove_hook( $tag, $method );
+		}
+	}
+
+	/**
+	 * Restore a previously disabled hook.
+	 *
+	 * @api
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param string $tag    The name of the filter to remove from.
+	 * @param string $method The name of the class' method to remove.
+	 */
+	final public static function restore_hook( $tag, $method ) {
+		$class = get_called_class();
+
+		if ( isset( static::$implemented_hooks[ "$tag/$method" ] ) ) {
+			list( , , $priority, $accepted_args ) = static::$implemented_hooks[ "$tag/$method" ];
+			self::add_hook( $tag, $method, $priority, $accepted_args );
+		}
+	}
+
+	/**
+	 * Restore all implemented hooks.
+	 *
+	 * @api
+	 *
+	 * @since 2.6.0
+	 */
+	public static function restore_all_hooks() {
+		foreach ( static::$implemented_hooks as $hook ) {
+			list( $tag, $method ) = $hook;
+			self::restore_hook( $tag, $method );
+		}
 	}
 
 	/**

@@ -41,7 +41,7 @@ final class Installer extends Handler {
 		register_deactivation_hook( NL_PLUGIN_FILE, array( __CLASS__, 'plugin_deactivate' ) );
 
 		// Upgrade logic
-		self::add_action( 'plugins_loaded', 'upgrade', 10, 0 );
+		self::add_hook( 'plugins_loaded', 'upgrade', 10, 0 );
 	}
 
 	// =========================

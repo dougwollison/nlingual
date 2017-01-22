@@ -31,6 +31,17 @@ final class Localizer extends Handler {
 	// =========================
 
 	/**
+	 * Record of added hooks.
+	 *
+	 * @internal Used by the Handler enable/disable methods.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @var array
+	 */
+	protected static $implemented_hooks = array();
+
+	/**
 	 * The name of the class.
 	 *
 	 * @internal
@@ -212,18 +223,18 @@ final class Localizer extends Handler {
 		// Backend-only hooks
 		if ( is_backend() ) {
 			// Saving localized fields
-			self::add_action( 'admin_init', 'save_localized_fields', 10, 0 );
+			self::add_hook( 'admin_init', 'save_localized_fields', 10, 0 );
 
 			// Setup the fields for the screen and add the Help tab
-			self::add_action( 'admin_head', 'setup_localized_fields', 10, 0 );
+			self::add_hook( 'admin_head', 'setup_localized_fields', 10, 0 );
 
 			// Do the call to the nLingual.localizeFields utility
-			self::add_action( 'admin_footer', 'do_localized_fields', 10, 0 );
+			self::add_hook( 'admin_footer', 'do_localized_fields', 10, 0 );
 		}
 		// Frontend-only hooks
 		else {
 			// Setup preloading of all localized options
-			self::add_action( 'init', 'preload_localized_fields', 10, 0 );
+			self::add_hook( 'init', 'preload_localized_fields', 10, 0 );
 		}
 	}
 
@@ -307,11 +318,11 @@ final class Localizer extends Handler {
 
 		// Add the filter to handle retrieval (frontend only)
 		if ( ! is_backend() ) {
-			self::add_filter( "pre_option_{$option}", 'handle_localized_option_field', 10, 1 );
+			self::add_hook( "pre_option_{$option}", 'handle_localized_option_field', 10, 1 );
 		}
 
 		// Add action to handle updating
-		self::add_action( "update_option_{$option}", 'update_unlocalized_option_field', 10, 2 );
+		self::add_hook( "update_option_{$option}", 'update_unlocalized_option_field', 10, 2 );
 	}
 
 	/**
@@ -350,11 +361,11 @@ final class Localizer extends Handler {
 
 		if ( ! is_backend() ) {
 			// Setup filtering if needed (frontend only)
-			self::add_action( 'the_post', 'handle_localized_post_fields', 10, 1 );
+			self::add_hook( 'the_post', 'handle_localized_post_fields', 10, 1 );
 		}
 
 		// Add action to handle updating
-		self::add_action( 'post_updated', 'update_unlocalized_post_fields', 10, 2 );
+		self::add_hook( 'post_updated', 'update_unlocalized_post_fields', 10, 2 );
 	}
 
 	/**
@@ -411,11 +422,11 @@ final class Localizer extends Handler {
 
 		if ( ! is_backend() ) {
 			// Setup filtering (if not already)
-			self::add_filter( "get_{$meta_type}_metadata", 'handle_localized_metadata_field', 10, 4 );
+			self::add_hook( "get_{$meta_type}_metadata", 'handle_localized_metadata_field', 10, 4 );
 		}
 
 		// Add action to handle updating
-		self::add_action( "update_{$meta_type}_metadata", 'update_unlocalized_metadata_field', 10, 4 );
+		self::add_hook( "update_{$meta_type}_metadata", 'update_unlocalized_metadata_field', 10, 4 );
 	}
 
 	/**
@@ -447,12 +458,12 @@ final class Localizer extends Handler {
 
 		// Add the filters to handle it (frontend only)
 		if ( ! is_backend() ) {
-			self::add_filter( "get_{$taxonomy}", 'handle_localized_term_fields', 10, 2 );
-			self::add_filter( 'get_terms', 'handle_localized_terms_fields', 10, 2 );
+			self::add_hook( "get_{$taxonomy}", 'handle_localized_term_fields', 10, 2 );
+			self::add_hook( 'get_terms', 'handle_localized_terms_fields', 10, 2 );
 		}
 
 		// Add action to handle updating
-		self::add_action( "edited_term", 'update_unlocalized_term_fields', 10, 3 );
+		self::add_hook( 'edited_term', 'update_unlocalized_term_fields', 10, 3 );
 	}
 
 	// =========================

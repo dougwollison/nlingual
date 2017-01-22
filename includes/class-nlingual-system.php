@@ -26,15 +26,15 @@ final class System extends Handler {
 	// =========================
 
 	/**
-	 * The Querying-Disabled status flag.
+	 * Record of added hooks.
 	 *
-	 * @internal
+	 * @internal Used by the Handler enable/disable methods.
 	 *
 	 * @since 2.6.0
 	 *
-	 * @var bool
+	 * @var array
 	 */
-	private static $disable_querying = false;
+	protected static $implemented_hooks = array();
 
 	/**
 	 * Language switching log.
@@ -300,41 +300,41 @@ final class System extends Handler {
 	 */
 	public static function register_hooks() {
 		// Setup Stuff
-		self::add_action( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
-		self::add_action( 'switch_blog', 'check_blog_for_support', 10, 0 );
+		self::add_hook( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
+		self::add_hook( 'switch_blog', 'check_blog_for_support', 10, 0 );
 
 		// Text Domain Manipulation
-		self::add_filter( 'theme_locale', 'log_textdomain_type', 10, 2 );
-		self::add_filter( 'plugin_locale', 'log_textdomain_type', 10, 2 );
-		self::add_action( 'load_textdomain', 'log_textdomain_path', 10, 2 );
+		self::add_hook( 'theme_locale', 'log_textdomain_type', 10, 2 );
+		self::add_hook( 'plugin_locale', 'log_textdomain_type', 10, 2 );
+		self::add_hook( 'load_textdomain', 'log_textdomain_path', 10, 2 );
 
 		// Post Changes
-		self::add_action( 'wp_insert_post', 'synchronize_posts', 10, 3 );
-		self::add_filter( 'trashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
-		self::add_filter( 'untrashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
-		self::add_filter( 'deleted_post', 'delete_sister_posts', 10, 1 );
-		self::add_filter( 'deleted_post', 'delete_post_language', 11, 1 );
-		self::add_filter( 'nlingual_sync_post_field-post_parent', 'use_translated_post', 10, 2 );
+		self::add_hook( 'wp_insert_post', 'synchronize_posts', 10, 3 );
+		self::add_hook( 'trashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
+		self::add_hook( 'untrashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
+		self::add_hook( 'deleted_post', 'delete_sister_posts', 10, 1 );
+		self::add_hook( 'deleted_post', 'delete_post_language', 11, 1 );
+		self::add_hook( 'nlingual_sync_post_field-post_parent', 'use_translated_post', 10, 2 );
 
 		// URL Rewriting
-		self::add_filter( 'home_url', 'localize_home_url', 10, 3 );
-		self::add_filter( 'page_link', 'localize_post_link', 10, 3 );
-		self::add_filter( 'post_link', 'localize_post_link', 10, 3 );
-		self::add_filter( 'post_type_link', 'localize_post_link', 10, 3 );
-		self::add_filter( 'mod_rewrite_rules', 'fix_mod_rewrite_rules', 0, 1 );
+		self::add_hook( 'home_url', 'localize_home_url', 10, 3 );
+		self::add_hook( 'page_link', 'localize_post_link', 10, 3 );
+		self::add_hook( 'post_link', 'localize_post_link', 10, 3 );
+		self::add_hook( 'post_type_link', 'localize_post_link', 10, 3 );
+		self::add_hook( 'mod_rewrite_rules', 'fix_mod_rewrite_rules', 0, 1 );
 
 		// Query Manipulation
-		self::add_action( 'parse_query', 'set_queried_language', 10, 1 );
-		self::add_action( 'parse_comment_query', 'set_queried_language', 10, 1 );
-		self::add_action( 'pre_get_posts', 'translate_excluded_posts', 20, 1 );
-		self::add_filter( 'posts_clauses', 'add_translation_clauses', 10, 2 );
-		self::add_filter( 'comments_clauses', 'add_translation_clauses', 10, 2 );
-		self::add_filter( 'get_pages', 'filter_pages', 10, 2 );
+		self::add_hook( 'parse_query', 'set_queried_language', 10, 1 );
+		self::add_hook( 'parse_comment_query', 'set_queried_language', 10, 1 );
+		self::add_hook( 'pre_get_posts', 'translate_excluded_posts', 20, 1 );
+		self::add_hook( 'posts_clauses', 'add_translation_clauses', 10, 2 );
+		self::add_hook( 'comments_clauses', 'add_translation_clauses', 10, 2 );
+		self::add_hook( 'get_pages', 'filter_pages', 10, 2 );
 
 		// Apply font patching (if needed)
 		if ( is_patch_font_stack_needed() ) {
-			self::add_action( 'wp_print_scripts', 'patch_font_stack', 10, 0 );
-			self::add_action( 'admin_print_scripts', 'patch_font_stack', 10, 0 );
+			self::add_hook( 'wp_print_scripts', 'patch_font_stack', 10, 0 );
+			self::add_hook( 'admin_print_scripts', 'patch_font_stack', 10, 0 );
 		}
 	}
 
@@ -370,9 +370,25 @@ final class System extends Handler {
 
 		// Check if the plugin runs on this site and isn't outdated
 		if ( version_compare( get_option( 'nlingual_database_version', '2.0.0' ), NL_DB_VERSION, '>=' ) ) {
-			self::$disable_querying = false;
+			// Re-enable the various handlers' hooks
+			self::restore_all_hooks();
+			Frontend::restore_all_hooks();
+			Backend::restore_all_hooks();
+			AJAX::restore_all_hooks();
+			Manager::restore_all_hooks();
+			Documenter::restore_all_hooks();
+			Localizer::restore_all_hooks();
+			Liaison::restore_all_hooks();
 		} else {
-			self::$disable_querying = true;
+			// Disable the various handlers' hooks
+			self::remove_all_hooks();
+			Frontend::remove_all_hooks();
+			Backend::remove_all_hooks();
+			AJAX::remove_all_hooks();
+			Manager::remove_all_hooks();
+			Documenter::remove_all_hooks();
+			Localizer::remove_all_hooks();
+			Liaison::remove_all_hooks();
 		}
 	}
 
@@ -454,6 +470,9 @@ final class System extends Handler {
 			return;
 		}
 
+		// Get the current action
+		$action = current_filter();
+
 		$skip_ids = array();
 		// If doing a bulk edit, and this is one of the intended posts,
 		// make sure to skip all listed posts
@@ -466,13 +485,13 @@ final class System extends Handler {
 		}
 
 		// Unhook this hook to prevent an infinite loop
-		$priority = self::remove_action( 'wp_insert_post', __FUNCTION__ );
+		self::remove_hook( $action, __FUNCTION__ );
 
 		// Now synchronize the post's translations
 		Synchronizer::sync_post_with_sisters( $post_id, $skip_ids );
 
 		// Rehook now that we're done
-		self::add_action( 'wp_insert_post', __FUNCTION__, $priority, 3 );
+		self::restore_hook( $action, __FUNCTION__ );
 	}
 
 	/**
@@ -516,7 +535,7 @@ final class System extends Handler {
 		$function = 'wp_' . str_replace( 'ed_post', '', $action ) . '_post';
 
 		// Unhook to prevent loop
-		$priority = self::remove_action( $action, __FUNCTION__ );
+		self::remove_hook( $action, __FUNCTION__ );
 
 		// Get the translations of the post
 		$translations = Translator::get_post_translations( $post_id );
@@ -526,7 +545,7 @@ final class System extends Handler {
 		}
 
 		// Rehook now that we're done
-		self::add_action( $action, __FUNCTION__, $priority, 1 );
+		self::reenble_hook( $action, __FUNCTION__ );
 	}
 
 	/**
@@ -549,8 +568,11 @@ final class System extends Handler {
 			return;
 		}
 
+		// Get the current action
+		$action = current_filter();
+
 		// Unhook to prevent loop
-		$priority = self::remove_action( 'deleted_post', __FUNCTION__ );
+		self::remove_hook( $action, __FUNCTION__ );
 
 		// Get the translations of the post
 		$translations = Translator::get_post_translations( $post_id );
@@ -562,7 +584,7 @@ final class System extends Handler {
 		}
 
 		// Rehook now that we're done
-		self::add_action( 'deleted_post', __FUNCTION__, $priority, 1 );
+		self::restore_hook( $action, __FUNCTION__ );
 	}
 
 	/**
@@ -698,8 +720,11 @@ final class System extends Handler {
 			return $rules;
 		}
 
+		// Get the current action
+		$action = current_filter();
+
 		// Unhook to prevent infinite loop
-		$priority = self::remove_filter( 'mod_rewrite_rules', __FUNCTION__ );
+		self::remove_hook( $action, __FUNCTION__ );
 
 		// Turn off URL localization, getting the old setting
 		$status = Rewriter::disable_localization();
@@ -711,7 +736,7 @@ final class System extends Handler {
 		Rewriter::enable_localization( $status );
 
 		// Rehook now that we're done
-		self::add_filter( 'mod_rewrite_rules', __FUNCTION__, $priority, 1 );
+		self::restore_hook( $action, __FUNCTION__ );
 
 		return $rules;
 	}

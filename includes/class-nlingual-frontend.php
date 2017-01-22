@@ -24,6 +24,21 @@ namespace nLingual;
  */
 final class Frontend extends Handler {
 	// =========================
+	// ! Properties
+	// =========================
+
+	/**
+	 * Record of added hooks.
+	 *
+	 * @internal Used by the Handler enable/disable methods.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @var array
+	 */
+	protected static $implemented_hooks = array();
+
+	// =========================
 	// ! Utilities
 	// =========================
 
@@ -69,41 +84,41 @@ final class Frontend extends Handler {
 		}
 
 		// Language Detection/Redirection
-		self::add_action( 'plugins_loaded', 'detect_language', 10, 0 );
-		self::add_filter( 'wp', 'redirect_language', 10, 0 );
-		self::add_filter( 'redirect_canonical', 'localize_canonical', 10, 2 );
+		self::add_hook( 'plugins_loaded', 'detect_language', 10, 0 );
+		self::add_hook( 'wp', 'redirect_language', 10, 0 );
+		self::add_hook( 'redirect_canonical', 'localize_canonical', 10, 2 );
 
 		// The Mod rewriting
-		self::add_filter( 'theme_mod_nav_menu_locations', 'localize_nav_menu_locations', 10, 1 );
-		self::add_filter( 'sidebars_widgets', 'localize_sidebar_locations', 10, 1 );
-		self::add_filter( 'wp_get_nav_menu_items', 'localize_menu_items', 10, 3 );
-		self::add_filter( 'wp_nav_menu_objects', 'handle_language_links', 10, 1 );
+		self::add_hook( 'theme_mod_nav_menu_locations', 'localize_nav_menu_locations', 10, 1 );
+		self::add_hook( 'sidebars_widgets', 'localize_sidebar_locations', 10, 1 );
+		self::add_hook( 'wp_get_nav_menu_items', 'localize_menu_items', 10, 3 );
+		self::add_hook( 'wp_nav_menu_objects', 'handle_language_links', 10, 1 );
 
 		// General fitlering
-		self::add_filter( 'locale', 'rewrite_locale', 10, 0 );
-		self::add_filter( 'body_class', 'add_body_classes', 10, 1 );
-		self::add_filter( 'option_page_on_front', 'current_language_post', 10, 1 );
-		self::add_filter( 'option_page_for_posts', 'current_language_post', 10, 1 );
-		self::add_filter( 'option_date_format', 'localize_date_format', 10, 1 );
+		self::add_hook( 'locale', 'rewrite_locale', 10, 0 );
+		self::add_hook( 'body_class', 'add_body_classes', 10, 1 );
+		self::add_hook( 'option_page_on_front', 'current_language_post', 10, 1 );
+		self::add_hook( 'option_page_for_posts', 'current_language_post', 10, 1 );
+		self::add_hook( 'option_date_format', 'localize_date_format', 10, 1 );
 
 		// Frontend-Only Query Rewrites
-		self::add_filter( 'get_previous_post_join', 'add_adjacent_translation_join_clause', 10, 1 );
-		self::add_filter( 'get_next_post_join', 'add_adjacent_translation_join_clause', 10, 1 );
-		self::add_filter( 'get_previous_post_where', 'add_adjacent_translation_where_clause', 10, 1 );
-		self::add_filter( 'get_next_post_where', 'add_adjacent_translation_where_clause', 10, 1 );
-		self::add_filter( 'getarchives_join', 'add_archives_translation_join_clause', 10, 2 );
-		self::add_filter( 'getarchives_where', 'add_archives_translation_where_clause', 10, 2 );
+		self::add_hook( 'get_previous_post_join', 'add_adjacent_translation_join_clause', 10, 1 );
+		self::add_hook( 'get_next_post_join', 'add_adjacent_translation_join_clause', 10, 1 );
+		self::add_hook( 'get_previous_post_where', 'add_adjacent_translation_where_clause', 10, 1 );
+		self::add_hook( 'get_next_post_where', 'add_adjacent_translation_where_clause', 10, 1 );
+		self::add_hook( 'getarchives_join', 'add_archives_translation_join_clause', 10, 2 );
+		self::add_hook( 'getarchives_where', 'add_archives_translation_where_clause', 10, 2 );
 
 		// Locale & GetText Rewrites
-		self::add_action( 'wp', 'maybe_patch_wp_locale', 10, 0 );
-		self::add_filter( 'gettext_with_context', 'handle_text_direction', 10, 4 );
+		self::add_hook( 'wp', 'maybe_patch_wp_locale', 10, 0 );
+		self::add_hook( 'gettext_with_context', 'handle_text_direction', 10, 4 );
 
 		// Frontend-Only URL Rewrites
-		self::add_filter( 'site_url', 'localize_uri', 10, 1 );
-		self::add_filter( 'stylesheet_directory_uri', 'localize_uri', 10, 1 );
-		self::add_filter( 'template_directory_uri', 'localize_uri', 10, 1 );
-		self::add_filter( 'upload_dir', 'localize_dir', 10, 1 );
-		self::add_filter( 'the_content', 'localize_attachment_urls', 10, 1 );
+		self::add_hook( 'site_url', 'localize_uri', 10, 1 );
+		self::add_hook( 'stylesheet_directory_uri', 'localize_uri', 10, 1 );
+		self::add_hook( 'template_directory_uri', 'localize_uri', 10, 1 );
+		self::add_hook( 'upload_dir', 'localize_dir', 10, 1 );
+		self::add_hook( 'the_content', 'localize_attachment_urls', 10, 1 );
 	}
 
 	// =========================

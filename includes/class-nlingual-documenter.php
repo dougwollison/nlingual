@@ -21,6 +21,21 @@ namespace nLingual;
  * @since 2.0.0
  */
 final class Documenter extends Handler {
+	// =========================
+	// ! Properties
+	// =========================
+
+	/**
+	 * Record of added hooks.
+	 *
+	 * @internal Used by the Handler enable/disable methods.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @var array
+	 */
+	protected static $implemented_hooks = array();
+
 	/**
 	 * A directory of all help tabs available.
 	 *
@@ -119,7 +134,7 @@ final class Documenter extends Handler {
 			return;
 		}
 
-		self::add_action( 'admin_head', 'setup_help_tabs', 10, 0 );
+		self::add_hook( 'admin_head', 'setup_help_tabs', 10, 0 );
 	}
 
 	// =========================
