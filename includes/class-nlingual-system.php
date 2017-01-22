@@ -85,17 +85,6 @@ final class System extends Handler {
 	// =========================
 
 	/**
-	 * Check if querying is enabled or disabled.
-	 *
-	 * @since 2.6.0
-	 *
-	 * @return bool Wether or not querying is enabled.
-	 */
-	private static function querying_disabled() {
-		return self::$disable_querying;
-	}
-
-	/**
 	 * Cache the text domains and re-load them.
 	 *
 	 * @since 2.0.0
