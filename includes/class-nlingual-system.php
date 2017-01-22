@@ -358,7 +358,7 @@ final class System extends Handler {
 		Registry::load( 'reload' );
 
 		// Check if the plugin runs on this site and isn't outdated
-		if ( version_compare( get_option( 'nlingual_database_version', '2.0.0' ), NL_DB_VERSION, '>=' ) ) {
+		if ( version_compare( get_option( 'nlingual_database_version', '0.0.0' ), NL_DB_VERSION, '>=' ) ) {
 			// Re-enable the various handlers' hooks
 			self::restore_all_hooks();
 			Frontend::restore_all_hooks();
