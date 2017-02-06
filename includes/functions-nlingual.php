@@ -21,6 +21,7 @@ namespace nLingual;
  *
  * @internal
  *
+ * @since 2.6.0 Added consideration of WP_INSTALLING.
  * @since 2.0.0
  *
  * @global string $pagenow The current page slug.

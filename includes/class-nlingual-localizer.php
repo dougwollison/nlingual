@@ -821,6 +821,7 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
+	 * @since 2.6.0 Added check if $term is an object.
 	 * @since 2.0.0
 	 *
 	 * @uses Localizer::handle_localized_term() to handle each term.

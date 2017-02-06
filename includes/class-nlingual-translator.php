@@ -604,6 +604,7 @@ final class Translator {
 	/**
 	 * Overload to the various _object_ methods.
 	 *
+	 * @since 2.6.0 Now automatically returns false when dealing with a revision.
 	 * @since 2.2.0 Added NOTICE error trigger when calling invalid get_* method.
 	 * @since 2.0.0
 	 *
