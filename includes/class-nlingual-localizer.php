@@ -831,7 +831,9 @@ final class Localizer extends Handler {
 	 */
 	public static function handle_localized_terms_fields( $terms ) {
 		foreach ( $terms as &$term ) {
-			$term = self::handle_localized_term_fields( $term );
+			if ( is_object( $term ) ) {
+				$term = self::handle_localized_term_fields( $term );
+			}
 		}
 		return $terms;
 	}
