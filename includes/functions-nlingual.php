@@ -28,6 +28,11 @@ namespace nLingual;
 function is_backend() {
 	global $pagenow;
 
+	if ( defined( 'WP_INSTALLING' ) && WP_INSTALLING ) {
+		// "Install" process, count as backend
+		return true;
+	}
+
 	if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 		// AJAX request, check if the referrer is from wp-admin
 		return strpos( $_SERVER['HTTP_REFERER'], admin_url() ) === 0;
