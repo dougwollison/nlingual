@@ -621,7 +621,7 @@ final class Backend extends Handler {
 						<span class="title"><?php _e( 'Language', 'nlingual' ); ?></span>
 						<select name="nlingual_language" class="nl-input nl-language-input">
 							<?php if ( ! Registry::get( 'language_is_required' ) ) : ?>
-							<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
+								<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
 							<?php endif; ?>
 							<?php
 							// Print the options
@@ -634,31 +634,31 @@ final class Backend extends Handler {
 				</div>
 				<div class="inline-edit-col nl-set-translations">
 					<?php foreach ( $languages as $language ) : ?>
-					<label class="nl-translation-field nl-translation-<?php echo $language->id; ?>" title="<?php
-						/* Translators: %s = The name of the language */
-						_ef( 'Assign %s Translation', 'nlingual', $language->system_name ); ?>" data-nl_language="<?php echo $language->id; ?>">
-						<span class="title"><?php echo $language->system_name; ?></span>
-						<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
-							<option value="0">&mdash; <?php _ex( 'None', 'no translation', 'nlingual' ); ?> &mdash;</option>
-							<?php
-							// Get all posts in this language
-							$posts = $wpdb->get_results( $wpdb->prepare( "
-								SELECT p.ID, p.post_title
-								FROM $wpdb->nl_translations AS t
-								LEFT JOIN $wpdb->posts AS p ON (t.object_id = p.ID)
-								WHERE t.object_type = 'post'
-								AND t.language_id = %d
-								AND p.post_type = %s
-								ORDER BY p.post_date DESC
-							", $language->id, $post_type ) );
+						<label class="nl-translation-field nl-translation-<?php echo $language->id; ?>" title="<?php
+							/* Translators: %s = The name of the language */
+							_ef( 'Assign %s Translation', 'nlingual', $language->system_name ); ?>" data-nl_language="<?php echo $language->id; ?>">
+							<span class="title"><?php echo $language->system_name; ?></span>
+							<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
+								<option value="0">&mdash; <?php _ex( 'None', 'no translation', 'nlingual' ); ?> &mdash;</option>
+								<?php
+								// Get all posts in this language
+								$posts = $wpdb->get_results( $wpdb->prepare( "
+									SELECT p.ID, p.post_title
+									FROM $wpdb->nl_translations AS t
+									LEFT JOIN $wpdb->posts AS p ON (t.object_id = p.ID)
+									WHERE t.object_type = 'post'
+									AND t.language_id = %d
+									AND p.post_type = %s
+									ORDER BY p.post_date DESC
+								", $language->id, $post_type ) );
 
-							// Print the options
-							foreach ( $posts as $option ) {
-								printf( '<option value="%s">%s</option>', $option->ID, $option->post_title );
-							}
-							?>
-						</select>
-					</label>
+								// Print the options
+								foreach ( $posts as $option ) {
+									printf( '<option value="%s">%s</option>', $option->ID, $option->post_title );
+								}
+								?>
+							</select>
+						</label>
 					<?php endforeach; ?>
 				</div>
 			</fieldset>
@@ -691,7 +691,6 @@ final class Backend extends Handler {
 		// Get the languages list
 		$languages = Registry::languages();
 		?>
-		<!-- <?php echo __FUNCTION__; ?> -->
 		<div class="nl-bulk-language-manager clear">
 			<hr />
 			<fieldset class="nl-fieldset">
@@ -806,7 +805,7 @@ final class Backend extends Handler {
 				<label for="nl_language" class="nl-field-label"><?php _e( 'Language', 'nlingual' ); ?></label>
 				<select name="nlingual_language" id="nl_language" class="nl-input nl-language-input">
 					<?php if ( ! Registry::get( 'language_is_required' ) ) : ?>
-					<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
+						<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
 					<?php endif; ?>
 					<?php
 					// Print the options
@@ -820,34 +819,34 @@ final class Backend extends Handler {
 
 			<div class="nl-manage-translations">
 				<?php if ( $languages->count() > 1 ) : ?>
-				<h4 class="nl-heading"><?php _e( 'Translations', 'nlingual' ); ?></h4>
-				<?php foreach ( $languages as $language ) : ?>
-				<div class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?>" data-nl_language="<?php echo $language->id; ?>">
-					<label for="nl_translation_<?php echo $language->id; ?>_input">
-						<?php echo $language->system_name; ?>
-						<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' ); ?>"><?php _e( 'Edit', 'nlingual' ); ?></button>
-					</label>
+					<h4 class="nl-heading"><?php _e( 'Translations', 'nlingual' ); ?></h4>
+					<?php foreach ( $languages as $language ) : ?>
+						<div class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?>" data-nl_language="<?php echo $language->id; ?>">
+							<label for="nl_translation_<?php echo $language->id; ?>_input">
+								<?php echo $language->system_name; ?>
+								<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' ); ?>"><?php _e( 'Edit', 'nlingual' ); ?></button>
+							</label>
 
-					<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
-						<option value="0">&mdash; <?php _ex( 'None', 'no translation', 'nlingual' ); ?> &mdash;</option>
-						<option value="new" class="nl-new-translation">&mdash;<?php
-						/* Translators: %1$s = The name of the language, %2$s = The singular name of the post type. */
-						_ef( 'New %1$s %2$s', 'nlingual', $language->system_name, $post_type->labels->singular_name ); ?>&mdash;</option>
-						<?php
-						// Print the options
-						foreach ( $post_options[ $language->id ] as $option ) {
-							$selected = $translations[ $language->id ] == $option->ID ? 'selected' : '';
-							$label = $option->post_title;
-							// If this post is already a translation of something, identify it as such.
-							if ( Translator::get_post_translations( $option->ID ) ) {
-								$label = _e( '[Taken]', 'nlingual' ) . ' ' . $label;
-							}
-							printf( '<option value="%s" %s>%s</option>', $option->ID, $selected, $label );
-						}
-						?>
-					</select>
-				</div>
-				<?php endforeach; ?>
+							<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
+								<option value="0">&mdash; <?php _ex( 'None', 'no translation', 'nlingual' ); ?> &mdash;</option>
+								<option value="new" class="nl-new-translation">&mdash;<?php
+								/* Translators: %1$s = The name of the language, %2$s = The singular name of the post type. */
+								_ef( 'New %1$s %2$s', 'nlingual', $language->system_name, $post_type->labels->singular_name ); ?>&mdash;</option>
+								<?php
+								// Print the options
+								foreach ( $post_options[ $language->id ] as $option ) {
+									$selected = $translations[ $language->id ] == $option->ID ? 'selected' : '';
+									$label = $option->post_title;
+									// If this post is already a translation of something, identify it as such.
+									if ( Translator::get_post_translations( $option->ID ) ) {
+										$label = _e( '[Taken]', 'nlingual' ) . ' ' . $label;
+									}
+									printf( '<option value="%s" %s>%s</option>', $option->ID, $selected, $label );
+								}
+								?>
+							</select>
+						</div>
+					<?php endforeach; ?>
 				<?php endif; ?>
 			</div>
 		</div>
