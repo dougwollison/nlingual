@@ -651,6 +651,10 @@ final class Translator {
 			// If it's a post and we can get the type, check if it's supported
 			if ( $object_type == 'post' && ( $post_type = get_post_type( $object_id ) )
 			&& ! Registry::is_post_type_supported( $post_type ) ) {
+				// If the post is a revision, silently return false
+				if ( $post_type == 'revision' ) {
+					return false;
+				}
 				// If this was the set method, throw exception
 				if ( $action == 'set' ) {
 					/* Translators: %d = The ID number of the object. */
