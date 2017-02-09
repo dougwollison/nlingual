@@ -39,7 +39,7 @@ final class Localizer extends Handler {
 	 *
 	 * @var array
 	 */
-	protected static $implemented_hooks = array();
+	private static $implemented_hooks = array();
 
 	/**
 	 * The name of the class.
