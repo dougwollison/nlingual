@@ -60,44 +60,6 @@ final class Manager extends Handler {
 	}
 
 	// =========================
-	// ! Utilities
-	// =========================
-
-	/**
-	 * Sanitize the sync rules.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param array $rules The rules to be sanitized.
-	 *
-	 * @return array The sanitized rules.
-	 */
-	public static function sanitize_rules( $rules ) {
-		// Loop through each object type
-		foreach ( $rules as $object_type => $type_rules ) {
-			// Loop through each object subtype
-			foreach ( $type_rules as $subtype => $ruleset ) {
-				// Loop through each rule set
-				foreach ( $ruleset as $rule => $values ) {
-					// If values is a string...
-					if ( is_string( $values ) ) {
-						// Split it by line
-						$values = preg_split( '/[\n\r]+/', trim( $values ), 0, PREG_SPLIT_NO_EMPTY );
-						// Convert to TRUE if it contains * wildcard
-						if ( in_array( '*', $values ) ) {
-							$values = true;
-						}
-
-						$rules[ $object_type ][ $subtype ][ $rule ] = $values;
-					}
-				}
-			}
-		}
-
-		return $rules;
-	}
-
-	// =========================
 	// ! Settings Page Setup
 	// =========================
 
