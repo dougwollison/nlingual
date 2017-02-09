@@ -819,6 +819,7 @@ final class System extends Handler {
 	/**
 	 * Translated the post__not_in IDs to those for the quereid language(s) if needed.
 	 *
+	 * @since 2.6.0 Added check to see if current query is for an unsupported post type.
 	 * @since 2.0.0
 	 *
 	 * @param object $query The query object.
@@ -827,6 +828,12 @@ final class System extends Handler {
 		// Get the language query_var name, and the query's variables (by reference)
 		$query_var = Registry::get( 'query_var' );
 		$query_vars = &$query->query_vars;
+
+		// Abort if a query for an unsupported post type
+		if ( isset( $query_vars['post_type'] ) && $query_vars['post_type'] && ! is_array( $query_vars['post_type'] )
+		&& $query_vars['post_type'] != 'any' && ! Registry::is_post_type_supported( $query_vars['post_type'] ) ) {
+			return;
+		}
 
 		// Abort if no language or exclusions were set
 		if ( ! isset( $query_vars[ $query_var ] ) || empty( $query_vars[ $query_var ] )
