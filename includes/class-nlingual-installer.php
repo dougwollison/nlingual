@@ -34,7 +34,7 @@ final class Installer extends Handler {
 	 *
 	 * @var array
 	 */
-	private static $implemented_hooks = array();
+	protected static $implemented_hooks = array();
 
 	// =========================
 	// ! Hook Registration

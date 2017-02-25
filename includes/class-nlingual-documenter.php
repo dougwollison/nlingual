@@ -34,7 +34,7 @@ final class Documenter extends Handler {
 	 *
 	 * @var array
 	 */
-	private static $implemented_hooks = array();
+	protected static $implemented_hooks = array();
 
 	/**
 	 * A directory of all help tabs available.
