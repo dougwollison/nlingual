@@ -463,6 +463,9 @@ final class Liaison extends Handler {
 
 			// Add notice of the page being a translation of an index page
 			self::add_hook( 'edit_form_after_title', 'indexpages_translation_notice', 10, 1 );
+
+			// Filter the pages for the dropdown to assign index pages
+			self::add_hook( 'get_pages', 'indexpages_filter_pages_for_dropdown', 10, 2 );
 		} else {
 			// Replace the retrieved index page's ID with it's current language counterpart
 			Frontend::add_hook( 'indexpages_get_index_page', 'current_language_post', 10, 1 );
@@ -564,6 +567,39 @@ final class Liaison extends Handler {
 			_fx( 'You are currently editing a translation of the page that shows your latest %s.', 'index page translation', 'nlingual', $label ) .
 			' <em>' . __( 'Your current theme may not display the content you write here.', 'nlingual', 'index-pages' ) . '</em>' .
 		'</p></div>';
+	}
+
+	/**
+	 * Filter the pages for the dropdown menu used to assign index pages.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param array $pages The list of page objects to filter.
+	 * @param array $args  The arguments for get_pages().
+	 */
+	public static function indexpages_filter_pages_for_dropdown( $pages, $args ) {
+		// Bail if pages are not supported for tranlsation
+		if ( ! Registry::is_post_type_supported( 'page' ) ) {
+			return $pages;
+		}
+
+		// Bail if the index-pages plugin context isn't specified
+		if ( ! isset( $args['plugin-context'] ) || $args['plugin-context'] != 'index-pages' ) {
+			return $pages;
+		}
+
+		$filtered_pages = array();
+
+		// Loop through and only add those that are in the default language
+		foreach ( $pages as $page ) {
+			$language = Translator::get_post_language( $page );
+			// If it has no language or the default language, add it
+			if ( ! $language || Registry::is_language_default( $language ) ) {
+				$filtered_pages[] = $page;
+			}
+		}
+
+		return $filtered_pages;
 	}
 
 	// =========================
