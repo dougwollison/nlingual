@@ -183,7 +183,7 @@ abstract class Handler {
 
 		// Retrieve the hook
 		if ( $hook = self::get_hook( $tag, $method ) ) {
-			// Remove the hook and mark it as disabled if applicable
+			// Remove the hook and mark it as disabled unless told not to
 			remove_filter( $tag, array( $class, $method ), $hook->priority );
 			if ( ! $dont_disable ) {
 				$hook->disabled = true;
@@ -214,12 +214,14 @@ abstract class Handler {
 	 * @api
 	 *
 	 * @since 2.6.0
+	 *
+	 * @param bool $force Wether or not to explicitly disable all hooks.
 	 */
-	public static function remove_all_hooks() {
+	public static function remove_all_hooks( $disable = false ) {
 		$class = get_called_class();
 
 		foreach ( static::$implemented_hooks as $hook ) {
-			self::remove_hook( $hook->tag, $hook->method, 'dont disable' );
+			self::remove_hook( $hook->tag, $hook->method, ! $disable );
 		}
 	}
 
@@ -230,17 +232,17 @@ abstract class Handler {
 	 *
 	 * @since 2.6.0
 	 *
-	 * @param string $tag    The name of the filter to remove from.
-	 * @param string $method The name of the class' method to remove.
-	 * @param bool   $force  Wether or not to ignore a hook's disabled status.
+	 * @param string $tag        The name of the filter to remove from.
+	 * @param string $method     The name of the class' method to remove.
+	 * @param bool   $dont_force Wether or not to ignore a hook's disabled status.
 	 */
-	final public static function restore_hook( $tag, $method, $force = false ) {
+	final public static function restore_hook( $tag, $method, $dont_force = false ) {
 		$class = get_called_class();
 
 		// Retrieve the hook
 		if ( $hook = self::get_hook( $tag, $method ) ) {
-			// If not disabled (or $force is set), re-add it and re-enable
-			if ( $force || ! $hook->disabled ) {
+			// Unless it's disabled (and $dont_force is set), re-add and re-enable it
+			if ( ! $dont_force || ! $hook->disabled ) {
 				add_filter( $tag, array( $class, $method ), $hook->priority, $hook->accepted_args );
 				$hook->disabled = false;
 			}
@@ -253,10 +255,12 @@ abstract class Handler {
 	 * @api
 	 *
 	 * @since 2.6.0
+	 *
+	 * @param bool $force Wether or not to force-restore all hooks.
 	 */
-	public static function restore_all_hooks() {
+	public static function restore_all_hooks( $force = false ) {
 		foreach ( static::$implemented_hooks as $hook ) {
-			self::restore_hook( $hook->tag, $hook->method );
+			self::restore_hook( $hook->tag, $hook->method, ! $force );
 		}
 	}
 
