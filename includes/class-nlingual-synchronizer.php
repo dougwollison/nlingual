@@ -149,7 +149,7 @@ final class Synchronizer {
 		$rules = self::prepare_post_rules( $rules );
 
 		// Post Fields
-		if ( isset( $rules['post_field'] ) && $rules['post_fields'] ) {
+		if ( isset( $rules['post_fields'] ) && $rules['post_fields'] ) {
 			// If TRUE, use all possible fields, as defined in the Documenter
 			if ( $rules['post_fields'] === true ) {
 				$rules['post_fields'] = array_keys( Documenter::post_field_names() );
