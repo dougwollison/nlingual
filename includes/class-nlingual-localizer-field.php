@@ -92,6 +92,17 @@ final class Localizer_Field extends Model {
 	 */
 	public $field_id;
 
+	/**
+	 * Wether or not to use a fallback when the localized value is empty.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @access public
+	 *
+	 * @var bool
+	 */
+	public $fallback_empty;
+
 	// =========================
 	// ! Methods
 	// =========================
@@ -107,19 +118,21 @@ final class Localizer_Field extends Model {
 	 *
 	 * @param int   $id     The ID of the field.
 	 * @param array $values The property values.
-	 *		@option string "key"      The database key to store the field under.
-	 *		@option string "type"     The type of field.
-	 *		@option array  "screen"   The screen id or property/value pair.
-	 *		@option string "field"    The name of the field the field is tied to.
-	 *		@option string "field_id" The ID of the field the field is tied to.
+	 *		@option string "key"            The database key to store the field under.
+	 *		@option string "type"           The type of field.
+	 *		@option array  "screen"         The screen id or property/value pair.
+	 *		@option string "field"          The name of the field the field is tied to.
+	 *		@option string "field_id"       The ID of the field the field is tied to.
+	 *		@option string "fallback_empty" The fallback-if-empty option for the field.
 	 */
 	public function __construct( $id, array $values ) {
 		$values = wp_parse_args( $values, array(
-			'id' => $id,
-			'key' => null,
-			'field' => null,
-			'field_id' => null,
-			'screen' => array(),
+			'id'             => $id,
+			'key'            => null,
+			'field'          => null,
+			'field_id'       => null,
+			'screen'         => array(),
+			'fallback_empty' => false,
 		) );
 
 		// Assume key is the same as id if not set
