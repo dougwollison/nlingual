@@ -467,18 +467,18 @@ final class Localizer extends Handler {
 		$page = "edit-{$taxonomy}";
 
 		self::register_field( "term.{$taxonomy}:term_name", array(
-			'key'            => "term_name",
-			'type'           => 'term_field',
-			'screen'         => array( 'id', $page ),
-			'field'          => 'name',
-			'fallback_empty' => true, // fallback to unlocalized name if needed
+			'key'         => "term_name",
+			'type'        => 'term_field',
+			'screen'      => array( 'id', $page ),
+			'field'       => 'name',
+			'allow_empty' => false, // fallback to unlocalized name if needed
 		) );
 		self::register_field( "term.{$taxonomy}:term_description", array(
-			'key'            => "term_description",
-			'type'           => 'term_field',
-			'screen'         => array( 'id', $page ),
-			'field'          => 'description',
-			'fallback_empty' => false, // dont fallback to unlocalized description
+			'key'         => "term_description",
+			'type'        => 'term_field',
+			'screen'      => array( 'id', $page ),
+			'field'       => 'description',
+			'allow_empty' => true, // dont fallback to unlocalized description
 		) );
 
 		// Add the filters to handle it (frontend only)
@@ -544,7 +544,7 @@ final class Localizer extends Handler {
 			wp_cache_set( $cache_id, $value, 'nlingual:localized' );
 		}
 
-		if ( ( $value === '' || is_null( $value ) ) && $field && $field->fallback_empty ) {
+		if ( ( $value === '' || is_null( $value ) ) && $field && ! $field->allow_empty ) {
 			$value = $fallback;
 		}
 
