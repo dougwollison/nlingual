@@ -445,16 +445,18 @@ final class Localizer extends Handler {
 		$page = "edit-{$taxonomy}";
 
 		self::register_field( "term.{$taxonomy}:term_name", array(
-			'key'      => "term_name",
-			'type'     => 'term_field',
-			'screen'   => array( 'id', $page ),
-			'field'    => 'name',
+			'key'            => "term_name",
+			'type'           => 'term_field',
+			'screen'         => array( 'id', $page ),
+			'field'          => 'name',
+			'fallback_empty' => true, // fallback to unlocalized name if needed
 		) );
 		self::register_field( "term.{$taxonomy}:term_description", array(
-			'key'      => "term_description",
-			'type'     => 'term_field',
-			'screen'   => array( 'id', $page ),
-			'field'    => 'description',
+			'key'            => "term_description",
+			'type'           => 'term_field',
+			'screen'         => array( 'id', $page ),
+			'field'          => 'description',
+			'fallback_empty' => false, // dont fallback to unlocalized description
 		) );
 
 		// Add the filters to handle it (frontend only)
@@ -475,22 +477,29 @@ final class Localizer extends Handler {
 	/**
 	 * Get the localized version of the field.
 	 *
+	 * @since 2.6.0 Now retrieves the actual LocalizerField if possible, and also accepts
+	 *              a fallback value to use should the result be empty/null and the retrieved
+	 *              field config allows fallbacks.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
-	 * @param string $key         The field key to search for.
+	 * @param string $id          The ID of the field, or a key to search for.
 	 * @param int    $language_id The language ID to match.
 	 * @param int    $object_id   The object ID if relevent (otherwise 0).
+	 * @param string $fallback    Optional. A fallback to use if the result is empty/null.
 	 * @param bool   $check_reg   Optional. Wether or not to check if the field is regsitered before fetching (default TRUE).
 	 *
 	 * @return field|bool The localized version, false if nothing found.
 	 */
-	public static function get_field_value( $key, $language_id, $object_id = 0, $check_reg = true ) {
+	public static function get_field_value( $id, $language_id, $object_id = 0, $fallback = null, $check_reg = true ) {
 		global $wpdb;
 
+		$field = self::get_field( $id );
+		$key = $field ? $field->key : $id;
+
 		// Abort if check isn't bypassed and fails
-		if ( $check_reg && ! isset( self::$fields_by_key[ $key ] ) ) {
+		if ( $check_reg && ! $field && ! isset( self::$fields_by_key[ $key ] ) ) {
 			return null;
 		}
 
@@ -499,19 +508,23 @@ final class Localizer extends Handler {
 		// Check if it's cached, return if so
 		$cached = wp_cache_get( $cache_id, 'nlingual:localized', false, $found );
 		if ( $found ) {
-			return $cached;
+			$value = $cached;
+		} else {
+			$value = $wpdb->get_var( $wpdb->prepare( "
+				SELECT localized_value
+				FROM $wpdb->nl_localizations
+				WHERE field_key = %s
+				AND language_id = %d
+				AND object_id = %d
+			", $key, $language_id, $object_id ) );
+
+			// Add it to the cache
+			wp_cache_set( $cache_id, $value, 'nlingual:localized' );
 		}
 
-		$value = $wpdb->get_var( $wpdb->prepare( "
-			SELECT localized_value
-			FROM $wpdb->nl_localizations
-			WHERE field_key = %s
-			AND language_id = %d
-			AND object_id = %d
-		", $key, $language_id, $object_id ) );
-
-		// Add it to the cache
-		wp_cache_set( $cache_id, $value, 'nlingual:localized' );
+		if ( ( $value === '' || is_null( $value ) ) && $field && $field->fallback_empty ) {
+			$value = $fallback;
+		}
 
 		return $value;
 	}
@@ -604,6 +617,7 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
+	 * @since 2.6.0 Updated to use $pre_option as the fallback.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current language.
@@ -621,12 +635,10 @@ final class Localizer extends Handler {
 		// Get the current language
 		$language = Registry::current_language();
 
-		// Get the localized version of the field if it exists
-		if ( $value = self::get_field_value( "option:{$option}", $language->id ) ) {
-			return $value;
-		}
+		// Get the localized version of the field, falling back to $pre_option if applicable
+		$value = self::get_field_value( "option:{$option}", $language->id, 0, $pre_option );
 
-		return $pre_option;
+		return $value;
 	}
 
 	/**
@@ -661,6 +673,7 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
+	 * @since 2.6.0 Updated to use the original field value as the fallback.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current language.
@@ -684,10 +697,8 @@ final class Localizer extends Handler {
 
 		// Loop through each localizable field and replace as needed
 		foreach ( self::$localizable_post_fields as $field_name ) {
-			// Get the localized version, replace it if found
-			if ( $localized = self::get_field_value( "post_field:{$field_name}", $language->id, $post->ID ) ) {
-				$post->$field_name = $localized;
-			}
+			// Get the localized version, falling back if applicable
+			$post->$field_name = self::get_field_value( "post_field.{$post->post_type}:{$field_name}", $language->id, $post->ID, $post->$field_name );
 		}
 	}
 
@@ -734,6 +745,7 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
+	 * @since 2.6.0 Updated to use $pre_value as the fallback.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current language.
@@ -753,10 +765,8 @@ final class Localizer extends Handler {
 		// Get the current language
 		$language = Registry::current_language();
 
-		// Get the localized version of the field if it exists
-		if ( $value = self::get_field_value( "meta.{$meta_type}:{$meta_key}", $language->id, $object_id ) ) {
-			return $value;
-		}
+		// Get the localized version of the field, falling back to $pre_value if applicable
+		$value = self::get_field_value( "meta.{$meta_type}:{$meta_key}", $language->id, $object_id, $pre_value );
 
 		return $pre_value;
 	}
@@ -795,7 +805,8 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
-	 * @since 2.6.0 Added handling of non-object terms.
+	 * @since 2.6.0 Added handling of non-object terms and use of the original
+	 *              name/description as the fallback.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current language.
@@ -811,15 +822,18 @@ final class Localizer extends Handler {
 		$language = Registry::current_language();
 
 		if ( is_object( $term ) ) {
-			// Get the localized version of the field if it exists
-			if ( $name = self::get_field_value( 'term_name', $language->id, $term->term_id ) ) {
-				$term->name = $name;
-			}
-			if ( $description = self::get_field_value( 'term_description', $language->id, $term->term_id ) ) {
-				$term->description = $description;
-			}
+			// Get the localized version of the name, falling back if applicable
+			$term->name = self::get_field_value( "term.{$term->taxonomy}:term_name", $language->id, $term->term_id, $term->name );
+
+			// Get the localized version of the description, falling back if applicable
+			$term->description = self::get_field_value( "term.{$term->taxonomy}:term_description", $language->id, $term->term_id, $term->description );
 		} else if ( $term_id ) {
-			$term = self::get_field_value( 'term_name', $language->id, $term_id );
+			$term_object = \WP_Term::get_instance( $term_id ); // Get the raw term
+
+			// If the term can be retrieved, localize the name, falling back if applicalbe
+			if ( $term_object ) {
+				$term = self::get_field_value( "term.{$term_object->taxonomy}:term_name", $language->id, $term_id, $term );
+			}
 		}
 
 		return $term;
