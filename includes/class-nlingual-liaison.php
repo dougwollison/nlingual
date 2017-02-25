@@ -561,12 +561,19 @@ final class Liaison extends Handler {
 		}
 
 		// Get the plural labe to use
-		$label = get_post_type_object( $post_type )->label;
-		echo '<div class="notice notice-warning inline"><p>' .
-			/* Translators: %s = The (likely plural) name of the post type. */
-			_fx( 'You are currently editing a translation of the page that shows your latest %s.', 'index page translation', 'nlingual', $label ) .
-			' <em>' . __( 'Your current theme may not display the content you write here.', 'nlingual', 'index-pages' ) . '</em>' .
-		'</p></div>';
+		$label = strtolower( get_post_type_object( $post_type )->label );
+
+		// Default notice type/message
+		$notice_type = 'info';
+		$notice_text = _fx( 'You are currently editing a translation of the page that shows your latest %s.', 'index page translation', 'nlingual', $label );
+
+		// If the post type doesn't explicitly support index-pages, mention content may not be displayed.
+		if ( ! post_type_supports( $post_type, 'index-page' ) ) {
+			$notice_type = 'warning';
+			$notice_text .= ' <em>' . __( 'Your current theme may not display the content you write here.', 'index-pages' ) . '</em>';
+		}
+
+		printf( '<div class="notice notice-%s inline"><p>%s</p></div>', $notice_type, $notice_text );
 	}
 
 	/**
