@@ -445,14 +445,14 @@ final class Localizer extends Handler {
 		$page = "edit-{$taxonomy}";
 
 		self::register_field( "term.{$taxonomy}:term_name", array(
-			'key'            => "term_name",
+			'key'            => 'term_name',
 			'type'           => 'term_field',
 			'screen'         => array( 'id', $page ),
 			'field'          => 'name',
 			'fallback_empty' => true, // fallback to unlocalized name if needed
 		) );
 		self::register_field( "term.{$taxonomy}:term_description", array(
-			'key'            => "term_description",
+			'key'            => 'term_description',
 			'type'           => 'term_field',
 			'screen'         => array( 'id', $page ),
 			'field'          => 'description',
