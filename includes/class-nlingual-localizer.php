@@ -147,16 +147,22 @@ final class Localizer extends Handler {
 	/**
 	 * Get a field by ID.
 	 *
+	 * @since 2.6.0 Now accepts an array of possible IDs to try.
 	 * @since 2.0.0
 	 *
-	 * @param string $id The ID of the field to retrieve.
+	 * @param string|array $ids The ID (or list of IDs to try) of the field to retrieve.
 	 *
 	 * @return Localizer_Field|bool The retreived field, FALSE on failure.
 	 */
-	public static function get_field( $id ) {
-		if ( isset( self::$registered_fields[ $id ] ) ) {
-			return self::$registered_fields[ $id ];
+	public static function get_field( $ids ) {
+		$ids = (array) $ids;
+
+		foreach ( $ids as $id ) {
+			if ( isset( self::$registered_fields[ $id ] ) ) {
+				return self::$registered_fields[ $id ];
+			}
 		}
+
 		return false;
 	}
 
@@ -376,6 +382,7 @@ final class Localizer extends Handler {
 	 * This will guess the screen base based on $meta_type
 	 * if not provided.
 	 *
+	 * @since 2.6.0 ID now includes subtype (post_type/taxonomy) if provided.
 	 * @since 2.0.0
 	 *
 	 * @param string $meta_type The type of object the meta data is for.
@@ -386,6 +393,8 @@ final class Localizer extends Handler {
 	 * 		@option string       "field_id"    The id of the HTML input to target (Defaults to input name).
 	 */
 	public static function register_metadata_field( $meta_type, $meta_key, $args = array() ) {
+		$subtype = null;
+
 		// Guess the screen based on available information
 		if ( ! isset( $args['screen'] ) ) {
 			// For posts, check for post_type
@@ -395,6 +404,7 @@ final class Localizer extends Handler {
 
 				// Specify post type if provided
 				if ( isset( $args['post_type'] ) ) {
+					$subtype = $args['post_type'];
 					$args['screen'] = array( 'post_type', $args['post_type'] );
 				}
 			}
@@ -405,20 +415,32 @@ final class Localizer extends Handler {
 
 				// Specify taxonomy if provided
 				if ( isset( $args['taxonomy'] ) ) {
+					$subtype = $args['taxonomy'];
 					$args['screen'] = array( 'taxonomy', $args['taxonomy'] );
 				}
 			}
 		}
 
+		// Create the key/subtype-less ID
+		$key = "meta.{$meta_type}:{$meta_key}";
+
 		// Build the args for the field and register it
 		$args = wp_parse_args( $args, array(
+			'key'    => $key,
 			'type'   => "{$meta_type}meta",
 			'screen' => array( 'base', "edit-{$meta_type}" ),
 			'field'  => $meta_key,
 		) );
 
+		// Create the field ID
+		$id = $key;
+		if ( $subtype ) {
+			// Subtype specified, recreate with it in the ID
+			$id .= "meta.{$meta_type}.{$subtype}:{$meta_key}";
+		}
+
 		// Register the field as normal
-		self::register_field( "meta.{$meta_type}:{$meta_key}", $args );
+		self::register_field( $id, $args );
 
 		if ( ! is_backend() ) {
 			// Setup filtering (if not already)
@@ -445,14 +467,14 @@ final class Localizer extends Handler {
 		$page = "edit-{$taxonomy}";
 
 		self::register_field( "term.{$taxonomy}:term_name", array(
-			'key'            => 'term_name',
+			'key'            => "term_name",
 			'type'           => 'term_field',
 			'screen'         => array( 'id', $page ),
 			'field'          => 'name',
 			'fallback_empty' => true, // fallback to unlocalized name if needed
 		) );
 		self::register_field( "term.{$taxonomy}:term_description", array(
-			'key'            => 'term_description',
+			'key'            => "term_description",
 			'type'           => 'term_field',
 			'screen'         => array( 'id', $page ),
 			'field'          => 'description',
@@ -484,11 +506,11 @@ final class Localizer extends Handler {
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
-	 * @param string $id          The ID of the field, or a key to search for.
-	 * @param int    $language_id The language ID to match.
-	 * @param int    $object_id   The object ID if relevent (otherwise 0).
-	 * @param string $fallback    Optional. A fallback to use if the result is empty/null.
-	 * @param bool   $check_reg   Optional. Wether or not to check if the field is regsitered before fetching (default TRUE).
+	 * @param string|array $id          The ID (or possible IDs) of the field, or a key to search for.
+	 * @param int          $language_id The language ID to match.
+	 * @param int          $object_id   The object ID if relevent (otherwise 0).
+	 * @param string       $fallback    Optional. A fallback to use if the result is empty/null.
+	 * @param bool         $check_reg   Optional. Wether or not to check if the field is regsitered before fetching (default TRUE).
 	 *
 	 * @return field|bool The localized version, false if nothing found.
 	 */
@@ -673,7 +695,7 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
-	 * @since 2.6.0 Updated to use the original field value as the fallback.
+	 * @since 2.6.0 Updated to fetch by field ID, and use the original field value as the fallback.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current language.
@@ -745,7 +767,8 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
-	 * @since 2.6.0 Updated to use $pre_value as the fallback.
+	 * @since 2.6.0 Updated to fetch by ID, with and without subtype specified,
+	 *              and to use $pre_value as the fallback.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current language.
@@ -765,8 +788,25 @@ final class Localizer extends Handler {
 		// Get the current language
 		$language = Registry::current_language();
 
+		// The default ID to try
+		$ids = array( "meta.{$meta_type}:{$meta_key}" );
+
+		if ( $meta_type == 'post' ) {
+			// First try with the post type specified
+			if ( $post_type = get_post_type( $object_id ) ) {
+				array_unshift( $ids, "meta.{$meta_type}.{$post_type}:{$meta_key}" );
+			}
+		} else
+		if ( $meta_type == 'term' ) {
+			// First try with the taxonomy specified
+			$term = \WP_Term::get_instance( $object_id );
+			if ( is_a( $term, 'WP_Term' ) ) {
+				array_unshift( $ids, "meta.{$meta_type}.{$term->taxonomy}:{$meta_key}" );
+			}
+		}
+
 		// Get the localized version of the field, falling back to $pre_value if applicable
-		$value = self::get_field_value( "meta.{$meta_type}:{$meta_key}", $language->id, $object_id, $pre_value );
+		$value = self::get_field_value( $ids, $language->id, $object_id, $pre_value );
 
 		return $pre_value;
 	}
@@ -805,8 +845,8 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
-	 * @since 2.6.0 Added handling of non-object terms and use of the original
-	 *              name/description as the fallback.
+	 * @since 2.6.0 Added handling of non-object terms, fetching by field ID,
+	 *              and use of the original name/description as the fallback.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current language.
