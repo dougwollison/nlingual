@@ -132,7 +132,7 @@ final class Localizer_Field extends Model {
 			'field'          => null,
 			'field_id'       => null,
 			'screen'         => array(),
-			'fallback_empty' => false,
+			'fallback_empty' => true,
 		) );
 
 		// Assume key is the same as id if not set
