@@ -536,7 +536,7 @@ final class System extends Handler {
 		}
 
 		// Rehook now that we're done
-		self::reenble_hook( $action, __FUNCTION__ );
+		self::restore_hook( $action, __FUNCTION__ );
 	}
 
 	/**
