@@ -13,6 +13,82 @@
 namespace nLingual;
 
 /**
+ * The Handler Hook
+ *
+ * Simple object representing a hook's settings.
+ *
+ * @package nLingual
+ * @subpackage Utilities
+ *
+ * @internal
+ *
+ * @since 2.6.0
+ */
+final class Hook {
+	/**
+	 * The tag name.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @var string
+	 */
+	public $tag;
+
+	/**
+	 * The method name.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @var string
+	 */
+	public $method;
+
+	/**
+	 * The callback priority.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @var int
+	 */
+	public $priority;
+
+	/**
+	 * The accepted arguments count.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @var int
+	 */
+	public $accepted_args;
+
+	/**
+	 * The disabled status.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @var bool
+	 */
+	public $disabled = false;
+
+	/**
+	 * Initialize the hook.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param string $tag           The tag name.
+	 * @param string $method        The callback method name.
+	 * @param int    $priority      The callback priority.
+	 * @param int    $accepted_args The accepted arguments count.
+	 */
+	public function __construct( $tag, $method, $priority, $accepted_args ) {
+		$this->tag = $tag;
+		$this->method = $method;
+		$this->priority = $priority;
+		$this->accepted_args = $accepted_args;
+	}
+}
+
+/**
  * The Handler Framework
  *
  * The basis for the any classes that need to hook into WordPress.
@@ -28,6 +104,24 @@ namespace nLingual;
  * @since 2.0.0
  */
 abstract class Handler {
+	/**
+	 * Retrieve an implemented hook's details.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param string $tag    The name of the filter the hook was applied to.
+	 * @param string $method The name of the method that was applied.
+	 *
+	 * @return array|FALSE The hook details, FALSE if not found.
+	 */
+	final public static function get_hook( $tag, $method ) {
+		if ( isset( static::$implemented_hooks[ "$tag/$method" ] ) ) {
+			return static::$implemented_hooks[ "$tag/$method" ];
+		}
+
+		return false;
+	}
+
 	/**
 	 * Add an internal method to a filter hook.
 	 *
@@ -51,7 +145,7 @@ abstract class Handler {
 		if ( has_filter( $tag, array( $class, $method ) ) === false ) {
 			add_filter( $tag, array( $class, $method ), $priority, $accepted_args );
 
-			static::$implemented_hooks[ "$tag/$method" ] = array( $tag, $method, $priority, $accepted_args );
+			static::$implemented_hooks[ "$tag/$method" ] = new Hook( $tag, $method, $priority, $accepted_args );
 		}
 	}
 
@@ -78,20 +172,26 @@ abstract class Handler {
 	 *
 	 * @see remove_filter() for details.
 	 *
-	 * @param string $tag    The name of the filter to remove from.
-	 * @param string $method The name of the called class' method to remove.
+	 * @param string $tag          The name of the filter to remove from.
+	 * @param string $method       The name of the called class' method to remove.
+	 * @param bool   $dont_disable Wether or not to skip flagging it at disabled.
 	 *
 	 * @return bool|int The priority it originally had (false if wasn't added).
 	 */
-	final public static function remove_hook( $tag, $method ) {
+	final public static function remove_hook( $tag, $method, $dont_disable = false ) {
 		$class = get_called_class();
 
-		// Get old priority, only remove if it had one
-		$priority = has_filter( $tag, array( $class, $method ) );
-		if ( $priority !== false ) {
-			remove_filter( $tag, array( $class, $method ), $priority );
+		// Retrieve the hook
+		if ( $hook = self::get_hook( $tag, $method ) ) {
+			// Remove the hook and mark it as disabled if applicable
+			remove_filter( $tag, array( $class, $method ), $hook->priority );
+			if ( ! $dont_disable ) {
+				$hook->disabled = true;
+			}
 			return $priority;
 		}
+
+		return false;
 	}
 
 	/**
@@ -116,9 +216,10 @@ abstract class Handler {
 	 * @since 2.6.0
 	 */
 	public static function remove_all_hooks() {
+		$class = get_called_class();
+
 		foreach ( static::$implemented_hooks as $hook ) {
-			list( $tag, $method ) = $hook;
-			self::remove_hook( $tag, $method );
+			self::remove_hook( $hook->tag, $hook->method, 'dont disable' );
 		}
 	}
 
@@ -131,13 +232,18 @@ abstract class Handler {
 	 *
 	 * @param string $tag    The name of the filter to remove from.
 	 * @param string $method The name of the class' method to remove.
+	 * @param bool   $force  Wether or not to ignore a hook's disabled status.
 	 */
-	final public static function restore_hook( $tag, $method ) {
+	final public static function restore_hook( $tag, $method, $force = false ) {
 		$class = get_called_class();
 
-		if ( isset( static::$implemented_hooks[ "$tag/$method" ] ) ) {
-			list( , , $priority, $accepted_args ) = static::$implemented_hooks[ "$tag/$method" ];
-			self::add_hook( $tag, $method, $priority, $accepted_args );
+		// Retrieve the hook
+		if ( $hook = self::get_hook( $tag, $method ) ) {
+			// If not disabled (or $force is set), re-add it and re-enable
+			if ( $force || ! $hook->disabled ) {
+				add_filter( $tag, array( $class, $method ), $hook->priority, $hook->accepted_args );
+				$hook->disabled = false;
+			}
 		}
 	}
 
@@ -150,8 +256,7 @@ abstract class Handler {
 	 */
 	public static function restore_all_hooks() {
 		foreach ( static::$implemented_hooks as $hook ) {
-			list( $tag, $method ) = $hook;
-			self::restore_hook( $tag, $method );
+			self::restore_hook( $hook->tag, $hook->method );
 		}
 	}
 
