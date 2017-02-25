@@ -435,6 +435,7 @@ final class Localizer extends Handler {
 	 * This adds localizer controls to name and description fields for terms,
 	 * for when you don't want to localize entire terms as separate objects per language.
 	 *
+	 * @since 2.6.0 Added hook to filter term query arguments.
 	 * @since 2.0.0
 	 *
 	 * @param string $taxonomy The taxonomy to localize term names for.
@@ -458,8 +459,9 @@ final class Localizer extends Handler {
 
 		// Add the filters to handle it (frontend only)
 		if ( ! is_backend() ) {
-			self::add_hook( "get_{$taxonomy}", 'handle_localized_term_fields', 10, 2 );
-			self::add_hook( 'get_terms', 'handle_localized_terms_fields', 10, 2 );
+			self::add_hook( 'get_term', 'handle_localized_term', 10, 1 );
+			self::add_hook( 'parse_term_query', 'maybe_modify_term_query', 10, 1 );
+			self::add_hook( 'get_terms', 'handle_localized_terms', 10, 3 );
 		}
 
 		// Add action to handle updating
@@ -792,28 +794,58 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
+	 * @since 2.6.0 Added handling of non-object terms.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current language.
 	 * @uses Localizer::get_field_value() to retrieve the localized value.
 	 *
-	 * @param object $term     The term to be localized.
+	 * @param string|object $term    The term name or object to be localized.
+	 * @param int           $term_id Optional The ID of the term name.
 	 *
-	 * @return object The term with localized name and description.
+	 * @return string|object The localized name or the object with localized name/description.
 	 */
-	public static function handle_localized_term_fields( $term ) {
+	public static function handle_localized_term( $term, $term_id = null ) {
 		// Get the current language
 		$language = Registry::current_language();
 
-		// Get the localized version of the field if it exists
-		if ( $name = self::get_field_value( "term_name", $language->id, $term->term_id ) ) {
-			$term->name = $name;
-		}
-		if ( $description = self::get_field_value( "term_description", $language->id, $term->term_id ) ) {
-			$term->description = $description;
+		if ( is_object( $term ) ) {
+			// Get the localized version of the field if it exists
+			if ( $name = self::get_field_value( 'term_name', $language->id, $term->term_id ) ) {
+				$term->name = $name;
+			}
+			if ( $description = self::get_field_value( 'term_description', $language->id, $term->term_id ) ) {
+				$term->description = $description;
+			}
+		} else if ( $term_id ) {
+			$term = self::get_field_value( 'term_name', $language->id, $term_id );
 		}
 
 		return $term;
+	}
+
+	/**
+	 * Modify the term query arguments if necessary, so that the
+	 * results can be properly processed.
+	 *
+	 * @sinternal
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param WP_Term_Query $query The term query.
+	 */
+	public static function maybe_modify_term_query( $query ) {
+		$args = &$query->query_vars;
+
+		if ( $args['fields'] == 'names' ) {
+			// Chanage to id=>names, will convert back later
+			$args['fields'] = 'id=>name';
+
+			// So we know we need to convert back later
+			$args['nl_original_fields'] = 'name';
+		}
+
+		return $args;
 	}
 
 	/**
@@ -821,21 +853,31 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
-	 * @since 2.6.0 Added check if $term is an object.
+	 * @since 2.6.0 Added handling of non-object results.
 	 * @since 2.0.0
 	 *
 	 * @uses Localizer::handle_localized_term() to handle each term.
 	 *
-	 * @param array $terms The list of terms to handle.
+	 * @param array $terms      The list of terms to handle.
+	 * @param array $taxonomies The taxonomies for the request.
+	 * @param array $query_vars The term query variables.
 	 *
 	 * @return array The modified list of terms.
 	 */
-	public static function handle_localized_terms_fields( $terms ) {
-		foreach ( $terms as &$term ) {
-			if ( is_object( $term ) ) {
-				$term = self::handle_localized_term_fields( $term );
-			}
+	public static function handle_localized_terms( $terms, $taxonomies, $query_vars ) {
+		// Check if the request was for an array of names by term_id
+		$names_by_id = $query_vars['fields'] == 'id=>name';
+
+		foreach ( $terms as $i => &$term ) {
+			// Localize the term, passing the index/term_id if applicable
+			$term = self::handle_localized_term( $term, $names_by_id ? $i : 0 );
 		}
+
+		// If the original request was for just names, return a plain array of names
+		if ( isset( $query_vars['nl_original_fields'] ) && $query_vars['nl_original_fields'] == 'name' ) {
+			$terms = array_values( $terms );
+		}
+
 		return $terms;
 	}
 
