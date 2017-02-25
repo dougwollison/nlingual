@@ -331,10 +331,11 @@ final class Synchronizer {
 		$post_data = array(
 			'post_author'    => $post->post_author,
 			'post_date'      => $post->post_date,
+			'post_date_gmt'  => $post->post_date_gmt,
 			'post_content'   => $post->post_content,
 			'post_title'     => $title,
 			'post_excerpt'   => $post->post_excerpt,
-			'post_status'    => 'draft',
+			'post_status'    => 'pending',
 			'comment_status' => $post->comment_status,
 			'post_password'  => $post->post_password,
 			'to_ping'        => $post->to_ping,
