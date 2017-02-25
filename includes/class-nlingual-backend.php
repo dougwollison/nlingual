@@ -434,6 +434,7 @@ final class Backend extends Handler {
 	/**
 	 * Filter the post states list, flagging translated versions where necessary.
 	 *
+	 * @since 2.6.0 Add check to make sure post's type is supported.
 	 * @since 2.1.0 Bypass language_is_required option; make sure post has a language.
 	 * @since 2.0.0
 	 *
@@ -443,6 +444,11 @@ final class Backend extends Handler {
 	 * @return array The filtered post states list.
 	 */
 	public static function flag_translated_pages( array $post_states, \WP_Post $post ) {
+		// Abort if not for a supported post type
+		if ( ! Registry::is_post_type_supported( $post->post_type ) ) {
+			return $post_states;
+		}
+
 		// Check if it's a page in another language, with a translation
 		$language = Translator::get_post_language( $post->ID, 'true_value' );
 		if ( $post->post_type == 'page' && $language && ! Registry::is_language_default( $language )

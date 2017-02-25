@@ -362,6 +362,7 @@ final class Rewriter {
 	/**
 	 * Attempt to localize the current page URL.
 	 *
+	 * @since 2.6.0 Add check to make sure queried object's post type is supported.
 	 * @since 2.2.0 Now uses get_search_link() to create the search URL.
 	 * @since 2.0.0
 	 *
@@ -389,9 +390,13 @@ final class Rewriter {
 		// First, check if it's the queried object is a post
 		$queried_object = get_queried_object();
 		if ( is_a( $queried_object, 'WP_Post' ) ) {
-			// Get the permalink for the translation in the specified language
-			$translation = Translator::get_post_translation( $queried_object->ID, $language, true );
-			$url = get_permalink( $translation );
+			// Get the permalink for the translation in the specified language if applicable
+			if ( Registry::is_post_type_supported( $queried_object->post_type ) ) {
+				$translation = Translator::get_post_translation( $queried_object->ID, $language, true );
+				$url = get_permalink( $translation );
+			} else {
+				$url = get_permalink( $queried_object->ID );
+			}
 
 			// Relocalize the URL
 			$url = self::localize_url( $url, $language, true );
@@ -477,6 +482,7 @@ final class Rewriter {
 	/**
 	 * Get the permalink for a post in the desired language.
 	 *
+	 * @since 2.6.0 Add check to make sure post's type is supported.
 	 * @since 2.0.0
 	 *
 	 * @uses validate_language() to validate the language and get the Language object.
@@ -488,6 +494,11 @@ final class Rewriter {
 	 * @return string The translation's permalink.
 	 */
 	public static function get_permalink( $post_id, $language = null ) {
+		// Abort if not a supported post type
+		if ( ! Registry::is_post_type_supported( get_post_type( $post_id ) ) ) {
+			return get_permalink( $post_id );
+		}
+
 		// Ensure $language is a Language, defaulting to current
 		if ( ! validate_language( $language, true ) ) {
 			// Doesn't exit; resort to original permalink

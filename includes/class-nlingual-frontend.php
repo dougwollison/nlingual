@@ -398,6 +398,7 @@ final class Frontend extends Handler {
 	/**
 	 * Localize the menu items if applicable.
 	 *
+	 * @since 2.6.0 Add check to make sure an item's post type is supported.
 	 * @since 2.0.0
 	 *
 	 * @param array  $items The nav menu items.
@@ -419,9 +420,10 @@ final class Frontend extends Handler {
 		if ( $theme_location && ! Registry::is_location_supported( 'nav_menu', $theme_location ) ) {
 			// Loop through each item, attempt to localize
 			foreach ( $items as $item ) {
-				// If it's for a post that has a translation (that's not itself),
+				// If it's for a (supported) post that has a translation (that's not itself),
 				// update the title/link with that of the translation
 				if ( $item->type == 'post_type'
+				&& Registry::is_post_type_supported( $item->object )
 				&& ( $translation = Translator::get_post_translation( $item->object_id, null ) )
 				&& $translation != $item->object_id ) {
 					$item->object_id = $translation;
@@ -506,6 +508,7 @@ final class Frontend extends Handler {
 	/**
 	 * Replace a post ID with it's translation for the default language.
 	 *
+	 * @since 2.6.0 Add check to make sure post's type is supported.
 	 * @since 2.0.0
 	 *
 	 * @api
@@ -518,9 +521,11 @@ final class Frontend extends Handler {
 	 * @return int The ID of the translation.
 	 */
 	public static function default_language_post( $post_id ) {
-		$default_language = Registry::default_language();
+		if ( Registry::is_post_type_supported( get_post_type( $post_id ) ) ) {
+			$default_language = Registry::default_language();
 
-		$post_id = Translator::get_post_translation( $post_id, $default_language, false );
+			$post_id = Translator::get_post_translation( $post_id, $default_language, false );
+		}
 
 		return $post_id;
 	}
@@ -528,6 +533,7 @@ final class Frontend extends Handler {
 	/**
 	 * Replace a post ID with it's translation for the current language.
 	 *
+	 * @since 2.6.0 Add check to make sure post's type is supported.
 	 * @since 2.0.0
 	 *
 	 * @api
@@ -540,9 +546,11 @@ final class Frontend extends Handler {
 	 * @return int The ID of the translation.
 	 */
 	public static function current_language_post( $post_id ) {
-		$current_language = Registry::current_language();
+		if ( Registry::is_post_type_supported( get_post_type( $post_id ) ) ) {
+			$current_language = Registry::current_language();
 
-		$post_id = Translator::get_post_translation( $post_id, $current_language, true );
+			$post_id = Translator::get_post_translation( $post_id, $current_language, true );
+		}
 
 		return $post_id;
 	}

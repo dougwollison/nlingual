@@ -477,6 +477,7 @@ final class Liaison extends Handler {
 	 *
 	 * This will also work for the QuickStart version of this utility.
 	 *
+	 * @since 2.6.0 Add check to make sure post's type is supported.
 	 * @since 2.0.0
 	 *
 	 * @param array   $post_states The list of post states for the post.
@@ -485,6 +486,11 @@ final class Liaison extends Handler {
 	 * @return array The filtered post states list.
 	 */
 	public static function indexpages_flag_translations( array $post_states, \WP_Post $post ) {
+		// Abort if the post's type is not supported
+		if ( ! Registry::is_post_type_supported( $post->post_type ) ) {
+			return $post_states;
+		}
+
 		// Determine which function to use (IndexPages' Registry::is_index_page() or QuickStart's is_index_page())
 		if ( class_exists( 'IndexPages\Registry' ) ) {
 			$function = array( 'IndexPages\Registry', 'is_index_page' );
@@ -525,14 +531,15 @@ final class Liaison extends Handler {
 	 *
 	 * Unlike WordPress for the Posts page, it will not disabled the editor.
 	 *
+	 * @since 2.6.0 Add check to make sure post's type is supported.
 	 * @since 2.1.1 Fixed namespace scope typo accessing IndexPages\Registry.
 	 * @since 2.0.0
 	 *
 	 * @param WP_Post $post The post in question.
 	 */
 	public static function indexpages_translation_notice( \WP_Post $post ) {
-		// Abort if not a page
-		if ( $post->post_type != 'page' ) {
+		// Abort if not a page or not a localizable post type
+		if ( $post->post_type != 'page' || ! Registry::is_post_type_supported( $post->post_type ) ) {
 			return;
 		}
 
