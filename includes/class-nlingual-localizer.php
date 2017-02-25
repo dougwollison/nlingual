@@ -482,6 +482,7 @@ final class Localizer extends Handler {
 	 * @param string $key         The field key to search for.
 	 * @param int    $language_id The language ID to match.
 	 * @param int    $object_id   The object ID if relevent (otherwise 0).
+	 * @param bool   $check_reg   Optional. Wether or not to check if the field is regsitered before fetching (default TRUE).
 	 *
 	 * @return field|bool The localized version, false if nothing found.
 	 */
