@@ -576,7 +576,7 @@ final class Liaison extends Handler {
 	 * @since 2.5.0
 	 */
 	public static function add_woocommerce_helpers() {
-		// Abort if QuickStart isn't present
+		// Abort if WooCommerce isn't present
 		if ( ! function_exists( 'WC' ) ) {
 			return;
 		}
