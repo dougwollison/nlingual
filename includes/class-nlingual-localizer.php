@@ -544,7 +544,7 @@ final class Localizer extends Handler {
 			wp_cache_set( $cache_id, $value, 'nlingual:localized' );
 		}
 
-		if ( ( $value === '' || is_null( $value ) ) && $field && ! $field->allow_empty ) {
+		if ( is_null( $value ) || ( $value === '' && $field && ! $field->allow_empty ) ) {
 			$value = $fallback;
 		}
 
