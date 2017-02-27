@@ -581,7 +581,7 @@ final class System extends Handler {
 	/**
 	 * Replace the post ID with that of it's translation.
 	 *
-	 * @since 2.6.0 Add check to make sure $post_id is not 0 and that post's type is supported.
+	 * @since 2.6.0 Add check to make sure $post_id isn't 0 and that post's type is supported.
 	 * @since 2.1.0
 	 *
 	 * @uses Translator::get_post_translation() To get the translation's ID.
@@ -944,7 +944,7 @@ final class System extends Handler {
 	/**
 	 * Filter the results of get_pages, removing those not in the current language.
 	 *
-	 * @since 2.6.0 Add check to make sure post's type is supported.
+	 * @since 2.6.0 Add check to make sure the Page post type is supported.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to retrieve the show_all_languages option.
@@ -959,7 +959,7 @@ final class System extends Handler {
 	 */
 	public static function filter_pages( $pages, $args ) {
 		// Abort if $pages is empty, show_all_languages is set, or pages are not localizable
-		if ( ! $pages || Registry::get( 'show_all_languages' ) || ! Registry::is_post_type_supported( $post->post_type ) ) {
+		if ( ! $pages || Registry::get( 'show_all_languages' ) || ! Registry::is_post_type_supported( 'page' ) ) {
 			return $pages;
 		}
 
