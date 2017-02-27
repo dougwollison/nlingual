@@ -188,7 +188,7 @@ abstract class Handler {
 			if ( ! $dont_disable ) {
 				$hook->disabled = true;
 			}
-			return $priority;
+			return $hook->priority;
 		}
 
 		return false;
