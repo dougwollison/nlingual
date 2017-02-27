@@ -581,7 +581,7 @@ final class System extends Handler {
 	/**
 	 * Replace the post ID with that of it's translation.
 	 *
-	 * @since 2.6.0 Add check to make sure post's type is supported.
+	 * @since 2.6.0 Add check to make sure $post_id is not 0 and that post's type is supported.
 	 * @since 2.1.0
 	 *
 	 * @uses Translator::get_post_translation() To get the translation's ID.
@@ -593,7 +593,7 @@ final class System extends Handler {
 	 */
 	public static function use_translated_post( $post_id, Language $language ) {
 		// Make sure this post's type is supported
-		if ( Registry::is_post_type_supported( get_post_type( $post_id ) ) ) {
+		if ( $post_id && Registry::is_post_type_supported( get_post_type( $post_id ) ) ) {
 			return Translator::get_post_translation( $post_id, $language, 'return_self' );
 		}
 
