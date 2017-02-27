@@ -522,7 +522,7 @@ final class Localizer extends Handler {
 
 		// Abort if check isn't bypassed and fails
 		if ( $check_reg && ! $field && ! isset( self::$fields_by_key[ $key ] ) ) {
-			return null;
+			return $fallback;
 		}
 
 		$cache_id = "$key/$object_id/$language_id";
