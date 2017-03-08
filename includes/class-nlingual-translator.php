@@ -377,7 +377,7 @@ final class Translator {
 	 */
 	public static function get_object_translation( $object_type, $object_id, $language = null, $return_self = false ) {
 		// Ensure $language is a Language, defaulting to current
-		if ( ! validate_language( $language, true ) ) {
+		if ( ! validate_language( $language, 'default current' ) ) {
 			// Trigger warning error if not found, return false
 			trigger_error( '[nLingual] Language does not exist: ' . maybe_serialize( $language ) . '; cannot get translation.', E_USER_WARNING );
 			return false;

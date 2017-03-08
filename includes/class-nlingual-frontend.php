@@ -549,7 +549,7 @@ final class Frontend extends Handler {
 		if ( Registry::is_post_type_supported( get_post_type( $post_id ) ) ) {
 			$current_language = Registry::current_language();
 
-			$post_id = Translator::get_post_translation( $post_id, $current_language, true );
+			$post_id = Translator::get_post_translation( $post_id, $current_language, 'return self' );
 		}
 
 		return $post_id;

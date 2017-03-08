@@ -342,7 +342,7 @@ final class Synchronizer {
 			'post_password'  => $post->post_password,
 			'to_ping'        => $post->to_ping,
 			'pinged'         => $post->pinged,
-			'post_parent'    => Translator::get_post_translation( $post->post_parent, $language, true ),
+			'post_parent'    => Translator::get_post_translation( $post->post_parent, $language, 'return self' ),
 			'menu_order'     => $post->menu_order,
 			'post_type'      => $post->post_type,
 			'comment_count'  => $post->comment_count,

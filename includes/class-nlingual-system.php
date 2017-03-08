@@ -570,7 +570,7 @@ final class System extends Handler {
 		foreach ( $translations as $translation ) {
 			// Delete it (if it's also in the trash)
 			if ( get_post_status( $translation ) == 'trash' ) {
-				wp_delete_post( $translation, true );
+				wp_delete_post( $translation, 'force delete' );
 			}
 		}
 
@@ -679,7 +679,7 @@ final class System extends Handler {
 			// If it's a page, check if it's a home page translation
 			if ( current_filter() == 'page_link' ) {
 				// Get the default language translation
-				$translation = Translator::get_post_translation( $post_id, Registry::default_language(), true );
+				$translation = Translator::get_post_translation( $post_id, Registry::default_language(), 'return self' );
 
 				// If it's a home page translation, replace with unlocalized home url
 				if ( $translation == get_option( 'page_on_front' ) ) {
@@ -688,7 +688,7 @@ final class System extends Handler {
 			}
 
 			// Just ensure the URL is localized for it's language and return it
-			return Rewriter::localize_url( $permalink, $language, true );
+			return Rewriter::localize_url( $permalink, $language, 'relocalize' );
 		}
 
 		return $permalink;
@@ -857,7 +857,7 @@ final class System extends Handler {
 			if ( Translator::get_post_language( $id ) ) {
 				// Add it's translations in each requested language
 				foreach ( $requested_languages as $language ) {
-					$exclude_ids[] = Translator::get_post_translation( $id, $language, true );
+					$exclude_ids[] = Translator::get_post_translation( $id, $language, 'return self' );
 				}
 			}
 			// Preserve it

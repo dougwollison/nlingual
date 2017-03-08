@@ -227,7 +227,7 @@ final class Rewriter {
 		}
 
 		// Ensure $language is a Language, defaulting to current
-		if ( ! validate_language( $language, true ) ) {
+		if ( ! validate_language( $language, 'default current' ) ) {
 			// Throw exception if not found
 			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
 		}
@@ -382,7 +382,7 @@ final class Rewriter {
 	 */
 	public static function localize_here( $language = null ) {
 		// Ensure $language is a Language, defaulting to current
-		if ( ! validate_language( $language, true ) ) {
+		if ( ! validate_language( $language, 'default current' ) ) {
 			// Throw exception if not found
 			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
 		}
@@ -392,14 +392,14 @@ final class Rewriter {
 		if ( is_a( $queried_object, 'WP_Post' ) ) {
 			// Get the permalink for the translation in the specified language if applicable
 			if ( Registry::is_post_type_supported( $queried_object->post_type ) ) {
-				$translation = Translator::get_post_translation( $queried_object->ID, $language, true );
+				$translation = Translator::get_post_translation( $queried_object->ID, $language, 'return self' );
 				$url = get_permalink( $translation );
 			} else {
 				$url = get_permalink( $queried_object->ID );
 			}
 
 			// Relocalize the URL
-			$url = self::localize_url( $url, $language, true );
+			$url = self::localize_url( $url, $language, 'relocalize' );
 		} else {
 			// Switch to the language (redundant for current one but doesn't matter)
 			System::switch_language( $language );
@@ -440,7 +440,7 @@ final class Rewriter {
 			}
 			// Give up and just get the orginally requested URL, relocalized
 			else {
-				$url = self::localize_url( NL_ORIGINAL_URL, null, true );
+				$url = self::localize_url( NL_ORIGINAL_URL, null, 'relocalize' );
 			}
 
 			// Switch back to the current language
@@ -500,7 +500,7 @@ final class Rewriter {
 		}
 
 		// Ensure $language is a Language, defaulting to current
-		if ( ! validate_language( $language, true ) ) {
+		if ( ! validate_language( $language, 'default current' ) ) {
 			// Doesn't exit; resort to original permalink
 			return get_permalink( $post_id );
 		}

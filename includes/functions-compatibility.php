@@ -226,7 +226,7 @@ function nL_print_lang_links( $prefix = '', $sep = ' ', $skip_current = false ) 
  */
 function nL_split_langs( $text, $language = null, $separator = null, $force = false ) {
 	// Ensure $language is a Language
-	if ( ! nLingual\validate_language( $language, true ) ) {
+	if ( ! nLingual\validate_language( $language, 'default current' ) ) {
 		// Abort if not found
 		return $text;
 	}
