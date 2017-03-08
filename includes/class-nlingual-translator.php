@@ -435,6 +435,7 @@ final class Translator {
 	 * Will fail if the primary isn't already in the database or if
 	 * any of the languages listed aren't valid.
 	 *
+	 * @since 2.6.0 Now flushes cache for translations as well as target object.
 	 * @since 2.0.0
 	 *
 	 * @uses validate_language() to validate the language and get the Language object.
@@ -489,6 +490,9 @@ final class Translator {
 			} else {
 				// Build the row data for the query
 				$values[] = $wpdb->prepare( "(%d, %s, %d, %d)", $group_id, $object_type, $translation_id, $language->id );
+
+				// Flush cache for this object
+				self::flush_cache( $object_type, $translation_id );
 			}
 		}
 
