@@ -81,6 +81,8 @@ final class Synchronizer {
 	/**
 	 * Copy desired post fields, meta data, and terms from the original to target.
 	 *
+	 * @since 2.6.0 Fixed typo preventing fields from being synced, also modified
+	 *              all-meta handling to skip _edit_* metadata.
 	 * @since 2.3.2 Fixed typo causing terms to be erased when trying to sync.
 	 * @since 2.1.0 Fixed various bugs causing sync to fail, added filters for
 	 *              each post field, term list, and meta value list,
@@ -219,7 +221,7 @@ final class Synchronizer {
 		if ( isset( $rules['post_meta'] ) && $rules['post_meta'] ) {
 			// If TRUE or wildcard exists, get all possible meta_key values from the original
 			if ( $rules['post_meta'] === true || in_array( '*', $rules['post_meta'] ) ) {
-				$rules['post_meta'] = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT meta_key FROM $wpdb->postmeta WHERE post_id = %d", $original->ID ) );
+				$rules['post_meta'] = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT meta_key FROM $wpdb->postmeta WHERE post_id = %d AND meta_key NOT LIKE '\_edit\_%%'", $original->ID ) );
 			}
 
 			// Assign all the same meta values
