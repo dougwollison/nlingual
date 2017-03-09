@@ -114,17 +114,18 @@ final class Backend extends Handler {
 	 *
 	 * Filter by post type and status.
 	 *
+	 * @since 2.6.0 Fixed handling of post types and statuses for post counts.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
-	 * @param mixed  $language_id The id of the language to get the count for.
-	 * @param string $post_type   The post type to filter by.
-	 * @param string $post_status The post status to filter by.
+	 * @param mixed        $language_id   The id of the language to get the count for.
+	 * @param string|array $post_types    The post type(s) to filter by.
+	 * @param string|array $post_statuses The post status(es) to filter by.
 	 *
 	 * @return int The number of posts found.
 	 */
-	public static function language_posts_count( $language_id, $post_type = null, $post_status = null ) {
+	public static function language_posts_count( $language_id, $post_types = null, $post_statuses = null ) {
 		global $wpdb;
 
 		$query = "
@@ -142,13 +143,27 @@ final class Backend extends Handler {
 		}
 
 		// Add post_type filter if applicable
-		if ( ! is_null( $post_type ) ) {
-			$query .= $wpdb->prepare( " AND p.post_type = %s", $post_type );
+		if ( ! is_null( $post_types ) ) {
+			if ( $post_types === 'any' ) {
+				$post_types = get_post_types( array( 'exclude_from_search' => false ), 'names' );
+			}
+
+			$post_types = array_map( 'sanitize_key', (array) $post_types );
+			$post_types = implode( "','", $post_types );
+
+			$query .= " AND p.post_type IN ('$post_types')";
 		}
 
 		// Add post_status filter if applicable
-		if ( ! is_null( $post_status ) ) {
-			$query .= $wpdb->prepare( " AND p.post_status = %s", $post_status );
+		if ( ! is_null( $post_statuses ) ) {
+			if ( $post_statuses === 'any' ) {
+				$post_statuses = get_post_stati( array( 'exclude_from_search' => false ), 'names' );
+			}
+
+			$post_statuses = array_map( 'sanitize_key', (array) $post_statuses );
+			$post_statuses = implode( "','", $post_statuses );
+
+			$query .= " AND p.post_status IN ('$post_statuses')";
 		}
 
 		// Run the query and return the results
