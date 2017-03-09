@@ -691,6 +691,7 @@ final class Backend extends Handler {
 	/**
 	 * Print out the bulk-edit box for post language.
 	 *
+	 * @since 2.6.0 Modified "No Change" value, added "None" when language isn't required.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::is_post_type_supported() to check for support.
@@ -720,7 +721,10 @@ final class Backend extends Handler {
 					<label>
 						<span class="title"><?php _e( 'Language', 'nlingual' ); ?></span>
 						<select name="nlingual_bulk_language" id="nl_language">
-							<option value="0">&mdash; <?php _e( 'No Change', 'nlingual' ); ?> &mdash;</option>
+							<option value="">&mdash; <?php _e( 'No Change', 'nlingual' ); ?> &mdash;</option>
+							<?php if ( ! Registry::get( 'language_is_required' ) ) : ?>
+								<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
+							<?php endif; ?>
 							<?php
 							// Print the options
 							foreach ( $languages as $language ) {
@@ -951,6 +955,7 @@ final class Backend extends Handler {
 	/**
 	 * Save the language sent via the bulk-edit interface.
 	 *
+	 * @since 2.6.0 Now accepts 0 for language option.
 	 * @since 2.0.0
 	 *
 	 * @param int $post_id The ID of the post being saved.
@@ -964,7 +969,7 @@ final class Backend extends Handler {
 		|| ! isset( $_REQUEST['post'] )
 		|| ! in_array( $post_id, (array) $_REQUEST['post'] )
 		|| ! isset( $_REQUEST['nlingual_bulk_language'] )
-		|| empty( $_REQUEST['nlingual_bulk_language'] )) {
+		|| $_REQUEST['nlingual_bulk_language'] === '' ) {
 			return;
 		}
 
