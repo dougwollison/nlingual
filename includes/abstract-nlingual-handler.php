@@ -20,9 +20,6 @@ namespace nLingual;
  * and defines aliases to the WordPress Plugin API, adding the
  * specified method of the current class to the specified hook.
  *
- * @package nLingual
- * @subpackage Abstracts
- *
  * @internal
  *
  * @since 2.0.0
