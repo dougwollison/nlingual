@@ -13,82 +13,6 @@
 namespace nLingual;
 
 /**
- * The Handler Hook
- *
- * Simple object representing a hook's settings.
- *
- * @package nLingual
- * @subpackage Utilities
- *
- * @internal
- *
- * @since 2.6.0
- */
-final class Hook {
-	/**
-	 * The tag name.
-	 *
-	 * @since 2.6.0
-	 *
-	 * @var string
-	 */
-	public $tag;
-
-	/**
-	 * The method name.
-	 *
-	 * @since 2.6.0
-	 *
-	 * @var string
-	 */
-	public $method;
-
-	/**
-	 * The callback priority.
-	 *
-	 * @since 2.6.0
-	 *
-	 * @var int
-	 */
-	public $priority;
-
-	/**
-	 * The accepted arguments count.
-	 *
-	 * @since 2.6.0
-	 *
-	 * @var int
-	 */
-	public $accepted_args;
-
-	/**
-	 * The disabled status.
-	 *
-	 * @since 2.6.0
-	 *
-	 * @var bool
-	 */
-	public $disabled = false;
-
-	/**
-	 * Initialize the hook.
-	 *
-	 * @since 2.6.0
-	 *
-	 * @param string $tag           The tag name.
-	 * @param string $method        The callback method name.
-	 * @param int    $priority      The callback priority.
-	 * @param int    $accepted_args The accepted arguments count.
-	 */
-	public function __construct( $tag, $method, $priority, $accepted_args ) {
-		$this->tag = $tag;
-		$this->method = $method;
-		$this->priority = $priority;
-		$this->accepted_args = $accepted_args;
-	}
-}
-
-/**
  * The Handler Framework
  *
  * The basis for the any classes that need to hook into WordPress.
@@ -139,13 +63,19 @@ abstract class Handler {
 	 * @param int    $accepted_args Optional. The number of arguments the callback accepts.
 	 */
 	final public static function add_hook( $tag, $method, $priority = 10, $accepted_args = 1 ) {
+		$disabled = false;
 		$class = get_called_class();
 
 		// Only add the filter if it hasn't already been added to the hook
 		if ( has_filter( $tag, array( $class, $method ) ) === false ) {
 			add_filter( $tag, array( $class, $method ), $priority, $accepted_args );
 
-			static::$implemented_hooks[ "$tag/$method" ] = new Hook( $tag, $method, $priority, $accepted_args );
+			// Create a hook object
+			$hook = compact( 'tag', 'method', 'priority', 'accepted_args', 'disabled' );
+			$hook = (object) $hook;
+
+			// Store it in the implemented hooks list
+			static::$implemented_hooks[ "$tag/$method" ] = $hook;
 		}
 	}
 
