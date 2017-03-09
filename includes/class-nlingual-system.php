@@ -872,6 +872,7 @@ final class System extends Handler {
 	/**
 	 * Add the translations join clause and language where clause for a query.
 	 *
+	 * @since 2.6.0 Fixed handling of 0 value for filtering by no language.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
@@ -892,7 +893,7 @@ final class System extends Handler {
 		$query_vars = &$query->query_vars;
 
 		// Abort if no language was set
-		if ( ! isset( $query_vars[ $query_var ] ) || empty( $query_vars[ $query_var ] ) ) {
+		if ( ! isset( $query_vars[ $query_var ] ) || is_null( $query_vars[ $query_var ] ) || $query_vars[ $query_var ] === '' ) {
 			return $clauses;
 		}
 
@@ -914,7 +915,7 @@ final class System extends Handler {
 			}
 
 			// Check if the language specified is "None"
-			if ( $language === '0' ) {
+			if ( $language === '0' || $language === 0 ) {
 				$where_clauses[] = "$nl.language_id IS NULL";
 			}
 			// Otherwise check if the language exists
