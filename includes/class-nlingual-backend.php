@@ -486,6 +486,7 @@ final class Backend extends Handler {
 	/**
 	 * Add <select> for filtering posts by language.
 	 *
+	 * @since 2.6.0 Default post type/status to any.
 	 * @since 2.4.0 Show all languages as filtering options.
 	 * @since 2.2.0 Fixed handling of string vs array for $current.
 	 * @since 2.0.0
@@ -504,8 +505,8 @@ final class Backend extends Handler {
 		}
 
 		// Get the post type and post status for the query
-		$post_type = $wp_query->get( 'post_type' ) ?: null;
-		$post_status = $wp_query->get( 'post_status' ) ?: null;
+		$post_type = $wp_query->get( 'post_type' ) ?: 'any';
+		$post_status = $wp_query->get( 'post_status' ) ?: 'any';
 
 		// Get the query var and it's current value
 		$query_var = Registry::get( 'query_var' );
