@@ -44,6 +44,7 @@ final class Backend extends Handler {
 	/**
 	 * Register hooks.
 	 *
+	 * @since 2.6.0 Added fix_localized_admin_url setup.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to retrieve enabled post types.
@@ -53,6 +54,9 @@ final class Backend extends Handler {
 		if ( ! is_backend() ) {
 			return;
 		}
+		
+		// Redirect fixing
+		self::add_hook( 'plugins_loaded', 'fix_localized_admin_url', 10, 0 );
 
 		// Setup stuff
 		self::add_hook( 'plugins_loaded', 'load_textdomain', 10, 0 );
@@ -170,6 +174,25 @@ final class Backend extends Handler {
 		$count = $wpdb->get_var( $query );
 
 		return intval( $count );
+	}
+	
+	// =========================
+	// ! Redirect Fixing
+	// =========================
+
+	/**
+	 * Fix localized wp-admin URLs and redirect to the unlocalized version.
+	 *
+	 * This prevents login issues when accessing /en/wp-admin or similar.
+	 *
+	 * @since 2.6.0
+	 */
+	public static function fix_localized_admin_url() {
+		if ( ( $the_url = Rewriter::process_url() ) && isset( $the_url->meta['language'] ) ) {
+			if ( wp_redirect( $the_url->build(), $status ) ) {
+				exit;
+			}
+		}
 	}
 
 	// =========================
