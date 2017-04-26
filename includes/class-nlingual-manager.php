@@ -400,7 +400,7 @@ final class Manager extends Handler {
 			'query_var' => array(
 				'title' => __( 'Query Variable', 'nlingual' ),
 				'help'  => __( 'The variable name for <code>WP_Query</code> to use when filtering by language.', 'nlingual' ),
-				'type'  => 'input',
+				'type'  => 'text',
 			),
 			'url_rewrite_method' => array(
 				'title' => __( 'URL Scheme', 'nlingual' ),
