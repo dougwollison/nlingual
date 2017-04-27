@@ -36,7 +36,7 @@ function is_backend() {
 	}
 
 	// Check if in the admin or otherwise the login/register page
-	return is_admin() || in_array( $_SERVER['SCRIPT_NAME'], array( 'wp-login.php', 'wp-register.php' ) );
+	return is_admin() || in_array( basename( $_SERVER['SCRIPT_NAME'] ), array( 'wp-login.php', 'wp-register.php' ) );
 }
 
 /**
