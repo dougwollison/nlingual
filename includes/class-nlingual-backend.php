@@ -54,7 +54,7 @@ final class Backend extends Handler {
 		if ( ! is_backend() ) {
 			return;
 		}
-		
+
 		// Redirect fixing
 		self::add_hook( 'plugins_loaded', 'fix_localized_admin_url', 10, 0 );
 
@@ -175,7 +175,7 @@ final class Backend extends Handler {
 
 		return intval( $count );
 	}
-	
+
 	// =========================
 	// ! Redirect Fixing
 	// =========================
@@ -787,7 +787,7 @@ final class Backend extends Handler {
 			add_meta_box(
 				'nlingual_translations', // id
 				__( 'Language & Translations', 'nlingual' ), // title
-				array( get_called_class(), 'post_meta_box' ), // callback
+				array( __CLASS__, 'post_meta_box' ), // callback
 				$post_type, // screen
 				'side', // context
 				'default' // priority
@@ -1107,7 +1107,7 @@ final class Backend extends Handler {
 		add_meta_box(
 			'add-nl_language_link', // metabox id
 			__( 'Language Links', 'nlingual' ), // title
-			array( get_called_class(), 'do_nav_menu_meta_box' ), // callback
+			array( __CLASS__, 'do_nav_menu_meta_box' ), // callback
 			'nav-menus', // screen
 			'side' // context
 		);

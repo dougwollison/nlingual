@@ -80,7 +80,7 @@ final class Manager extends Handler {
 			_x( 'Translation', 'menu title', 'nlingual' ), // menu title
 			'manage_options', // capability
 			'nlingual-options', // slug
-			array( get_called_class(), 'settings_page' ), // callback
+			array( __CLASS__, 'settings_page' ), // callback
 			'dashicons-translation', // icon
 			90 // Postion; after settings
 		);
@@ -92,7 +92,7 @@ final class Manager extends Handler {
 			_x( 'Languages', 'menu title', 'nlingual' ), // menu title
 			'manage_options', // capability
 			'nlingual-languages', // slug
-			array( get_called_class(), 'settings_page_languages' ) // callback
+			array( __CLASS__, 'settings_page_languages' ) // callback
 		);
 
 		// Localizable Objects manager
@@ -102,7 +102,7 @@ final class Manager extends Handler {
 			__( 'Localizables', 'nlingual' ), // menu title
 			'manage_options', // capability
 			'nlingual-localizables', // slug
-			array( get_called_class(), 'settings_page' ) // callback
+			array( __CLASS__, 'settings_page' ) // callback
 		);
 
 		// Sync/Clone Rules manager
@@ -112,7 +112,7 @@ final class Manager extends Handler {
 			__( 'Synchronizer', 'nlingual' ), // menu title
 			'manage_options', // capability
 			'nlingual-synchronizer', // slug
-			array( get_called_class(), 'settings_page_synchronizer' ) // callback
+			array( __CLASS__, 'settings_page_synchronizer' ) // callback
 		);
 
 		// Setup the help tabs for each page
@@ -589,7 +589,7 @@ final class Manager extends Handler {
 		Settings::add_fields( $sync_fields, 'synchronizer' );
 
 		// The post cloning setting fields
-		add_settings_section( 'cloning', __( 'New Translations', 'nlingual' ), array( get_called_class(), 'settings_section_cloning' ), 'nlingual-synchronizer' );
+		add_settings_section( 'cloning', __( 'New Translations', 'nlingual' ), array( __CLASS__, 'settings_section_cloning' ), 'nlingual-synchronizer' );
 		Settings::add_fields( $clone_fields, 'synchronizer', 'cloning' );
 	}
 

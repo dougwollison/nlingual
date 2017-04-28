@@ -82,7 +82,7 @@ final class Settings {
 		add_settings_field(
 			"nlingual_{$field}", // id
 			$options['title'], // title
-			array( get_called_class(), 'build_field' ), // callback
+			array( __CLASS__, 'build_field' ), // callback
 			"nlingual-{$page}", // page
 			$section, // section
 			$args // arguments
@@ -225,7 +225,7 @@ final class Settings {
 				$cb_args = array( $args['name'], $args['id'], $value, $args['type'], $args['data'] );
 		}
 
-		$html = call_user_func_array( array( get_called_class(), $method ), $cb_args );
+		$html = call_user_func_array( array( __CLASS__, $method ), $cb_args );
 
 		if ( $args['help'] ) {
 			// Wrap $html in lable with help text if checkbox or radio

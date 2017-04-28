@@ -1054,7 +1054,7 @@ final class Localizer extends Handler {
 
 		// Perform the saves
 		foreach ( $to_save as $save ) {
-			call_user_func_array( array( get_called_class(), 'save_field_value' ), $save );
+			call_user_func_array( array( __CLASS__, 'save_field_value' ), $save );
 		}
 	}
 
@@ -1209,14 +1209,14 @@ final class Localizer extends Handler {
 		if ( preg_match( '/^get_fields_by_(\w+)$/', $name, $matches ) ) {
 			$index = $matches[1];
 			array_unshift( $args, $index );
-			return call_user_func_array( array( get_called_class(), 'get_fields_by' ), $args );
+			return call_user_func_array( array( __CLASS__, 'get_fields_by' ), $args );
 		}
 
 		// Check if it's a register_metadata alias
 		if ( preg_match( '/^register_(\w+)_meta_field$/', $name, $matches ) ) {
 			$meta_type = $matches[1];
 			array_unshift( $args, $meta_type );
-			return call_user_func_array( array( get_called_class(), 'register_metadata_field' ), $args );
+			return call_user_func_array( array( __CLASS__, 'register_metadata_field' ), $args );
 		}
 
 		// Not a valid method alias, throw exception
