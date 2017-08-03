@@ -446,6 +446,7 @@ final class Liaison extends Handler {
 	/**
 	 * Check if IndexPages is active, setup necessary helpers.
 	 *
+	 * @since 2.6.0 Added support for term index pages.
 	 * @since 2.0.0
 	 *
 	 * @uses Frontend::current_language_post() on the qs_helper_get_index filter.
@@ -467,11 +468,13 @@ final class Liaison extends Handler {
 			// Filter the pages for the dropdown to assign index pages
 			self::add_hook( 'get_pages', 'indexpages_filter_pages_for_dropdown', 10, 2 );
 		} else {
-			// Replace the retrieved index page's ID with it's current language counterpart
+			// Replace the retrieved index/term page's ID with it's current language counterpart
 			Frontend::add_hook( 'indexpages_get_index_page', 'current_language_post', 10, 1 );
+			Frontend::add_hook( 'indexpages_get_term_page', 'current_language_post', 10, 1 );
 
-			// Replace the retrieved index page's ID with it's default language counterpart
+			// Replace the retrieved index/term page's ID with it's default language counterpart
 			Frontend::add_hook( 'indexpages_is_index_page', 'default_language_post', 10, 1 );
+			Frontend::add_hook( 'indexpages_is_term_page', 'default_language_post', 10, 1 );
 		}
 	}
 
