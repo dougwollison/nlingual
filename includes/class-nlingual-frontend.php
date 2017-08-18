@@ -280,6 +280,7 @@ final class Frontend extends Handler {
 		// Redirect, but don't allow a loop; make sure they're different (trailing slash agnostic)
 		if ( $redirect_url && untrailingslashit( NL_ORIGINAL_URL ) != untrailingslashit( $redirect_url ) ) {
 			// Exit if redirect was successful
+			header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
 			if ( wp_redirect( $redirect_url, $status ) ) {
 				exit;
 			}
