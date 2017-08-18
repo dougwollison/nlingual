@@ -175,7 +175,7 @@ final class Backend extends Handler {
 
 		return intval( $count );
 	}
-	
+
 	// =========================
 	// ! Redirect Fixing
 	// =========================
@@ -815,11 +815,14 @@ final class Backend extends Handler {
 	public static function post_meta_box( $post ) {
 		global $wpdb;
 
+		// Get the required language option
+		$language_is_required = Registry::get( 'language_is_required' );
+
 		// Get the language list
 		$languages = Registry::languages();
 
 		// Get the post's language
-		$post_language = Translator::get_post_language( $post->ID, 'true_value' );
+		$post_language = Translator::get_post_language( $post->ID, 'true value' );
 
 		// Get the post's translations
 		$translations = Translator::get_post_translations( $post->ID );
@@ -855,13 +858,17 @@ final class Backend extends Handler {
 			<div class="nl-field nl-language-field">
 				<label for="nl_language" class="nl-field-label"><?php _e( 'Language', 'nlingual' ); ?></label>
 				<select name="nlingual_language" id="nl_language" class="nl-input nl-language-input">
-					<?php if ( ! Registry::get( 'language_is_required' ) ) : ?>
+					<?php if ( ! $language_is_required ) : ?>
 						<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
 					<?php endif; ?>
 					<?php
 					// Print the options
 					foreach ( $language_options as $value => $label ) {
 						$selected = $post_language->id == $value ? 'selected' : '';
+						if ( $language_is_required && ! $post_language->id && Registry::is_language_default( $value ) ) {
+							$selected = 'selected';
+						}
+
 						printf( '<option value="%s" %s>%s</option>', $value, $selected, $label );
 					}
 					?>
