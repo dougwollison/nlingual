@@ -379,12 +379,14 @@ final class Synchronizer {
 		// Get the post object
 		$translation = get_post( $translation );
 
-		// Set the language of the translation and it's associate it with the original
+		// Set the language of the translation
 		Translator::set_post_language( $translation->ID, $language );
-		Translator::set_post_translation( $post->ID, $language, $translation->ID );
 
 		// Synchronize the two posts
 		self::sync_posts( $post->ID, $translation->ID, $rules );
+
+		// Now associate it with the original
+		Translator::set_post_translation( $post->ID, $language, $translation->ID );
 
 		return $translation;
 	}
