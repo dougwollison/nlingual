@@ -194,6 +194,7 @@ final class Manager extends Handler {
 			'native_name' => '%s',
 			'short_name'  => '%s',
 			'locale_name' => '%s',
+			'accept_code' => '%s',
 			'iso_code'    => '%s',
 			'slug'        => '%s',
 		);
@@ -650,6 +651,7 @@ final class Manager extends Handler {
 							<th scope="col" class="nl-language-native_name"><?php _e( 'Native Name', 'nlingual' ); ?></th>
 							<th scope="col" class="nl-language-short_name"><?php _e( 'Short Name', 'nlingual' ); ?></th>
 							<th scope="col" class="nl-language-locale_name"><?php _e( 'Locale', 'nlingual' ); ?></th>
+							<th scope="col" class="nl-language-accept_code"><?php _e( 'Code(s)', 'nlingual' ); ?></th>
 							<th scope="col" class="nl-language-iso_code"><?php _e( 'ISO', 'nlingual' ); ?></th>
 							<th scope="col" class="nl-language-slug"><?php _e( 'Slug', 'nlingual' ); ?></th>
 							<th scope="col" class="nl-language-direction"><?php _e( 'Text Direction', 'nlingual' ); ?></th>
@@ -676,6 +678,9 @@ final class Manager extends Handler {
 						</td>
 						<td class="nl-language-locale_name">
 							<input type="text" name="nlingual_languages[%id%][locale_name]" value="%locale_name%" />
+						</td>
+						<td class="nl-language-accept_code">
+							<input type="text" name="nlingual_languages[%id%][accept_code]" value="%accept_code%" />
 						</td>
 						<td class="nl-language-iso_code">
 							<input type="text" name="nlingual_languages[%id%][iso_code]" value="%iso_code%" maxlength="2" />

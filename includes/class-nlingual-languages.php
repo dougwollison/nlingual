@@ -384,9 +384,17 @@ final class Languages implements \Iterator {
 		// Sanitize for looser comparison
 		$language_tag = sanitize_tag( $language_tag );
 
+		// Loop through all languages, try matching the accept code(s)
+		foreach ( $this->items as $language ) {
+			$codes = strtolower( $language->accept_code );
+			$codes = preg_split( '/[\s,]+/', $codes, 0, PREG_SPLIT_NO_EMPTY );
+			if ( in_array( $language_tag, $codes ) ) {
+				return $language;
+			}
+		}
+
 		// Loop through all languages, try matching locale
 		foreach ( $this->items as $language ) {
-			// Try the full locale...
 			if ( sanitize_tag( $language->locale_name, '_' ) == $language_tag ) {
 				return $language;
 			}

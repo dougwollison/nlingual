@@ -101,6 +101,17 @@ final class Language extends Model {
 	public $locale_name = '';
 
 	/**
+	 * The code(s) this language accepts (i.e. HTTP Accept-Language).
+	 *
+	 * @since 2.6.0
+	 *
+	 * @access public
+	 *
+	 * @var string
+	 */
+	public $accept_code = '';
+
+	/**
 	 * The ISO 639-1 code for the language.
 	 *
 	 * @since 2.0.0
@@ -154,6 +165,7 @@ final class Language extends Model {
 	 *		@option string "native_name" The native name of the language.
 	 *		@option string "short_name"  A shorthand name for the language.
 	 *		@option string "locale_name" The local to use for this language (i.e. MO file).
+	 *		@option string "accept_code" The code(s) this language accepts (i.e. HTTP Accept-Language).
 	 *		@option string "iso_code"    The ISO 639-1 code for the language.
 	 *		@option string "direction"   The text direction of the language (ltr or rtl).
 	 *		@option int    "list_order"  The disired order of the language.

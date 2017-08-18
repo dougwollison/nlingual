@@ -9,6 +9,7 @@
 	<li><strong><?php _e( 'Native Name:', 'nlingual' ); ?></strong> <?php _e( 'The name of the language as it should appear to a native speaker.', 'nlingual' ); ?></li>
 	<li><strong><?php _e( 'Short Name:', 'nlingual' ); ?></strong> <?php _e( 'A shorthand name (usually native) of the language, which may be used by your custom theme.', 'nlingual' ); ?></li>
 	<li><strong><?php _e( 'Locale:', 'nlingual' ); ?></strong> <?php _e( 'The name of the GetText localization file to load for this language.', 'nlingual' ); ?></li>
+	<li><strong><?php _e( 'Code(s):', 'nlingual' ); ?></strong> <?php _e( 'A comma/space separated list of accepted values for the HTTP Accept-Language header.', 'nlingual' ); ?></li>
 	<li><strong><?php _e( 'ISO Code:', 'nlingual' ); ?></strong> <?php _e( 'The ISO 639-1 code for the language (two letters).', 'nlingual' ); ?></li>
 	<li><strong><?php _e( 'Slug:', 'nlingual' ); ?></strong> <?php _e( 'Used for specifying the language in the URL. Usually the same as the ISO code but can be different if desired.', 'nlingual' ); ?></li>
 	<li><strong><?php _e( 'Text Direction:', 'nlingual' ); ?></strong> <?php _e( 'The direction of text the language should use (left-to-right or right-to-left).', 'nlingual' ); ?></li>
