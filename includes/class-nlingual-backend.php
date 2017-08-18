@@ -107,6 +107,9 @@ final class Backend extends Handler {
 
 		// JavaScript Variables
 		self::add_hook( 'admin_footer', 'print_javascript_vars', 10, 0 );
+
+		// Translation creation
+		self::add_hook( 'admin_post_nl_new_translation', 'new_translation', 10, 0 );
 	}
 
 	// =========================
@@ -800,6 +803,8 @@ final class Backend extends Handler {
 	/**
 	 * Output the content of the translations meta box.
 	 *
+	 * @since 2.6.0 Dropped post selection for translation fields,
+	 *              now uses simpler Create button that opens in new window.
 	 * @since 2.1.0 Added bypass of langauge_is_required.
 	 * @since 2.0.0
 	 *
@@ -880,29 +885,12 @@ final class Backend extends Handler {
 					<h4 class="nl-heading"><?php _e( 'Translations', 'nlingual' ); ?></h4>
 					<?php foreach ( $languages as $language ) : ?>
 						<div class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?>" data-nl_language="<?php echo $language->id; ?>">
+							<input type="hidden" name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input" value="<?php echo $translations[ $language->id ]; ?>" />
 							<label for="nl_translation_<?php echo $language->id; ?>_input">
 								<?php echo $language->system_name; ?>
-								<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo admin_url( $post_type->_edit_link . '&amp;action=edit' ); ?>"><?php _e( 'Edit', 'nlingual' ); ?></button>
+								<button type="button" class="button button-small button-primary nl-add-translation"><?php _e( 'Create', 'nlingual' ); ?></button>
+								<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php _e( 'Edit', 'nlingual' ); ?></button>
 							</label>
-
-							<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
-								<option value="0">&mdash; <?php _ex( 'None', 'no translation', 'nlingual' ); ?> &mdash;</option>
-								<option value="new" class="nl-new-translation">&mdash;<?php
-								/* Translators: %1$s = The name of the language, %2$s = The singular name of the post type. */
-								_ef( 'New %1$s %2$s', 'nlingual', $language->system_name, $post_type->labels->singular_name ); ?>&mdash;</option>
-								<?php
-								// Print the options
-								foreach ( $post_options[ $language->id ] as $option ) {
-									$selected = $translations[ $language->id ] == $option->ID ? 'selected' : '';
-									$label = $option->post_title;
-									// If this post is already a translation of something, identify it as such.
-									if ( Translator::get_post_translations( $option->ID ) ) {
-										$label = _e( '[Taken]', 'nlingual' ) . ' ' . $label;
-									}
-									printf( '<option value="%s" %s>%s</option>', $option->ID, $selected, $label );
-								}
-								?>
-							</select>
 						</div>
 					<?php endforeach; ?>
 				<?php endif; ?>
@@ -1214,5 +1202,75 @@ final class Backend extends Handler {
 			nLingual.Languages.add( <?php echo json_encode( Registry::languages()->dump() ); ?> );
 		</script>
 		<?php
+	}
+
+	// =========================
+	// ! Translation Creation
+	// =========================
+
+	/**
+	 * Create a clone of the requested post in the requested lanuage.
+	 *
+	 * Will redirect to the edit screen for the new translation.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @uses Registry::languages() to validate the language requested.
+	 * @uses Synchronizer::clone_post() to create the cloned post.
+	 */
+	public static function new_translation() {
+		// Fail if no post/language id or title is passed
+		if ( ! isset( $_REQUEST['post_id'] ) || ! isset( $_REQUEST['post_language_id'] )
+		|| ! isset( $_REQUEST['translation_language_id'] ) || ! isset( $_REQUEST['title'] ) ) {
+			return;
+		}
+
+		// Fail if post does not exist
+		$post = get_post( $_REQUEST['post_id'] );
+		if ( ! $post ) {
+			return;
+		}
+
+		// Fail if post language does not exist
+		$post_language = Registry::get_language( $_REQUEST['post_language_id'] );
+		if ( ! $post_language ) {
+			return;
+		}
+
+		// Fail if translation language does not exist
+		$translation_language = Registry::get_language( $_REQUEST['translation_language_id'] );
+		if ( ! $translation_language ) {
+			return;
+		}
+
+		// Ensure the post is in the correct language
+		Translator::set_post_language( $post, $post_language );
+
+		// Create the translated clone
+		$translation = Synchronizer::clone_post( $post, $translation_language );
+
+		// Fail if error creating translation
+		if ( ! $translation ) {
+			wp_die( __( 'Error creating translation. Please refresh and try again.', 'nlingual' ) );
+		}
+
+		/**
+		 * Fires when a translation clone is successfully created.
+		 *
+		 * @since 2.2.0
+		 *
+		 * @param WP_Post  $translation          The translation clone of the post.
+		 * @param WP_Post  $post                 The original post.
+		 * @param Language $translation_language The language the clone is for.
+		 */
+		do_action( 'nlingual_new_translation', $translation, $post, $translation_language );
+
+		// Get the edit link for this new translation
+		$edit_link = get_edit_post_link( $translation->ID, 'raw' );
+
+		// Redirect to the edit screen
+		if ( wp_redirect( $edit_link, 302 ) ) {
+			exit;
+		}
 	}
 }

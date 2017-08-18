@@ -509,59 +509,48 @@
 			$parent.find( '.nl-translation-' + id ).hide();
 		} ).change(); // Update on page load
 
-		// Handle creating new translation
-		$( '.nl-translation-input' ).change( function( e ) {
-			var $input, value, post_id, post_language_id, translation_language_id, title, placeholder, translation_title;
+		// Show/Hide the Add/Edit buttons based on value
+		$( '.nl-translation-field' ).each( function() {
+			var value = $( this ).find( '.nl-input' ).val();
 
-			$input = $( this );
-			value = $input.val();
+			var $add = $( this ).find( '.nl-add-translation' ),
+				$edit = $( this ).find( '.nl-edit-translation' );
+
+			$edit.hide();
+			if ( parseInt( value ) ) {
+				$add.hide();
+				$edit.show();
+			}
+		} );
+
+		// Create a new translation for the assocaited language
+		$( '.nl-add-translation' ).click( function() {
+			var $field, $input, $add, $edit, post_id, post_language_id, translation_language_id, title, translation_title;
+
+			$field = $( this ).parents( '.nl-field' );
+			$input = $field.find( '.nl-input' );
+			$add = $field.find( '.nl-add-translation' );
+			$edit = $field.find( '.nl-edit-translation' );
 			post_id = $( '#post_ID' ).val();
 			post_language_id = $( '#nl_language' ).val();
 			translation_language_id = $input.parents( '.nl-field' ).data( 'nl_language' );
 
-			// If creating a new one, ask for a title for the translation
-			if ( 'new' === value ) {
-				title = $( '#title' ).val();
+			var editWindow = window.open( '/wp-admin/admin-post.php?' + $.param( {
+				action                 : 'nl_new_translation',
+				post_id                 : post_id,
+				post_language_id        : post_language_id,
+				translation_language_id : translation_language_id,
+			} ), '_blank' );
 
-				placeholder = nlingualL10n.TranslationTitlePlaceholder
-					.replace( '%1$s', Languages.get( translation_language_id ).get( 'system_name' ) )
-					.replace( '%2$s', title );
+			editWindow.onload = function() {
+				var url = this.location.href.match( /post=(\d+)/ ),
+					id = url[1];
 
-				translation_title = prompt( nlingualL10n.TranslationTitle, placeholder );
+				$input.val( id );
 
-				// Abort if empty or null
-				if ( null === translation_title || '' === translation_title ) {
-					e.preventDefault();
-					$input.val( -1 );
-					return false;
-				}
-
-				$.ajax( {
-					url: ajaxurl,
-					data: {
-						action                  : 'nl_new_translation',
-						post_id                 : post_id,
-						post_language_id        : post_language_id,
-						translation_language_id : translation_language_id,
-						title                   : translation_title,
-						custom_title            : translation_title === placeholder
-					},
-					type: 'post',
-					dataType: 'json',
-					success: function( data ) {
-						if ( 0 === data ) {
-							return this.error();
-						}
-
-						// Replace the New option with that of the new post
-						$input.find( '.nl-new-translation' ).attr( 'value', data.id ).text( nlingualL10n.NewTranslation + ' ' + data.title );
-					},
-					error: function() {
-						alert( nlingualL10n.NewTranslationError );
-						$input.val( -1 );
-					}
-				} );
-			}
+				$add.hide();
+				$edit.show().attr( 'title' );
+			};
 		} );
 
 		// Open the editor for the selected translation
