@@ -132,6 +132,7 @@ final class Rewriter {
 			// Ensure it is in fact a valid language
 			if ( $language = $languages->get( $the_url->args[ $query_var ] ) ) {
 				$the_url->meta['language'] = $language;
+				$the_url->meta['source'] = 'query';
 			}
 
 			return $the_url;
@@ -144,6 +145,7 @@ final class Rewriter {
 						if ( $language = $languages->get( $matches[1] ) ) {
 							// Update language with the matched
 							$the_url->meta['language'] = $language;
+							$the_url->meta['source'] = 'domain';
 
 							// Update the host with the remainder
 							$the_url->host = $matches[2];
@@ -168,6 +170,7 @@ final class Rewriter {
 						if ( $language = $languages->get( $matches[1] ) ) {
 							// Update language with the matched
 							$the_url->meta['language'] = $language;
+							$the_url->meta['source'] = 'path';
 
 							// Update the path with the remainder
 							$the_url->path = '/' . $matches[2];

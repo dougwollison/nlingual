@@ -175,7 +175,7 @@ final class Backend extends Handler {
 
 		return intval( $count );
 	}
-
+	
 	// =========================
 	// ! Redirect Fixing
 	// =========================
@@ -189,8 +189,10 @@ final class Backend extends Handler {
 	 */
 	public static function fix_localized_admin_url() {
 		if ( ( $the_url = Rewriter::process_url() ) && isset( $the_url->meta['language'] ) ) {
-			if ( wp_redirect( $the_url->build(), $status ) ) {
-				exit;
+			if ( $the_url->meta['source'] !== 'query' ) {
+				if ( wp_redirect( $the_url->build(), $status ) ) {
+					exit;
+				}
 			}
 		}
 	}
