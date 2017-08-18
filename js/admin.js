@@ -1,4 +1,4 @@
-/* globals alert, prompt, Backbone, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n */
+/* globals alert, wp, Backbone, tinymce, inlineEditPost, inlineEditTax, nLingual, nlingualL10n */
 ( function() {
 	var nL = window.nLingual = {};
 
@@ -429,7 +429,7 @@
 			$field.trigger( 'nl:localizer:change' );
 		} );
 
-		$( 'body' ).on( 'input nl:localizer:update nl:localizer:save', '.nl-localizable-input', function( e ) {
+		$( 'body' ).on( 'input nl:localizer:update nl:localizer:save', '.nl-localizable-input', function() {
 			var $control, $localized, language;
 
 			// Get the control reference and it's current language
@@ -438,8 +438,6 @@
 
 			// Get the localized storage field
 			$localized = $control.data( '$nl_localized_' + language );
-
-			console.log( this.value );
 
 			// Update it with the current value
 			$localized.val( this.value );
@@ -462,7 +460,7 @@
 					$( editor.getContainer() ).parent().after( $control );
 				} );
 
-				$field.on( 'nl:localizer:update', function(e) {
+				$field.on( 'nl:localizer:update', function() {
 					// Get the content, clean it
 					var content = editor.getContent();
 						content = wp.editor.removep( content );
