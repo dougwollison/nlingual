@@ -87,6 +87,7 @@ final class System extends Handler {
 	/**
 	 * Cache the text domains and re-load them.
 	 *
+	 * @since 2.6.0 Removed erroneous uses of $the_locale instead of $new_locale.
 	 * @since 2.0.0
 	 *
 	 * @global array $l10n The index of loaded text domain files.
@@ -141,16 +142,15 @@ final class System extends Handler {
 				$paths = self::$textdomain_log[ $domain ]['paths'];
 
 				// The new mo file name
-				$mofile = $the_locale . '.mo';
+				$mofile = $new_locale . '.mo';
 
 				// Filter it if needed
-				$the_locale = $new_locale;
 				if ( $type ) {
-					$the_locale = apply_filters( "{$type}_locale", $new_locale, $domain );
+					$new_locale = apply_filters( "{$type}_locale", $new_locale, $domain );
 				}
 
 				// The new mo file name
-				$mofile = $the_locale . '.mo';
+				$mofile = $new_locale . '.mo';
 
 				// In the case of a plugin, prefix with domain
 				if ( $type == 'plugin' ) {
