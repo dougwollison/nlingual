@@ -1,4 +1,4 @@
-/* globals alert, wp, Backbone, tinymce, inlineEditPost, inlineEditTax, nLingual, nlingualL10n */
+/* globals alert, wp, Backbone, tinymce, inlineEditPost, inlineEditTax, nlingualL10n */
 ( function() {
 	var nL = window.nLingual = {};
 
@@ -523,7 +523,7 @@
 
 		// Create a new translation for the assocaited language
 		$( '.nl-add-translation' ).click( function() {
-			var $field, $input, $add, $edit, post_id, post_language_id, translation_language_id, title, translation_title;
+			var $field, $input, $add, $edit, post_id, post_language_id, translation_language_id;
 
 			$field = $( this ).parents( '.nl-field' );
 			$input = $field.find( '.nl-input' );
