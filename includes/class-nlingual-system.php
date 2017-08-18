@@ -310,6 +310,7 @@ final class System extends Handler {
 		self::add_hook( 'post_link', 'localize_post_link', 10, 3 );
 		self::add_hook( 'post_type_link', 'localize_post_link', 10, 3 );
 		self::add_hook( 'mod_rewrite_rules', 'fix_mod_rewrite_rules', 0, 1 );
+		self::add_hook( 'wp_loaded', 'rest_query_var_setup', 10, 1 );
 
 		// Query Manipulation
 		self::add_hook( 'parse_query', 'set_queried_language', 10, 1 );
@@ -736,6 +737,72 @@ final class System extends Handler {
 		self::restore_hook( $action, __FUNCTION__ );
 
 		return $rules;
+	}
+
+	/**
+	 * Setup hook to add query_var option for all REST Posts Controller instances.
+	 *
+	 * @since 2.6.0
+	 */
+	public static function rest_query_var_setup() {
+		foreach ( get_post_types( array( 'show_in_rest' => true ), 'names' ) as $post_type ) {
+			if ( Registry::is_post_type_supported( $post_type ) ) {
+				self::add_hook( "rest_{$post_type}_collection_params", 'rest_register_query_var', 10, 1 );
+				self::add_hook( "rest_{$post_type}_query", 'rest_handle_query_var', 10, 2 );
+			}
+		}
+	}
+
+	/**
+	 * Filter the query params to add the query_var option as a
+	 * possible parameter for collection requests.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param array $query_params The list of params to add to.
+	 *
+	 * @return array The filtered query parameters.
+	 */
+	public static function rest_register_query_var( $query_params ) {
+		$query_var = Registry::get( 'query_var' );
+
+		$language_slugs = $language_ids = array();
+		foreach ( Registry::languages( 'active' ) as $language ) {
+			$language_slugs[] = $language->slug;
+			$language_ids[] = $language->id;
+		}
+
+		$query_params[ $query_var ] = array(
+			'default'           => Registry::current_language()->slug,
+			'description'       => __( 'Limit result set to posts assigned one or more registered languages.', 'gridarch' ),
+			'type'              => 'array',
+			'items'             => array(
+				'enum'          => array_merge( $language_slugs, $language_ids ),
+				'type'          => 'string',
+			),
+		);
+
+		return $query_params;
+	}
+
+	/**
+	 * Filter the query arguments, adding the the query_var if requested.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param array           $args    Key value array of query var to query value.
+	 * @param WP_REST_Request $request The request used.
+	 *
+	 * @return array The filtered args.
+	 */
+	public static function rest_handle_query_var( $args, $request ) {
+		$query_var = Registry::get( 'query_var' );
+
+		if ( $languages = $request->get_param( $query_var ) ) {
+			$args[ $query_var ] = $languages;
+		}
+
+		return $args;
 	}
 
 	// =========================
