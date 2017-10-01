@@ -774,7 +774,7 @@ final class System extends Handler {
 
 		$query_params[ $query_var ] = array(
 			'default'           => Registry::current_language()->slug,
-			'description'       => __( 'Limit result set to posts assigned one or more registered languages.', 'gridarch' ),
+			'description'       => __( 'Limit result set to posts assigned one or more registered languages.', 'nlingual' ),
 			'type'              => 'array',
 			'items'             => array(
 				'enum'          => array_merge( $language_slugs, $language_ids ),
