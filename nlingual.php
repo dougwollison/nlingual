@@ -35,6 +35,15 @@ define( 'NL_PLUGIN_FILE', __FILE__ );
 define( 'NL_PLUGIN_DIR', dirname( NL_PLUGIN_FILE ) );
 
 /**
+ * Identifies the current plugin version.
+ *
+ * @since 2.6.0
+ *
+ * @var string
+ */
+define( 'NL_PLUGIN_VERSION', '2.6.0' );
+
+/**
  * Identifies the current database version.
  *
  * @since 2.0.0
