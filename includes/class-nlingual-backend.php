@@ -1219,9 +1219,9 @@ final class Backend extends Handler {
 	 * @uses Synchronizer::clone_post() to create the cloned post.
 	 */
 	public static function new_translation() {
-		// Fail if no post/language id or title is passed
+		// Fail if no post/language id is passed
 		if ( ! isset( $_REQUEST['post_id'] ) || ! isset( $_REQUEST['post_language_id'] )
-		|| ! isset( $_REQUEST['translation_language_id'] ) || ! isset( $_REQUEST['title'] ) ) {
+		|| ! isset( $_REQUEST['translation_language_id'] )) {
 			return;
 		}
 
