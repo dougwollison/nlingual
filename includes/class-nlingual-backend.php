@@ -1221,7 +1221,7 @@ final class Backend extends Handler {
 	public static function new_translation() {
 		// Fail if no post/language id is passed
 		if ( ! isset( $_REQUEST['post_id'] ) || ! isset( $_REQUEST['post_language_id'] )
-		|| ! isset( $_REQUEST['translation_language_id'] )) {
+		|| ! isset( $_REQUEST['translation_language_id'] ) ) {
 			return;
 		}
 
