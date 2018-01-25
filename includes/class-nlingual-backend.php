@@ -1159,6 +1159,7 @@ final class Backend extends Handler {
 	/**
 	 * Enqueue necessary styles and scripts.
 	 *
+	 * @since 2.6.0 Updated to use plugin version for CSS/JS files.
 	 * @since 2.0.0
 	 */
 	public static function enqueue_assets() {
