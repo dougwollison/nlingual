@@ -851,12 +851,6 @@ final class System extends Handler {
 			return;
 		}
 
-		// If it's a post type archive, check if the post type is supported
-		$post_type = $query->get( 'post_type' ) ?: 'post';
-		if ( ! Registry::is_post_type_supported( $post_type ) ) {
-			return;
-		}
-
 		// If we're querying by taxonomy, check if it's object type is supported
 		if ( property_exists( $query, 'tax_query' ) && $query->tax_query ) {
 			foreach ( $query->tax_query->queries as $tax_query ) {
@@ -865,6 +859,12 @@ final class System extends Handler {
 					return;
 				}
 			}
+		}
+
+		// If it's a post type archive, check if the post type is supported
+		$post_type = $query->get( 'post_type' ) ?: 'post';
+		if ( ! Registry::is_post_type_supported( $post_type ) ) {
+			return;
 		}
 
 		// If the parent is specified, and has a language itself, don't bother
