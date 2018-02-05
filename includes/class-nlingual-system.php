@@ -880,8 +880,8 @@ final class System extends Handler {
 			$value = Registry::languages( 'active' )->pluck( 'id', false );
 		}
 
-		// If in the backend, also add 0 to retreive language-less posts too
-		if ( is_backend() ) {
+		// If in the backend, or language is not required, add 0 to retreive language-less posts too
+		if ( is_backend() || ! Registry::get( 'language_is_required' ) ) {
 			$value[] = '0';
 		}
 
