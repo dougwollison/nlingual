@@ -451,9 +451,10 @@ final class Frontend extends Handler {
 	public static function handle_language_links( $items ) {
 		foreach ( $items as $i => $item ) {
 			if ( $item->type == 'nl_language_link' ) {
-				// Language link, set URL to the localized version of the current location
+				// Language link, set URL to the localized version of the current location,
 				// Delete the item if it's for a language that doesn't exist or is inactive
-				if ( $language = Registry::get_language( $item->object ) ) {
+				if ( ( $language = Registry::get_language( $item->object ) )
+				&& ( $language->active || is_user_logged_in() ) ) {
 					$item->url = Rewriter::localize_here( $language );
 				} else {
 					unset( $items[$i] );

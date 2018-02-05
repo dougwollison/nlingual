@@ -1124,11 +1124,12 @@ final class Backend extends Handler {
 			<p><?php _e( 'These links will go to the respective language versions of the current URL.', 'nlingual' ); ?></p>
 			<div id="tabs-panel-nl_language_link-all" class="tabs-panel tabs-panel-active">
 				<ul id="pagechecklist-most-recent" class="categorychecklist form-no-clear">
-				<?php $i = -1; foreach ( Registry::languages( 'active' ) as $language ) : ?>
+				<?php $i = -1; foreach ( Registry::languages() as $language ) : ?>
 					<li>
 						<label class="menu-item-title">
 							<input type="checkbox" class="menu-item-checkbox" name="menu-item[<?php echo $i; ?>][menu-item-object-id]" value="-1">
 							<?php echo $language->system_name; ?>
+							<?php if ( ! $language->active ) _ex( '[Inactive]', 'language inactive', 'nlingual' ); ?>
 						</label>
 						<input type="hidden" class="menu-item-type" name="menu-item[<?php echo $i; ?>][menu-item-type]" value="nl_language_link">
 						<input type="hidden" class="menu-item-title" name="menu-item[<?php echo $i; ?>][menu-item-title]" value="<?php echo $language->native_name; ?>">
