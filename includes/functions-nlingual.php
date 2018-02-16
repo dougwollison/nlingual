@@ -120,6 +120,26 @@ function sanitize_tag( $tag, $_ = false ) {
 // =========================
 
 /**
+ * Generate a link to create a clone of a post for translation.
+ *
+ * @since 2.6.0
+ *
+ * @param int $post_id The ID of the post to clone.
+ * @param int $language_id The ID of the language to translate to.
+ *
+ * @return string The URL to use.
+ */
+function get_translate_post_link( $post_id, $language_id ) {
+	$url = admin_url( 'admin-post.php?' ) . http_build_query( array(
+		'action' => 'nl_new_translation',
+		'post_id' => $post_id,
+		'translation_language_id' => $language_id,
+	) );
+
+	return $url;
+}
+
+/**
  * Triggers the standard "Cheatin’ uh?" wp_die message.
  *
  * @internal

@@ -119,6 +119,12 @@ final class Frontend extends Handler {
 		self::add_hook( 'template_directory_uri', 'localize_uri', 10, 1 );
 		self::add_hook( 'upload_dir', 'localize_dir', 10, 1 );
 		self::add_hook( 'the_content', 'localize_attachment_urls', 10, 1 );
+
+		// Script/Style Enqueues
+		self::add_hook( 'wp_enqueue_scripts', 'enqueue_assets', 10, 0 );
+
+		// Admin Bar Additions
+		self::add_hook( 'admin_bar_menu', 'add_translate_menu', 81, 1 ); // should occur after Edit menu item
 	}
 
 	// =========================
@@ -808,5 +814,75 @@ final class Frontend extends Handler {
 			$content = str_replace( $find_url, $replace_url, $content );
 		}
 		return $content;
+	}
+
+	// =========================
+	// ! Script/Style Enqueues
+	// =========================
+
+	/**
+	 * Enqueue necessary styles and scripts.
+	 *
+	 * @since 2.6.0
+	 */
+	public static function enqueue_assets() {
+		// Abort if not showing the admin bar
+		if ( ! is_admin_bar_showing() ) {
+			return;
+		}
+
+		// Admin styling
+		wp_enqueue_style( 'nlingual-public', plugins_url( 'css/public.css', NL_PLUGIN_FILE ), NL_PLUGIN_VERSION, 'screen' );
+	}
+
+	// =========================
+	// ! Admin Bar Additions
+	// =========================
+
+	/**
+	 * Add a Translate This node/menu to the Admin Bar.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param WP_Admin_Bar $wp_admin_bar The admin bar object.
+	 */
+	public static function add_translate_menu( \WP_Admin_Bar $wp_admin_bar ) {
+		global $wp_the_query;
+
+		$current_language = Registry::current_language();
+		$other_languages = Registry::languages( 'id', $current_language->id, 'inverse' );
+
+		$current_object = $wp_the_query->get_queried_object();
+
+		if ( ! empty( $current_object->post_type )
+		&& Registry::is_post_type_supported( $current_object->post_type )
+		&& ! Translator::get_post_translation( $current_object->ID, $current_language )
+		&& ( $post_type_object = get_post_type_object( $current_object->post_type ) )
+		&& current_user_can( 'edit_post', $current_object->ID )
+		&& $post_type_object->show_in_admin_bar ) {
+			$label = property_exists( $post_type_object->labels, 'translate_item' ) ? $post_type_object->labels->translate_item : __( 'Translate This', 'nlingual' );
+
+			if ( $other_languages->count() > 1 ) {
+				$wp_admin_bar->add_menu( array(
+					'id' => 'nlingual',
+					'title' => $label,
+				) );
+
+				foreach ( $other_languages as $language ) {
+					$wp_admin_bar->add_node( array(
+						'parent' => 'nlingual',
+						'id' => 'nlingual-' . $language->slug,
+						'title' => _f( 'Translate to %s', 'nlingual', $language->system_name ),
+						'href' => get_translate_post_link( $current_object->ID, $language->id ),
+					) );
+				}
+			} else {
+				$wp_admin_bar->add_node( array(
+					'id' => 'nlingual',
+					'title' => $label,
+					'href' => get_translate_post_link( $current_object->ID, $other_languages->current()->id ),
+				) );
+			}
+		}
 	}
 }
