@@ -1221,39 +1221,52 @@ final class Backend extends Handler {
 	 * @uses Synchronizer::clone_post() to create the cloned post.
 	 */
 	public static function new_translation() {
+		$data = $_REQUEST;
+
 		// Fail if no post/language id is passed
-		if ( ! isset( $_REQUEST['post_id'] ) || ! isset( $_REQUEST['post_language_id'] )
-		|| ! isset( $_REQUEST['translation_language_id'] ) ) {
-			return;
+		if ( ! isset( $data['post_id'] )
+		|| ! isset( $data['translation_language_id'] ) ) {
+			wp_die( __( 'Error creating translation: post and or language ID not specified.', 'nlingual' ) );
 		}
 
 		// Fail if post does not exist
-		$post = get_post( $_REQUEST['post_id'] );
+		$post = get_post( $data['post_id'] );
 		if ( ! $post ) {
-			return;
+			wp_die( __( 'Error creating translation: specified post not found.', 'nlingual' ) );
+		}
+
+		// If post_language is not passed, use what already exists, fail if not found
+		if ( isset( $data['post_language_id'] ) ) {
+			$post_language = Registry::get_language( $data['post_language_id'] );
+
+			// Ensure the post is in the correct language
+			Translator::set_post_language( $post, $post_language );
+		} else {
+			$post_language = Translator::get_post_language( $post->ID, 'true value' );
 		}
 
 		// Fail if post language does not exist
-		$post_language = Registry::get_language( $_REQUEST['post_language_id'] );
 		if ( ! $post_language ) {
-			return;
+			wp_die( __( 'Error creating translation: original language not found.', 'nlingual' ) );
 		}
 
 		// Fail if translation language does not exist
-		$translation_language = Registry::get_language( $_REQUEST['translation_language_id'] );
+		$translation_language = Registry::get_language( $data['translation_language_id'] );
 		if ( ! $translation_language ) {
-			return;
+			wp_die( __( 'Error creating translation: requested language does not exist.', 'nlingual' ) );
 		}
 
-		// Ensure the post is in the correct language
-		Translator::set_post_language( $post, $post_language );
+		// Fail if the post already has a translation
+		if ( Translator::get_post_translation( $post, $translation_language ) ) {
+			wp_die( __( 'Error creating translation: Translation already exists.', 'nlingual' ) );
+		}
 
 		// Create the translated clone
 		$translation = Synchronizer::clone_post( $post, $translation_language );
 
 		// Fail if error creating translation
 		if ( ! $translation ) {
-			wp_die( __( 'Error creating translation. Please refresh and try again.', 'nlingual' ) );
+			wp_die( __( 'Error creating translation: unable to create clone.', 'nlingual' ) );
 		}
 
 		/**
