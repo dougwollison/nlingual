@@ -55,11 +55,12 @@ define( 'NL_DB_VERSION', '2.0.0' );
 /**
  * Stores the (assumed) undoctored URL requested.
  *
+ * @since 2.6.0 Won't generate if HTTP_HOST isn't present.
  * @since 2.0.0
  *
  * @var string
  */
-define( 'NL_ORIGINAL_URL', ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+define( 'NL_ORIGINAL_URL', isset( $_SERVER['HTTP_HOST'] ) ? ( ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] ) : '' );
 
 // =========================
 // ! Includes

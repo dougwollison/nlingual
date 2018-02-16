@@ -94,6 +94,7 @@ final class Rewriter {
 	 *
 	 * @internal
 	 *
+	 * @since 2.6.0 Updated to use NL_ORIGINAL_URL.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::languages() to get the active registered languages.
@@ -118,7 +119,7 @@ final class Rewriter {
 
 		// If no url was passed, build it from the $_SERVER values
 		if ( is_null( $url_data ) ) {
-			$url_data = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+			$url_data = NL_ORIGINAL_URL;
 		}
 
 		// Parse it
