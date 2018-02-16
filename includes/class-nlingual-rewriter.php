@@ -100,8 +100,8 @@ final class Rewriter {
 	 * @uses Registry::languages() to get the active registered languages.
 	 * @uses Registry::get() to get the query var and redirection method options.
 	 *
-	 * @param mixed $url_data        Optional. The URL string or parsed array to process.
-	 * @param bool  $return_language Optional. Wether or not to return just the language.
+	 * @param string|array $url_data        Optional. The URL string or parsed array to process.
+	 * @param bool         $return_language Optional. Wether or not to return just the language.
 	 *
 	 * @return URL The parsed and processed URL object.
 	 */
