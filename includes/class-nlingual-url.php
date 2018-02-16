@@ -134,20 +134,20 @@ final class URL extends Model {
 	 *
 	 * since 2.0.0
 	 *
-	 * @param string|array $url      The URL to process.
+	 * @param string|array $url_data The URL to process.
 	 * @param array        $defaults Optional. The default property values.
 	 *
 	 * @throws Exception If $url is not an string or array.
 	 */
-	public function parse( $url, $defaults = array() ) {
+	public function parse( $url_data, $defaults = array() ) {
 		// If it's a string, parse it
-		if ( is_string( $url ) ) {
-			$url_data = parse_url( $url );
+		if ( is_string( $url_data ) ) {
+			$url_data = parse_url( $url_data );
 		}
 		// If not an array, throw an exception
-		elseif ( ! is_array( $url ) ) {
+		elseif ( ! is_array( $url_data ) ) {
 			/* Translators: %1$s = The class name, %2$s = The type used. */
-			throw new Exception( _f( '%1$s expects a string or array, %2$s given', 'nlingual', __CLASS__, gettype( $url ) ), NL_ERR_UNSUPPORTED );
+			throw new Exception( _f( '%1$s expects a string or array, %2$s given', 'nlingual', __CLASS__, gettype( $url_data ) ), NL_ERR_UNSUPPORTED );
 		}
 
 		// If defaults were provided, parse them
