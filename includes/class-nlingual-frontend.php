@@ -256,8 +256,8 @@ final class Frontend extends Handler {
 			return;
 		}
 
-		// If the language isn't active, fallback to the accepted or default language
-		if ( ! $redirect_language->active ) {
+		// If the language isn't active (and they're not logged in), fallback to the accepted or default language
+		if ( ! $redirect_language->active && ! is_user_logged_in() ) {
 			$redirect_language = self::get_accepted_language() ?: Registry::default_language();
 		}
 
