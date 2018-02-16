@@ -354,13 +354,14 @@ final class Registry {
 	 *
 	 * @uses Languages::filter() to filter the languages before returning it.
 	 *
-	 * @param string $filter Optional. A filter property to pass to Languages->filter().
-	 * @param string $value  Optional. A filter value to pass to Languages->filter().
+	 * @param string $filter  Optional. A filter property to pass to Languages->filter().
+	 * @param string $value   Optional. A filter value to pass to Languages->filter().
+	 * @param bool   $inverse Optional. The inverse option to pass to Languages->filter().
 	 *
 	 * @return Language The languages collection (optionally filtered).
 	 */
-	public static function languages( $filter = null, $value = null ) {
-		return self::$languages->filter( $filter, $value );
+	public static function languages( $filter = null, $value = null, $inverse = false ) {
+		return self::$languages->filter( $filter, $value, $inverse );
 	}
 
 	/**

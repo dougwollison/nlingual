@@ -198,14 +198,16 @@ final class Languages implements \Iterator {
 	/**
 	 * Return a filtered copy of the collection.
 	 *
+	 * @since 2.6.0 Added $inverse option.
 	 * @since 2.0.0
 	 *
-	 * @param string $filter Optional. The property to filter by.
-	 * @param string $value  Optional. A specific value to filter by (defaults to TRUE).
+	 * @param string $filter  Optional. The property to filter by.
+	 * @param string $value   Optional. A specific value to filter by (defaults to TRUE).
+	 * @param bool   $inverse Optional. Return instead those that don't match (defaults to FALSE).
 	 *
 	 * @return nLingual\Languages A new collection of languages
 	 */
-	public function filter( $filter = null, $value = null ) {
+	public function filter( $filter = null, $value = null, $inverse = false ) {
 		// No filter? Return original
 		if ( is_null( $filter ) ) {
 			return $this;
@@ -218,7 +220,7 @@ final class Languages implements \Iterator {
 
 		$filtered = new static;
 		foreach ( $this as $language ) {
-			if ( $language->$filter === $value ) {
+			if ( $language->$filter === $value xor $inverse ) {
 				$filtered->add( $language, false );
 			}
 		}
