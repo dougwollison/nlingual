@@ -812,6 +812,7 @@ final class System extends Handler {
 	/**
 	 * Set the queried language to the current one if applicable
 	 *
+	 * @since 2.6.0 Perform tax query handling first, then post type archive.
 	 * @since 2.1.1 Fixed post type and taxonomy checks to be more less picky.
 	 * @since 2.0.0
 	 *
