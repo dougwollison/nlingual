@@ -365,7 +365,7 @@ final class Rewriter {
 	/**
 	 * Attempt to localize the current page URL.
 	 *
-	 * @since 2.6.0 Add check to make sure queried object's post type is supported.
+	 * @since 2.6.0 Fixed paged handling, added check to make sure queried object's post type is supported.
 	 * @since 2.2.0 Now uses get_search_link() to create the search URL.
 	 * @since 2.0.0
 	 *
@@ -458,7 +458,7 @@ final class Rewriter {
 
 		// Check if paged and add entry to $url_data
 		if ( is_paged() ) {
-			$the_url->paged = get_query_var( 'paged' );
+			$the_url->page = get_query_var( 'paged' );
 		}
 
 		// Build the URL
