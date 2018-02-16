@@ -856,6 +856,7 @@ final class Frontend extends Handler {
 
 		if ( ! empty( $current_object->post_type )
 		&& Registry::is_post_type_supported( $current_object->post_type )
+		&& Translator::get_post_language( $current_object->ID, 'true value' )
 		&& ! Translator::get_post_translation( $current_object->ID, $current_language )
 		&& ( $post_type_object = get_post_type_object( $current_object->post_type ) )
 		&& current_user_can( 'edit_post', $current_object->ID )
