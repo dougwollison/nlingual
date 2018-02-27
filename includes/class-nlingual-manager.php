@@ -728,7 +728,7 @@ final class Manager extends Handler {
 				<?php do_settings_sections( $plugin_page ); ?>
 				<p><small>
 					<sup>1</sup> <?php _e( 'includes creation/publication date, modified date, and their GMT versions', 'nlingual' ); ?><br />
-					<sup>2</sup> <?php _e( 'will also apply to trashing and untrashing', 'nlingual' ); ?><br />
+					<sup>2</sup> <?php _e( 'will NOT apply to trashing or untrashing via normal means', 'nlingual' ); ?><br />
 					<sup>3</sup> <?php _e( 'will use counterpart translation if found', 'nlingual' ); ?><br />
 					<sup>4</sup> <?php _e( 'includes pingback status', 'nlingual' ); ?>
 				</small></p>
