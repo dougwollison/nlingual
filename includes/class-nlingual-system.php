@@ -283,6 +283,7 @@ final class System extends Handler {
 	/**
 	 * Register hooks.
 	 *
+	 * @since 2.6.0 Added transition (un)flagging.
 	 * @since 2.4.0 Only add patch_font_stack hook if before 4.6.
 	 * @since 2.2.0 Reassigned synchronize_posts to wp_insert_post (better hook to use).
 	 * @since 2.0.0
@@ -298,6 +299,10 @@ final class System extends Handler {
 
 		// Post Changes
 		self::add_hook( 'wp_insert_post', 'synchronize_posts', 10, 3 );
+		self::add_hook( 'wp_trash_post', 'flag_transitioning_post', 10, 1 );
+		self::add_hook( 'untrash_post', 'flag_transitioning_post', 10, 1 );
+		self::add_hook( 'trashed_post', 'unflag_transitioning_post', 10, 1 );
+		self::add_hook( 'untrashed_post', 'unflag_transitioning_post', 10, 1 );
 		self::add_hook( 'trashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
 		self::add_hook( 'untrashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
 		self::add_hook( 'deleted_post', 'delete_sister_posts', 10, 1 );
@@ -441,6 +446,7 @@ final class System extends Handler {
 	/**
 	 * Handle any synchronization with sister posts.
 	 *
+	 * @since 2.6.0 Added check to see if post is in the middle of transitioning to/from trashed.
 	 * @since 2.3.1 Fixed number of accepted arguments for rehooking.
 	 * @since 2.2.0 Added $post & $update args; moved to wp_insert_post hook.
 	 * @since 2.0.0
@@ -454,6 +460,12 @@ final class System extends Handler {
 	public static function synchronize_posts( $post_id, $post, $update ) {
 		// Abort if doing auto save, a revision, or not an update
 		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || wp_is_post_revision( $post_id ) || ! $update ) {
+			return;
+		}
+
+		// Abort if the post has been marked as in the middle of (un)trashing
+		$transitioning = wp_cache_get( 'transitioning_posts', 'nlingual:vars' ) ?: array();
+		if ( in_array( $post_id, $transitioning ) ) {
 			return;
 		}
 
@@ -501,13 +513,47 @@ final class System extends Handler {
 	}
 
 	/**
+	 * Flag a post being (un)trashed.
+	 *
+	 * This is to prevent syncronize_post() from proceeding.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param int $post_id The ID of the post being (un)trashed.
+	 */
+	public static function flag_transitioning_post( $post_id ) {
+		$transitioning = wp_cache_get( 'transitioning_posts', 'nlingual:vars' ) ?: array();
+
+		$transitioning[] = $post_id;
+
+		wp_cache_set( 'transitioning_posts', $transitioning, 'nlingual:vars' );
+	}
+
+	/**
+	 * Unflag a post being (un)trashed.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param int $post_id The ID of the post being (un)trashed.
+	 */
+	public static function unflag_transitioning_post( $post_id ) {
+		$transitioning = wp_cache_get( 'transitioning_posts', 'nlingual:vars' ) ?: array();
+
+		$index = array_search( $post_id, $transitioning );
+		if ( $index !== false ) {
+			unset( $transitioning[ $index ] );
+			wp_cache_set( 'transitioning_posts', $transitioning, 'nlingual:vars' );
+		}
+	}
+
+	/**
 	 * (Un)trash a post's sister translations when it's deleted.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to check the trash_sister_posts option.
 	 *
-	 * @param int $post_id The ID of the post that was deleted.
+	 * @param int $post_id The ID of the post being trashed/untrashed.
 	 */
 	public static function trash_or_untrash_sister_posts( $post_id ) {
 		// Abort if option isn't enabled
