@@ -632,6 +632,10 @@ final class Backend extends Handler {
 		}
 	}
 
+	// =========================
+	// ! Quick/Bulk Edit Interfaces
+	// =========================
+
 	/**
 	 * Print out the quick-edit box for post language/translations.
 	 *
@@ -1040,6 +1044,7 @@ final class Backend extends Handler {
 	/**
 	 * Print notice about any sister posts being updated/trashed/deleted.
 	 *
+	 * @since 2.6.0 Remove post_status check for trash/untrash messages.
 	 * @since 2.3.1 Added check for NULL screen.
 	 * @since 2.0.0
 	 *
@@ -1057,9 +1062,6 @@ final class Backend extends Handler {
 			return $bulk_notices;
 		}
 
-		// Get the trash_sister_posts option
-		$trash_sister_posts = Registry::get( 'trash_sister_posts' );
-
 		// Create the addendums
 		$updated_addendum   = __( 'Any associated translations have been synchronized accordingly.', 'nlingual' );
 		$deleted_addendum   = __( 'Any associated translations have also been deleted.', 'nlingual' );
@@ -1076,8 +1078,8 @@ final class Backend extends Handler {
 				$notices['updated'] .= ' ' . $updated_addendum;
 			}
 
-			// If trash_sister_posts is enabled, or post_status is synced, add trashed/untrashed addendum
-			if ( $trash_sister_posts || ( isset( $sync_rules['post_fields'] ) && in_array( 'post_status', $sync_rules['post_fields'] ) ) ) {
+			// If trash_sister_posts is enabled, add trashed/untrashed addendum
+			if ( Registry::get( 'trash_sister_posts' ) ) {
 				$notices['trashed'] .= ' ' . $trashed_addendum;
 				$notices['untrashed'] .= ' ' . $untrashed_addendum;
 			}
