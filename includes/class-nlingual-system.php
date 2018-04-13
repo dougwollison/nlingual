@@ -858,6 +858,7 @@ final class System extends Handler {
 	/**
 	 * Set the queried language to the current one if applicable
 	 *
+	 * @since 2.6.1 Revised support checks for post type archives.
 	 * @since 2.6.0 Perform tax query handling first, then post type archive.
 	 * @since 2.1.1 Fixed post type and taxonomy checks to be more less picky.
 	 * @since 2.0.0
@@ -909,8 +910,12 @@ final class System extends Handler {
 		}
 
 		// If it's a post type archive, check if the post type is supported
-		$post_type = $query->get( 'post_type' ) ?: 'post';
-		if ( ! Registry::is_post_type_supported( $post_type ) ) {
+		if ( $query->is_post_type_archive() && ! Registry::is_post_type_supported( $query->get( 'post_type' ) ) ) {
+			return;
+		}
+
+		// If it's the home feed, check if posts are supported
+		if ( $query->is_home() && ! Registry::is_post_type_supported( 'post' ) ) {
 			return;
 		}
 
