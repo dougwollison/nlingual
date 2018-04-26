@@ -288,7 +288,7 @@ final class Liaison extends Handler {
 
 		// Get the old separator, abort if not found
 		if ( ! $separator = Registry::get( '_old_separator' ) ) {
-			return $value;
+			return;
 		}
 
 		// Escape % and _ characters in separator for MySQL use
