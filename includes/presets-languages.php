@@ -16,6 +16,7 @@ return array(
 		'native_name' => 'العربية',
 		'short_name'  => 'العربية',
 		'locale_name' => 'ar',
+		'accept_code' => 'ar',
 		'direction'   => 'rtl',
 	),
 	'zh' => array(
@@ -23,6 +24,7 @@ return array(
 		'native_name' => '中文',
 		'short_name'  => '中文',
 		'locale_name' => 'zh_CN',
+		'accept_code' => 'zh, zh_CN',
 		'direction'   => 'ltr',
 	),
 	'cs' => array(
@@ -30,6 +32,7 @@ return array(
 		'native_name' => 'čeština',
 		'short_name'  => 'Če',
 		'locale_name' => 'cs_CZ',
+		'accept_code' => 'cs, cs_CZ',
 		'direction'   => 'ltr',
 	),
 	'nl' => array(
@@ -37,6 +40,7 @@ return array(
 		'native_name' => 'Nederlands',
 		'short_name'  => 'Nl',
 		'locale_name' => 'nl_NL',
+		'accept_code' => 'nl, nl_NL',
 		'direction'   => 'ltr',
 	),
 	'en' => array(
@@ -44,6 +48,7 @@ return array(
 		'native_name' => 'English',
 		'short_name'  => 'En',
 		'locale_name' => 'en_US',
+		'accept_code' => 'en, en_US',
 		'direction'   => 'ltr',
 	),
 	'fi' => array(
@@ -51,6 +56,7 @@ return array(
 		'native_name' => 'Sumoi',
 		'short_name'  => 'Fi',
 		'locale_name' => 'fi',
+		'accept_code' => 'fi',
 		'direction'   => 'ltr',
 	),
 	'fr' => array(
@@ -58,6 +64,7 @@ return array(
 		'native_name' => 'Français',
 		'short_name'  => 'Fr',
 		'locale_name' => 'fr_FR',
+		'accept_code' => 'fr, fr_FR',
 		'direction'   => 'ltr',
 	),
 	'de' => array(
@@ -65,6 +72,7 @@ return array(
 		'native_name' => 'Deutsch',
 		'short_name'  => 'De',
 		'locale_name' => 'de_DE',
+		'accept_code' => 'de, de_DE',
 		'direction'   => 'ltr',
 	),
 	'el' => array(
@@ -72,6 +80,7 @@ return array(
 		'native_name' => 'ελληνικά',
 		'short_name'  => 'ελ',
 		'locale_name' => 'el_GR',
+		'accept_code' => 'el, el_GR',
 		'direction'   => 'ltr',
 	),
 	'hi' => array(
@@ -79,6 +88,7 @@ return array(
 		'native_name' => 'हिन्दी',
 		'short_name'  => 'हिंदी',
 		'locale_name' => 'hi_IN',
+		'accept_code' => 'hi, hi_IN',
 		'direction'   => 'ltr',
 	),
 	'hu' => array(
@@ -86,6 +96,7 @@ return array(
 		'native_name' => 'Magyar',
 		'short_name'  => 'Ma',
 		'locale_name' => 'hu_HU',
+		'accept_code' => 'hu, hu_HU',
 		'direction'   => 'ltr',
 	),
 	'it' => array(
@@ -93,6 +104,7 @@ return array(
 		'native_name' => 'Italiano',
 		'short_name'  => 'It',
 		'locale_name' => 'it_IT',
+		'accept_code' => 'it, it_IT',
 		'direction'   => 'ltr',
 	),
 	'ja' => array(
@@ -100,6 +112,7 @@ return array(
 		'native_name' => '日本語',
 		'short_name'  => '日本語',
 		'locale_name' => 'ja',
+		'accept_code' => 'ja',
 		'direction'   => 'ltr',
 	),
 	'ko' => array(
@@ -107,6 +120,7 @@ return array(
 		'native_name' => '한국말',
 		'short_name'  => '국어',
 		'locale_name' => 'ko_KR',
+		'accept_code' => 'ko, ko_KR',
 		'direction'   => 'ltr',
 	),
 	'fa' => array(
@@ -114,6 +128,7 @@ return array(
 		'native_name' => 'فارسی',
 		'short_name'  => 'فارسی',
 		'locale_name' => 'fa',
+		'accept_code' => 'fa',
 		'direction'   => 'rtl',
 	),
 	'pl' => array(
@@ -121,6 +136,7 @@ return array(
 		'native_name' => 'Polski',
 		'short_name'  => 'Pl',
 		'locale_name' => 'pl_PL',
+		'accept_code' => 'pl, pl_PL',
 		'direction'   => 'ltr',
 	),
 	'pt' => array(
@@ -128,6 +144,7 @@ return array(
 		'native_name' => 'Português',
 		'short_name'  => 'Pt',
 		'locale_name' => 'pt_BR',
+		'accept_code' => 'pt, pt_BR',
 		'direction'   => 'ltr',
 	),
 	'ro' => array(
@@ -135,6 +152,7 @@ return array(
 		'native_name' => 'Română',
 		'short_name'  => 'Ro',
 		'locale_name' => 'ro_RO',
+		'accept_code' => 'ro, ro_RO',
 		'direction'   => 'ltr',
 	),
 	'ru' => array(
@@ -142,6 +160,7 @@ return array(
 		'native_name' => 'Русский язык',
 		'short_name'  => 'Ру',
 		'locale_name' => 'ru_RU',
+		'accept_code' => 'ru, ru_RU',
 		'direction'   => 'ltr',
 	),
 	'es' => array(
@@ -149,6 +168,7 @@ return array(
 		'native_name' => 'Español',
 		'short_name'  => 'Es',
 		'locale_name' => 'es_ES',
+		'accept_code' => 'es, es_ES',
 		'direction'   => 'ltr',
 	),
 	'sv' => array(
@@ -156,6 +176,7 @@ return array(
 		'native_name' => 'Svenska',
 		'short_name'  => 'Sv',
 		'locale_name' => 'sv_SE',
+		'accept_code' => 'sv, sv_SE',
 		'direction'   => 'ltr',
 	),
 	'vi' => array(
@@ -163,6 +184,7 @@ return array(
 		'native_name' => 'Tiếng Việt',
 		'short_name'  => 'Vi',
 		'locale_name' => 'vi',
+		'accept_code' => 'vi',
 		'direction'   => 'ltr',
 	),
 );
