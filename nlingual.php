@@ -3,7 +3,7 @@
 Plugin Name: nLingual
 Plugin URI: https://github.com/dougwollison/nlingual
 Description: Easy to manage Multilingual system, with theme development utilities and post data synchronization.
-Version: 2.6.1
+Version: 2.7.0
 Author: Doug Wollison
 Author URI: http://dougw.me
 Tags: multilingual, multi, language, admin, bilingual, switcher, translation, nlingual
@@ -41,7 +41,7 @@ define( 'NL_PLUGIN_DIR', dirname( NL_PLUGIN_FILE ) );
  *
  * @var string
  */
-define( 'NL_PLUGIN_VERSION', '2.6.0' );
+define( 'NL_PLUGIN_VERSION', '2.7.0' );
 
 /**
  * Identifies the current database version.
