@@ -254,6 +254,20 @@ final class Manager extends Handler {
 				// Assume new language and add
 				Registry::languages()->add( $entry );
 			}
+
+			// Download the language pack if applicable and possible (not default US english)
+			if ( $entry['locale_name'] != 'en' && $entry['locale_name'] != 'en_US' ) {
+				require_once( ABSPATH . 'wp-admin/includes/translation-install.php' );
+				if ( ! wp_download_language_pack( $entry['locale_name'] ) ) {
+					add_settings_error(
+						'nlingual-languages',
+						'nl_language',
+						/* Translators: %1$s = The locale code, %2$s = The language name. */
+						_f( 'Unable to download the WordPress language file "%1$s" for the language "%$2s".  Please install it manually.', 'nlingual', $entry['locale_name'], $entry['system_name'] ),
+						'notice'
+					);
+				}
+			}
 		}
 
 		// Save the registry
@@ -607,7 +621,7 @@ final class Manager extends Handler {
 	 */
 	public static function settings_page() {
 		global $plugin_page;
-?>
+		?>
 		<div class="wrap">
 			<h2><?php echo get_admin_page_title(); ?></h2>
 			<?php settings_errors(); ?>
@@ -719,7 +733,7 @@ final class Manager extends Handler {
 	 */
 	public static function settings_page_synchronizer() {
 		global $plugin_page;
-?>
+		?>
 		<div class="wrap">
 			<h2><?php echo get_admin_page_title(); ?></h2>
 			<?php settings_errors(); ?>
