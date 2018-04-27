@@ -5,6 +5,7 @@
  * @package nLingual
  * @subpackage Utilities
  *
+ * @since 2.7.0 Added accept_code presets.
  * @since 2.0.0
  *
  * @return array The preset list.

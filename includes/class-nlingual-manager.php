@@ -167,6 +167,7 @@ final class Manager extends Handler {
 	/**
 	 * Save languages from the manager.
 	 *
+	 * @since 2.7.0 Added downloading of WordPress language files for each language.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
