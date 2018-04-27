@@ -225,6 +225,32 @@ final class System extends Handler {
 		self::reload_textdomains( $old_local );
 	}
 
+	/**
+	 * @since 2.0.0
+	 *
+	 * @return Language|bool The accepted language, false if no match.
+	 */
+	private static function get_accepted_language() {
+		// Abort if no accept-language entry is present
+		if ( ! isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
+			return false;
+		}
+
+		$accepted_languages = explode( ',', $_SERVER['HTTP_ACCEPT_LANGUAGE'] );
+		// Loop through them and get the first match
+		foreach ( $accepted_languages as $language_tag ) {
+			// Remove the quality flag
+			$language_tag = preg_replace( '/;q=[\d\.]+/', '', $language_tag );
+
+			// Stop at the first matched language found
+			if ( $language = Registry::languages( 'active' )->match_tag( $language_tag ) ) {
+				return $language;
+			}
+		}
+
+		return false;
+	}
+
 	// =========================
 	// ! Master Setup Method
 	// =========================
