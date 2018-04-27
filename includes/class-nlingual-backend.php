@@ -207,6 +207,7 @@ final class Backend extends Handler {
 	/**
 	 * Load the text domain.
 	 *
+	 * @since 2.7.0 Fix $plugin_rel_path argument.
 	 * @since 2.0.0
 	 */
 	public static function load_textdomain() {
