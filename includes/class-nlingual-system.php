@@ -277,7 +277,7 @@ final class System extends Handler {
 	}
 
 	// =========================
-	// ! Setup Utilities
+	// ! Hook Registration
 	// =========================
 
 	/**
@@ -291,6 +291,10 @@ final class System extends Handler {
 	public static function register_hooks() {
 		// Setup Stuff
 		self::add_hook( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
+
+		// Language Detection/Rewriting
+		self::add_hook( 'plugins_loaded', 'detect_language', 10, 0 );
+		self::add_hook( 'locale', 'rewrite_locale', 10, 0 );
 
 		// Text Domain Manipulation
 		self::add_hook( 'theme_locale', 'log_textdomain_type', 10, 2 );
@@ -334,6 +338,10 @@ final class System extends Handler {
 		// Finally, add the blog switching handler
 		add_action( 'switch_blog', array( __CLASS__, 'check_blog_for_support' ), 10, 0 );
 	}
+
+	// =========================
+	// ! Setup Utilities
+	// =========================
 
 	/**
 	 * Setup default localizable fields like title/tagline and supported taxonomies.
@@ -387,6 +395,91 @@ final class System extends Handler {
 			Localizer::remove_all_hooks();
 			Liaison::remove_all_hooks();
 		}
+	}
+
+	// =========================
+	// ! Language Detection/Rewriting
+	// =========================
+
+	/**
+	 * Detect the language based on the request or browser info.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::languages() to validate and retrieve a detected language.
+	 * @uses Registry::get() to get the query var option.
+	 * @uses Rewriter::process_url() to parse the current page URL.
+	 * @uses Frontend::get_accepted_language() to determine a perferred language.
+	 * @uses Registry::set_language() to tentatively apply the detected language.
+	 */
+	public static function detect_language() {
+		$language = false;
+
+		// First, check if the language was specified by the GET or POST parameters
+		if ( ( $query_var = Registry::get( 'query_var' ) ) && isset( $_REQUEST[ $query_var ] ) ) {
+			// Even if the language specified is invalid, don't fallback from here.
+			$language = Registry::get_language( $_REQUEST[ $query_var ] );
+			$mode = 'REQUESTED';
+		}
+		// Failing that, get the language from the url
+		elseif ( ( $the_url = Rewriter::process_url() ) && isset( $the_url->meta['language'] ) ) {
+			$language = $the_url->meta['language'];
+			// If the language was determined but skip is enabled, redirect.
+			if ( Registry::is_language_default( $language )
+			&& Registry::get( 'skip_default_l10n' )
+			&& Registry::get( 'url_rewrite_method' ) == 'path' ) {
+				// Determine the status code to use
+				$status = Registry::get( 'redirection_permanent' ) ? 301 : 302;
+
+				// Redirect, exit if successful
+				if ( wp_redirect( $the_url->build(), $status ) ) {
+					exit;
+				}
+			}
+
+			$mode = 'REQUESTED';
+		}
+		// Fallback to finding the first match in the accepted languages list
+		elseif ( $language = self::get_accepted_language() ) {
+			$mode = 'ACCEPTED';
+		}
+
+		/**
+		 * Filter the detected language.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param Language $language The language detected.
+		 */
+		$language = apply_filters( 'nlingual_detected_language', $language );
+
+		if ( $language ) {
+			/**
+			 * Stores the language originally requested or accepted.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @var bool|int
+			 */
+			define( "NL_{$mode}_LANGUAGE", $language->id );
+
+			// Set the language, but don't lock it
+			Registry::set_language( $language );
+		}
+	}
+
+	/**
+	 * Replace the locale with that of the current language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::current_language() to get the current language.
+	 *
+	 * @return string The replaced locale.
+	 */
+	public static function rewrite_locale() {
+		// Return the current language's locale_name
+		return Registry::current_language( 'locale_name' );
 	}
 
 	// =========================
