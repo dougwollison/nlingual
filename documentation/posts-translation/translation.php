@@ -18,4 +18,4 @@ _ef( 'The <strong>Quick Edit</strong> option will allow you to quickly change th
 /* Translators: %1$s = The singular name of the post type, %2$s = The URL for the link. Please preserve the HTML as-is. */
 _ef( 'If you make changes to a %1$s from here, certain fields and settings will be copied to it’s sister translations, synchronizing them. The exact fields/settings that will be synchronized is controlled <a href="%2$s" target="_blank">here</a>.', 'nlingual', $singular, admin_url( 'admin.php?page=nlingual-synchronizer' ) ); ?></p>
 
-<?php require dirname( __DIR__ ) . '/shared/post-sync-summary.php'; ?>
+<?php require NL_PLUGIN_DIR . '/documentation/shared/post-sync-summary.php'; ?>
