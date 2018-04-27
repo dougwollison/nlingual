@@ -207,7 +207,7 @@ final class Documenter extends Handler {
 
 		// Get the contents of the file
 		ob_start();
-		include( $path );
+		include $path;
 		$html = ob_get_clean();
 
 		// Parse the HTML to get the title and content

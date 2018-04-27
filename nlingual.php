@@ -66,9 +66,9 @@ define( 'NL_ORIGINAL_URL', isset( $_SERVER['HTTP_HOST'] ) ? ( ( is_ssl() ? 'http
 // ! Includes
 // =========================
 
-require( NL_PLUGIN_DIR . '/includes/autoloader.php' );
-require( NL_PLUGIN_DIR . '/includes/functions-nlingual.php' );
-require( NL_PLUGIN_DIR . '/includes/functions-gettext.php' );
+require NL_PLUGIN_DIR . '/includes/autoloader.php';
+require NL_PLUGIN_DIR . '/includes/functions-nlingual.php';
+require NL_PLUGIN_DIR . '/includes/functions-gettext.php';
 
 // =========================
 // ! Setup

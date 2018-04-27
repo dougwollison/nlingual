@@ -16,4 +16,4 @@ _ef( 'The <strong>Languages & Translation</strong> box allows you to assign a la
 /* Translators: %s = The URL for the link. Please preserve the HTML as-is. */
 _ef( 'When you save your changes, certain fields and settings will be copied to it’s sister translations, synchronizing them. The exact fields/settings that will be synchronized is controlled <a href="%s" target="_blank">here</a>.', 'nlingual', admin_url( 'admin.php?page=nlingual-synchronizer' ) ); ?></p>
 
-<?php require( dirname( __DIR__ ) . '/shared/post-sync-summary.php' ); ?>
+<?php require dirname( __DIR__ ) . '/shared/post-sync-summary.php'; ?>

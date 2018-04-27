@@ -219,7 +219,7 @@ final class Installer extends Handler {
 	 */
 	private static function install_options() {
 		// Load the language presets
-		$presets = require( NL_PLUGIN_DIR . '/includes/presets-languages.php' );
+		$presets = require NL_PLUGIN_DIR . '/includes/presets-languages.php';
 
 		// Default options
 		$default_options = Registry::get_defaults();
@@ -257,7 +257,7 @@ final class Installer extends Handler {
 		global $wpdb;
 
 		// Load dbDelta utility
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		$charset_collate = $wpdb->get_charset_collate();
 

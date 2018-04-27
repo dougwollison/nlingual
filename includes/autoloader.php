@@ -35,7 +35,7 @@ function find( $type, $name ) {
 
 	// Make sure the file exists before loading it
 	if ( file_exists ( $path ) ){
-		require( $path );
+		require $path;
 		return true;
 	}
 

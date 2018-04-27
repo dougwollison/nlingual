@@ -258,7 +258,7 @@ final class Manager extends Handler {
 
 			// Download the language pack if applicable and possible (not default US english)
 			if ( $entry['locale_name'] != 'en' && $entry['locale_name'] != 'en_US' ) {
-				require_once( ABSPATH . 'wp-admin/includes/translation-install.php' );
+				require_once ABSPATH . 'wp-admin/includes/translation-install.php';
 				if ( ! wp_download_language_pack( $entry['locale_name'] ) ) {
 					add_settings_error(
 						'nlingual-languages',
@@ -716,7 +716,7 @@ final class Manager extends Handler {
 					</tr>
 				</script>
 				<script>
-					<?php $presets = require( NL_PLUGIN_DIR . '/includes/presets-languages.php' ); ?>
+					<?php $presets = require NL_PLUGIN_DIR . '/includes/presets-languages.php'; ?>
 					nLingual.presets = <?php echo json_encode( $presets ); ?>
 				</script>
 				<?php submit_button(); ?>

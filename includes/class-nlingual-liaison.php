@@ -77,7 +77,7 @@ final class Liaison extends Handler {
 		}
 
 		// Load the old template functions
-		require( NL_PLUGIN_DIR . '/includes/functions-compatibility.php' );
+		require NL_PLUGIN_DIR . '/includes/functions-compatibility.php';
 
 		// Old split-language string support
 		add_filter( 'the_title', 'nl_split_langs', 10, 1 );
