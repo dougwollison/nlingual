@@ -448,7 +448,10 @@
 		// =========================
 
 		if ( typeof tinymce === 'object' ) {
-			tinymce.on( 'SetupEditor', function( editor ) {
+			tinymce.on( 'SetupEditor', function( e ) {
+				// TinyMCE 4.7 changes callback arg to event CONTAINING editor
+				var editor = e.editor || e;
+
 				var $field = $( editor.getElement() ),
 					$control = $field.data( '$nl_localizer' );
 
