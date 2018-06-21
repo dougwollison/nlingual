@@ -430,6 +430,7 @@ final class System extends Handler {
 	/**
 	 * Detect the language based on the request or browser info.
 	 *
+	 * @since 2.7.0 Checked for skip_default_l10n option before getting accepted language.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::languages() to validate and retrieve a detected language.
@@ -465,8 +466,8 @@ final class System extends Handler {
 
 			$mode = 'REQUESTED';
 		}
-		// Fallback to finding the first match in the accepted languages list
-		elseif ( $language = self::get_accepted_language() ) {
+		// Fallback to finding the first match in the accepted languages list, assuming skip is not enabled
+		elseif ( ! Registry::get( 'skip_default_l10n' ) && $language = self::get_accepted_language() ) {
 			$mode = 'ACCEPTED';
 		}
 
