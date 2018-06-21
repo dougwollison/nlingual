@@ -79,10 +79,7 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
 
 = 2.7.0 =
-Added language detection and rewriting to backend, including the login page.
-
-= 2.6.1 =
-Fixed language support detection on various archives.
+Language detection fixes, added detection and rewriting to backend, including the login page.
 
 = 2.6.0 =
 Additional system support, improved translation interface, and the usual bug fixes.
