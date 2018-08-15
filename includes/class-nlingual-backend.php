@@ -1168,7 +1168,7 @@ final class Backend extends Handler {
 	 */
 	public static function enqueue_assets() {
 		// Admin styling
-		wp_enqueue_style( 'nlingual-admin', plugins_url( 'css/admin.css', NL_PLUGIN_FILE ), NL_PLUGIN_VERSION, 'screen' );
+		wp_enqueue_style( 'nlingual-admin', plugins_url( 'css/admin.css', NL_PLUGIN_FILE ), array(), NL_PLUGIN_VERSION, 'screen' );
 
 		// Admin javascript
 		wp_enqueue_script( 'nlingual-admin-js', plugins_url( 'js/admin.js', NL_PLUGIN_FILE ), array( 'backbone', 'jquery-ui-sortable' ), NL_PLUGIN_VERSION );
