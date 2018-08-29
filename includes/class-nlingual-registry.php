@@ -108,6 +108,8 @@ final class Registry {
 		'delete_sister_posts' => false,
 		// - The patch font stack option
 		'patch_font_stack' => false,
+		// - The force default language on new posts option
+		'force_default_language' => false,
 
 		/* Request/Redirection Options */
 

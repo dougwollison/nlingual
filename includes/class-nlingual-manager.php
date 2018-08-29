@@ -293,6 +293,7 @@ final class Manager extends Handler {
 	/**
 	 * Fields for the Translations page.
 	 *
+	 * @since 2.8.0 Add force_default_language option control.
 	 * @since 2.4.0 Only list active languages as options for Default Language,
 	 *              also deprecate patch_font_stack option.
 	 * @since 2.0.0
@@ -358,6 +359,11 @@ final class Manager extends Handler {
 			'delete_sister_posts' => array(
 				'title' => __( 'Delete Sister Translations?', 'nlingual' ),
 				'help'  => __( 'When deleting an object (that’s in the Trash), should its translations be deleted as well?', 'nlingual' ),
+				'type'  => 'checkbox',
+			),
+			'force_default_language' => array(
+				'title' => __( 'Force Default Language?', 'nlingual' ),
+				'help'  => __( 'Should new posts always be in the default language (unless created as a translation)?', 'nlingual' ),
 				'type'  => 'checkbox',
 			),
 		);
