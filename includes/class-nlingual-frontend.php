@@ -105,6 +105,7 @@ final class Frontend extends Handler {
 	 * For example, if the language requested doesn't match that of the queried object,
 	 * or if the language requested is inactive.
 	 *
+	 * @since 2.6.0 Allow inactive language if user is logged in.
 	 * @since 2.2.0 Regigged post language redirecting to account for untranslated homepage.
 	 * @since 2.0.0
 	 *
