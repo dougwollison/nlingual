@@ -312,7 +312,7 @@ final class Languages implements \Iterator {
 	/**
 	 * Add a language to the index.
 	 *
-	 * @since 2.7.1 Prevent duplicate languages.
+	 * @since 2.8.0 Prevent duplicate languages.
 	 * @since 2.0.0
 	 *
 	 * @param array|Language $language The language to add.
