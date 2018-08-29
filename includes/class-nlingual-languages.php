@@ -312,6 +312,7 @@ final class Languages implements \Iterator {
 	/**
 	 * Add a language to the index.
 	 *
+	 * @since 2.7.1 Prevent duplicate languages.
 	 * @since 2.0.0
 	 *
 	 * @param array|Language $language The language to add.
@@ -332,6 +333,11 @@ final class Languages implements \Iterator {
 
 		// Add to the index if successful
 		if ( $language ) {
+			// Abort if somehow already exists
+			if ( $this->find( $language->id ) ) {
+				return $this;
+			}
+
 			// If language has no ID, assign it one
 			if ( $language->id == 0 ) {
 				$language->id = $this->auto_increment++;
