@@ -92,6 +92,7 @@ final class Backend extends Handler {
 
 		// Post Editor Interfaces
 		self::add_hook( 'add_meta_boxes', 'add_post_meta_box', 10, 1 );
+		self::add_hook( 'admin_footer', 'print_finder_modal', 10, 1 );
 
 		// Admin Notices
 		self::add_hook( 'edit_form_top', 'synced_posts_notice', 10, 1 );
@@ -108,7 +109,8 @@ final class Backend extends Handler {
 		// JavaScript Variables
 		self::add_hook( 'admin_footer', 'print_javascript_vars', 10, 0 );
 
-		// Translation creation
+		// AJAX/POST Events
+		self::add_hook( 'wp_ajax_nl_find_translations', 'find_translations', 10, 0 );
 		self::add_hook( 'admin_post_nl_new_translation', 'new_translation', 10, 0 );
 	}
 
@@ -808,7 +810,8 @@ final class Backend extends Handler {
 	/**
 	 * Output the content of the translations meta box.
 	 *
-	 * @since 2.8.0 Add force_default_language option usage.
+	 * @since 2.8.0 Add force_default_language option usage,
+	 *              Add find/replace translation buttons.
 	 * @since 2.6.0 Dropped post selection for translation fields,
 	 *              now uses simpler Create button that opens in new window.
 	 * @since 2.1.0 Added bypass of langauge_is_required.
@@ -897,12 +900,18 @@ final class Backend extends Handler {
 				<?php if ( $languages->count() > 1 ) : ?>
 					<h4 class="nl-heading"><?php _e( 'Translations', 'nlingual' ); ?></h4>
 					<?php foreach ( $languages as $language ) : ?>
-						<div class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?>" data-nl_language="<?php echo $language->id; ?>">
+						<div class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?> <?php echo $translations[ $language->id ] ? 'nl-is-set' : ''; ?>" data-nl_language="<?php echo $language->id; ?>">
 							<input type="hidden" name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input" value="<?php echo $translations[ $language->id ]; ?>" />
 							<label for="nl_translation_<?php echo $language->id; ?>_input">
 								<?php echo $language->system_name; ?>
-								<button type="button" class="button button-small button-primary nl-add-translation"><?php _e( 'Create', 'nlingual' ); ?></button>
-								<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php _e( 'Edit', 'nlingual' ); ?></button>
+								<span class="nl-buttonset nl-if-unset">
+									<button type="button" class="button button-small nl-find-translation"><?php _e( 'Find', 'nlingual' ); ?></button>
+									<button type="button" class="button button-small button-primary nl-add-translation"><?php _e( 'Create', 'nlingual' ); ?></button>
+								</span>
+								<span class="nl-buttonset nl-if-set">
+									<button type="button" class="button button-small nl-find-translation"><?php _e( 'Replace', 'nlingual' ); ?></button>
+									<button type="button" class="button button-small button-primary nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php _e( 'Edit', 'nlingual' ); ?></button>
+								</span>
 							</label>
 						</div>
 					<?php endforeach; ?>
@@ -1164,6 +1173,33 @@ final class Backend extends Handler {
 		<?php
 	}
 
+	/**
+	 * Prints out the template for the "Find Translation" modal.
+	 *
+	 * @since 2.8.0
+	 */
+	public static function print_finder_modal() {
+		$screen = get_current_screen();
+
+		if ( $screen->base !== 'post' ) {
+			return;
+		}
+
+		?>
+		<div id="nl_translation_finder" class="nl-modal">
+			<div class="nl-modal-dialog">
+				<h1 class="nl-modal-header"><?php _e( 'Find/Replace Translation', 'nlingual' ); ?></h1>
+				<button type="button" class="nl-modal-close">
+					<span class="screen-reader-text">Close</span>
+				</button>
+				<div class="nl-modal-body">
+					<ul class="nl-translation-items"></ul>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
 	// =========================
 	// ! Script/Style Enqueues
 	// =========================
@@ -1185,6 +1221,8 @@ final class Backend extends Handler {
 		wp_localize_script( 'nlingual-admin-js', 'nlingualL10n', array(
 			'TranslationTitle'            => __( 'Enter the title for this translation.', 'nlingual' ),
 			'TranslationTitlePlaceholder' => __( '[Needs %1$s Translation]: %2$s', 'nlingual' ),
+			'FindTranslationsError'       => __( 'Error finding translations, please try again later.', 'nlingual' ),
+			'UseFoundTranslation'         => __( 'Are you sure you want to assign/reassign "%1$s" as the %2$s translation?', 'nlingual' ),
 			'NewTranslationError'         => __( 'Error creating translation, please try again later or create one manually.', 'nlingual' ),
 			'NoPostSelected'              => __( 'No post selected to edit.', 'nlingual' ),
 			'NewTranslation'              => __( '[New]', 'nlingual' ),
@@ -1218,8 +1256,55 @@ final class Backend extends Handler {
 	}
 
 	// =========================
-	// ! Translation Creation
+	// ! AJAX/POST Events
 	// =========================
+
+	/**
+	 * Fetch and return a list of applicable posts to assign as translations.
+	 *
+	 * @since 2.8.0
+	 */
+	public static function find_translations() {
+		$data = $_REQUEST;
+
+		// Fail if no type/language is passed
+		if ( ! isset( $data['post_type'] ) || ! isset( $data['language_id'] ) ) {
+			wp_die( __( 'Error finding translations: post type and/or language ID not specified.', 'nlingual' ) );
+		}
+
+		// Fail if post type is not supported
+		if ( ! Registry::is_post_type_supported( $data['post_type'] ) ) {
+			wp_die( __( 'Error finding translations: post type is not supported.', 'nlingual' ) );
+		}
+
+		// Fail if language does not exist
+		$language = Registry::get_language( $data['language_id'] );
+		if ( ! $language ) {
+			wp_die( __( 'Error finding translations: requested language does not exist.', 'nlingual' ) );
+		}
+
+		$language_var = Registry::get( 'query_var' );
+		$posts = get_posts( array(
+			'suppress_filters' => false,
+			'posts_per_page' => -1,
+			'post_type' => $data['post_type'],
+			'orderby' => 'post_date',
+			'order' => 'desc',
+			$language_var => $data['language_id'],
+		) );
+
+		$results = array();
+		foreach ( $posts as $post ) {
+			$results[] = array(
+				'id' => $post->ID,
+				'title' => $post->post_title,
+				'is_assigned' => Translator::get_post_translations( $post->ID ),
+			);
+		}
+
+		echo json_encode( $results );
+		exit;
+	}
 
 	/**
 	 * Create a clone of the requested post in the requested lanuage.
@@ -1237,7 +1322,7 @@ final class Backend extends Handler {
 		// Fail if no post/language id is passed
 		if ( ! isset( $data['post_id'] )
 		|| ! isset( $data['translation_language_id'] ) ) {
-			wp_die( __( 'Error creating translation: post and or language ID not specified.', 'nlingual' ) );
+			wp_die( __( 'Error creating translation: post and/or language ID not specified.', 'nlingual' ) );
 		}
 
 		// Fail if post does not exist

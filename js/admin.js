@@ -1,4 +1,4 @@
-/* globals alert, wp, Backbone, tinymce, inlineEditPost, inlineEditTax, nlingualL10n */
+/* globals alert, confirm, wp, ajaxurl, Backbone, tinymce, inlineEditPost, inlineEditTax, nlingualL10n */
 ( function() {
 	var nL = window.nLingual = {};
 
@@ -493,6 +493,8 @@
 		// ! Meta Box and Quick/Bulk Edit
 		// =========================
 
+		var $finder = $( '#nl_translation_finder' );
+
 		// Update visible translation fields based on current language
 		$( '.nl-language-input' ).change( function() {
 			var id, $parent;
@@ -510,28 +512,67 @@
 			$parent.find( '.nl-translation-' + id ).hide();
 		} ).change(); // Update on page load
 
-		// Show/Hide the Add/Edit buttons based on value
-		$( '.nl-translation-field' ).each( function() {
-			var value = $( this ).find( '.nl-input' ).val();
+		// Create and display a modal listing available posts to use as the translation
+		$( '.nl-find-translation' ).click( function() {
+			var $field, $input, current, post_type, language_id, $list;
 
-			var $add = $( this ).find( '.nl-add-translation' ),
-				$edit = $( this ).find( '.nl-edit-translation' );
+			$field = $( this ).parents( '.nl-field' );
+			$input = $field.find( '.nl-input' );
+			current = parseInt( $input.val(), 10 );
+			post_type = $( '#post_type' ).val();
+			language_id = $input.parents( '.nl-field' ).data( 'nl_language' );
+			$list = $finder.find( 'ul' );
 
-			$edit.hide();
-			if ( parseInt( value ) ) {
-				$add.hide();
-				$edit.show();
+			$finder.show();
+			$list.empty();
+			function assigner( post ) {
+				return function() {
+					var message = nlingualL10n.UseFoundTranslation
+						.replace( '%1$s', post.title )
+						.replace( '%2$s', Languages.get( language_id ).get( 'system_name' ) );
+
+					if ( confirm( message ) ) {
+						$field.addClass( 'nl-is-set' );
+						$input.val( post.id );
+						$finder.hide();
+					}
+				};
 			}
+
+			$.ajax( {
+				url: ajaxurl,
+				data: {
+					action: 'nl_find_translations',
+					post_type: post_type,
+					language_id: language_id,
+				},
+				dataType: 'json',
+				success: function( posts ) {
+					console.log(posts);
+					var i, post, $item;
+
+					for ( i = 0; i < posts.length; i ++ ) {
+						post = posts[ i ];
+
+						$item = $( '<li class="nl-translation-item"></li>' ).text( post.title );
+						$item.toggleClass( 'current', post.id === current );
+						$item.on( 'click', assigner( post ) );
+
+						$list.append( $item );
+					}
+				},
+				error: function( jqXHR ) {
+					alert( jqXHR.responseText || nlingualL10n.FindTranslationsError );
+				}
+			} );
 		} );
 
 		// Create a new translation for the assocaited language
 		$( '.nl-add-translation' ).click( function() {
-			var $field, $input, $add, $edit, post_id, post_language_id, translation_language_id;
+			var $field, $input, post_id, post_language_id, translation_language_id;
 
 			$field = $( this ).parents( '.nl-field' );
 			$input = $field.find( '.nl-input' );
-			$add = $field.find( '.nl-add-translation' );
-			$edit = $field.find( '.nl-edit-translation' );
 			post_id = $( '#post_ID' ).val();
 			post_language_id = $( '#nl_language' ).val();
 			translation_language_id = $input.parents( '.nl-field' ).data( 'nl_language' );
@@ -549,8 +590,7 @@
 
 				$input.val( id );
 
-				$add.hide();
-				$edit.show().attr( 'title' );
+				$field.addClass( 'nl-is-set' );
 			};
 		} );
 

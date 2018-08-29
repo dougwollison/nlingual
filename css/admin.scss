@@ -30,15 +30,28 @@
 		padding: 3px 0;
 		margin: 0 0 5px;
 	}
-		.button {
-			float: right;
-			margin: -3px 0;
-		}
 	select {
 		clear: both;
 		display: block;
 		width: 100%;
 	}
+}
+	.nl-buttonset {
+		float: right;
+
+		.button {
+			float: left;
+			margin: -3px 0 -3px 3px;
+		}
+	}
+
+.nl-if-set,
+.nl-is-set .nl-if-unset {
+	display: none;
+}
+
+.nl-is-set .nl-if-set {
+	display: block;
 }
 
 .nl-language-field {
@@ -300,3 +313,97 @@
 		width: 60px;
 	}
 }
+
+.nl-modal {
+	display: none;
+	position: fixed;
+	z-index: 100100;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(#000, .7);
+
+	&-dialog {
+		position: fixed;
+		z-index: 100105;
+		top: 50%;
+		left: 50%;
+		width: 500px;
+		height: 500px;
+		margin-top: -250px;
+		margin-left: -250px;
+		background: #fff;
+		box-shadow: 0 3px 6px rgba(#000, .3);
+	}
+		&-header {
+			background: #fcfcfc;
+			border-bottom: 1px solid #ddd;
+			height: 36px;
+			font-size: 18px;
+			font-weight: 600;
+			line-height: 36px;
+			margin: 0;
+			padding: 0 36px 0 16px;
+		}
+			&-close {
+				position: absolute;
+				top: 0;
+				right: 0;
+				width: 36px;
+				height: 36px;
+				text-align: center;
+				background: none;
+				padding: 0;
+				margin: 0;
+				border: none;
+				cursor: pointer;
+
+				&:before {
+					content: '\f158';
+					font: 400 20px/36px dashicons;
+					vertical-align: top;
+					speak: none;
+					width: 36px;
+					height: 36px;
+					-webkit-font-smoothing: antialiased;
+				}
+			}
+		&-body {
+			position: absolute;
+			top: 37px;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			padding: 16px;
+		}
+}
+	.nl-translation-items {
+		margin: 0;
+		padding: 0;
+		width: 100%;
+		height: 100%;
+		overflow: auto;
+		border: 1px solid #dfdfdf;
+		background: #fff;
+	}
+		.nl-translation-item {
+			border-bottom: 1px solid #f1f1f1;
+			color: #32373c;
+			padding: 4px 6px 4px 10px;
+			margin: 0;
+			cursor: pointer;
+
+			&:nth-child(odd) {
+				background: #f9f9f9;
+			}
+
+			&:hover {
+				background: #eaf2fa;
+				color: #151515;
+			}
+
+			&.current {
+				font-weight: 600;
+			}
+		}
