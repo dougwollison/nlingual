@@ -109,8 +109,7 @@ final class Backend extends Handler {
 		// JavaScript Variables
 		self::add_hook( 'admin_footer', 'print_javascript_vars', 10, 0 );
 
-		// AJAX/POST Events
-		self::add_hook( 'wp_ajax_nl_find_translations', 'find_translations', 10, 0 );
+		// POST Events
 		self::add_hook( 'admin_post_nl_new_translation', 'new_translation', 10, 0 );
 	}
 
@@ -1256,55 +1255,8 @@ final class Backend extends Handler {
 	}
 
 	// =========================
-	// ! AJAX/POST Events
+	// ! POST Events
 	// =========================
-
-	/**
-	 * Fetch and return a list of applicable posts to assign as translations.
-	 *
-	 * @since 2.8.0
-	 */
-	public static function find_translations() {
-		$data = $_REQUEST;
-
-		// Fail if no type/language is passed
-		if ( ! isset( $data['post_type'] ) || ! isset( $data['language_id'] ) ) {
-			wp_die( __( 'Error finding translations: post type and/or language ID not specified.', 'nlingual' ) );
-		}
-
-		// Fail if post type is not supported
-		if ( ! Registry::is_post_type_supported( $data['post_type'] ) ) {
-			wp_die( __( 'Error finding translations: post type is not supported.', 'nlingual' ) );
-		}
-
-		// Fail if language does not exist
-		$language = Registry::get_language( $data['language_id'] );
-		if ( ! $language ) {
-			wp_die( __( 'Error finding translations: requested language does not exist.', 'nlingual' ) );
-		}
-
-		$language_var = Registry::get( 'query_var' );
-		$posts = get_posts( array(
-			'suppress_filters' => false,
-			'posts_per_page' => -1,
-			'post_type' => $data['post_type'],
-			'orderby' => 'post_date',
-			'order' => 'desc',
-			$language_var => $data['language_id'],
-		) );
-
-		$results = array();
-		foreach ( $posts as $post ) {
-			$results[] = array(
-				'id' => $post->ID,
-				'title' => $post->post_title,
-				'is_assigned' => Translator::get_post_translations( $post->ID ),
-			);
-		}
-
-		echo json_encode( $results );
-		exit;
-	}
 
 	/**
 	 * Create a clone of the requested post in the requested lanuage.
