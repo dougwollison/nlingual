@@ -60,6 +60,14 @@
 			wpInlineEditTax_edit;
 
 		// =========================
+		// ! Generic Events
+		// =========================
+
+		$( 'body' ).on( 'click', '.nl-modal-close', function() {
+			$( this ).parents( '.nl-modal' ).hide();
+		} );
+
+		// =========================
 		// ! Setings Pages
 		// =========================
 
