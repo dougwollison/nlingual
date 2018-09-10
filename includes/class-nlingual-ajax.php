@@ -164,13 +164,24 @@ final class AJAX extends Handler {
 			$language_var => $data['language_id'],
 		) );
 
+		$current = null;
 		$results = array();
 		foreach ( $posts as $post ) {
-			$results[] = array(
+			$result = array(
 				'id' => $post->ID,
 				'title' => $post->post_title,
 				'is_assigned' => Translator::get_post_translations( $post->ID ),
 			);
+
+			if ( $post->ID == $data['translation_id'] ) {
+				$current = $result;
+			} else {
+				$results[] = $result;
+			}
+		}
+
+		if ( $current ) {
+			array_unshift( $results, $current );
 		}
 
 		echo json_encode( $results );

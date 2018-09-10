@@ -545,6 +545,7 @@
 					action: 'nl_find_translations',
 					post_type: post_type,
 					language_id: language_id,
+					translation_id: current,
 				},
 				dataType: 'json',
 				success: function( posts ) {
