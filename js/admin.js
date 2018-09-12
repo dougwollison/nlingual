@@ -1,4 +1,4 @@
-/* globals alert, confirm, wp, ajaxurl, Backbone, tinymce, inlineEditPost, inlineEditTax, nlingualL10n */
+/* globals wp, ajaxurl, _, Backbone, tinymce, inlineEditPost, inlineEditTax, nlingualL10n */
 ( function() {
 	var nL = window.nLingual = {};
 
@@ -42,6 +42,119 @@
 		model: LocalizableField
 	} );
 
+	// Traslation Model
+	var Translation = Framework.Translation = Backbone.Model.extend( {
+		defaults: {
+			title: '',
+			date: '',
+			is_assigned: false,
+		},
+	} );
+
+	// Translations collection
+	var TranslationSet = Framework.TranslationSet = Backbone.Collection.extend( {
+		model: Translation,
+
+		sortBy: function( attr, desc ) {
+			desc = desc === true || desc === 'desc';
+
+			this.models = this.models.sort( function( a, b ) {
+				var aVal = a.get( attr ),
+					bVal = b.get( attr );
+
+				if ( aVal > bVal ) {
+					return desc ? -1 : 1;
+				} else if ( aVal < bVal ) {
+					return desc ? 1 : -1;
+				} else {
+					return 0;
+				}
+			} );
+
+			this.trigger( 'sort', this );
+		},
+	} );
+
+	// Translation view
+	var TranslationItem = Framework.TranslationItem = Backbone.View.extend( {
+		tagName: 'label',
+		className: 'nl-translation-item',
+
+		render: function() {
+			this.$el.empty();
+
+			this.$input = $( '<input type="radio" name="nl_translation_replacement" />' );
+			this.$input.val( this.model.id );
+
+			this.$el.append( this.$input );
+			this.$el.append( this.model.get( 'title' ) );
+
+			this.$el.data( 'sort-title', this.model.get( 'title' ) );
+			this.$el.data( 'sort-date', this.model.get( 'date' ) );
+
+			var is_assigned = this.model.get( 'is_assigned' );
+			if ( is_assigned ) {
+				this.$el.attr( 'title', nlingualL10n.IsTranslationOf.replace( '%s', is_assigned ) );
+			}
+
+			return this;
+		},
+	} );
+
+	// Translations collection view
+	var TranslationItemSet = Framework.TranslationItemSet = Backbone.View.extend( {
+		modelView: TranslationItem,
+
+		initialize: function( options ) {
+			this.children = {};
+			this.collection = options.collection || new TranslationSet();
+
+			_.bindAll( this, 'render', 'addChild', 'sortChildren' );
+
+			this.listenTo( this.collection, 'reset', this.render );
+			this.listenTo( this.collection, 'add', this.addChild );
+			this.listenTo( this.collection, 'sort', this.sortChildren );
+		},
+
+		get: function( id ) {
+			return this.children[ id ];
+		},
+
+		render: function() {
+			this.$el.empty();
+
+			this.collection.each( this.addChild );
+
+			return this;
+		},
+
+		addChild: function( model ) {
+			var view = new this.modelView( {
+				model: model,
+			} );
+
+			this.children[ model.id ] = view;
+			this.$el.append( view.render().el );
+
+			return this;
+		},
+
+		sortChildren: function() {
+			var set = this;
+			this.collection.each( function( model ) {
+				set.get( model.id ).$el.appendTo( set.$el );
+			} );
+		},
+
+		remove: function() {
+			_.each( this.children, function( child ) {
+				child.remove();
+			} );
+
+			Backbone.View.prototype.remove.apply( this, arguments );
+		},
+	} );
+
 	// =========================
 	// ! Setup Main Collections
 	// =========================
@@ -63,7 +176,7 @@
 		// ! Generic Events
 		// =========================
 
-		$( 'body' ).on( 'click', '.nl-modal-close', function() {
+		$( 'body' ).on( 'click', '.nl-modal-close, .nl-modal-cancel', function() {
 			$( this ).parents( '.nl-modal' ).hide();
 		} );
 
@@ -503,6 +616,23 @@
 
 		var $finder = $( '#nl_translation_finder' );
 
+		var finderTranslations = new TranslationSet(),
+			finderTranslationList;
+
+		if ( $finder.length > 0 ) {
+			finderTranslationList = new TranslationItemSet( {
+				collection: finderTranslations,
+				el: $finder.find( '.nl-translation-items' ),
+			} );
+
+			finderTranslationList.render();
+
+			$finder.on( 'click', '.nl-sort', function() {
+				var sort = $( this ).data( 'nl_sort' ).split( ':' );
+				finderTranslations.sortBy( sort[0], sort[1] );
+			} );
+		}
+
 		// Update visible translation fields based on current language
 		$( '.nl-language-input' ).change( function() {
 			var id, $parent;
@@ -522,52 +652,43 @@
 
 		// Create and display a modal listing available posts to use as the translation
 		$( '.nl-find-translation' ).click( function() {
-			var $field, $input, current, post_type, language_id, $list;
+			var $field, $input, post_id, post_type, language_id, translation_id;
 
 			$field = $( this ).parents( '.nl-field' );
 			$input = $field.find( '.nl-input' );
-			current = parseInt( $input.val(), 10 );
+			post_id = $( '#post_ID' ).val();
 			post_type = $( '#post_type' ).val();
 			language_id = $input.parents( '.nl-field' ).data( 'nl_language' );
-			$list = $finder.find( 'ul' );
+			translation_id = parseInt( $input.val(), 10 );
 
-			$finder.show();
-			$list.empty();
-			function assigner( post ) {
-				return function() {
-					var message = nlingualL10n.UseFoundTranslation
-						.replace( '%1$s', post.title )
-						.replace( '%2$s', Languages.get( language_id ).get( 'system_name' ) );
+			$finder.one( 'submit', function( e ) {
+				e.preventDefault();
 
-					if ( confirm( message ) ) {
-						$field.addClass( 'nl-is-set' );
-						$input.val( post.id );
-						$finder.hide();
-					}
-				};
-			}
+				var selected = parseInt( $finder.find( '.nl-translation-item input:checked' ).val() );
+
+				$field.toggleClass( 'nl-is-set', selected );
+				$input.val( selected );
+				$finder.hide();
+
+				finderTranslations.reset( [] );
+			} ).show();
 
 			$.ajax( {
 				url: ajaxurl,
 				data: {
 					action: 'nl_find_translations',
+					post_id: post_id,
 					post_type: post_type,
 					language_id: language_id,
-					translation_id: current,
+					translation_id: translation_id,
 				},
 				dataType: 'json',
 				success: function( posts ) {
-					console.log(posts);
-					var i, post, $item;
+					finderTranslations.reset( posts );
 
-					for ( i = 0; i < posts.length; i ++ ) {
-						post = posts[ i ];
-
-						$item = $( '<li class="nl-translation-item"></li>' ).text( post.title );
-						$item.toggleClass( 'current', post.id === current );
-						$item.on( 'click', assigner( post ) );
-
-						$list.append( $item );
+					var current = finderTranslationList.get( translation_id );
+					if ( current ) {
+						current.$el.find( 'input' ).attr( 'checked', true );
 					}
 				},
 				error: function( jqXHR ) {

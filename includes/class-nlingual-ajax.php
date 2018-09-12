@@ -154,6 +154,8 @@ final class AJAX extends Handler {
 			wp_die( __( 'Error finding translations: requested language does not exist.', 'nlingual' ) );
 		}
 
+		$current_language = Translator::get_post_language( $data['translation_id'] );
+
 		$language_var = Registry::get( 'query_var' );
 		$posts = get_posts( array(
 			'suppress_filters' => false,
@@ -167,10 +169,13 @@ final class AJAX extends Handler {
 		$current = null;
 		$results = array();
 		foreach ( $posts as $post ) {
+			$translation = Translator::get_post_translation( $post->ID, $current_language );
+
 			$result = array(
 				'id' => $post->ID,
+				'date' => $post->post_date,
 				'title' => $post->post_title,
-				'is_assigned' => Translator::get_post_translations( $post->ID ),
+				'is_assigned' => $translation ? get_the_title( $translation ) : false,
 			);
 
 			if ( $post->ID == $data['translation_id'] ) {

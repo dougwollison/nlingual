@@ -901,17 +901,16 @@ final class Backend extends Handler {
 					<?php foreach ( $languages as $language ) : ?>
 						<div class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?> <?php echo $translations[ $language->id ] ? 'nl-is-set' : ''; ?>" data-nl_language="<?php echo $language->id; ?>">
 							<input type="hidden" name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input" value="<?php echo $translations[ $language->id ]; ?>" />
-							<label for="nl_translation_<?php echo $language->id; ?>_input">
-								<?php echo $language->system_name; ?>
-								<span class="nl-buttonset nl-if-unset">
-									<button type="button" class="button button-small nl-find-translation"><?php _e( 'Find', 'nlingual' ); ?></button>
-									<button type="button" class="button button-small button-primary nl-add-translation"><?php _e( 'Create', 'nlingual' ); ?></button>
-								</span>
-								<span class="nl-buttonset nl-if-set">
-									<button type="button" class="button button-small nl-find-translation"><?php _e( 'Replace', 'nlingual' ); ?></button>
-									<button type="button" class="button button-small button-primary nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php _e( 'Edit', 'nlingual' ); ?></button>
-								</span>
-							</label>
+
+							<?php echo $language->system_name; ?>
+							<span class="nl-buttonset nl-if-unset">
+								<button type="button" class="button button-small nl-find-translation"><?php _e( 'Find', 'nlingual' ); ?></button>
+								<button type="button" class="button button-small button-primary nl-add-translation"><?php _e( 'Create', 'nlingual' ); ?></button>
+							</span>
+							<span class="nl-buttonset nl-if-set">
+								<button type="button" class="button button-small nl-find-translation"><?php _e( 'Replace', 'nlingual' ); ?></button>
+								<button type="button" class="button button-small button-primary nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php _e( 'Edit', 'nlingual' ); ?></button>
+							</span>
 						</div>
 					<?php endforeach; ?>
 				<?php endif; ?>
@@ -1185,17 +1184,32 @@ final class Backend extends Handler {
 		}
 
 		?>
-		<div id="nl_translation_finder" class="nl-modal">
+		<form id="nl_translation_finder" class="nl-modal">
 			<div class="nl-modal-dialog">
-				<h1 class="nl-modal-header"><?php _e( 'Find/Replace Translation', 'nlingual' ); ?></h1>
-				<button type="button" class="nl-modal-close">
-					<span class="screen-reader-text">Close</span>
-				</button>
+				<div class="nl-modal-header">
+					<h1 class="nl-modal-title"><?php _e( 'Find/Replace Translation', 'nlingual' ); ?></h1>
+					<button type="reset" class="nl-modal-close">
+						<span class="screen-reader-text">Close</span>
+					</button>
+				</div>
 				<div class="nl-modal-body">
-					<ul class="nl-translation-items"></ul>
+					<div class="nl-translation-items"></div>
+					<label class="nl-translation-item nl-translation-unset">
+						<input type="radio" name="nl_translation_replacement" value="0" />
+						<?php _e( 'None; Remove Translation', 'nlingual' ); ?>
+					</label>
+				</div>
+				<div class="nl-modal-footer">
+					<button type="button" class="button nl-sort" data-nl_sort="date:desc">
+						<?php _e( 'Sort by Date', 'nlingual' ); ?>
+					</button>
+					<button type="button" class="button nl-sort" data-nl_sort="title:asc">
+						<?php _e( 'Sort by Title', 'nlingual' ); ?>
+					</button>
+					<button type="submit" class="button button-primary"><?php _ex( 'Confirm', 'nlingual' ); ?></button>
 				</div>
 			</div>
-		</div>
+		</form>
 		<?php
 	}
 
@@ -1221,6 +1235,7 @@ final class Backend extends Handler {
 			'TranslationTitle'            => __( 'Enter the title for this translation.', 'nlingual' ),
 			'TranslationTitlePlaceholder' => __( '[Needs %1$s Translation]: %2$s', 'nlingual' ),
 			'FindTranslationsError'       => __( 'Error finding translations, please try again later.', 'nlingual' ),
+			'IsTranslationOf'             => __( 'This translation already belongs to "%s"', 'nlingual' ),
 			'UseFoundTranslation'         => __( 'Are you sure you want to assign/reassign "%1$s" as the %2$s translation?', 'nlingual' ),
 			'NewTranslationError'         => __( 'Error creating translation, please try again later or create one manually.', 'nlingual' ),
 			'NoPostSelected'              => __( 'No post selected to edit.', 'nlingual' ),
