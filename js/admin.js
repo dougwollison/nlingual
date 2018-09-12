@@ -656,21 +656,31 @@
 
 			$field = $( this ).parents( '.nl-field' );
 			$input = $field.find( '.nl-input' );
-			post_id = $( '#post_ID' ).val();
-			post_type = $( '#post_type' ).val();
-			language_id = $input.parents( '.nl-field' ).data( 'nl_language' );
+
+			if ( $field.parents( '.postbox' ).length > 0 ) {
+				post_id = $( '#post_ID' ).val();
+				post_type = $( '#post_type' ).val();
+			} else {
+				post_id = $field.data( 'post_id' );
+				post_type = $( '.post_type_page' ).val();
+			}
+
+			language_id = $field.data( 'nl_language' );
 			translation_id = parseInt( $input.val(), 10 );
 
 			$finder.one( 'submit', function( e ) {
 				e.preventDefault();
 
-				var selected = parseInt( $finder.find( '.nl-translation-item input:checked' ).val() );
+				var $selected = $finder.find( '.nl-translation-item input:checked' );
+				var translation_id = parseInt( $selected.val() );
 
-				$field.toggleClass( 'nl-is-set', selected );
-				$input.val( selected );
-				$finder.hide();
+				$input.val( translation_id );
+
+				$field.toggleClass( 'nl-is-set', !! translation_id );
+				$field.find( '.nl-translation-title' ).text( translation_id ? $selected.parent( '.nl-translation-item' ).text() : '' );
 
 				finderTranslations.reset( [] );
+				$finder.hide();
 			} ).show();
 
 			$.ajax( {
@@ -780,12 +790,16 @@
 
 				// Update the translations fields
 				$editRow.find( '.nl-translation-field' ).each( function() {
-					var id, translation;
+					var id, translation_id, translation_title;
+
+					$( this ).data( 'post_id', post_id );
 
 					id = $( this ).data( 'nl_language' );
-					translation = $postRow.find( '.nl-translation-' + id ).val();
+					translation_id = $postRow.find( '.nl-translation-' + id ).val();
+					translation_title = $postRow.find( '.nl-translation-' + id + '-title' ).val();
 
-					$( this ).find( 'select' ).val( translation || 0 );
+					$( this ).toggleClass( 'nl-is-set', translation_id ).find( '.nl-input' ).val( translation_id || 0 );
+					$( this ).find( '.nl-translation-title' ).text( translation_title );
 				} );
 			};
 		}

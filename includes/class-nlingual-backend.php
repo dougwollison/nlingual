@@ -623,10 +623,11 @@ final class Backend extends Handler {
 			foreach ( $translations as $language_id => $post ) {
 				if ( $language = Registry::get_language( $language_id ) ) {
 					echo '<li>';
-					printf( '<input type="hidden" class="nl-translation-%d" value="%d" />', $language->id, $post );
-					$link = sprintf( '<a href="%s" target="_blank">%s</a>', get_edit_post_link( $post ), get_the_title( $post ) );
-					/* Translators: %1$s = The name of the language, %2$s = The title of the post, wrapped in a link */
-					_efx( '%1$s: %2$s', 'language: title', 'nlingual', $language->system_name, $link );
+						printf( '<input type="hidden" class="nl-translation-%d" value="%d" />', $language->id, $post );
+						printf( '<input type="hidden" class="nl-translation-%d-title" value="%s" />', $language->id, esc_attr( get_the_title( $post ) ) );
+						$link = sprintf( '<a href="%s" target="_blank">%s</a>', get_edit_post_link( $post ), get_the_title( $post ) );
+						/* Translators: %1$s = The name of the language, %2$s = The title of the post, wrapped in a link */
+						_efx( '%1$s: %2$s', 'language: title', 'nlingual', $language->system_name, $link );
 					echo '<li>';
 				}
 			}
@@ -665,6 +666,9 @@ final class Backend extends Handler {
 			return;
 		}
 
+		// Get the post type's object
+		$post_type_obj = get_post_type_object( $post_type );
+
 		// Get the languages list
 		$languages = Registry::languages();
 		?>
@@ -690,30 +694,19 @@ final class Backend extends Handler {
 				</div>
 				<div class="inline-edit-col nl-set-translations">
 					<?php foreach ( $languages as $language ) : ?>
-						<label class="nl-translation-field nl-translation-<?php echo $language->id; ?>" title="<?php
-							/* Translators: %s = The name of the language */
-							_ef( 'Assign %s Translation', 'nlingual', $language->system_name ); ?>" data-nl_language="<?php echo $language->id; ?>">
-							<span class="title"><?php echo $language->system_name; ?></span>
-							<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
-								<option value="0">&mdash; <?php _ex( 'None', 'no translation', 'nlingual' ); ?> &mdash;</option>
-								<?php
-								// Get all posts in this language
-								$posts = $wpdb->get_results( $wpdb->prepare( "
-									SELECT p.ID, p.post_title
-									FROM $wpdb->nl_translations AS t
-									LEFT JOIN $wpdb->posts AS p ON (t.object_id = p.ID)
-									WHERE t.object_type = 'post'
-									AND t.language_id = %d
-									AND p.post_type = %s
-									ORDER BY p.post_date DESC
-								", $language->id, $post_type ) );
+						<label for="" class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?>" data-nl_language="<?php echo $language->id; ?>">
+							<input type="hidden" name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input" />
 
-								// Print the options
-								foreach ( $posts as $option ) {
-									printf( '<option value="%s">%s</option>', $option->ID, $option->post_title );
-								}
-								?>
-							</select>
+							<span class="title"><?php echo $language->system_name; ?></span>
+							<span class="nl-translation-title"></span>
+							<span class="nl-buttonset nl-if-unset">
+								<button type="button" class="button button-small nl-find-translation"><?php _e( 'Find', 'nlingual' ); ?></button>
+								<button type="button" class="button button-small button-primary nl-add-translation"><?php _e( 'Create', 'nlingual' ); ?></button>
+							</span>
+							<span class="nl-buttonset nl-if-set">
+								<button type="button" class="button button-small nl-find-translation"><?php _e( 'Replace', 'nlingual' ); ?></button>
+								<button type="button" class="button button-small button-primary nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type_obj->_edit_link . '&action=edit' ) ); ?>"><?php _e( 'Edit', 'nlingual' ); ?></button>
+							</span>
 						</label>
 					<?php endforeach; ?>
 				</div>
@@ -1179,7 +1172,7 @@ final class Backend extends Handler {
 	public static function print_finder_modal() {
 		$screen = get_current_screen();
 
-		if ( $screen->base !== 'post' ) {
+		if ( ! in_array( $screen->base, array( 'post', 'edit' ) ) ) {
 			return;
 		}
 
