@@ -787,10 +787,15 @@ final class Backend extends Handler {
 	public static function add_post_meta_box() {
 		$post_types = Registry::get( 'post_types' );
 
+		$title = __( 'Language & Translations', 'nlingual' );
+		if ( Registry::get( 'force_default_language' ) ) {
+			$title = __( 'Translations', 'nlingual' );
+		}
+
 		foreach ( $post_types as $post_type ) {
 			add_meta_box(
 				'nlingual_translations', // id
-				__( 'Language & Translations', 'nlingual' ), // title
+				$title, // title
 				array( __CLASS__, 'post_meta_box' ), // callback
 				$post_type, // screen
 				'side', // context
@@ -863,7 +868,7 @@ final class Backend extends Handler {
 			}
 		}
 		?>
-		<div class="nl-translations-manager">
+		<div class="nl-translations-manager <?php echo $force_default_language ? 'nl-is-translationsonly' : ''; ?>">
 			<?php if ( $force_default_language ) : ?>
 				<input type="hidden" name="nlingual_language" id="nl_language" class="nl-input nl-language-input" value="<?php echo $post_language ? $post_language->id : Registry::default_language( 'id' ); ?>">
 			<?php else: ?>
@@ -892,10 +897,16 @@ final class Backend extends Handler {
 				<?php if ( $languages->count() > 1 ) : ?>
 					<?php foreach ( $languages as $language ) : $translation = $translations[ $language->id ]; ?>
 						<div class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?> <?php echo $translation ? 'nl-is-set' : ''; ?>" data-nl_language="<?php echo $language->id; ?>">
-							<h4 class="nl-heading"><?php _ef( '%s Translation', 'nlingual', $language->system_name ); ?></h4>
 							<input type="hidden" name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input" value="<?php echo $translation; ?>" />
 
+							<?php if ( $force_default_language ) : ?>
+								<h4 class="nl-heading"><?php echo $language->system_name; ?></h4>
+							<?php else: ?>
+								<h4 class="nl-heading"><?php _ef( '%s Translation', 'nlingual', $language->system_name ); ?></h4>
+							<?php endif; ?>
+
 							<span class="nl-translation-title"><?php echo $translation ? get_the_title( $translation ) : ''; ?></span>
+
 							<span class="nl-buttonset nl-if-unset">
 								<button type="button" class="button button-small nl-find-translation"><?php _e( 'Find', 'nlingual' ); ?></button>
 								<button type="button" class="button button-small button-primary nl-add-translation"><?php _e( 'Create', 'nlingual' ); ?></button>

@@ -54,7 +54,14 @@
 
 .nl-translation-field {
 	@extend %clearfix;
-	margin: 10px 0 5px;
+	margin: 10px 0;
+
+	.nl-is-translationsonly & {
+		&,
+		.nl-heading {
+			margin-top: 0;
+		}
+	}
 }
 	.nl-translation-title {
 		&:before {
