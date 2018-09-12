@@ -53,8 +53,19 @@
 }
 
 .nl-translation-field {
+	@extend %clearfix;
 	margin: 10px 0 5px;
 }
+	.nl-translation-title {
+		&:before {
+			content: '[Not Set]';
+			font-style: italic;
+
+			.nl-is-set & {
+				content: none;
+			}
+		}
+	}
 
 .nl-manage-translations {
 	.nl-buttonset {

@@ -890,12 +890,12 @@ final class Backend extends Handler {
 
 			<div class="nl-manage-translations">
 				<?php if ( $languages->count() > 1 ) : ?>
-					<h4 class="nl-heading"><?php _e( 'Translations', 'nlingual' ); ?></h4>
-					<?php foreach ( $languages as $language ) : ?>
-						<div class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?> <?php echo $translations[ $language->id ] ? 'nl-is-set' : ''; ?>" data-nl_language="<?php echo $language->id; ?>">
-							<input type="hidden" name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input" value="<?php echo $translations[ $language->id ]; ?>" />
+					<?php foreach ( $languages as $language ) : $translation = $translations[ $language->id ]; ?>
+						<div class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?> <?php echo $translation ? 'nl-is-set' : ''; ?>" data-nl_language="<?php echo $language->id; ?>">
+							<h4 class="nl-heading"><?php _ef( '%s Translation', 'nlingual', $language->system_name ); ?></h4>
+							<input type="hidden" name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input" value="<?php echo $translation; ?>" />
 
-							<?php echo $language->system_name; ?>
+							<span class="nl-translation-title"><?php echo $translation ? get_the_title( $translation ) : ''; ?></span>
 							<span class="nl-buttonset nl-if-unset">
 								<button type="button" class="button button-small nl-find-translation"><?php _e( 'Find', 'nlingual' ); ?></button>
 								<button type="button" class="button button-small button-primary nl-add-translation"><?php _e( 'Create', 'nlingual' ); ?></button>
