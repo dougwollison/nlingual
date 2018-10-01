@@ -621,6 +621,7 @@ final class System extends Handler {
 	/**
 	 * Delete the language for a post being deleted.
 	 *
+	 * @since 2.7.1 Add check for post's type being supported.
 	 * @since 2.0.0
 	 *
 	 * @uses Translator::delete_post_language() to handle the deletion.
@@ -628,6 +629,11 @@ final class System extends Handler {
 	 * @param int $post_id The ID of the post that was deleted.
 	 */
 	public static function delete_post_language( $post_id ) {
+		// Abort if the post's post type isn't supported
+		if ( ! Registry::is_post_type_supported( get_post_type( $post_id ) ) ) {
+			return;
+		}
+
 		// Delete the language
 		Translator::delete_post_language( $post_id );
 	}
