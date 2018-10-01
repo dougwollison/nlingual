@@ -978,6 +978,7 @@ final class System extends Handler {
 	/**
 	 * Set the queried language to the current one if applicable
 	 *
+	 * @since 2.7.1 Added check for parent's post type being supported.
 	 * @since 2.7.0 Revised support checks for post type archives.
 	 * @since 2.6.0 Perform tax query handling first, then post type archive.
 	 * @since 2.1.1 Fixed post type and taxonomy checks to be more less picky.
@@ -1039,8 +1040,8 @@ final class System extends Handler {
 			return;
 		}
 
-		// If the parent is specified, and has a language itself, don't bother
-		if ( ( $parent = $query->get( 'post_parent' ) ) && Translator::get_post_language( $parent ) ) {
+		// If the parent is specified, is of a supported type, and has a language itself, don't bother
+		if ( ( $parent = $query->get( 'post_parent' ) ) && Registry::is_post_type_supported( get_post_type( $parent ) ) && Translator::get_post_language( $parent ) ) {
 			return;
 		}
 
