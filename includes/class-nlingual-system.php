@@ -309,6 +309,7 @@ final class System extends Handler {
 	/**
 	 * Register hooks.
 	 *
+	 * @since 2.7.1 Moved rewrite_locale to Frontend.
 	 * @since 2.6.0 Added transition (un)flagging.
 	 * @since 2.4.0 Only add patch_font_stack hook if before 4.6.
 	 * @since 2.2.0 Reassigned synchronize_posts to wp_insert_post (better hook to use).
@@ -318,9 +319,8 @@ final class System extends Handler {
 		// Setup Stuff
 		self::add_hook( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
 
-		// Language Detection/Rewriting
+		// Language Detection
 		self::add_hook( 'plugins_loaded', 'detect_language', 10, 0 );
-		self::add_hook( 'locale', 'rewrite_locale', 10, 0 );
 
 		// Text Domain Manipulation
 		self::add_hook( 'theme_locale', 'log_textdomain_type', 10, 2 );
@@ -424,7 +424,7 @@ final class System extends Handler {
 	}
 
 	// =========================
-	// ! Language Detection/Rewriting
+	// ! Language Detection
 	// =========================
 
 	/**
@@ -493,20 +493,6 @@ final class System extends Handler {
 			// Set the language, but don't lock it
 			Registry::set_language( $language );
 		}
-	}
-
-	/**
-	 * Replace the locale with that of the current language.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Registry::current_language() to get the current language.
-	 *
-	 * @return string The replaced locale.
-	 */
-	public static function rewrite_locale() {
-		// Return the current language's locale_name
-		return Registry::current_language( 'locale_name' );
 	}
 
 	// =========================
@@ -621,6 +607,7 @@ final class System extends Handler {
 	/**
 	 * Delete the language for a post being deleted.
 	 *
+	 * @since 2.7.1 Add check for post's type being supported.
 	 * @since 2.0.0
 	 *
 	 * @uses Translator::delete_post_language() to handle the deletion.
@@ -628,6 +615,11 @@ final class System extends Handler {
 	 * @param int $post_id The ID of the post that was deleted.
 	 */
 	public static function delete_post_language( $post_id ) {
+		// Abort if the post's post type isn't supported
+		if ( ! Registry::is_post_type_supported( get_post_type( $post_id ) ) ) {
+			return;
+		}
+
 		// Delete the language
 		Translator::delete_post_language( $post_id );
 	}
@@ -978,6 +970,7 @@ final class System extends Handler {
 	/**
 	 * Set the queried language to the current one if applicable
 	 *
+	 * @since 2.7.1 Added check for parent's post type being supported.
 	 * @since 2.7.0 Revised support checks for post type archives.
 	 * @since 2.6.0 Perform tax query handling first, then post type archive.
 	 * @since 2.1.1 Fixed post type and taxonomy checks to be more less picky.
@@ -1039,8 +1032,8 @@ final class System extends Handler {
 			return;
 		}
 
-		// If the parent is specified, and has a language itself, don't bother
-		if ( ( $parent = $query->get( 'post_parent' ) ) && Translator::get_post_language( $parent ) ) {
+		// If the parent is specified, is of a supported type, and has a language itself, don't bother
+		if ( ( $parent = $query->get( 'post_parent' ) ) && Registry::is_post_type_supported( get_post_type( $parent ) ) && Translator::get_post_language( $parent ) ) {
 			return;
 		}
 
@@ -1184,6 +1177,7 @@ final class System extends Handler {
 	/**
 	 * Filter the results of get_pages, removing those not in the current language.
 	 *
+	 * @since 2.7.1 Add handling for an array of languages being requested.
 	 * @since 2.6.0 Add check to make sure the Page post type is supported.
 	 * @since 2.0.0
 	 *
@@ -1205,7 +1199,9 @@ final class System extends Handler {
 
 		// Get the id of the current language or the requested one
 		if ( isset( $args['language'] ) ) {
-			$filter_language = Registry::get_language( $args['language'] );
+			// Check only the first real language
+			$requested_languages = array_filter( (array) $args['language'] );
+			$filter_language = Registry::get_language( $requested_languages[0] );
 
 			// If it's not a valid language, return the original list
 			if ( ! $filter_language ) {
