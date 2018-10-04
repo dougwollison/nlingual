@@ -45,6 +45,7 @@ final class Frontend extends Handler {
 	/**
 	 * Register hooks.
 	 *
+	 * @since 2.7.1 Added rewrite_locale from System.
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
@@ -52,6 +53,9 @@ final class Frontend extends Handler {
 		if ( is_backend() ) {
 			return;
 		}
+
+		// Language Rewriting
+		self::add_hook( 'locale', 'rewrite_locale', 10, 0 );
 
 		// Language Redirection
 		self::add_hook( 'wp', 'redirect_language', 10, 0 );
@@ -93,6 +97,24 @@ final class Frontend extends Handler {
 
 		// Admin Bar Additions
 		self::add_hook( 'admin_bar_menu', 'add_translate_menu', 81, 1 ); // should occur after Edit menu item
+	}
+
+	// =========================
+	// ! Language Rewriting
+	// =========================
+
+	/**
+	 * Replace the locale with that of the current language.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::current_language() to get the current language.
+	 *
+	 * @return string The replaced locale.
+	 */
+	public static function rewrite_locale() {
+		// Return the current language's locale_name
+		return Registry::current_language( 'locale_name' );
 	}
 
 	// =========================

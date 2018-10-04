@@ -309,6 +309,7 @@ final class System extends Handler {
 	/**
 	 * Register hooks.
 	 *
+	 * @since 2.7.1 Moved rewrite_locale to Frontend.
 	 * @since 2.6.0 Added transition (un)flagging.
 	 * @since 2.4.0 Only add patch_font_stack hook if before 4.6.
 	 * @since 2.2.0 Reassigned synchronize_posts to wp_insert_post (better hook to use).
@@ -318,9 +319,8 @@ final class System extends Handler {
 		// Setup Stuff
 		self::add_hook( 'plugins_loaded', 'setup_localizable_fields', 10, 0 );
 
-		// Language Detection/Rewriting
+		// Language Detection
 		self::add_hook( 'plugins_loaded', 'detect_language', 10, 0 );
-		self::add_hook( 'locale', 'rewrite_locale', 10, 0 );
 
 		// Text Domain Manipulation
 		self::add_hook( 'theme_locale', 'log_textdomain_type', 10, 2 );
@@ -424,7 +424,7 @@ final class System extends Handler {
 	}
 
 	// =========================
-	// ! Language Detection/Rewriting
+	// ! Language Detection
 	// =========================
 
 	/**
@@ -493,20 +493,6 @@ final class System extends Handler {
 			// Set the language, but don't lock it
 			Registry::set_language( $language );
 		}
-	}
-
-	/**
-	 * Replace the locale with that of the current language.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @uses Registry::current_language() to get the current language.
-	 *
-	 * @return string The replaced locale.
-	 */
-	public static function rewrite_locale() {
-		// Return the current language's locale_name
-		return Registry::current_language( 'locale_name' );
 	}
 
 	// =========================
