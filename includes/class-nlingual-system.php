@@ -1177,6 +1177,7 @@ final class System extends Handler {
 	/**
 	 * Filter the results of get_pages, removing those not in the current language.
 	 *
+	 * @since 2.7.1 Add handling for an array of languages being requested.
 	 * @since 2.6.0 Add check to make sure the Page post type is supported.
 	 * @since 2.0.0
 	 *
@@ -1198,7 +1199,9 @@ final class System extends Handler {
 
 		// Get the id of the current language or the requested one
 		if ( isset( $args['language'] ) ) {
-			$filter_language = Registry::get_language( $args['language'] );
+			// Check only the first real language
+			$requested_languages = array_filter( (array) $args['language'] );
+			$filter_language = Registry::get_language( $requested_languages[0] );
 
 			// If it's not a valid language, return the original list
 			if ( ! $filter_language ) {
