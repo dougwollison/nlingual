@@ -44,6 +44,7 @@ final class Backend extends Handler {
 	/**
 	 * Register hooks.
 	 *
+	 * @since 2.7.1 Added page_attributes_dropdown_pages_args filter.
 	 * @since 2.6.0 Added fix_localized_admin_url setup.
 	 * @since 2.0.0
 	 *
@@ -80,6 +81,7 @@ final class Backend extends Handler {
 		self::add_hook( 'query_vars', 'add_language_var' );
 		self::add_hook( 'display_post_states', 'flag_translated_pages', 10, 2 );
 		self::add_hook( 'restrict_manage_posts', 'add_language_filter', 10, 0 );
+		self::add_hook( 'page_attributes_dropdown_pages_args', 'maybe_set_queried_language', 10, 2 );
 		$post_types = Registry::get( 'post_types' );
 		foreach ( $post_types as $post_type ) {
 			self::add_hook( "manage_{$post_type}_posts_columns", 'add_language_column', 15, 1 );
@@ -561,6 +563,26 @@ final class Backend extends Handler {
 		<?php
 	}
 
+	/**
+	 * Filter the query args, adding langauge if applicable.
+	 *
+	 * @since 2.7.1
+	 *
+	 * @param array   $args The WP_Query arguments to filter.
+	 * @param WP_Post $post The post for context.
+	 *
+	 * @return array The filtered query args.
+	 */
+	public static function maybe_set_queried_language( $args, $post ) {
+		if ( ! Registry::get( 'show_all_languages' ) && Registry::is_post_type_supported( $post->post_type ) ) {
+			$query_var = Registry::get( 'query_var' );
+			$language = Translator::get_post_language( $post );
+
+			$args[ $query_var ] = array( $language->id, '0' );
+		}
+
+		return $args;
+	}
 
 	/**
 	 * Add the language/translations column to the post edit screen.
