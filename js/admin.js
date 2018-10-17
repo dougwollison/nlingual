@@ -287,13 +287,13 @@
 		// =========================
 
 		// Setup the base localizer
-		$localizerTemplate = $( '<span class="nl-localizer"></span>' ).html( function() {
-			var html = '<span class="nl-localizer-toggle" title="' + nlingualL10n.LocalizeThis + '"></span>';
+		$localizerTemplate = $( '<div class="nl-localizer"></div>' ).html( function() {
+			var html = '<div class="nl-localizer-toggle" title="' + nlingualL10n.LocalizeThis + '"></div>';
 
 			Languages.each( function( language ) {
-				html += '<span class="nl-localizer-option" title="' + nlingualL10n.LocalizeFor.replace( '%s', language.get( 'system_name' ) ) + '" data-nl_language="' + language.id + '">' +
-					'<i class="nl-option-text" data-slug="' + language.get( 'slug' ) + '">' + language.get( 'system_name' ) + '</i>' +
-				'</span>';
+				html += '<div class="nl-localizer-option" title="' + nlingualL10n.LocalizeFor.replace( '%s', language.get( 'system_name' ) ) + '" data-nl_language="' + language.id + '">' +
+					'<div class="nl-option-text" data-slug="' + language.get( 'slug' ) + '">' + language.get( 'system_name' ) + '</div>' +
+				'</div>';
 			} );
 
 			return html;
@@ -325,7 +325,7 @@
 				$wrap = $field.parents( '.wp-editor-wrap' );
 			} else {
 				// Wrap the field in a container
-				$field.wrap( '<span class="nl-localizable"></span>' );
+				$field.wrap( '<div class="nl-localizable"></div>' );
 				$wrap = $field.parent();
 			}
 
