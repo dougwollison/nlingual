@@ -1,4 +1,4 @@
-/* globals alert, wp, Backbone, tinymce, inlineEditPost, inlineEditTax, nlingualL10n */
+/* globals alert, wp, _, Backbone, tinymce, inlineEditPost, inlineEditTax, nlingualL10n */
 ( function() {
 	var nL = window.nLingual = {};
 
@@ -486,6 +486,91 @@
 
 				this.fire( 'SavedContent' );
 				$( this.getElement() ).trigger( 'nl:localizer:save' );
+			};
+		}
+
+		// =========================
+		// ! - WP Media Extension
+		// =========================
+
+		if ( wp && wp.media && wp.media.view ) {
+			var oldAttachmentDetailsRender = wp.media.view.Attachment.Details.prototype.render;
+
+			wp.media.view.Attachment.Details.prototype.render = function() {
+				var returnVal, localized_values, $selector, $languages, view, localized_values, $fields;
+
+				returnVal = oldAttachmentDetailsRender.apply( this, arguments );
+
+				localized_values = this.model.get( 'localized_values' );
+
+				if ( ! localized_values ) {
+					return returnVal;
+				}
+
+				$selector = $( '<label class="setting nl-localizer-languages"></label>' ).html( function() {
+					var html = '<span class="name">Translate</span>';
+
+					html += '<span class="value">';
+					Languages.each( function( language, index ) {
+						if ( index > 0 ) {
+							html += ' | ';
+						}
+						html += '<a href="#" class="nl-localizer-language" data-nl_language="' + language.id + '">' + language.get( 'system_name' ) + '</a>';
+					} );
+					html += '</span>';
+
+					return html;
+				} );
+
+				$languages = $selector.find( '.nl-localizer-language' );
+
+				this.$( '.settings' ).prepend( $selector );
+
+				view = this;
+				_.each( [ 'title', 'caption', 'alt', 'description' ], function( field ) {
+					var $field, $last_insert;
+
+					$field = $last_insert = view.$( '.setting[data-setting="' + field + '"]' );
+
+					$field.addClass( 'nl-localizer-field' );
+
+					Languages.each( function( language ) {
+						var setting, $localized;
+
+						if ( language.id === nL.default_language ) {
+							return true;
+						}
+
+						setting = 'localized_' + language.id + '_' + field;
+						$localized = $field.clone();
+
+						$localized.addClass( 'nl-language-' + language.id );
+						$localized.data( 'setting', setting ).attr( 'data-setting', setting );
+						$localized.find( 'input,textarea' ).val( localized_values[ field ][ language.id ] );
+
+						$last_insert.after( $localized );
+						$last_insert = $localized;
+					} );
+
+					$field.addClass( 'nl-language-' + nL.default_language );
+				} );
+
+				$fields = this.$( '.nl-localizer-field' );
+
+				$languages.on( 'click', function() {
+					var language_id;
+
+					$languages.removeClass( 'nl-current' );
+					$( this ).addClass( 'nl-current' );
+
+					language_id = $( this ).data( 'nl_language' );
+
+					$fields.hide().filter( '.nl-language-' + language_id ).show();
+				} );
+
+				$languages.filter( '[data-nl_language="' + nL.default_language + '"]' ).trigger( 'click' );
+
+				return returnVal;
 			};
 		}
 

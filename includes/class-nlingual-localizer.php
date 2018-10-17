@@ -140,6 +140,22 @@ final class Localizer extends Handler {
 	 */
 	private static $localizable_post_fields = array( 'post_content', 'post_title', 'post_excerpt' );
 
+	/**
+	 * Reference of what keys belong to what localizable attachment fields.
+	 *
+	 * @internal
+	 *
+	 * @since 2.8.0
+	 *
+	 * @var array
+	 */
+	private static $localizable_attachment_fields = array(
+		'title' => 'post_field:post_title',
+		'caption' => 'post_field:post_excerpt',
+		'description' => 'post_field:post_content',
+		'alt' => 'meta.post:_wp_attachment_image_alt',
+	);
+
 	// =========================
 	// ! Property Access
 	// =========================
@@ -242,6 +258,10 @@ final class Localizer extends Handler {
 			// Setup preloading of all localized options
 			self::add_hook( 'init', 'preload_localized_fields', 10, 0 );
 		}
+
+		// Attachment-specific notes
+		self::add_hook( 'wp_prepare_attachment_for_js', 'handle_localized_attachment_for_js', 10, 2 );
+		self::add_hook( 'attachment_updated', 'update_localized_attachment_from_js', 10, 2 );
 	}
 
 	// =========================
@@ -1188,6 +1208,71 @@ final class Localizer extends Handler {
 		foreach ( $fields as $field ) {
 			$cache_id = "{$field['field_key']}/{$field['object_id']}/{$field['language_id']}";
 			wp_cache_set( $cache_id, $field['localized_value'], 'nlingual:localized' );
+		}
+	}
+
+	// =========================
+	// ! Attachment Specific
+	// =========================
+
+	/**
+	 * Filter the attachment data prepared for JavaScript.
+	 *
+	 * Adds the localized values for title/caption/alt/description.
+	 *
+	 * @internal
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param array  $response   Array of prepared attachment data.
+	 * @param object $attachment Attachment ID or object.
+	 *
+	 * @return array The filtered attachment data.
+	 */
+	public static function handle_localized_attachment_for_js( $response, $attachment ) {
+		$localized_values = array();
+
+		foreach ( self::$localizable_attachment_fields as $name => $key ) {
+			$localized_values[ $name ] = Localizer::get_field_values( $key, $attachment->ID );
+		}
+
+		$response['localized_values'] = $localized_values;
+
+		return $response;
+	}
+
+	/**
+	 * Stores the updated attachment data from AJAX.
+	 *
+	 * @internal
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Localizer::save_field_value() to save the localized value.
+	 *
+	 * @param int $post_id The ID of the post being updated.
+	 * @param WP_Post $post The updated post object.
+	 */
+	public static function update_localized_attachment_from_js( $post_id, $post ) {
+		// Abort if no post is specified
+		if ( ! $post ) return;
+
+		// Abort if not an AJAX submission with changes
+		if ( ! defined( 'DOING_AJAX' ) || ! isset( $_REQUEST['id'] ) || ! isset( $_REQUEST['changes'] ) ) {
+			return;
+		}
+
+		$languages = Registry::languages();
+		$changes = $_REQUEST['changes'];
+
+		// Loop through the localizable attachment fields, find and use the transmitted values
+		foreach ( self::$localizable_attachment_fields as $name => $key ) {
+			foreach ( $languages as $language ) {
+				$change_key = "localized_{$language->id}_$name";
+				if ( isset( $changes[ $change_key ] ) ) {
+					Localizer::save_field_value( $key, $language->id, $post_id, $changes[ $change_key ] );
+				}
+			}
 		}
 	}
 

@@ -188,6 +188,13 @@
 			max-width: 150px;
 		}
 	}
+	.nl-localizer-language {
+		text-decoration: none;
+
+		&.nl-current {
+			text-decoration: underline;
+		}
+	}
 
 .nl-translations-manager,
 .nl-bulk-language-manager {

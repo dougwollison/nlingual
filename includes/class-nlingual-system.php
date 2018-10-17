@@ -388,6 +388,21 @@ final class System extends Handler {
 		foreach ( $taxonomies as $taxonomy ) {
 			Localizer::register_taxonomy( $taxonomy );
 		}
+
+		// Register media title/caption/description and alt text for media
+		Localizer::register_post_field( 'attachment', 'post_title', array(
+			'field_id' => 'title',
+		) );
+		Localizer::register_post_field( 'attachment', 'post_excerpt', array(
+			'field_id' => 'attachment_caption',
+		) );
+		Localizer::register_post_field( 'attachment', 'post_content', array(
+			'field_id' => 'attachment_content',
+		) );
+		Localizer::register_post_meta_field( '_wp_attachment_image_alt', array(
+			'post_type' => 'attachment',
+			'field_id' => 'attachment_alt',
+		) );
 	}
 
 	/**
