@@ -370,8 +370,14 @@ final class Localizer extends Handler {
 			self::add_hook( 'the_post', 'handle_localized_post_fields', 10, 1 );
 		}
 
-		// Add action to handle updating
-		self::add_hook( 'post_updated', 'update_unlocalized_post_fields', 10, 2 );
+		// Determine hooks to add based on post type
+		if ( $post_type == 'attachment' ) {
+			// Add save handling when updated via post.php
+			self::add_hook( 'attachment_updated', 'update_unlocalized_post_fields', 10, 2 );
+		} else {
+			// Add save handling when updated via post.php
+			self::add_hook( 'post_updated', 'update_unlocalized_post_fields', 10, 2 );
+		}
 	}
 
 	/**
