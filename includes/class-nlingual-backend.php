@@ -564,7 +564,7 @@ final class Backend extends Handler {
 	}
 
 	/**
-	 * Filter the query args, adding langauge if applicable.
+	 * Filter the query args, adding language if applicable.
 	 *
 	 * @since 2.7.1
 	 *
@@ -601,7 +601,7 @@ final class Backend extends Handler {
 	/**
 	 * Print the content of the language/translations column.
 	 *
-	 * @since 2.1.0 Added bypass of langauge_is_required.
+	 * @since 2.1.0 Added bypass of language_is_required.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::is_post_type_supported() to check for support.
@@ -833,7 +833,7 @@ final class Backend extends Handler {
 	 * @since 2.8.0 Add force_default_language option usage.
 	 * @since 2.6.0 Dropped post selection for translation fields,
 	 *              now uses simpler Create button that opens in new window.
-	 * @since 2.1.0 Added bypass of langauge_is_required.
+	 * @since 2.1.0 Added bypass of language_is_required.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
