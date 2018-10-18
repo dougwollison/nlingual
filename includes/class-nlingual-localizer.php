@@ -136,7 +136,7 @@ final class Localizer extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @var int
+	 * @var array
 	 */
 	private static $localizable_post_fields = array( 'post_content', 'post_title', 'post_excerpt' );
 

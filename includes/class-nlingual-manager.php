@@ -596,13 +596,22 @@ final class Manager extends Handler {
 		foreach ( $post_types as $post_type ) {
 			// Ensure post type exists
 			if ( post_type_exists( $post_type ) ) {
-				$field = array(
+				$sync_fields[ "sync_rules[post_type][{$post_type}]" ] = array(
 					'title' => get_post_type_object( $post_type )->labels->name,
 					'type'  => 'sync_settings',
-					'data'  => $post_type,
+					'data'  => array(
+						'post_type' => $post_type,
+						'allowed_fields' => Synchronizer::get_allowed_post_fields( 'sync' ),
+					),
 				);
-				$sync_fields[ "sync_rules[post_type][{$post_type}]" ] = $field;
-				$clone_fields[ "clone_rules[post_type][{$post_type}]" ] = $field;
+				$clone_fields[ "clone_rules[post_type][{$post_type}]" ] = array(
+					'title' => get_post_type_object( $post_type )->labels->name,
+					'type'  => 'sync_settings',
+					'data'  => array(
+						'post_type' => $post_type,
+						'allowed_fields' => Synchronizer::get_allowed_post_fields( 'clone' ),
+					),
+				);
 			}
 		}
 
@@ -751,7 +760,8 @@ final class Manager extends Handler {
 					<sup>1</sup> <?php _e( 'includes creation/publication date, modified date, and their GMT versions', 'nlingual' ); ?><br />
 					<sup>2</sup> <?php _e( 'will NOT apply to trashing or untrashing via normal means', 'nlingual' ); ?><br />
 					<sup>3</sup> <?php _e( 'will use counterpart translation if found', 'nlingual' ); ?><br />
-					<sup>4</sup> <?php _e( 'includes pingback status', 'nlingual' ); ?>
+					<sup>4</sup> <?php _e( 'includes pingback status', 'nlingual' ); ?><br />
+					<sup>5</sup> <?php _e( 'includes excerpt and filtered content data', 'nlingual' ); ?>
 				</small></p>
 				<?php submit_button(); ?>
 			</form>

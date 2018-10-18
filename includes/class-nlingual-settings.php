@@ -382,16 +382,21 @@ final class Settings {
 	 * @uses Documenter::post_field_names() to get the post field names.
 	 * @uses Settings::build_checklist_field() to build checklists of fields and terms to enable.
 	 *
-	 * @param string $name      The name of the field.
-	 * @param mixed  $value     The value of the field.
-	 * @param string $post_type The post type in question.
+	 * @param string $name    The name of the field.
+	 * @param mixed  $value   The value of the field.
+	 * @param string $options The field options.
+	 *		@option string "post_type" The post type this is for.
+	 *		@option array  "allowed_fields" The allowed fields list to offer.
 	 */
-	private static function build_sync_settings_field( $name, $value, $post_type ) {
+	private static function build_sync_settings_field( $name, $value, $options ) {
 		$value = wp_parse_args( $value, array(
 			'post_fields' => array(),
 			'post_terms' => array(),
 			'post_meta' => array(),
 		) );
+
+		$post_type = isset( $options['post_type'] ) ? $options['post_type'] : 'post';
+		$allowed_fields = isset( $options['allowed_fields'] ) ? $options['allowed_fields'] : array();
 
 		// Post Data values
 		$post_fields = Documenter::post_field_names();
@@ -399,6 +404,10 @@ final class Settings {
 		$post_fields['post_status']    .= '<sup>2</sup>'; // flag status field for note about trashing
 		$post_fields['post_parent']    .= '<sup>3</sup>'; // flag parent field for note about counterpart translation
 		$post_fields['comment_status'] .= '<sup>4</sup>'; // flag comment status field for note about pingback status
+		$post_fields['post_content']   .= '<sup>5</sup>'; // flag content field for note about excerpt
+
+		// Whitelist the $post_fields list
+		$post_fields = array_intersect_key( $post_fields, array_flip( $allowed_fields ) );
 
 		// Taxonomies values
 		$post_taxs = get_object_taxonomies( $post_type, 'objects' );

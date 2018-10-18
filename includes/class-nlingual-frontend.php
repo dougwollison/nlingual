@@ -71,6 +71,7 @@ final class Frontend extends Handler {
 		self::add_hook( 'body_class', 'add_body_classes', 10, 1 );
 		self::add_hook( 'option_page_on_front', 'current_language_post', 10, 1 );
 		self::add_hook( 'option_page_for_posts', 'current_language_post', 10, 1 );
+		self::add_hook( 'option_sticky_posts', 'current_language_post_list', 10, 1 );
 		self::add_hook( 'option_date_format', 'localize_date_format', 10, 1 );
 
 		// Frontend-Only Query Rewrites
@@ -471,6 +472,25 @@ final class Frontend extends Handler {
 		}
 
 		return $post_id;
+	}
+
+	/**
+	 * Replace entries in a post ID list with their translations for the current language.
+	 *
+	 * @since 2.7.1
+	 *
+	 * @api
+	 *
+	 * @uses Frontend::current_language_post_list() on each entry in the array.
+	 *
+	 * @param array $post_ids The post IDs to be replaced.
+	 *
+	 * @return array The IDs of the translations.
+	 */
+	public static function current_language_post_list( $post_ids ) {
+		$post_ids = array_map( array( __NAMESPACE__ . '\Frontend', 'current_language_post' ), $post_ids );
+
+		return $post_ids;
 	}
 
 	/**
