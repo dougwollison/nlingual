@@ -372,9 +372,6 @@ final class Synchronizer {
 		// Get the cloning rules
 		$rules = Registry::get_post_clone_rules( $post->post_type );
 
-		// Prepare the rules
-		$rules = self::prepare_post_rules( $rules );
-
 		// Remove the post_field rules; we copied those manually
 		unset( $rules['post_fields'] );
 
