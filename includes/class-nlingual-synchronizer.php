@@ -367,6 +367,9 @@ final class Synchronizer {
 		// Prepare the rules
 		$rules = self::prepare_post_rules( $rules );
 
+		// Remove the post_field rules; we copied those manually
+		unset( $rules['post_fields'] );
+
 		/**
 		 * Filter the post sync rules.
 		 *
