@@ -69,7 +69,15 @@ final class Synchronizer {
 		if ( in_array( 'comment_status', $rules['post_fields'] ) ) {
 			$rules['post_fields'][] = 'ping_status';
 		}
+
+		// Ensure lists are unique
 		$rules['post_fields'] = array_unique( $rules['post_fields'] );
+		if ( is_array( $rules['post_terms'] ) ) {
+			$rules['post_terms'] = array_unique( $rules['post_terms'] );
+		}
+		if ( is_array( $rules['post_meta'] ) ) {
+			$rules['post_meta'] = array_unique( $rules['post_meta'] );
+		}
 
 		return $rules;
 	}
