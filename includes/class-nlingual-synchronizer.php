@@ -24,8 +24,37 @@ namespace nLingual;
  */
 final class Synchronizer {
 	// =========================
+	// ! Properties
+	// =========================
+
+	/**
+	 * The list of allowed post_fields for syncing.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @var array
+	 */
+	protected static $allowed_post_fields = array(
+		'sync' => array( 'post_author', 'post_date', 'post_status', 'post_parent', 'menu_order', 'post_password', 'comment_status' ),
+		'clone' => array( 'post_content', 'post_author', 'post_date', 'post_parent', 'menu_order', 'post_password', 'comment_status' ),
+	);
+
+	// =========================
 	// ! Utilities
 	// =========================
+
+	/**
+	 * Get the whitelist of allowed post fields for a mode.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string $context The requested mode to get the list for.
+	 *
+	 * @return array The requested whitelist.
+	 */
+	final public static function get_allowed_post_fields( $context ) {
+		return self::$allowed_post_fields[ $context ];
+	}
 
 	/**
 	 * Handle the post sync/clone rules for the Synchronizer.
@@ -33,15 +62,20 @@ final class Synchronizer {
 	 * Ensures fields/terms/meta are present, and handle
 	 * the aliases dictated by existing values.
 	 *
+	 * @uses Documenter::post_field_names() To get list of possible post_field options.
+	 * @uses Synchronizer::get_allowed_post_fields() To get whitelist of post_field options.
+	 *
+	 * @since 2.8.0 Added $context parameter, post_fields expanding/whitelisting.
 	 * @since 2.1.0 Made sure all entries were array|bool, including
 	 *              splitting up post_meta at the line breaks.
 	 * @since 2.0.0
 	 *
-	 * @param array $rules The rules to prepare.
+	 * @param array  $rules   The rules to prepare.
+	 * @param string $context The context the rules are for ("sync" or "clone").
 	 *
 	 * @return array The prepared rules.
 	 */
-	final private static function prepare_post_rules( array $rules ) {
+	final private static function prepare_post_rules( array $rules, $context = 'sync' ) {
 		// Ensure the rule sets are present
 		$rules = wp_parse_args( $rules, array(
 			'post_fields' => array(),
@@ -60,7 +94,19 @@ final class Synchronizer {
 			$rules['post_meta'] = preg_split( '/[\r\n]+/', trim( $rules['post_meta'] ), 0, PREG_SPLIT_NO_EMPTY );
 		}
 
+		// Auto-expand post_fields if true
+		if ( $rules['post_fields'] === true ) {
+			$rules['post_fields'] = array_keys( Documenter::post_field_names() );
+		}
+
+		// Whitelist the $post_fields list
+		$post_fields = array_intersect_key( $post_fields, array_flip( self::get_allowed_post_fields( $context ) ) );
+
 		// Handle the post_field aliases
+		if ( in_array( 'post_content', $rules['post_fields'] ) ) {
+			$rules['post_fields'][] = 'post_content_filtered';
+			$rules['post_fields'][] = 'post_excerpt';
+		}
 		if ( in_array( 'post_date', $rules['post_fields'] ) ) {
 			$rules['post_fields'][] = 'post_date_gmt';
 			$rules['post_fields'][] = 'post_modified';
@@ -69,7 +115,15 @@ final class Synchronizer {
 		if ( in_array( 'comment_status', $rules['post_fields'] ) ) {
 			$rules['post_fields'][] = 'ping_status';
 		}
+
+		// Ensure lists are unique
 		$rules['post_fields'] = array_unique( $rules['post_fields'] );
+		if ( is_array( $rules['post_terms'] ) ) {
+			$rules['post_terms'] = array_unique( $rules['post_terms'] );
+		}
+		if ( is_array( $rules['post_meta'] ) ) {
+			$rules['post_meta'] = array_unique( $rules['post_meta'] );
+		}
 
 		return $rules;
 	}
@@ -81,6 +135,7 @@ final class Synchronizer {
 	/**
 	 * Copy desired post fields, meta data, and terms from the original to target.
 	 *
+	 * @since 2.8.0 Moved post_fields=true expanding to prepare_post_rules().
 	 * @since 2.6.0 Fixed typo preventing fields from being synced, also modified
 	 *              all-meta handling to skip _edit_* metadata.
 	 * @since 2.3.2 Fixed typo causing terms to be erased when trying to sync.
@@ -101,12 +156,14 @@ final class Synchronizer {
 	 *		@option array      "post_fields" A whitelist of fields to copy over.
 	 *		@option bool|array "post_meta"   A whitelist of meta fields (TRUE for all).
 	 *		@option bool|array "post_terms"  A whitelist of taxonomies (TRUE for all).
+	 * @param string      $context  Optional. The context for preparing the rules ("sync" or "clone"),
+	 *                              also dictates what rules are fetched if they aren't provided.
 	 *
 	 * @throws Exception If the requested posts aren't of the same type.
 	 *
 	 * @return bool TRUE if successful, FALSE if errors occurred.
 	 */
-	public static function sync_posts( $original, $target, $rules = null ) {
+	public static function sync_posts( $original, $target, $rules = null, $context = 'sync' ) {
 		global $wpdb;
 
 		// Get post objects if not already passed
@@ -130,33 +187,29 @@ final class Synchronizer {
 
 		// Load general sync rules by default
 		if ( is_null( $rules ) ) {
-			$rules = Registry::get_post_sync_rules( $original->post_type );
+			$rules = Registry::get_rules( $context, $original->post_type );
 
 			/**
-			 * Filter the post sync rules.
+			 * Filter the post rules.
 			 *
+			 * @since 2.8.0 Now applies to nlingual_post_clone_rules too.
 			 * @since 2.0.0
 			 *
 			 * @param array    $rules    The sync rules for this post's type.
 			 * @param \WP_Post $original The post being synchronized from.
 			 * @param \WP_Post $target   The post being synchronized to.
 			 */
-			$rules = apply_filters( 'nlingual_post_sync_rules', $rules, $original, $target );
+			$rules = apply_filters( "nlingual_post_{$context}_rules", $rules, $original, $target );
 		}
+
+		// Prepare the rules
+		$rules = self::prepare_post_rules( $rules, $context );
 
 		// Get the target's language
 		$language = Translator::get_post_language( $target->ID );
 
-		// Prepare the rules
-		$rules = self::prepare_post_rules( $rules );
-
 		// Post Fields
 		if ( isset( $rules['post_fields'] ) && $rules['post_fields'] ) {
-			// If TRUE, use all possible fields, as defined in the Documenter
-			if ( $rules['post_fields'] === true ) {
-				$rules['post_fields'] = array_keys( Documenter::post_field_names() );
-			}
-
 			// Build the list of fields to change
 			$changes = array();
 			foreach ( $rules['post_fields'] as $field_name ) {
@@ -287,6 +340,7 @@ final class Synchronizer {
 	 *
 	 * All fields, meta data and terms are copied.
 	 *
+	 * @since 2.8.0 Copy only mandatory post fields, leave the rest to sync_posts().
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::languages() to validate/retrieve the desired language.
@@ -331,25 +385,16 @@ final class Synchronizer {
 
 		// Create the new post
 		$post_data = array(
-			'post_author'    => $post->post_author,
-			'post_date'      => $post->post_date,
-			'post_date_gmt'  => $post->post_date_gmt,
-			'post_content'   => $post->post_content,
 			'post_title'     => $title,
-			'post_excerpt'   => $post->post_excerpt,
 			'post_status'    => 'pending',
-			'comment_status' => $post->comment_status,
-			'post_password'  => $post->post_password,
-			'to_ping'        => $post->to_ping,
-			'pinged'         => $post->pinged,
-			'post_parent'    => Translator::get_post_translation( $post->post_parent, $language, 'return self' ),
-			'menu_order'     => $post->menu_order,
 			'post_type'      => $post->post_type,
-			'comment_count'  => $post->comment_count,
+			'post_mime_type' => $post->post_mime_type,
 		);
 
 		// If using default title, create a default post_name
-		$post_data['post_name'] = $post->post_name . '-' . $language->slug;
+		if ( $_title_is_default ) {
+			$post_data['post_name'] = $post->post_name . '-' . $language->slug;
+		}
 
 		// Insert and get the ID
 		$translation = wp_insert_post( $post_data );
@@ -359,23 +404,6 @@ final class Synchronizer {
 			return false;
 		}
 
-		// Get the cloning rules
-		$rules = Registry::get_post_clone_rules( $post->post_type );
-
-		// Prepare the rules
-		$rules = self::prepare_post_rules( $rules );
-
-		/**
-		 * Filter the post sync rules.
-		 *
-		 * @since 2.0.0
-		 *
-		 * @param array    $rules    The clone rules for this post's type.
-		 * @param \WP_Post $post     The post being cloned.
-		 * @param Language $language The language being cloned for.
-		 */
-		$rules = apply_filters( 'nlingual_post_clone_rules', $rules, $post, $language );
-
 		// Get the post object
 		$translation = get_post( $translation );
 
@@ -383,7 +411,7 @@ final class Synchronizer {
 		Translator::set_post_language( $translation->ID, $language );
 
 		// Synchronize the two posts
-		self::sync_posts( $post->ID, $translation->ID, $rules );
+		self::sync_posts( $post->ID, $translation->ID, null, 'clone' );
 
 		// Now associate it with the original
 		Translator::set_post_translation( $post->ID, $language, $translation->ID );

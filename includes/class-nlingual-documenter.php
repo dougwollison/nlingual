@@ -109,6 +109,7 @@ final class Documenter extends Handler {
 	 */
 	public static function post_field_names() {
 		return array(
+			'post_content'   => _x( 'Content',         'post field', 'nlingual' ),
 			'post_author'    => _x( 'Author',          'post field', 'nlingual' ),
 			'post_date'      => _x( 'Date',            'post field', 'nlingual' ),
 			'post_status'    => _x( 'Status',          'post field', 'nlingual' ),
