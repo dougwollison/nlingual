@@ -331,21 +331,23 @@ final class Synchronizer {
 
 		// Create the new post
 		$post_data = array(
-			'post_author'    => $post->post_author,
-			'post_date'      => $post->post_date,
-			'post_date_gmt'  => $post->post_date_gmt,
-			'post_content'   => $post->post_content,
-			'post_title'     => $title,
-			'post_excerpt'   => $post->post_excerpt,
-			'post_status'    => 'pending',
-			'comment_status' => $post->comment_status,
-			'post_password'  => $post->post_password,
-			'to_ping'        => $post->to_ping,
-			'pinged'         => $post->pinged,
-			'post_parent'    => Translator::get_post_translation( $post->post_parent, $language, 'return self' ),
-			'menu_order'     => $post->menu_order,
-			'post_type'      => $post->post_type,
-			'comment_count'  => $post->comment_count,
+			'post_author'             => $post->post_author,
+			'post_date'               => $post->post_date,
+			'post_date_gmt'           => $post->post_date_gmt,
+			'post_content'            => $post->post_content,
+			'post_content_filtered'   => $post->post_content_filtered,
+			'post_title'              => $title,
+			'post_excerpt'            => $post->post_excerpt,
+			'post_status'             => 'pending',
+			'comment_status'          => $post->comment_status,
+			'post_password'           => $post->post_password,
+			'to_ping'                 => $post->to_ping,
+			'pinged'                  => $post->pinged,
+			'post_parent'             => Translator::get_post_translation( $post->post_parent, $language, 'return self' ),
+			'menu_order'              => $post->menu_order,
+			'post_type'               => $post->post_type,
+			'post_mime_type'          => $post->post_mime_type,
+			'comment_count'           => $post->comment_count,
 		);
 
 		// If using default title, create a default post_name
