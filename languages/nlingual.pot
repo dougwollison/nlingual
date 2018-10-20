@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: nLingual\n"
-"POT-Creation-Date: 2018-10-20 10:53-0400\n"
+"POT-Creation-Date: 2018-10-20 13:11-0400\n"
 "PO-Revision-Date: 2018-10-20 10:47-0400\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -20,6 +20,7 @@ msgstr ""
 "_nx_noop:3c,1,2;__ngettext_noop:1,2;_f;_fx:1,2c;_ef;_efx:1,2c\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
+"X-Poedit-SearchPathExcluded-1: includes/class-nlingual-locale.php\n"
 
 #: documentation/languages/overview.php:1
 #: documentation/localizables/overview.php:1
@@ -165,13 +166,15 @@ msgstr ""
 msgid "Localize This"
 msgstr ""
 
-#: documentation/localizer/localize-this.php:3
+#. translators: %s = the translation icon HTML
+#: documentation/localizer/localize-this.php:5
+#, php-format
 msgid ""
-"Use the <i class=\"dashicons dashicons-translation\"></i> widget to add, "
-"view, and edit localized versions of the text in the associated field."
+"Use the %s widget to add, view, and edit localized versions of the text in "
+"the associated field."
 msgstr ""
 
-#: documentation/localizer/localize-this.php:5
+#: documentation/localizer/localize-this.php:8
 msgid ""
 "When the site is viewed in a particular language and the data controlled by "
 "these fields is displayed, the version for that language will be used "
@@ -335,14 +338,68 @@ msgid "Languages & Translations"
 msgstr ""
 
 #. translators: %1$s = The singular name of the post type, %2$s = The URL for the link. Please preserve the HTML as-is.
-#: documentation/post-translation/translation.php:12
+#: documentation/post-translation/translation.php:11
+#, php-format
+msgid ""
+"The <strong>Languages & Translation</strong> box allows you to assign a "
+"language to this %1$s, from the list of languages that have been registered "
+"<a href=\"%2$s\" target=\"_blank\">here</a> for use. Once you assign a "
+"language, you can also assign the translated versions of the %1$s in each of "
+"the other languages, assuming they exist already."
+msgstr ""
+
+#: documentation/post-translation/translation.php:13
 msgid ""
 "If you don’t have a translated version for a particular language yet, you "
 "can select the option to create a new one; a copy of the current post will "
 "be created in draft form for you to work on."
 msgstr ""
 
+#. translators: %s = The URL for the link. Please preserve the HTML as-is.
+#: documentation/post-translation/translation.php:17
+#, php-format
+msgid ""
+"When you save your changes, certain fields and settings will be copied to "
+"it’s sister translations, synchronizing them. The exact fields/settings that "
+"will be synchronized is controlled <a href=\"%s\" target=\"_blank\">here</a>."
+msgstr ""
+
+#. translators: %s = The singular name of the post type.
+#: documentation/posts-translation/translation.php:11
+#, php-format
+msgid ""
+"On this screen you can view at a glance what language every post is in, as "
+"well as what it’s translations are. You can also filter the list to show "
+"only %s of a particular language."
+msgstr ""
+
+#. translators: %1$s = The singular name of the post type, %2$s = The plural name of the post type.
+#: documentation/posts-translation/translation.php:15
+#, php-format
+msgid ""
+"The <strong>Quick Edit</strong> option will allow you to quickly change the "
+"language or assign translations to a %1$s, while Bulk Edit will allow you to "
+"change the language of many %2$s at once. Currently, only the row for the "
+"%1$s being updated will change; you will need to refresh if you wish to see "
+"the full changes."
+msgstr ""
+
+#. translators: %1$s = The singular name of the post type, %2$s = The URL for the link. Please preserve the HTML as-is.
+#: documentation/posts-translation/translation.php:19
+#, php-format
+msgid ""
+"If you make changes to a %1$s from here, certain fields and settings will be "
+"copied to it’s sister translations, synchronizing them. The exact fields/"
+"settings that will be synchronized is controlled <a href=\"%2$s\" target="
+"\"_blank\">here</a>."
+msgstr ""
+
 #. translators: %s = The plural name of the post type.
+#: documentation/shared/post-sync-summary.php:5
+#, php-format
+msgid "The following details will be synchronized between sister %s"
+msgstr ""
+
 #: documentation/shared/post-sync-summary.php:8
 #: includes/class-nlingual-settings.php:433
 msgid "Post Data"
@@ -399,6 +456,20 @@ msgstr ""
 msgid "Enable/disable post types for localization."
 msgstr ""
 
+#. translators: %s = The name of the language
+#: includes/class-nlingual-backend.php:505
+#, php-format
+msgctxt "front page translation"
+msgid "%s Front Page"
+msgstr ""
+
+#. translators: %s = The name of the language
+#: includes/class-nlingual-backend.php:510
+#, php-format
+msgctxt "front page translation"
+msgid "%s Posts Page"
+msgstr ""
+
 #: includes/class-nlingual-backend.php:552
 msgid "All Languages"
 msgstr ""
@@ -418,6 +489,13 @@ msgstr ""
 msgid "None"
 msgstr ""
 
+#. translators: %1$s = The name of the language, %2$s = The title of the post, wrapped in a link
+#: includes/class-nlingual-backend.php:650
+#, php-format
+msgctxt "language: title"
+msgid "%1$s: %2$s"
+msgstr ""
+
 #: includes/class-nlingual-backend.php:701
 #: includes/class-nlingual-backend.php:781
 msgctxt "no language"
@@ -425,6 +503,11 @@ msgid "None"
 msgstr ""
 
 #. translators: %s = The name of the language
+#: includes/class-nlingual-backend.php:716
+#, php-format
+msgid "Assign %s Translation"
+msgstr ""
+
 #: includes/class-nlingual-backend.php:719
 msgctxt "no translation"
 msgid "None"
@@ -445,6 +528,12 @@ msgstr ""
 
 #: includes/class-nlingual-backend.php:920
 msgid "Translations"
+msgstr ""
+
+#. translators: %s = language name
+#: includes/class-nlingual-backend.php:927
+#, php-format
+msgid "%s Translation:"
 msgstr ""
 
 #: includes/class-nlingual-backend.php:929
@@ -510,7 +599,9 @@ msgstr ""
 msgid "Enter the title for this translation."
 msgstr ""
 
+#. translators: %1$s = The name of the language, %2$s = The post title
 #: includes/class-nlingual-backend.php:1212
+#: includes/class-nlingual-synchronizer.php:382
 #, php-format
 msgid "[Needs %1$s Translation]: %2$s"
 msgstr ""
@@ -601,6 +692,11 @@ msgstr ""
 msgid "Translate This"
 msgstr ""
 
+#: includes/class-nlingual-frontend.php:815
+#, php-format
+msgid "Translate to %s"
+msgstr ""
+
 #: includes/class-nlingual-liaison.php:254
 #, php-format
 msgid ""
@@ -618,272 +714,23 @@ msgid ""
 "been enabled for localization."
 msgstr ""
 
+#. translators: %1$s = The name of the language, %2$s = The (likely plural) name of the post type.
+#: includes/class-nlingual-liaison.php:525
+#, php-format
+msgctxt "index page translation"
+msgid "%1$s %2$s Page"
+msgstr ""
+
+#: includes/class-nlingual-liaison.php:571
+#, php-format
+msgctxt "index page translation"
+msgid ""
+"You are currently editing a translation of the page that shows your latest "
+"%s."
+msgstr ""
+
 #: includes/class-nlingual-liaison.php:576
 msgid "Your current theme may not display the content you write here."
-msgstr ""
-
-#. translators: weekday
-#: includes/class-nlingual-locale.php:30 includes/class-nlingual-locale.php:40
-#: includes/class-nlingual-locale.php:53
-msgid "Sunday"
-msgstr ""
-
-#. translators: weekday
-#: includes/class-nlingual-locale.php:31 includes/class-nlingual-locale.php:41
-#: includes/class-nlingual-locale.php:54
-msgid "Monday"
-msgstr ""
-
-#. translators: weekday
-#: includes/class-nlingual-locale.php:32 includes/class-nlingual-locale.php:42
-#: includes/class-nlingual-locale.php:55
-msgid "Tuesday"
-msgstr ""
-
-#. translators: weekday
-#: includes/class-nlingual-locale.php:33 includes/class-nlingual-locale.php:43
-#: includes/class-nlingual-locale.php:56
-msgid "Wednesday"
-msgstr ""
-
-#. translators: weekday
-#: includes/class-nlingual-locale.php:34 includes/class-nlingual-locale.php:44
-#: includes/class-nlingual-locale.php:57
-msgid "Thursday"
-msgstr ""
-
-#. translators: weekday
-#: includes/class-nlingual-locale.php:35 includes/class-nlingual-locale.php:45
-#: includes/class-nlingual-locale.php:58
-msgid "Friday"
-msgstr ""
-
-#. translators: weekday
-#: includes/class-nlingual-locale.php:36 includes/class-nlingual-locale.php:46
-#: includes/class-nlingual-locale.php:59
-msgid "Saturday"
-msgstr ""
-
-#. translators: one-letter abbreviation of the weekday
-#: includes/class-nlingual-locale.php:40
-msgid "S_Sunday_initial"
-msgstr ""
-
-#. translators: one-letter abbreviation of the weekday
-#: includes/class-nlingual-locale.php:41
-msgid "M_Monday_initial"
-msgstr ""
-
-#. translators: one-letter abbreviation of the weekday
-#: includes/class-nlingual-locale.php:42
-msgid "T_Tuesday_initial"
-msgstr ""
-
-#. translators: one-letter abbreviation of the weekday
-#: includes/class-nlingual-locale.php:43
-msgid "W_Wednesday_initial"
-msgstr ""
-
-#. translators: one-letter abbreviation of the weekday
-#: includes/class-nlingual-locale.php:44
-msgid "T_Thursday_initial"
-msgstr ""
-
-#. translators: one-letter abbreviation of the weekday
-#: includes/class-nlingual-locale.php:45
-msgid "F_Friday_initial"
-msgstr ""
-
-#. translators: one-letter abbreviation of the weekday
-#: includes/class-nlingual-locale.php:46
-msgid "S_Saturday_initial"
-msgstr ""
-
-#. translators: three-letter abbreviation of the weekday
-#: includes/class-nlingual-locale.php:53
-msgid "Sun"
-msgstr ""
-
-#. translators: three-letter abbreviation of the weekday
-#: includes/class-nlingual-locale.php:54
-msgid "Mon"
-msgstr ""
-
-#. translators: three-letter abbreviation of the weekday
-#: includes/class-nlingual-locale.php:55
-msgid "Tue"
-msgstr ""
-
-#. translators: three-letter abbreviation of the weekday
-#: includes/class-nlingual-locale.php:56
-msgid "Wed"
-msgstr ""
-
-#. translators: three-letter abbreviation of the weekday
-#: includes/class-nlingual-locale.php:57
-msgid "Thu"
-msgstr ""
-
-#. translators: three-letter abbreviation of the weekday
-#: includes/class-nlingual-locale.php:58
-msgid "Fri"
-msgstr ""
-
-#. translators: three-letter abbreviation of the weekday
-#: includes/class-nlingual-locale.php:59
-msgid "Sat"
-msgstr ""
-
-#. translators: month name
-#: includes/class-nlingual-locale.php:62 includes/class-nlingual-locale.php:77
-msgid "January"
-msgstr ""
-
-#. translators: month name
-#: includes/class-nlingual-locale.php:63 includes/class-nlingual-locale.php:78
-msgid "February"
-msgstr ""
-
-#. translators: month name
-#: includes/class-nlingual-locale.php:64 includes/class-nlingual-locale.php:79
-msgid "March"
-msgstr ""
-
-#. translators: month name
-#: includes/class-nlingual-locale.php:65 includes/class-nlingual-locale.php:80
-msgid "April"
-msgstr ""
-
-#. translators: month name
-#: includes/class-nlingual-locale.php:66 includes/class-nlingual-locale.php:81
-msgid "May"
-msgstr ""
-
-#. translators: month name
-#: includes/class-nlingual-locale.php:67 includes/class-nlingual-locale.php:82
-msgid "June"
-msgstr ""
-
-#. translators: month name
-#: includes/class-nlingual-locale.php:68 includes/class-nlingual-locale.php:83
-msgid "July"
-msgstr ""
-
-#. translators: month name
-#: includes/class-nlingual-locale.php:69 includes/class-nlingual-locale.php:84
-msgid "August"
-msgstr ""
-
-#. translators: month name
-#: includes/class-nlingual-locale.php:70 includes/class-nlingual-locale.php:85
-msgid "September"
-msgstr ""
-
-#. translators: month name
-#: includes/class-nlingual-locale.php:71 includes/class-nlingual-locale.php:86
-msgid "October"
-msgstr ""
-
-#. translators: month name
-#: includes/class-nlingual-locale.php:72 includes/class-nlingual-locale.php:87
-msgid "November"
-msgstr ""
-
-#. translators: month name
-#: includes/class-nlingual-locale.php:73 includes/class-nlingual-locale.php:88
-msgid "December"
-msgstr ""
-
-#. translators: three-letter abbreviation of the month
-#: includes/class-nlingual-locale.php:77
-msgid "Jan_January_abbreviation"
-msgstr ""
-
-#. translators: three-letter abbreviation of the month
-#: includes/class-nlingual-locale.php:78
-msgid "Feb_February_abbreviation"
-msgstr ""
-
-#. translators: three-letter abbreviation of the month
-#: includes/class-nlingual-locale.php:79
-msgid "Mar_March_abbreviation"
-msgstr ""
-
-#. translators: three-letter abbreviation of the month
-#: includes/class-nlingual-locale.php:80
-msgid "Apr_April_abbreviation"
-msgstr ""
-
-#. translators: three-letter abbreviation of the month
-#: includes/class-nlingual-locale.php:81
-msgid "May_May_abbreviation"
-msgstr ""
-
-#. translators: three-letter abbreviation of the month
-#: includes/class-nlingual-locale.php:82
-msgid "Jun_June_abbreviation"
-msgstr ""
-
-#. translators: three-letter abbreviation of the month
-#: includes/class-nlingual-locale.php:83
-msgid "Jul_July_abbreviation"
-msgstr ""
-
-#. translators: three-letter abbreviation of the month
-#: includes/class-nlingual-locale.php:84
-msgid "Aug_August_abbreviation"
-msgstr ""
-
-#. translators: three-letter abbreviation of the month
-#: includes/class-nlingual-locale.php:85
-msgid "Sep_September_abbreviation"
-msgstr ""
-
-#. translators: three-letter abbreviation of the month
-#: includes/class-nlingual-locale.php:86
-msgid "Oct_October_abbreviation"
-msgstr ""
-
-#. translators: three-letter abbreviation of the month
-#: includes/class-nlingual-locale.php:87
-msgid "Nov_November_abbreviation"
-msgstr ""
-
-#. translators: three-letter abbreviation of the month
-#: includes/class-nlingual-locale.php:88
-msgid "Dec_December_abbreviation"
-msgstr ""
-
-#: includes/class-nlingual-locale.php:95
-msgid "am"
-msgstr ""
-
-#: includes/class-nlingual-locale.php:96
-msgid "pm"
-msgstr ""
-
-#: includes/class-nlingual-locale.php:97
-msgid "AM"
-msgstr ""
-
-#: includes/class-nlingual-locale.php:98
-msgid "PM"
-msgstr ""
-
-#. translators: $thousands_sep argument for http://php.net/number_format, default is ,
-#: includes/class-nlingual-locale.php:104
-msgid "number_format_thousands_sep"
-msgstr ""
-
-#. translators: $dec_point argument for http://php.net/number_format, default is .
-#: includes/class-nlingual-locale.php:108
-msgid "number_format_decimal_point"
-msgstr ""
-
-#. translators: 'rtl' or 'ltr'. This sets the text direction for WordPress.
-#: includes/class-nlingual-locale.php:115
-msgctxt "text direction"
-msgid "ltr"
 msgstr ""
 
 #: includes/class-nlingual-localizer.php:1044
@@ -926,6 +773,13 @@ msgstr ""
 
 #: includes/class-nlingual-manager.php:220
 msgid "One or more languages were incomplete and were not saved."
+msgstr ""
+
+#. translators: %1$s = The locale code, %2$s = The language name.
+#: includes/class-nlingual-manager.php:267
+msgid ""
+"Unable to download the WordPress language file \"%1$s\" for the language \"%"
+"$2s\".  Please install it manually."
 msgstr ""
 
 #: includes/class-nlingual-manager.php:279
@@ -1033,6 +887,13 @@ msgstr ""
 msgid "What style should be used for the translated URLs?"
 msgstr ""
 
+#. translators: %s = The HTML code to be appended
+#: includes/class-nlingual-manager.php:431
+#: includes/class-nlingual-manager.php:470
+#, php-format
+msgid "Preview: %s"
+msgstr ""
+
 #: includes/class-nlingual-manager.php:434
 msgid "Path prefix"
 msgstr ""
@@ -1047,6 +908,13 @@ msgstr ""
 
 #: includes/class-nlingual-manager.php:440
 msgid "URLs for the default language will be unmodified."
+msgstr ""
+
+#. translators: %s = The HTML code to be appended
+#: includes/class-nlingual-manager.php:442
+#: includes/class-nlingual-manager.php:449
+#, php-format
+msgid "Example: %s"
 msgstr ""
 
 #: includes/class-nlingual-manager.php:446
@@ -1201,6 +1069,13 @@ msgid ""
 "details should be cloned?"
 msgstr ""
 
+#. translators: %s = The full name of the method being called. (Low priority translation)
+#: includes/class-nlingual-registry.php:831
+#: includes/class-nlingual-translator.php:635
+#, php-format
+msgid "Call to unrecognized method alias %s"
+msgstr ""
+
 #: includes/class-nlingual-settings.php:430
 msgid "Close Settings"
 msgstr ""
@@ -1234,8 +1109,29 @@ msgstr ""
 msgid "One per line. Enter an asterisk (*) to match all fields."
 msgstr ""
 
+#. translators: %1$d = The ID number of the original post, %2$d = The ID number of the target post.
+#: includes/class-nlingual-synchronizer.php:185
+#, php-format
+msgid ""
+"The requested posts (%1$d & %2$d) cannot be synchronized because they are of "
+"different types."
+msgstr ""
+
 #: includes/class-nlingual-system.php:935
 msgid "Limit result set to posts assigned one or more registered languages."
+msgstr ""
+
+#. translators: %d = The ID number of the object.
+#: includes/class-nlingual-translator.php:666
+#: includes/class-nlingual-translator.php:671
+#, php-format
+msgid "The requested post (ID: %d) does not belong to a supported post type."
+msgstr ""
+
+#. translators: %1$s = The class name, %2$s = The type used.
+#: includes/class-nlingual-url.php:150
+#, php-format
+msgid "%1$s expects a string or array, %2$s given"
 msgstr ""
 
 #: includes/functions-nlingual.php:150
