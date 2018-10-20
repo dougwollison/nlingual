@@ -168,6 +168,7 @@ final class System extends Handler {
 	/**
 	 * Switch to a different language.
 	 *
+	 * @since 2.8.0 Store the $reload_textdomains option when adding to stack.
 	 * @since 2.0.0
 	 *
 	 * @uses validate_language() to ensure $language is a Language object.
@@ -183,11 +184,12 @@ final class System extends Handler {
 			return false; // Does not exist
 		}
 
+		// Log the current language and reload status
+		self::$language_stack[] = array( Registry::current_language( 'id' ), $reload_textdomains );
+
 		// Get the old locale for text domain reloading
 		$old_local = get_locale();
 
-		// Log the current language
-		self::$language_stack[] = Registry::current_language( 'id' );
 
 		// Set to the desired language
 		Registry::set_language( $language->id, false, 'override' );
@@ -201,6 +203,7 @@ final class System extends Handler {
 	/**
 	 * Switch back to the previous language.
 	 *
+	 * @since 2.8.0 Added handling of re-reloading text domains.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::$previous_languages to get the previous language.
@@ -208,21 +211,26 @@ final class System extends Handler {
 	 * @uses Registry::$current_language to update the current language.
 	 */
 	public static function restore_language() {
-		$last_language = array_pop( self::$language_stack );
+		$last_change = array_pop( self::$language_stack );
 
 		// If no previous language, go with default
-		if ( ! $last_language ) {
-			$last_language = Registry::default_language( 'id' );
+		if ( ! $last_change ) {
+			$last_change = array( Registry::default_language( 'id' ), false ); // default to not reloading text domains
 		}
+
+		// Get the language and reload option
+		list( $language, $reload_textdomains ) = $last_change;
 
 		// Get the old locale for text domain reloading
 		$old_local = get_locale();
 
 		// Set to the last language
-		Registry::set_language( $last_language, false, 'override' );
+		Registry::set_language( $language, false, 'override' );
 
-		// Reload the text domains
-		self::reload_textdomains( $old_local );
+		if ( $reload_textdomains ) {
+			// Reload the text domains
+			self::reload_textdomains( $old_local );
+		}
 	}
 
 	/**
