@@ -827,7 +827,7 @@ final class Registry {
 		}
 
 		// No match, throw exception
-		/* Translators: %s = The full name of the method being called. (Low priority translation) */
+		/* translators: %s = The full name of the method being called. (Low priority translation) */
 		throw new Exception( _f( 'Call to unrecognized method alias %s', 'nlingual', __CLASS__ . '::' . $name . '()' ), NL_ERR_UNSUPPORTED );
 	}
 }

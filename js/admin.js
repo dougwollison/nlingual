@@ -1,4 +1,4 @@
-/* globals alert, wp, _, Backbone, tinymce, inlineEditPost, inlineEditTax, nlingualL10n */
+/* globals jQuery, alert, wp, _, Backbone, tinymce, inlineEditPost, inlineEditTax, nlingualL10n */
 ( function() {
 	var nL = window.nLingual = {};
 
@@ -497,7 +497,7 @@
 			var oldAttachmentDetailsRender = wp.media.view.Attachment.Details.prototype.render;
 
 			wp.media.view.Attachment.Details.prototype.render = function() {
-				var returnVal, localized_values, $selector, $languages, view, localized_values, $fields;
+				var returnVal, localized_values, $selector, $languages, view, $fields;
 
 				returnVal = oldAttachmentDetailsRender.apply( this, arguments );
 
@@ -583,10 +583,10 @@
 			var id, $parent;
 
 			id = $( this ).val();
-			$parent = $( this ).parents( '.nl-translations-manager' );
+			$parent = $( this ).parents( '.nl-translation-manager' );
 
 			// Toggle visibility of the translations interface if language isn't set
-			$parent.find( '.nl-set-translations' ).toggleClass( 'hidden', '0' === id );
+			$parent.find( '.nl-manage-translations' ).toggleClass( 'hidden', '0' === id );
 
 			// Show all translation fields by default
 			$parent.find( '.nl-translation-field' ).show();

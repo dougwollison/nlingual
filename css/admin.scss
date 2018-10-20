@@ -41,7 +41,7 @@
 	}
 }
 
-.nl-language-field {
+.nl-manage-language {
 	label {
 		font-weight: bold;
 	}
@@ -196,15 +196,9 @@
 		}
 	}
 
-.nl-translations-manager,
+.nl-translation-manager,
 .nl-bulk-language-manager {
 	padding: 5px 0 0;
-}
-
-.nl-set-language {
-	.title {
-		font-weight: bold;
-	}
 }
 
 #nlingual-synchronizer-form {

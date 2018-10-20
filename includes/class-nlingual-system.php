@@ -1213,7 +1213,7 @@ final class System extends Handler {
 		}
 
 		// Get the id of the current language or the requested one
-		if ( isset( $args['language'] ) ) {
+		if ( isset( $args['language'] ) && $args['language'] ) {
 			// Check only the first real language
 			$requested_languages = array_filter( (array) $args['language'] );
 			$filter_language = Registry::get_language( $requested_languages[0] );
