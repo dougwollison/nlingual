@@ -1,4 +1,4 @@
-/* globals alert, wp, Backbone, tinymce, inlineEditPost, inlineEditTax, nlingualL10n */
+/* globals jQuery, alert, wp, Backbone, tinymce, inlineEditPost, inlineEditTax, nlingualL10n */
 ( function() {
 	var nL = window.nLingual = {};
 
