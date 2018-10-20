@@ -922,7 +922,10 @@ final class Backend extends Handler {
 						<div class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?>" data-nl_language="<?php echo $language->id; ?>">
 							<input type="hidden" name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input" value="<?php echo $translations[ $language->id ]; ?>" />
 							<label for="nl_translation_<?php echo $language->id; ?>_input">
-								<?php _ef( '%s Translation:', 'nlingual', $language->system_name ); ?>
+								<?php
+								/* translators: %s = language name */
+								_ef( '%s Translation:', 'nlingual', $language->system_name );
+								 ?>
 								<button type="button" class="button button-small button-primary nl-add-translation"><?php _e( 'Create', 'nlingual' ); ?></button>
 								<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php _e( 'Edit', 'nlingual' ); ?></button>
 							</label>
