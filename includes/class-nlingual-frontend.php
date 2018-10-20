@@ -96,8 +96,10 @@ final class Frontend extends Handler {
 		// Script/Style Enqueues
 		self::add_hook( 'wp_enqueue_scripts', 'enqueue_assets', 10, 0 );
 
-		// Admin Bar Additions
+		// Admin Bar Stuff
 		self::add_hook( 'admin_bar_menu', 'add_translate_menu', 81, 1 ); // should occur after Edit menu item
+		self::add_hook( 'admin_bar_menu', 'revert_to_default_language', -1, 0 ); // Should occur before anything is added
+		self::add_hook( 'admin_bar_menu', 'restore_to_current_language', PHP_INT_MAX, 0 ); // Should occur after everything is added
 	}
 
 	// =========================
@@ -766,7 +768,7 @@ final class Frontend extends Handler {
 	}
 
 	// =========================
-	// ! Admin Bar Additions
+	// ! Admin Bar Stuff
 	// =========================
 
 	/**
@@ -817,5 +819,27 @@ final class Frontend extends Handler {
 				) );
 			}
 		}
+	}
+
+	/**
+	 * Switch back to the default language.
+	 *
+	 * So that the Admin Bar isn't localized.
+	 *
+	 * @since 2.8.0
+	 */
+	public static function revert_to_default_language() {
+		System::switch_language( Registry::default_language(), true );
+	}
+
+	/**
+	 * Switch back to the requested language.
+	 *
+	 * So that the Admin Bar isn't localized.
+	 *
+	 * @since 2.8.0
+	 */
+	public static function restore_to_current_language() {
+		System::restore_language( true );
 	}
 }
