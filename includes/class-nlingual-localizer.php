@@ -382,6 +382,7 @@ final class Localizer extends Handler {
 	 * This will guess the screen base based on $meta_type
 	 * if not provided.
 	 *
+	 * @since 2.8.0 Fixed ID creation when a subtype is specified.
 	 * @since 2.6.0 ID now includes subtype (post_type/taxonomy) if provided.
 	 * @since 2.0.0
 	 *
@@ -436,7 +437,7 @@ final class Localizer extends Handler {
 		$id = $key;
 		if ( $subtype ) {
 			// Subtype specified, recreate with it in the ID
-			$id .= "meta.{$meta_type}.{$subtype}:{$meta_key}";
+			$id = "meta.{$meta_type}.{$subtype}:{$meta_key}";
 		}
 
 		// Register the field as normal
