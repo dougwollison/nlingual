@@ -323,7 +323,7 @@ final class Manager extends Handler {
 				'type'  => 'checkbox',
 			),
 			'patch_wp_locale' => array(
-				/* translators: This uses markdown-style formatting; ``code text``. */
+				/* translators: This uses markdown-like formatting; ``code text``. */
 				'title' => markitup( __( 'Patch ``WP_Locale``?', 'nlingual' ) ),
 				'help'  => __( 'Replaced the Date/Time localization system with one using your Theme’s translation files instead (front-end only).', 'nlingual' ),
 				'type'  => 'checkbox',
@@ -422,7 +422,7 @@ final class Manager extends Handler {
 		$redirection_settings = array(
 			'query_var' => array(
 				'title' => __( 'Query Variable', 'nlingual' ),
-				/* translators: This uses markdown-style formatting; ``code text``. */
+				/* translators: This uses markdown-like formatting; ``code text``. */
 				'help'  => markitup( __( 'The variable name for ``WP_Query`` to use when filtering by language.', 'nlingual' ) ),
 				'type'  => 'text',
 			),
@@ -468,7 +468,7 @@ final class Manager extends Handler {
 			$redirection_settings['url_rewrite_method'] = array(
 				'title' => __( 'URL Scheme', 'nlingual' ),
 				'type'  => 'notice',
-				/* translators: This uses markdown-style formatting; **bold text**. */
+				/* translators: This uses markdown-like formatting; **bold text**. */
 				'data'  => markitup( __( 'You have permalinks disabled; translated URLs will use the HTTP query method, using the **query variable** set above.', 'nlingual' ) ),
 				'help'  => '<span class="nl-previews">' . _f( 'Preview: %s', 'nlingual', $redirect_previews ) . '</span>',
 			);
