@@ -894,11 +894,11 @@ final class Backend extends Handler {
 			<?php if ( $force_default_language ) : ?>
 				<input type="hidden" name="nlingual_language" id="nl_language" class="nl-input nl-language-input" value="<?php echo $post_language ? $post_language->id : Registry::default_language( 'id' ); ?>">
 			<?php else: ?>
-					<label for="nl_language" class="nl-field-label"><?php _e( 'Language', 'nlingual' ); ?></label>
 				<div class="nl-field nl-manage-language">
+					<label for="nl_language" class="screen-reader-text"><?php _e( 'Language', 'nlingual' ); ?></label>
 					<select name="nlingual_language" id="nl_language" class="nl-input nl-language-input">
 						<?php if ( ! $language_is_required ) : ?>
-							<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
+							<option value="0">&mdash; <?php _ex( 'Select Language', 'no language', 'nlingual' ); ?> &mdash;</option>
 						<?php endif; ?>
 						<?php
 						// Print the options
@@ -917,12 +917,12 @@ final class Backend extends Handler {
 
 			<div class="nl-manage-translations">
 				<?php if ( $languages->count() > 1 ) : ?>
-					<h4 class="nl-heading"><?php _e( 'Translations', 'nlingual' ); ?></h4>
+					<h4 class="screen-reader-text"><?php _e( 'Translations', 'nlingual' ); ?></h4>
 					<?php foreach ( $languages as $language ) : ?>
 						<div class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?>" data-nl_language="<?php echo $language->id; ?>">
 							<input type="hidden" name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input" value="<?php echo $translations[ $language->id ]; ?>" />
 							<label for="nl_translation_<?php echo $language->id; ?>_input">
-								<?php echo $language->system_name; ?>
+								<?php _ef( '%s Translation:', 'nlingual', $language->system_name ); ?>
 								<button type="button" class="button button-small button-primary nl-add-translation"><?php _e( 'Create', 'nlingual' ); ?></button>
 								<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php _e( 'Edit', 'nlingual' ); ?></button>
 							</label>
