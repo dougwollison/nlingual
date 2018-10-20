@@ -693,7 +693,7 @@ final class Backend extends Handler {
 			<hr />
 			<fieldset class="nl-fieldset">
 				<input type="hidden" name="_nl_nonce" class="nl-nonce" />
-				<div class="inline-edit-col nl-set-language">
+				<div class="inline-edit-col nl-manage-language">
 					<label>
 						<span class="title"><?php _e( 'Language', 'nlingual' ); ?></span>
 						<select name="nlingual_language" class="nl-input nl-language-input">
@@ -709,7 +709,7 @@ final class Backend extends Handler {
 						</select>
 					</label>
 				</div>
-				<div class="inline-edit-col nl-set-translations">
+				<div class="inline-edit-col nl-manage-translations">
 					<?php foreach ( $languages as $language ) : ?>
 						<label class="nl-translation-field nl-translation-<?php echo $language->id; ?>" title="<?php
 							/* Translators: %s = The name of the language */
@@ -890,12 +890,12 @@ final class Backend extends Handler {
 			}
 		}
 		?>
-		<div class="nl-translations-manager">
+		<div class="nl-translation-manager">
 			<?php if ( $force_default_language ) : ?>
 				<input type="hidden" name="nlingual_language" id="nl_language" class="nl-input nl-language-input" value="<?php echo $post_language ? $post_language->id : Registry::default_language( 'id' ); ?>">
 			<?php else: ?>
-				<div class="nl-field nl-language-field">
 					<label for="nl_language" class="nl-field-label"><?php _e( 'Language', 'nlingual' ); ?></label>
+				<div class="nl-field nl-manage-language">
 					<select name="nlingual_language" id="nl_language" class="nl-input nl-language-input">
 						<?php if ( ! $language_is_required ) : ?>
 							<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>

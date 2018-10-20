@@ -498,10 +498,10 @@
 			var id, $parent;
 
 			id = $( this ).val();
-			$parent = $( this ).parents( '.nl-translations-manager' );
+			$parent = $( this ).parents( '.nl-translation-manager' );
 
 			// Toggle visibility of the translations interface if language isn't set
-			$parent.find( '.nl-set-translations' ).toggleClass( 'hidden', '0' === id );
+			$parent.find( '.nl-manage-translations' ).toggleClass( 'hidden', '0' === id );
 
 			// Show all translation fields by default
 			$parent.find( '.nl-translation-field' ).show();
