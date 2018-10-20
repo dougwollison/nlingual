@@ -120,6 +120,44 @@ function sanitize_tag( $tag, $_ = false ) {
 // =========================
 
 /**
+ * A lazy, Markdown style formatting utility, for translation strings.
+ *
+ * Available formats:
+ *		**bold text**
+ *		__italic text__
+ *		``italic text``
+ *		[link text](url)
+ *
+ * All formats require no whitespace on the inside of the start/end markers.
+ * All links will open in a new tab.
+ *
+ * @since 2.8.0
+ *
+ * @param string $text The text to convert to HTML.
+ *
+ * @return string The output HTML
+ */
+function markitup( $string ) {
+	$html = preg_replace( array(
+		// **bold text**
+		'/\*\*([^\*\s][^\*]+[^\*\s])\*\*/',
+		// __italic text__
+		'/__([^_\s][^_]+[^_\s])__/',
+		// ``code text``
+		'/``([^`\s][^`]+[^`\s])``/',
+		// [link text](url)
+		'/\[([^\]\s][^\]]+[^\]\s])\]\(([^\)\s]+)\)/',
+	), array(
+		'<strong>$1</strong>',
+		'<em>$1</em>',
+		'<code>$1</code>',
+		'<a href="$2" target="_blank">$1</a>',
+	), $string );
+
+	return $html;
+}
+
+/**
  * Generate a link to create a clone of a post for translation.
  *
  * @since 2.6.0

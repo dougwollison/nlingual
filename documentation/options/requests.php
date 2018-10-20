@@ -17,4 +17,7 @@
 
 <p><?php _e( 'For SEO purposes, it is recommended you enable the Language is Required option, which will tell the system to treat all unassigned posts as belonging to the default language. Otherwise, posts without a language can be viewed from multiple URLs, causing duplicated content on your site.', 'nlingual' ); ?></p>
 
-<p><?php _e( 'Regarding SEO, nLingual by default uses "temporary" (HTTP 302) redirects to handle localized URLs. Best practices suggest using "permanent" (HTTP 301) redirects instead. <strong>Caution is advised when using permanent redirects, as they can cause issues if the URLs or the settings responsible for them are changed after the fact.</strong>', 'nlingual' ); ?></p>
+<p><?php
+/* translators: This uses markdown-style formatting; **bold text**. */
+echo nLingual\markitup( __( 'Regarding SEO, nLingual by default uses "temporary" (HTTP 302) redirects to handle localized URLs. Best practices suggest using "permanent" (HTTP 301) redirects instead. **Caution is advised when using permanent redirects, as they can cause issues if the URLs or the settings responsible for them are changed after the fact.**', 'nlingual' ) );
+?></p>
