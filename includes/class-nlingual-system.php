@@ -169,6 +169,7 @@ final class System extends Handler {
 	 * Switch to a different language.
 	 *
 	 * @since 2.8.0 Store the $reload_textdomains option when adding to stack.
+	 *              Added check if already in requested language.
 	 * @since 2.0.0
 	 *
 	 * @uses validate_language() to ensure $language is a Language object.
@@ -187,9 +188,13 @@ final class System extends Handler {
 		// Log the current language and reload status
 		self::$language_stack[] = array( Registry::current_language( 'id' ), $reload_textdomains );
 
+		// If already in this language, finish
+		if ( Registry::is_language_current( $language ) ) {
+			return;
+		}
+
 		// Get the old locale for text domain reloading
 		$old_local = get_locale();
-
 
 		// Set to the desired language
 		Registry::set_language( $language->id, false, 'override' );
@@ -204,6 +209,7 @@ final class System extends Handler {
 	 * Switch back to the previous language.
 	 *
 	 * @since 2.8.0 Added handling of re-reloading text domains.
+	 *              Added check if already in previous language.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::$previous_languages to get the previous language.
@@ -220,6 +226,11 @@ final class System extends Handler {
 
 		// Get the language and reload option
 		list( $language, $reload_textdomains ) = $last_change;
+
+		// If already in this language, finish
+		if ( Registry::is_language_current( $language ) ) {
+			return;
+		}
 
 		// Get the old locale for text domain reloading
 		$old_local = get_locale();
