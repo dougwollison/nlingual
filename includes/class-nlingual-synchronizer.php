@@ -181,7 +181,7 @@ final class Synchronizer {
 
 		// Throw exception if the post types don't match
 		if ( $original->post_type != $target->post_type ) {
-			/* Translators: %1$d = The ID number of the original post, %2$d = The ID number of the target post. */
+			/* translators: %1$d = The ID number of the original post, %2$d = The ID number of the target post. */
 			throw new Exception( _f( 'The requested posts (%1$d & %2$d) cannot be synchronized because they are of different types.', 'nlingual', $original->ID, $target->ID ), NL_ERR_BADREQUEST );
 		}
 
@@ -378,7 +378,7 @@ final class Synchronizer {
 
 		// Default title if not passed
 		if ( is_null( $title ) ) {
-			/* Translators: %1$s = The name of the language, %2$s = The post title */
+			/* translators: %1$s = The name of the language, %2$s = The post title */
 			$title = _f( '[Needs %1$s Translation]: %2$s', 'nlingual', $language->system_name, $post->post_title );
 			$_title_is_default = true;
 		}

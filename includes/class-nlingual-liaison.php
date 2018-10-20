@@ -521,7 +521,7 @@ final class Liaison extends Handler {
 					$label = sprintf( $post_type_obj->labels->index_page_translation, $language->system_name );
 				} else {
 					// Use generic one otherwise
-					/* Translators: %1$s = The name of the language, %2$s = The (likely plural) name of the post type. */
+					/* translators: %1$s = The name of the language, %2$s = The (likely plural) name of the post type. */
 					$label = _fx( '%1$s %2$s Page', 'index page translation', 'nlingual', $language->system_name, $post_type_obj->label );
 				}
 
