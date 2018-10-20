@@ -576,9 +576,9 @@ final class Backend extends Handler {
 	public static function maybe_set_queried_language( $args, $post ) {
 		if ( ! Registry::get( 'show_all_languages' ) && Registry::is_post_type_supported( $post->post_type ) ) {
 			$query_var = Registry::get( 'query_var' );
-			$language = Translator::get_post_language( $post );
-
-			$args[ $query_var ] = array( $language->id, '0' );
+			if ( $language = Translator::get_post_language( $post ) ) {
+				$args[ $query_var ] = array( $language->id, '0' );
+			}
 		}
 
 		return $args;
