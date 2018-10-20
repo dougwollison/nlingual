@@ -412,6 +412,7 @@ final class System extends Handler {
 	/**
 	 * Check if the new blog supports nLingual; disable querying if not.
 	 *
+	 * @since 2.8.0 Added use of is_nlingual_active() to properly test for plugin status.
 	 * @since 2.5.0
 	 */
 	public static function check_blog_for_support() {
@@ -419,7 +420,7 @@ final class System extends Handler {
 		Registry::load( 'reload' );
 
 		// Check if the plugin runs on this site and isn't outdated
-		if ( version_compare( get_option( 'nlingual_database_version', '0.0.0' ), NL_DB_VERSION, '>=' ) ) {
+		if ( is_nlingual_active() && version_compare( get_option( 'nlingual_database_version', '0.0.0' ), NL_DB_VERSION, '>=' ) ) {
 			// Re-enable the various handlers' hooks
 			self::restore_all_hooks();
 			Frontend::restore_all_hooks();
