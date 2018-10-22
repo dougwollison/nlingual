@@ -634,12 +634,13 @@ final class Registry {
 	 *
 	 * @internal
 	 *
+	 * @since 2.8.0 Added $require_all option.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to get the post_types list.
 	 *
 	 * @param string|array $post_types  The post type(s) to check.
-	 * @param bool         $require_all Wether or not to ensure ALL are supported.
+	 * @param bool         $require_all Optional. Wether or not to ensure ALL are supported.
 	 *
 	 * @return bool Wether or not the post type(s) are supported.
 	 */
