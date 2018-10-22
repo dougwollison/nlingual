@@ -1088,8 +1088,7 @@ final class System extends Handler {
 		$query_vars = &$query->query_vars;
 
 		// Abort if a query for an unsupported post type
-		if ( isset( $query_vars['post_type'] ) && $query_vars['post_type'] && ! is_array( $query_vars['post_type'] )
-		&& $query_vars['post_type'] != 'any' && ! Registry::is_post_type_supported( $query_vars['post_type'] ) ) {
+		if ( isset( $query_vars['post_type'] ) && $query_vars['post_type'] && ! Registry::is_post_type_supported( $query_vars['post_type'] ) ) {
 			return;
 		}
 
