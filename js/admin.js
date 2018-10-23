@@ -524,8 +524,6 @@
 
 				$languages = $selector.find( '.nl-localizer-language' );
 
-				this.$( '.settings' ).prepend( $selector );
-
 				view = this;
 				_.each( [ 'title', 'caption', 'alt', 'description' ], function( field ) {
 					var $field, $last_insert;
@@ -569,6 +567,15 @@
 				} );
 
 				$languages.filter( '[data-nl_language="' + nL.default_language + '"]' ).trigger( 'click' );
+
+				// Attach to proper area...
+				if ( wp.media.view.Attachment.Details.TwoColumn && this instanceof wp.media.view.Attachment.Details.TwoColumn ) {
+					// Inside the settings wrapper if the Two Column interface from Media Grid
+					this.$( '.settings' ).prepend( $selector );
+				} else {
+					// Just after the attachment info block if the default interface on the Post Screen
+					this.$( '.attachment-info' ).after( $selector );
+				}
 
 				return returnVal;
 			};
