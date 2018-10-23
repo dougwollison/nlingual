@@ -508,7 +508,7 @@
 				}
 
 				$selector = $( '<label class="setting nl-localizer-languages"></label>' ).html( function() {
-					var html = '<span class="name">Translate</span>';
+					var html = '<span class="name">' + nlinualL10n.Translate + '</span>';
 
 					html += '<span class="value">';
 					Languages.each( function( language, index ) {
