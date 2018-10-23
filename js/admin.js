@@ -181,6 +181,12 @@
 			$( this ).parents( '.nl-modal' ).hide();
 		} );
 
+		$( 'body' ).on( 'click', '.nl-modal', function( e ) {
+			if ( $( e.target ).hasClass( 'nl-modal' ) ) {
+				$( this ).hide();
+			}
+		} );
+
 		// =========================
 		// ! Setings Pages
 		// =========================
