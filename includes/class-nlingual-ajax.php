@@ -161,6 +161,7 @@ final class AJAX extends Handler {
 			'suppress_filters' => false,
 			'posts_per_page' => -1,
 			'post_type' => $data['post_type'],
+			'post_status' => 'any',
 			'orderby' => 'post_date',
 			'order' => 'desc',
 			$language_var => $data['language_id'],
