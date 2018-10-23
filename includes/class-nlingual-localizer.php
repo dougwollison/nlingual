@@ -408,6 +408,7 @@ final class Localizer extends Handler {
 	 * This will guess the screen base based on $meta_type
 	 * if not provided.
 	 *
+	 * @since 2.8.0 Fixed ID creation when a subtype is specified.
 	 * @since 2.6.0 ID now includes subtype (post_type/taxonomy) if provided.
 	 * @since 2.0.0
 	 *
@@ -462,7 +463,7 @@ final class Localizer extends Handler {
 		$id = $key;
 		if ( $subtype ) {
 			// Subtype specified, recreate with it in the ID
-			$id .= "meta.{$meta_type}.{$subtype}:{$meta_key}";
+			$id = "meta.{$meta_type}.{$subtype}:{$meta_key}";
 		}
 
 		// Register the field as normal
@@ -793,6 +794,7 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
+	 * @since 2.8.0 Reverted part of 2.6.0 change; pass $key, not $ids list.
 	 * @since 2.6.0 Updated to fetch by ID, with and without subtype specified,
 	 *              and to use $pre_value as the fallback.
 	 * @since 2.0.0
@@ -814,25 +816,11 @@ final class Localizer extends Handler {
 		// Get the current language
 		$language = Registry::current_language();
 
-		// The default ID to try
-		$ids = array( "meta.{$meta_type}:{$meta_key}" );
-
-		if ( $meta_type == 'post' ) {
-			// First try with the post type specified
-			if ( $post_type = get_post_type( $object_id ) ) {
-				array_unshift( $ids, "meta.{$meta_type}.{$post_type}:{$meta_key}" );
-			}
-		} else
-		if ( $meta_type == 'term' ) {
-			// First try with the taxonomy specified
-			$term = \WP_Term::get_instance( $object_id );
-			if ( is_a( $term, 'WP_Term' ) ) {
-				array_unshift( $ids, "meta.{$meta_type}.{$term->taxonomy}:{$meta_key}" );
-			}
-		}
+		// The key to search by
+		$key = "meta.{$meta_type}:{$meta_key}";
 
 		// Get the localized version of the field, falling back to $pre_value if applicable
-		$value = self::get_field_value( $ids, $language->id, $object_id, $pre_value );
+		$value = self::get_field_value( $key, $language->id, $object_id, $pre_value );
 
 		return $pre_value;
 	}
