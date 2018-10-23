@@ -178,6 +178,34 @@ function get_translate_post_link( $post_id, $language_id ) {
 }
 
 /**
+ * Test if this plugin is active.
+ *
+ * @internal
+ *
+ * @since 2.8.0
+ *
+ * @return bool Wether or not this plugin is active.
+ */
+function is_nlingual_active() {
+	if ( function_exists( 'is_plugin_active' ) ) {
+		return is_plugin_active( NL_PLUGIN_SLUG );
+	}
+
+	/**
+	 * Front-end polyfill, rather than load all of wp-admin/includes/plugin.php
+	 */
+
+	// Get active plugins
+	$plugins = get_option( 'active_plugins', array() );
+	if ( is_multisite() ) {
+		// Add site-wide plugins (why is it in a different format again?)
+		$plugins += array_keys( get_site_option( 'active_sitewide_plugins', array() ) );
+	}
+
+	return in_array( NL_PLUGIN_SLUG, $plugins );
+}
+
+/**
  * Triggers the standard "Cheatin’ uh?" wp_die message.
  *
  * @internal

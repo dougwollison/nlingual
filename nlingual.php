@@ -35,6 +35,15 @@ define( 'NL_PLUGIN_FILE', __FILE__ );
 define( 'NL_PLUGIN_DIR', dirname( NL_PLUGIN_FILE ) );
 
 /**
+ * Reference to the plugin slug.
+ *
+ * @since 2.8.0
+ *
+ * @var string
+ */
+define( 'NL_PLUGIN_SLUG', basename( NL_PLUGIN_DIR ) . '/' . basename( NL_PLUGIN_FILE ) );
+
+/**
  * Identifies the current plugin version.
  *
  * @since 2.6.0

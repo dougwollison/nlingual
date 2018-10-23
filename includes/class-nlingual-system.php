@@ -168,6 +168,8 @@ final class System extends Handler {
 	/**
 	 * Switch to a different language.
 	 *
+	 * @since 2.8.0 Store the $reload_textdomains option when adding to stack.
+	 *              Added check if already in requested language.
 	 * @since 2.0.0
 	 *
 	 * @uses validate_language() to ensure $language is a Language object.
@@ -183,11 +185,16 @@ final class System extends Handler {
 			return false; // Does not exist
 		}
 
+		// Log the current language and reload status
+		self::$language_stack[] = array( Registry::current_language( 'id' ), $reload_textdomains );
+
+		// If already in this language, finish
+		if ( Registry::is_language_current( $language ) ) {
+			return;
+		}
+
 		// Get the old locale for text domain reloading
 		$old_local = get_locale();
-
-		// Log the current language
-		self::$language_stack[] = Registry::current_language( 'id' );
 
 		// Set to the desired language
 		Registry::set_language( $language->id, false, 'override' );
@@ -201,6 +208,8 @@ final class System extends Handler {
 	/**
 	 * Switch back to the previous language.
 	 *
+	 * @since 2.8.0 Added handling of re-reloading text domains.
+	 *              Added check if already in previous language.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::$previous_languages to get the previous language.
@@ -208,21 +217,31 @@ final class System extends Handler {
 	 * @uses Registry::$current_language to update the current language.
 	 */
 	public static function restore_language() {
-		$last_language = array_pop( self::$language_stack );
+		$last_change = array_pop( self::$language_stack );
 
 		// If no previous language, go with default
-		if ( ! $last_language ) {
-			$last_language = Registry::default_language( 'id' );
+		if ( ! $last_change ) {
+			$last_change = array( Registry::default_language( 'id' ), false ); // default to not reloading text domains
+		}
+
+		// Get the language and reload option
+		list( $language, $reload_textdomains ) = $last_change;
+
+		// If already in this language, finish
+		if ( Registry::is_language_current( $language ) ) {
+			return;
 		}
 
 		// Get the old locale for text domain reloading
 		$old_local = get_locale();
 
 		// Set to the last language
-		Registry::set_language( $last_language, false, 'override' );
+		Registry::set_language( $language, false, 'override' );
 
-		// Reload the text domains
-		self::reload_textdomains( $old_local );
+		if ( $reload_textdomains ) {
+			// Reload the text domains
+			self::reload_textdomains( $old_local );
+		}
 	}
 
 	/**
@@ -393,6 +412,7 @@ final class System extends Handler {
 	/**
 	 * Check if the new blog supports nLingual; disable querying if not.
 	 *
+	 * @since 2.8.0 Added use of is_nlingual_active() to properly test for plugin status.
 	 * @since 2.5.0
 	 */
 	public static function check_blog_for_support() {
@@ -400,7 +420,7 @@ final class System extends Handler {
 		Registry::load( 'reload' );
 
 		// Check if the plugin runs on this site and isn't outdated
-		if ( version_compare( get_option( 'nlingual_database_version', '0.0.0' ), NL_DB_VERSION, '>=' ) ) {
+		if ( is_nlingual_active() && version_compare( get_option( 'nlingual_database_version', '0.0.0' ), NL_DB_VERSION, '>=' ) ) {
 			// Re-enable the various handlers' hooks
 			self::restore_all_hooks();
 			Frontend::restore_all_hooks();
@@ -1055,7 +1075,7 @@ final class System extends Handler {
 	}
 
 	/**
-	 * Translated the post__not_in IDs to those for the quereid language(s) if needed.
+	 * Translated the post__not_in IDs to those for the queried language(s) if needed.
 	 *
 	 * @since 2.6.0 Added check to see if current query is for an unsupported post type.
 	 * @since 2.0.0
@@ -1068,8 +1088,7 @@ final class System extends Handler {
 		$query_vars = &$query->query_vars;
 
 		// Abort if a query for an unsupported post type
-		if ( isset( $query_vars['post_type'] ) && $query_vars['post_type'] && ! is_array( $query_vars['post_type'] )
-		&& $query_vars['post_type'] != 'any' && ! Registry::is_post_type_supported( $query_vars['post_type'] ) ) {
+		if ( isset( $query_vars['post_type'] ) && $query_vars['post_type'] && ! Registry::is_post_type_supported( $query_vars['post_type'] ) ) {
 			return;
 		}
 

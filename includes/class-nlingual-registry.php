@@ -629,25 +629,31 @@ final class Registry {
 	/**
 	 * Test if the provided post type(s) are registered for translation.
 	 *
-	 * Will return true if at least 1 is supported.
+	 * If $require_all is TRUE, will test if ALL are supported,
+	 * otherwise, will return true if at least 1 is supported.
 	 *
 	 * @internal
 	 *
+	 * @since 2.8.0 Added $require_all option.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to get the post_types list.
 	 *
-	 * @param string|array $post_types The post type(s) to check.
+	 * @param string|array $post_types  The post type(s) to check.
+	 * @param bool         $require_all Optional. Wether or not to ensure ALL are supported.
 	 *
 	 * @return bool Wether or not the post type(s) are supported.
 	 */
-	public static function is_post_type_supported( $post_types ) {
+	public static function is_post_type_supported( $post_types, $require_all = false ) {
 		$post_types = (array) $post_types; // Convert to array
 
 		// Get the supported post types list
 		$supported = self::get( 'post_types' );
 
-		$result = (bool) array_intersect( $supported, $post_types );
+		$matches = count( array_intersect( $supported, $post_types ) );
+
+		// Based on $require_all setting, test if number of matches is sufficient
+		$result = $require_all ? $matches === count( $post_types ) : $matches > 0;
 
 		/**
 		 * Filter the result.
