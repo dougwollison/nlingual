@@ -706,6 +706,8 @@
 					var current = finderTranslationList.get( translation_id );
 					if ( current ) {
 						current.$el.addClass( 'current' ).find( 'input' ).attr( 'checked', true );
+					} else {
+						$finder.find( '.nl-translation-unset input' ).attr( 'checked', true );
 					}
 				},
 				error: function( jqXHR ) {
