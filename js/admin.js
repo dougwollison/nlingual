@@ -503,7 +503,7 @@
 
 				localized_values = this.model.get( 'localized_values' );
 
-				if ( ! localized_values ) {
+				if ( typeof localized_values == 'undefined' ) {
 					return returnVal;
 				}
 
