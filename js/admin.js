@@ -94,7 +94,7 @@
 
 			var is_assigned = this.model.get( 'is_assigned' );
 			if ( is_assigned ) {
-				this.$el.attr( 'title', nlingualL10n.IsTranslationOf.replace( '%s', is_assigned ) );
+				this.$el.attr( 'title', nlingualL10n.IsTranslationOf.replace( '%s', is_assigned.title ) );
 			}
 
 			return this;
