@@ -535,7 +535,10 @@ final class System extends Handler {
 
 		// Add/update it in the list
 		if ( ! isset( self::$textdomain_log[ $domain ] ) ) {
-			self::$textdomain_log[ $domain ] = array();
+			self::$textdomain_log[ $domain ] = array(
+				'type' => '',
+				'paths' => array(),
+			);
 		}
 		self::$textdomain_log[ $domain ]['type'] = $type;
 
@@ -560,7 +563,10 @@ final class System extends Handler {
 
 		// Add/update it in the list
 		if ( ! isset( self::$textdomain_log[ $domain ] ) ) {
-			self::$textdomain_log[ $domain ] = array();
+			self::$textdomain_log[ $domain ] = array(
+				'type' => '',
+				'paths' => array(),
+			);
 		}
 		self::$textdomain_log[ $domain ]['paths'][] = $dir;
 	}
