@@ -462,6 +462,10 @@
 			&.current {
 				font-weight: 600;
 			}
+
+			&.assigned {
+				font-style: italic;
+			}
 		}
 		.nl-translation-unset {
 			border: 1px solid #dfdfdf;

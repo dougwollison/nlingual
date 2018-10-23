@@ -96,6 +96,7 @@
 			if ( is_assigned ) {
 				this.$el.attr( 'title', nlingualL10n.IsTranslationOf.replace( '%s', is_assigned.title ) );
 			}
+			this.$el.toggleClass( 'assigned', !! is_assigned );
 
 			return this;
 		},
@@ -698,7 +699,7 @@
 
 					var current = finderTranslationList.get( translation_id );
 					if ( current ) {
-						current.$el.find( 'input' ).attr( 'checked', true );
+						current.$el.addClass( 'current' ).find( 'input' ).attr( 'checked', true );
 					}
 				},
 				error: function( jqXHR ) {
