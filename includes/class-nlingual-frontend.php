@@ -45,7 +45,7 @@ final class Frontend extends Handler {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 2.7.1 Added rewrite_locale from System.
+	 * @since 2.8.0 Added rewrite_locale from System.
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
@@ -477,7 +477,7 @@ final class Frontend extends Handler {
 	/**
 	 * Replace entries in a post ID list with their translations for the current language.
 	 *
-	 * @since 2.7.1
+	 * @since 2.8.0
 	 *
 	 * @api
 	 *

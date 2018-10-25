@@ -44,7 +44,7 @@ final class Backend extends Handler {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 2.7.1 Added page_attributes_dropdown_pages_args filter.
+	 * @since 2.8.0 Added page_attributes_dropdown_pages_args filter.
 	 * @since 2.6.0 Added fix_localized_admin_url setup.
 	 * @since 2.0.0
 	 *
@@ -566,7 +566,7 @@ final class Backend extends Handler {
 	/**
 	 * Filter the query args, adding language if applicable.
 	 *
-	 * @since 2.7.1
+	 * @since 2.8.0
 	 *
 	 * @param array   $args The WP_Query arguments to filter.
 	 * @param WP_Post $post The post for context.
