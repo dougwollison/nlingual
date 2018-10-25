@@ -6,11 +6,17 @@ $plural = strtolower( get_post_type_object( $post_type )->labels->name );
 ?>
 <title><?php _e( 'Languages & Translations', 'nlingual' ); ?></title>
 
-<p><?php
-/* translators: %1$s = The singular name of the post type, %2$s = The URL for the link. Please preserve the HTML as-is. */
-_ef( 'The <strong>Languages & Translation</strong> box allows you to assign a language to this %1$s, from the list of languages that have been registered <a href="%2$s" target="_blank">here</a> for use. Once you assign a language, you can also assign the translated versions of the %1$s in each of the other languages, assuming they exist already.', 'nlingual', $singular, admin_url( 'admin.php?page=nlingual-languages' ) ); ?></p>
+<?php if ( nLingual\Registry::get( 'lock_post_language' ) ) : ?>
+	<p><?php
+	/* translators: %1$s = The singular name of the post type */
+	_ef( 'The <strong>Languages & Translations</strong> box allows you to create/access translated versions for this %1$s in the other languages.', 'nlingual', $singular ); ?></p>
+<?php else: ?>
+	<p><?php
+	/* translators: %1$s = The singular name of the post type, %2$s = The URL for the link. Please preserve the HTML as-is. */
+	_ef( 'The <strong>Languages & Translations</strong> box allows you to assign a language for this %1$s, from the list of languages that have been registered <a href="%2$s" target="_blank">here</a> for use. Once a language is assigned, you can create/access translated versions for the other languages.', 'nlingual', $singular, admin_url( 'admin.php?page=nlingual-languages' ) ); ?></p>
+<?php endif; ?>
 
-<p><?php _e( 'If you don’t have a translated version for a particular language yet, you can select the option to create a new one; a copy of the current post will be created in draft form for you to work on.', 'nlingual' ); ?></p>
+<p><?php _e( 'If a translation does not yet exist, you can click the Create button, a clone of the current post will be created in draft form, and opened in a new window or tab of you to start editing.', 'nlingual' ); ?></p>
 
 <p><?php
 /* translators: %s = The URL for the link. Please preserve the HTML as-is. */
