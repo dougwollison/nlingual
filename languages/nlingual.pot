@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: nLingual\n"
-"POT-Creation-Date: 2018-10-26 10:07-0400\n"
+"POT-Creation-Date: 2018-10-26 11:07-0400\n"
 "PO-Revision-Date: 2018-10-20 10:47-0400\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -17,7 +17,8 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
 "esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
-"_nx_noop:3c,1,2;__ngettext_noop:1,2;_f;_fx:1,2c;_ef;_efx:1,2c\n"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2;_f;_fx:1,2c;_ef;_efx:1,2c;_m;_mx:1,2c;"
+"_em;_emx:1,2c;_mf;_mfx:1,2c;_emf;_emfx:1,2c\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 "X-Poedit-SearchPathExcluded-1: includes/class-nlingual-locale.php\n"
@@ -351,14 +352,14 @@ msgid ""
 "access translated versions for this %1$s in the other languages."
 msgstr ""
 
-#. translators: This uses markdown-like formatting; **bold text**, [link text](url). %1$s = The singular name of the post type, %2$s = The URL for the link.
+#. translators: This uses markdown-like formatting; **bold text**, [link text]^(url). %1$s = The singular name of the post type, %2$s = The URL for the link.
 #: documentation/post-translation/translation.php:16
 #, php-format
 msgid ""
 "The **Languages & Translations** box allows you to assign a language for "
-"this %1$s, from the list of languages that have been registered [here](%2$s) "
-"for use. Once a language is assigned, you can create/access translated "
-"versions for the other languages."
+"this %1$s, from the list of languages that have been registered "
+"[here]^(%2$s) for use. Once a language is assigned, you can create/access "
+"translated versions for the other languages."
 msgstr ""
 
 #: documentation/post-translation/translation.php:19
@@ -368,13 +369,13 @@ msgid ""
 "window or tab of you to start editing."
 msgstr ""
 
-#. translators: This uses markdown-like formatting; [link text](url). %s = The URL for the link.
+#. translators: This uses markdown-like formatting; [link text]^(url). %s = The URL for the link.
 #: documentation/post-translation/translation.php:23
 #, php-format
 msgid ""
 "When you save your changes, certain fields and settings will be copied to "
 "its sister translations, synchronizing them. The exact fields/settings that "
-"will be synchronized is controlled [here](%s)."
+"will be synchronized is controlled [here]^(%s)."
 msgstr ""
 
 #. translators: %s = The singular name of the post type.
@@ -382,8 +383,8 @@ msgstr ""
 #, php-format
 msgid ""
 "On this screen you can view at a glance what language every post is in, as "
-"well as what it’s translations are. You can also filter the list to show "
-"only %s of a particular language."
+"well as what its translations are. You can also filter the list to show only "
+"%s of a particular language."
 msgstr ""
 
 #. translators: This uses markdown-like formatting; **bold text**. %1$s = The singular name of the post type.
@@ -411,13 +412,13 @@ msgid ""
 "need to refresh if you wish to see the full changes."
 msgstr ""
 
-#. translators: This uses markdown-like formatting; [link text](url). %1$s = The singular name of the post type, %2$s = The URL for the link. Please preserve the HTML as-is.
+#. translators: This uses markdown-like formatting; [link text]^(url). %1$s = The singular name of the post type, %2$s = The URL for the link. Please preserve the HTML as-is.
 #: documentation/posts-translation/translation.php:29
 #, php-format
 msgid ""
 "If you make changes to a %1$s from here, certain fields and settings will be "
-"copied to it’s sister translations, synchronizing them. The exact fields/"
-"settings that will be synchronized is controlled [here](%2$s)."
+"copied to its sister translations, synchronizing them. The exact fields/"
+"settings that will be synchronized is controlled [here]^(%2$s)."
 msgstr ""
 
 #. translators: %s = The plural name of the post type.
@@ -1166,7 +1167,7 @@ msgstr ""
 msgid "%1$s expects a string or array, %2$s given"
 msgstr ""
 
-#: includes/functions-nlingual.php:216
+#: includes/functions-nlingual.php:220
 msgid "Cheatin&#8217; uh?"
 msgstr ""
 
