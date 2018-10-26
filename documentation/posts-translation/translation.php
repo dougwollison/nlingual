@@ -8,7 +8,7 @@ $plural = strtolower( get_post_type_object( $post_type )->labels->name );
 
 <p><?php
 /* translators: %s = The singular name of the post type. */
-_ef( 'On this screen you can view at a glance what language every post is in, as well as what it’s translations are. You can also filter the list to show only %s of a particular language.', 'nlingual', $plural ); ?></p>
+_ef( 'On this screen you can view at a glance what language every post is in, as well as what its translations are. You can also filter the list to show only %s of a particular language.', 'nlingual', $plural ); ?></p>
 
 <?php if ( nLingual\Registry::get( 'lock_post_language' ) ) : ?>
 	<p><?php
@@ -25,7 +25,7 @@ _ef( 'On this screen you can view at a glance what language every post is in, as
 _ef( 'Currently, only the row for the %1$s being updated will change; you will need to refresh if you wish to see the full changes.', 'nlingual', $singular ); ?></p>
 
 <p><?php
-/* translators: This uses markdown-like formatting; [link text](url). %1$s = The singular name of the post type, %2$s = The URL for the link. Please preserve the HTML as-is. */
-echo nLingual\markitup( _f( 'If you make changes to a %1$s from here, certain fields and settings will be copied to it’s sister translations, synchronizing them. The exact fields/settings that will be synchronized is controlled [here](%2$s).', 'nlingual', $singular, admin_url( 'admin.php?page=nlingual-synchronizer' ) ) ); ?></p>
+/* translators: This uses markdown-like formatting; [link text]^(url). %1$s = The singular name of the post type, %2$s = The URL for the link. Please preserve the HTML as-is. */
+echo nLingual\markitup( _f( 'If you make changes to a %1$s from here, certain fields and settings will be copied to its sister translations, synchronizing them. The exact fields/settings that will be synchronized is controlled [here]^(%2$s).', 'nlingual', $singular, admin_url( 'admin.php?page=nlingual-synchronizer' ) ) ); ?></p>
 
 <?php require NL_PLUGIN_DIR . '/documentation/shared/post-sync-summary.php'; ?>

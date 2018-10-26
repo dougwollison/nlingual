@@ -127,6 +127,7 @@ function sanitize_tag( $tag, $_ = false ) {
  *		__italic text__
  *		``italic text``
  *		[link text](url)
+ *		[link text]^(external url)
  *
  * All formats require no whitespace on the inside of the start/end markers.
  * All links will open in a new tab.
@@ -146,11 +147,14 @@ function markitup( $string ) {
 		// ``code text``
 		'/``([^`\s][^`]+[^`\s])``/',
 		// [link text](url)
-		'/\[([^\]\s][^\]]+[^\]\s])\]\(([^\)\s]+)\)/',
+		'/\[([^\]\s][^\]]+[^\]\s])\]\((\S+)\)/',
+		// [link text]^(external url)
+		'/\[([^\]\s][^\]]+[^\]\s])\]\^\((\S+)\)/',
 	), array(
 		'<strong>$1</strong>',
 		'<em>$1</em>',
 		'<code>$1</code>',
+		'<a href="$2">$1</a>',
 		'<a href="$2" target="_blank">$1</a>',
 	), $string );
 
