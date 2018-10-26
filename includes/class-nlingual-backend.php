@@ -96,7 +96,7 @@ final class Backend extends Handler {
 		self::add_hook( 'bulk_edit_custom_box', 'bulk_edit_post_language', 20, 2 );
 
 		// Post Editor Interfaces
-		self::add_hook( 'add_meta_boxes', 'add_post_meta_box', 15, 1 );
+		self::add_hook( 'admin_head', 'add_post_meta_box', 15, 1 );
 
 		// Admin Notices
 		self::add_hook( 'edit_form_top', 'synced_posts_notice', 10, 1 );
@@ -828,17 +828,19 @@ final class Backend extends Handler {
 	 * For setting language and associated translations
 	 * for the enabled post types.
 	 *
-	 * @since 2.8.1 Revised to run on add_meta_boxes_$post_type, accept $post argument.
+	 * @since 2.8.1 Revised to run on admin_head.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry:get() to retrieve the supported post types.
 	 * @uses Backend::post_meta_box() as the callback to build the metabox.
 	 *
-	 * @param string $post_type The post type being added for.
+	 * @global \WP_Post $post The post object, assuming this is the edit screen.
 	 */
-	public static function add_post_meta_box( $post_type ) {
-		// Abort if post type is not supported
-		if ( ! Registry::is_post_type_supported( $post_type ) ) {
+	public static function add_post_meta_box() {
+		global $post;
+
+		// Abort if post is not present or type is not supported
+		if ( ! $post || ! Registry::is_post_type_supported( $post->post_type ) ) {
 			return;
 		}
 
@@ -846,7 +848,7 @@ final class Backend extends Handler {
 			'nlingual_translations', // id
 			__( 'Language & Translations', 'nlingual' ), // title
 			array( __CLASS__, 'post_meta_box' ), // callback
-			$post_type, // screen
+			$post->post_type, // screen
 			'side', // context
 			'default' // priority
 		);
