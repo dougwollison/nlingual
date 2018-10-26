@@ -214,3 +214,50 @@ function _emf( $text, $domain, $args ) {
 function _emfx( $text, $context, $domain, $args ) {
 	echo call_user_func_array( '_mfx', func_get_args() );
 }
+
+// =========================
+// ! Array Stuff (deprecated)
+// =========================
+
+/*
+ * Localize an array of strings.
+ *
+ * @deprecated 2.10.0 Was never used internally and not recommended.
+ *
+ * @since 1.0.0
+ *
+ * @uses __()
+ *
+ * @param array $array The array to be localized.
+ * @param string $domain The domain to use.
+ */
+function _a( $array, $domain = 'default' ) {
+	$_array = array();
+	foreach ( $array as $key => $value ) {
+		$_array[ $key ] = __( $value, $domain );
+	}
+
+	return $_array;
+}
+
+/*
+ * Localize an array of strings.
+ *
+ * @deprecated 2.10.0 Was never used internally and not recommended.
+ *
+ * @since 1.0.0
+ *
+ * @uses _x()
+ *
+ * @param array $array The array to be localized.
+ * @param string $context The context to use.
+ * @param string $domain The domain to use.
+ */
+function _ax( $array, $context, $domain = 'default' ) {
+	$_array = array();
+	foreach ( $array as $key => $value ) {
+		$_array[ $key ] = _x( $value, $context, $domain );
+	}
+
+	return $_array;
+}
