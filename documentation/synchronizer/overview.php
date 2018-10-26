@@ -4,4 +4,4 @@
 
 <p><?php
 /* translators: This uses markdown-like formatting; **bold text**. */
-echo nLingual\markitup( __( '**Caution:** these sync rules cannot be disabled on a per-post basis; either all post of a particular type have these details synchronized or none of them do.', 'nlingual' ) ); ?></p>
+_em( '**Caution:** these sync rules cannot be disabled on a per-post basis; either all post of a particular type have these details synchronized or none of them do.', 'nlingual' ); ?></p>

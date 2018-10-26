@@ -19,5 +19,5 @@
 
 <p><?php
 /* translators: This uses markdown-like formatting; **bold text**. */
-echo nLingual\markitup( __( 'Regarding SEO, nLingual by default uses "temporary" (HTTP 302) redirects to handle localized URLs. Best practices suggest using "permanent" (HTTP 301) redirects instead. **Caution is advised when using permanent redirects, as they can cause issues if the URLs or the settings responsible for them are changed after the fact.**', 'nlingual' ) );
+_em( 'Regarding SEO, nLingual by default uses "temporary" (HTTP 302) redirects to handle localized URLs. Best practices suggest using "permanent" (HTTP 301) redirects instead. **Caution is advised when using permanent redirects, as they can cause issues if the URLs or the settings responsible for them are changed after the fact.**', 'nlingual' );
 ?></p>
