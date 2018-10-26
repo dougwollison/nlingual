@@ -328,7 +328,7 @@ final class System extends Handler {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 2.7.1 Moved rewrite_locale to Frontend.
+	 * @since 2.8.0 Moved rewrite_locale to Frontend.
 	 * @since 2.6.0 Added transition (un)flagging.
 	 * @since 2.4.0 Only add patch_font_stack hook if before 4.6.
 	 * @since 2.2.0 Reassigned synchronize_posts to wp_insert_post (better hook to use).
@@ -535,7 +535,10 @@ final class System extends Handler {
 
 		// Add/update it in the list
 		if ( ! isset( self::$textdomain_log[ $domain ] ) ) {
-			self::$textdomain_log[ $domain ] = array();
+			self::$textdomain_log[ $domain ] = array(
+				'type' => '',
+				'paths' => array(),
+			);
 		}
 		self::$textdomain_log[ $domain ]['type'] = $type;
 
@@ -560,7 +563,10 @@ final class System extends Handler {
 
 		// Add/update it in the list
 		if ( ! isset( self::$textdomain_log[ $domain ] ) ) {
-			self::$textdomain_log[ $domain ] = array();
+			self::$textdomain_log[ $domain ] = array(
+				'type' => '',
+				'paths' => array(),
+			);
 		}
 		self::$textdomain_log[ $domain ]['paths'][] = $dir;
 	}
@@ -627,7 +633,7 @@ final class System extends Handler {
 	/**
 	 * Delete the language for a post being deleted.
 	 *
-	 * @since 2.7.1 Add check for post's type being supported.
+	 * @since 2.8.0 Add check for post's type being supported.
 	 * @since 2.0.0
 	 *
 	 * @uses Translator::delete_post_language() to handle the deletion.
@@ -990,7 +996,7 @@ final class System extends Handler {
 	/**
 	 * Set the queried language to the current one if applicable
 	 *
-	 * @since 2.7.1 Added check for parent's post type being supported.
+	 * @since 2.8.0 Added check for parent's post type being supported.
 	 * @since 2.7.0 Revised support checks for post type archives.
 	 * @since 2.6.0 Perform tax query handling first, then post type archive.
 	 * @since 2.1.1 Fixed post type and taxonomy checks to be more less picky.
@@ -1196,7 +1202,7 @@ final class System extends Handler {
 	/**
 	 * Filter the results of get_pages, removing those not in the current language.
 	 *
-	 * @since 2.7.1 Add handling for an array of languages being requested.
+	 * @since 2.8.0 Add handling for an array of languages being requested.
 	 * @since 2.6.0 Add check to make sure the Page post type is supported.
 	 * @since 2.0.0
 	 *

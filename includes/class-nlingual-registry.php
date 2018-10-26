@@ -109,7 +109,7 @@ final class Registry {
 		// - The patch font stack option
 		'patch_font_stack' => false,
 		// - The force default language on new posts option
-		'force_default_language' => false,
+		'lock_post_language' => false,
 
 		/* Request/Redirection Options */
 

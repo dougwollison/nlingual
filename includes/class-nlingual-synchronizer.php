@@ -386,7 +386,7 @@ final class Synchronizer {
 		// Create the new post
 		$post_data = array(
 			'post_title'     => $title,
-			'post_status'    => 'pending',
+			'post_status'    => 'draft',
 			'post_type'      => $post->post_type,
 			'post_mime_type' => $post->post_mime_type,
 		);

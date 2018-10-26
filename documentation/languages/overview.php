@@ -15,6 +15,6 @@
 	<li><strong><?php _e( 'Text Direction:', 'nlingual' ); ?></strong> <?php _e( 'The direction of text the language should use (left-to-right or right-to-left).', 'nlingual' ); ?></li>
 </ul>
 
-<p><?php _e( 'Registered languages can be deactivated by unchecking the Active box. This hides them from from being publicly accessible, and excluding them from the All Languages filter in the post listing. The language will still however be available for assigning posts and translations to.', 'nlingual' ); ?></p>
+<p><?php _e( 'Registered languages can be deactivated by unchecking the Active box. This hides them from from being publicly accessible, and excluding them from the All Languages filter in the post listing. The language will still however be available for assigning posts and translations to it.', 'nlingual' ); ?></p>
 
-<p><?php _e( 'To delete languages, check off the delete box and and then click Save Changes.', 'nlingual' ); ?></p>
+<p><?php _e( 'To delete languages, check the delete box before clicking Save Changes.', 'nlingual' ); ?></p>

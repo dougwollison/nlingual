@@ -7,7 +7,7 @@
 <ol>
 	<li><?php _e( 'The visitor’s language according to their browser.', 'nlingual' ); ?></li>
 	<?php if ( nLingual\Registry::can_use_rewrites() ) : ?>
-	<li><?php _e( 'The language specified in the URL (based on the scheme specified by the Redirection Method)', 'nlingual' ); ?></li>
+		<li><?php _e( 'The language specified in the URL (based on the scheme specified by the Redirection Method)', 'nlingual' ); ?></li>
 	<?php endif; ?>
 	<li><?php _e( 'The GET/POST query argument if specified.', 'nlingual' ); ?></li>
 	<li><?php _e( '(Optional) The language of the requested object if it differs from the on previously detected.', 'nlingual' ); ?></li>
