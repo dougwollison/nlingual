@@ -79,7 +79,7 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
 
 = 2.8.1 =
-Minor bug fixes, prepping for WordPress 5.0.
+Minor adjustments to meta box registration, bug fixes.
 
 = 2.8.0 =
 Simplified Language & Translations meta box interface, revised post cloning process, bug fixes with upgrading, language setting, and testing.
