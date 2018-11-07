@@ -44,7 +44,8 @@ final class Backend extends Handler {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 2.7.1 Added page_attributes_dropdown_pages_args filter.
+	 * @since 2.8.1 Revise setup of add_post_meta_box hook.
+	 * @since 2.8.0 Added page_attributes_dropdown_pages_args filter.
 	 * @since 2.6.0 Added fix_localized_admin_url setup.
 	 * @since 2.0.0
 	 *
@@ -55,6 +56,9 @@ final class Backend extends Handler {
 		if ( ! is_backend() ) {
 			return;
 		}
+
+		// Get supported post types
+		$post_types = Registry::get( 'post_types' );
 
 		// Redirect fixing
 		self::add_hook( 'plugins_loaded', 'fix_localized_admin_url', 10, 0 );
@@ -82,7 +86,6 @@ final class Backend extends Handler {
 		self::add_hook( 'display_post_states', 'flag_translated_pages', 10, 2 );
 		self::add_hook( 'restrict_manage_posts', 'add_language_filter', 10, 0 );
 		self::add_hook( 'page_attributes_dropdown_pages_args', 'maybe_set_queried_language', 10, 2 );
-		$post_types = Registry::get( 'post_types' );
 		foreach ( $post_types as $post_type ) {
 			self::add_hook( "manage_{$post_type}_posts_columns", 'add_language_column', 15, 1 );
 			self::add_hook( "manage_{$post_type}_posts_custom_column", 'do_language_column', 10, 2 );
@@ -93,7 +96,7 @@ final class Backend extends Handler {
 		self::add_hook( 'bulk_edit_custom_box', 'bulk_edit_post_language', 20, 2 );
 
 		// Post Editor Interfaces
-		self::add_hook( 'add_meta_boxes', 'add_post_meta_box', 10, 1 );
+		self::add_hook( 'add_meta_boxes', 'add_post_meta_box', 15, 1 );
 
 		// Admin Notices
 		self::add_hook( 'edit_form_top', 'synced_posts_notice', 10, 1 );
@@ -285,6 +288,7 @@ final class Backend extends Handler {
 	/**
 	 * In case of update, check for notice about the update.
 	 *
+	 * @since 2.8.1 Patched notice printing to account for preceding/proceeding markup.
 	 * @since 2.0.0
 	 *
 	 * @param array $plugin The information about the plugin and the update.
@@ -306,7 +310,17 @@ final class Backend extends Handler {
 
 		// Print out the notice if there is one
 		if ( $notice ) {
-			echo apply_filters( 'the_content', $notice );
+			// Since the notice is normally contained within a single div/p combo,
+			// we need to close it before printing the update notice
+			?>
+			</p></div>
+			<div class="notice inline notice-warning notice-alt">
+				<?php echo apply_filters( 'the_content', $notice ); ?>
+			</div>
+			<div><p>
+			<?php
+			// Now that we've re-opened it, there will be
+			// an empty div/p combo after our notice
 		}
 	}
 
@@ -566,7 +580,7 @@ final class Backend extends Handler {
 	/**
 	 * Filter the query args, adding language if applicable.
 	 *
-	 * @since 2.7.1
+	 * @since 2.8.0
 	 *
 	 * @param array   $args The WP_Query arguments to filter.
 	 * @param WP_Post $post The post for context.
@@ -693,22 +707,24 @@ final class Backend extends Handler {
 			<hr />
 			<fieldset class="nl-fieldset">
 				<input type="hidden" name="_nl_nonce" class="nl-nonce" />
-				<div class="inline-edit-col nl-manage-language">
-					<label>
-						<span class="title"><?php _e( 'Language', 'nlingual' ); ?></span>
-						<select name="nlingual_language" class="nl-input nl-language-input">
-							<?php if ( ! Registry::get( 'language_is_required' ) ) : ?>
-								<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
-							<?php endif; ?>
-							<?php
-							// Print the options
-							foreach ( $languages as $language ) {
-								printf( '<option value="%s">%s</option>', $language->id, $language->system_name );
-							}
-							?>
-						</select>
-					</label>
-				</div>
+				<?php if ( ! Registry::get( 'lock_post_language' ) ) : ?>
+					<div class="inline-edit-col nl-manage-language">
+						<label>
+							<span class="title"><?php _e( 'Language', 'nlingual' ); ?></span>
+							<select name="nlingual_language" class="nl-input nl-language-input">
+								<?php if ( ! Registry::get( 'language_is_required' ) ) : ?>
+									<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
+								<?php endif; ?>
+								<?php
+								// Print the options
+								foreach ( $languages as $language ) {
+									printf( '<option value="%s">%s</option>', $language->id, $language->system_name );
+								}
+								?>
+							</select>
+						</label>
+					</div>
+				<?php endif; ?>
 				<div class="inline-edit-col nl-manage-translations">
 					<?php foreach ( $languages as $language ) : ?>
 						<label class="nl-translation-field nl-translation-<?php echo $language->id; ?>" title="<?php
@@ -766,6 +782,11 @@ final class Backend extends Handler {
 			return;
 		}
 
+		// Or if posts are locked to their assigned language
+		if ( Registry::get( 'lock_post_language' ) ) {
+			return;
+		}
+
 		// Get the languages list
 		$languages = Registry::languages();
 		?>
@@ -807,30 +828,34 @@ final class Backend extends Handler {
 	 * For setting language and associated translations
 	 * for the enabled post types.
 	 *
+	 * @since 2.8.1 Revised to run on add_meta_boxes_$post_type, accept $post argument.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry:get() to retrieve the supported post types.
 	 * @uses Backend::post_meta_box() as the callback to build the metabox.
+	 *
+	 * @param string $post_type The post type being added for.
 	 */
-	public static function add_post_meta_box() {
-		$post_types = Registry::get( 'post_types' );
-
-		foreach ( $post_types as $post_type ) {
-			add_meta_box(
-				'nlingual_translations', // id
-				__( 'Language & Translations', 'nlingual' ), // title
-				array( __CLASS__, 'post_meta_box' ), // callback
-				$post_type, // screen
-				'side', // context
-				'default' // priority
-			);
+	public static function add_post_meta_box( $post_type ) {
+		// Abort if post type is not supported
+		if ( ! Registry::is_post_type_supported( $post_type ) ) {
+			return;
 		}
+
+		add_meta_box(
+			'nlingual_translations', // id
+			__( 'Language & Translations', 'nlingual' ), // title
+			array( __CLASS__, 'post_meta_box' ), // callback
+			$post_type, // screen
+			'side', // context
+			'default' // priority
+		);
 	}
 
 	/**
 	 * Output the content of the translations meta box.
 	 *
-	 * @since 2.8.0 Add force_default_language option usage.
+	 * @since 2.8.0 Add lock_post_language option usage.
 	 * @since 2.6.0 Dropped post selection for translation fields,
 	 *              now uses simpler Create button that opens in new window.
 	 * @since 2.1.0 Added bypass of language_is_required.
@@ -852,7 +877,7 @@ final class Backend extends Handler {
 		$language_is_required = Registry::get( 'language_is_required' );
 
 		// Get the force default language option
-		$force_default_language = Registry::get( 'force_default_language' );
+		$lock_post_language = Registry::get( 'lock_post_language' );
 
 		// Get the language list
 		$languages = Registry::languages();
@@ -891,8 +916,10 @@ final class Backend extends Handler {
 		}
 		?>
 		<div class="nl-translation-manager">
-			<?php if ( $force_default_language ) : ?>
-				<input type="hidden" name="nlingual_language" id="nl_language" class="nl-input nl-language-input" value="<?php echo $post_language ? $post_language->id : Registry::default_language( 'id' ); ?>">
+			<?php if ( $lock_post_language ) : $post_language = $post_language ?: Registry::default_language(); ?>
+				<input type="hidden" name="nlingual_language" id="nl_language" class="nl-input nl-language-input" value="<?php echo $post_language->id; ?>">
+				<strong><?php _e( 'Language:', 'nlingual' ); ?></strong>
+				<em><?php echo $post_language->system_name; ?></em>
 			<?php else: ?>
 				<div class="nl-field nl-manage-language">
 					<label for="nl_language" class="screen-reader-text"><?php _e( 'Language', 'nlingual' ); ?></label>

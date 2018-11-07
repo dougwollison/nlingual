@@ -2,8 +2,8 @@
 Contributors: dougwollison
 Tags: multilingual, language, bilingual, translation
 Requires at least: 4.0
-Tested up to: 4.7.1
-Stable tag: 2.7.0
+Tested up to: 4.9.8
+Stable tag: 2.8.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,15 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 == Changelog ==
 
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
+
+= 2.8.2 =
+Fixed issue with localizing URLs for sites on subdirectories.
+
+= 2.8.1 =
+Minor adjustments to meta box registration, bug fixes.
+
+= 2.8.0 =
+Simplified Language & Translations meta box interface, revised post cloning process, bug fixes with upgrading, language setting, and testing.
 
 = 2.7.0 =
 Language detection fixes, added detection and rewriting to backend, including the login page.

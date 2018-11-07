@@ -312,7 +312,7 @@ final class Languages implements \Iterator {
 	/**
 	 * Add a language to the index.
 	 *
-	 * @since 2.8.0 Prevent duplicate languages.
+	 * @since 2.8.0 Fixed dummy removal, prevent duplicate languages.
 	 * @since 2.0.0
 	 *
 	 * @param array|Language $language The language to add.
@@ -322,7 +322,7 @@ final class Languages implements \Iterator {
 	 */
 	public function add( $language, $sort = true ) {
 		// If we have a dummy, remove it now that we're adding a real one
-		if ( isset( $this->items[0] ) && $this->items[0]->id === -1 ) {
+		if ( isset( $this->items[0] ) && $this->items[0]->id === 0 ) {
 			array_shift( $this->items );
 		}
 

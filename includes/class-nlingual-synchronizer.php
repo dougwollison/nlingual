@@ -100,7 +100,7 @@ final class Synchronizer {
 		}
 
 		// Whitelist the $post_fields list
-		$post_fields = array_intersect_key( $post_fields, array_flip( self::get_allowed_post_fields( $context ) ) );
+		$rules['post_fields'] = array_intersect_key( $rules['post_fields'], array_flip( self::get_allowed_post_fields( $context ) ) );
 
 		// Handle the post_field aliases
 		if ( in_array( 'post_content', $rules['post_fields'] ) ) {
