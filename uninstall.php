@@ -84,4 +84,4 @@ final class Uninstaller {
 	}
 }
 
-nLingual\Uninstaller::run();
+Uninstaller::run();
