@@ -792,6 +792,7 @@ final class System extends Handler {
 	/**
 	 * Localize the home URL.
 	 *
+	 * @since 2.9.0 Added check if being called before parse_request.
 	 * @since 2.2.0 No longer localizes draft URLs while in the admin.
 	 * @since 2.0.0
 	 *
@@ -804,6 +805,13 @@ final class System extends Handler {
 	 * @return string The localized home URL.
 	 */
 	public static function localize_home_url( $url, $path, $scheme ) {
+		// If the language wasn't specified and we haven't parsed the request yet, abort
+		if ( ! defined( 'NL_REQUESTED_LANGUAGE' ) && ! did_action( 'send_headers' ) ) {
+			// This is mostly to prevent WP::parse_request() from getting the wrong home path to work with
+			// but, in case do_parse_request returns false, we have to check if we've sent headers or not
+			return $url;
+		}
+
 		// Only localize for http/https and scheme-agnostic
 		if ( ! in_array( $scheme, array( null, 'http', 'https' ) ) ) {
 			return $url;
