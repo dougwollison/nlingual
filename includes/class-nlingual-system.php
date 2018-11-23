@@ -792,7 +792,7 @@ final class System extends Handler {
 	/**
 	 * Localize the home URL.
 	 *
-	 * @since 2.9.0 Added check if being called before parse_request.
+	 * @since 2.8.3 Added check if being called before parse_request.
 	 * @since 2.2.0 No longer localizes draft URLs while in the admin.
 	 * @since 2.0.0
 	 *
