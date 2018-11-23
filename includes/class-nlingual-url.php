@@ -165,6 +165,7 @@ final class URL extends Model {
 	/**
 	 * Export the URL back into a string.
 	 *
+	 * @since 2.8.3 Refixed path + page handling.
 	 * @since 2.6.0 Fixed path + page handling.
 	 * @since 2.2.0 Ensure / path is included.
 	 * @since 2.0.0
@@ -211,7 +212,7 @@ final class URL extends Model {
 
 		// If the page property is present, add it to the path
 		if ( $this->page ) {
-			$this->path .= sprintf( '/page/%d/', rtrim( $this->page, '/' ) );
+			$this->path = rtrim( $this->path, '/' ) . sprintf( '/page/%d/', rtrim( $this->page, '/' ) );
 		}
 
 		// Add the path
