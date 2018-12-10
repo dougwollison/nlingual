@@ -209,6 +209,7 @@ final class Rewriter {
 	 *
 	 * This will add the language slug subdomain/subdirecty/query var as needed.
 	 *
+	 * @since 2.8.4 Dropped $relocalize option, will always relocalize.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current Language object if not passed.
@@ -217,15 +218,14 @@ final class Rewriter {
 	 * @uses Registry::is_language_default() to check if the language provided is the default.
 	 * @uses Registry::get() to get the skip_default_l10n, url_rewrite_method and query_var options.
 	 *
-	 * @param string $url        The URL to parse.
-	 * @param mixed  $language   Optional. The desired language to localize to.
-	 * @param bool   $relocalize Optional. Wether or not to relocalize the url if it already is.
+	 * @param string $url      The URL to parse.
+	 * @param mixed  $language Optional. The desired language to localize to.
 	 *
 	 * @throws Exception If the language requested does not exist.
 	 *
 	 * @return string The new localized URL.
 	 */
-	public static function localize_url( $url, $language = null, $relocalize = false ) {
+	public static function localize_url( $url, $language = null ) {
 		// If localization is disabled, abort
 		if ( ! self::$do_localization ) {
 			return $url;
@@ -240,14 +240,14 @@ final class Rewriter {
 		/**
 		 * Filter wether or not to localize the URL.
 		 *
+		 * @since 2.8.4 Dropped $relocalize param.
 		 * @since 2.0.0
 		 *
 		 * @param bool     $bool       Whether or not to localize the URL. Default true.
 		 * @param string   $url        The URL to parse.
 		 * @param Language $language   The desired language to localize to.
-		 * @param bool     $relocalize Wether or not to relocalize the url if it already is.
 		 */
-		if ( ! apply_filters( 'nlingual_do_localize_url', true, $url, $language, $relocalize ) ) {
+		if ( ! apply_filters( 'nlingual_do_localize_url', true, $url, $language ) ) {
 			return $url;
 		}
 
@@ -280,10 +280,8 @@ final class Rewriter {
 
 		// Proceed if it's a local url
 		if ( strpos( $url, $home ) === 0 ) {
-			// If $relocalize, delocalize first
-			if ( $relocalize ) {
-				$url = self::delocalize_url( $url );
-			}
+			// Delocalize the URL first, to prevent double localizing
+			$url = self::delocalize_url( $url );
 
 			// Process
 			$the_url = new URL( $url );
@@ -326,14 +324,14 @@ final class Rewriter {
 		/**
 		 * Filter the new localized URL.
 		 *
+		 * @since 2.8.4 Dropped $relocalize param.
 		 * @since 2.0.0
 		 *
 		 * @param string   $url        The new localized URL.
 		 * @param string   $old_url    The original URL passed to this function.
 		 * @param Language $language   The language requested.
-		 * @param bool     $relocalize Whether or not to forcibly relocalize the URL.
 		 */
-		$url = apply_filters( 'nlingual_localize_url', $url, $old_url, $language, $relocalize );
+		$url = apply_filters( 'nlingual_localize_url', $url, $old_url, $language );
 
 		// Store the URL in the cache
 		wp_cache_set( $cache_id, $url, 'nlingual:url' );
@@ -367,6 +365,7 @@ final class Rewriter {
 	/**
 	 * Attempt to localize the current page URL.
 	 *
+	 * @since 2.8.4 Dropped use of localize_url() $relocalize param, will always relocalize.
 	 * @since 2.6.0 Fixed paged handling, added check to make sure queried object's post type is supported.
 	 * @since 2.2.0 Now uses get_search_link() to create the search URL.
 	 * @since 2.0.0
@@ -404,7 +403,7 @@ final class Rewriter {
 			}
 
 			// Relocalize the URL
-			$url = self::localize_url( $url, $language, 'relocalize' );
+			$url = self::localize_url( $url, $language );
 		} else {
 			// Switch to the language (redundant for current one but doesn't matter)
 			System::switch_language( $language );
@@ -445,7 +444,7 @@ final class Rewriter {
 			}
 			// Give up and just get the orginally requested URL, relocalized
 			else {
-				$url = self::localize_url( NL_ORIGINAL_URL, null, 'relocalize' );
+				$url = self::localize_url( NL_ORIGINAL_URL, null );
 			}
 
 			// Switch back to the current language

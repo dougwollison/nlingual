@@ -160,16 +160,16 @@ final class Liaison extends Handler {
 	/**
 	 * Run filters assigned to deprecated nLingual_localize_url hook.
 	 *
+	 * @since 2.8.4 Dropped $relocalize option, will always relocalize.
 	 * @since 2.0.0
 	 *
-	 * @param string   $url        The new localized URL.
-	 * @param string   $old_url    The original URL passed to this function.
-	 * @param Language $language   The language requested.
-	 * @param bool     $relocalize Whether or not to forcibly relocalize the URL.
+	 * @param string   $url      The new localized URL.
+	 * @param string   $old_url  The original URL passed to this function.
+	 * @param Language $language The language requested.
 	 *
 	 * @return string The filtered URL.
 	 */
-	public static function redirect_old_localize_url_hook( $url, $old_url, Language $language, $relocalize ) {
+	public static function redirect_old_localize_url_hook( $url, $old_url, Language $language ) {
 		// Only apply the old filter if there are hooks registered to it.
 		if ( has_filter( 'nLingual_localize_url' ) ) {
 			/**
@@ -177,12 +177,11 @@ final class Liaison extends Handler {
 			 *
 			 * @deprecated Use "nlingual_localize_url" instead (case-sensitive).
 			 *
-			 * @param string  $new_url    The new localized URL.
-			 * @param string  $old_url    The original URL passed to this function.
-			 * @param string  $lang       The slug of the language requested.
-			 * @param bool    $relocalize Whether or not to forcibly relocalize the URL.
+			 * @param string  $new_url The new localized URL.
+			 * @param string  $old_url The original URL passed to this function.
+			 * @param string  $lang    The slug of the language requested.
 			 */
-			$url = apply_filters( 'nLingual_localize_url', $url, $old_url, $language->slug, $relocalize );
+			$url = apply_filters( 'nLingual_localize_url', $url, $old_url, $language->slug, true );
 		}
 
 		return $url;
