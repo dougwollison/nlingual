@@ -24,6 +24,8 @@
 }
 
 .nl-field {
+	margin: 0 0 10px;
+
 	label {
 		@extend %clearfix;
 		display: block;
@@ -41,10 +43,10 @@
 	}
 }
 
-.nl-manage-language {
-	label {
-		font-weight: bold;
-	}
+.nl-field-heading {
+	font-weight: bold;
+	padding: 0;
+	margin: 0 0 10px;
 }
 
 .nl-translation-field {
@@ -192,6 +194,15 @@
 .nl-translation-manager,
 .nl-bulk-language-manager {
 	padding: 5px 0 0;
+}
+
+#nlingual_translations {
+	h2:before {
+		content: '\f326';
+		font: 20px dashicons;
+		vertical-align: bottom;
+		margin-right: 5px;
+	}
 }
 
 #nlingual-synchronizer-form {
