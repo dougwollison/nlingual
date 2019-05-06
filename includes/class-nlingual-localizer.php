@@ -304,6 +304,7 @@ final class Localizer extends Handler {
 	/**
 	 * Localize a standard option string.
 	 *
+	 * @since 2.8.5 Use pre/update_option hooks to include $option argument.
 	 * @since 2.0.0
 	 *
 	 * @param string $option The name of the option (as identified by get_option()).
