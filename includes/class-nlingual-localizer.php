@@ -324,11 +324,11 @@ final class Localizer extends Handler {
 
 		// Add the filter to handle retrieval (frontend only)
 		if ( ! is_backend() ) {
-			self::add_hook( "pre_option_{$option}", 'handle_localized_option_field', 10, 1 );
+			self::add_hook( "pre_option_{$option}", 'handle_localized_option_field', 10, 2 );
 		}
 
 		// Add action to handle updating
-		self::add_hook( "update_option_{$option}", 'update_unlocalized_option_field', 10, 2 );
+		self::add_hook( "update_option_{$option}", 'update_unlocalized_option_field', 10, 3 );
 	}
 
 	/**
@@ -640,21 +640,19 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
+	 * @since 2.8.5 Updated to use $option key that's been around since 4.4.
 	 * @since 2.6.0 Updated to use $pre_option as the fallback.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current language.
 	 * @uses Localizer::get_field_value() to retrieve the localized value.
 	 *
-	 * @param mixed $pre_option Value to return instead of the option value.
+	 * @param mixed  $pre_option Value to return instead of the option value.
+	 * @param string $option     The name of the option being localized.
 	 *
 	 * @return field The localized version of the option.
 	 */
-	public static function handle_localized_option_field( $pre_option ) {
-		// Get the current filter and the option based on it
-		$filter = current_filter();
-		$option = preg_replace( '/^pre_option_/', '', $filter );
-
+	public static function handle_localized_option_field( $pre_option, $option ) {
 		// Get the current language
 		$language = Registry::current_language();
 
@@ -669,19 +667,17 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
+	 * @since 2.8.5 Updated to use $option key that's been around since 4.4.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current language.
 	 * @uses Localizer::save_field_value() to save the unlocalized value.
 	 *
-	 * @param mixed $old_value The old value of the option (unused).
-	 * @param mixed $value     The new value of the option.
+	 * @param mixed  $old_value The old value of the option (unused).
+	 * @param mixed  $value     The new value of the option.
+	 * @param string $option    The name of the option being localized.
 	 */
-	public static function update_unlocalized_option_field( $old_value, $value ) {
-		// Get the current filter and the option based on it
-		$filter = current_filter();
-		$option = preg_replace( '/^update_option_/', '', $filter );
-
+	public static function update_unlocalized_option_field( $old_value, $value, $option ) {
 		// Get the default language
 		$language = Registry::default_language();
 
