@@ -135,6 +135,7 @@ final class Synchronizer {
 	/**
 	 * Copy desired post fields, meta data, and terms from the original to target.
 	 *
+	 * @since 2.8.5 Fixed get_rules() call to specify post_type.
 	 * @since 2.8.0 Moved post_fields=true expanding to prepare_post_rules().
 	 * @since 2.6.0 Fixed typo preventing fields from being synced, also modified
 	 *              all-meta handling to skip _edit_* metadata.
@@ -187,7 +188,7 @@ final class Synchronizer {
 
 		// Load general sync rules by default
 		if ( is_null( $rules ) ) {
-			$rules = Registry::get_rules( $context, $original->post_type );
+			$rules = Registry::get_rules( $context, 'post_type', $original->post_type );
 
 			/**
 			 * Filter the post rules.
