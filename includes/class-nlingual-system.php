@@ -1004,6 +1004,7 @@ final class System extends Handler {
 	/**
 	 * Set the queried language to the current one if applicable
 	 *
+	 * @since 2.8.6 Rewrite post type checking to handle search and mixed types.
 	 * @since 2.8.0 Added check for parent's post type being supported.
 	 * @since 2.7.0 Revised support checks for post type archives.
 	 * @since 2.6.0 Perform tax query handling first, then post type archive.
@@ -1046,6 +1047,11 @@ final class System extends Handler {
 			return;
 		}
 
+		// If it's the home feed, check if posts are supported
+		if ( $query->is_home() && ! Registry::is_post_type_supported( 'post' ) ) {
+			return;
+		}
+
 		// If we're querying by taxonomy, check if it's object type is supported
 		if ( property_exists( $query, 'tax_query' ) && $query->tax_query ) {
 			foreach ( $query->tax_query->queries as $tax_query ) {
@@ -1056,13 +1062,8 @@ final class System extends Handler {
 			}
 		}
 
-		// If it's a post type archive, check if the post type is supported
-		if ( $query->is_post_type_archive() && ! Registry::is_post_type_supported( $query->get( 'post_type' ) ) ) {
-			return;
-		}
-
-		// If it's the home feed, check if posts are supported
-		if ( $query->is_home() && ! Registry::is_post_type_supported( 'post' ) ) {
+		// If we're querying by post type, check if ANY are supported
+		if ( $query->get( 'post_type' ) && ! Registry::is_post_type_supported( $query->get( 'post_type' ) ) ) {
 			return;
 		}
 
@@ -1079,8 +1080,8 @@ final class System extends Handler {
 			$value = Registry::languages( 'active' )->pluck( 'id', false );
 		}
 
-		// If in the backend, or language is not required, add 0 to retreive language-less posts too
-		if ( is_backend() || ! Registry::get( 'language_is_required' ) ) {
+		// If in the backend, or language is not required, or non-supported post types are involved, add 0 to retreive language-less posts too
+		if ( is_backend() || ! Registry::get( 'language_is_required' ) || ! Registry::is_post_type_supported( $query->get( 'post_type' ), 'require all' ) ) {
 			$value[] = '0';
 		}
 
