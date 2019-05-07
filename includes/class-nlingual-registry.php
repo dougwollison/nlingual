@@ -658,12 +658,14 @@ final class Registry {
 		/**
 		 * Filter the result.
 		 *
+		 * @since 2.8.6 Added $require_all argument.
 		 * @since 2.0.0
 		 *
-		 * @param bool         $result     The result of the test.
-		 * @param string|array $post_types The post type(s) being checked.
+		 * @param bool         $result      The result of the test.
+		 * @param string|array $post_types  The post type(s) being checked.
+		 * @param bool         $require_all Wether or not all need to be supported.
 		 */
-		return apply_filters( 'nlingual_is_post_type_supported', $result, $post_types );
+		return apply_filters( 'nlingual_is_post_type_supported', $result, $post_types, $require_all );
 	}
 
 	/**
