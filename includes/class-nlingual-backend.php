@@ -931,7 +931,7 @@ final class Backend extends Handler {
 						// Print the options
 						foreach ( $language_options as $value => $label ) {
 							$selected = ( $post_language && $post_language->id == $value ) ? 'selected' : '';
-							if ( $language_is_required && ! $post_language->id && Registry::is_language_default( $value ) ) {
+							if ( $language_is_required && $post_language && ! $post_language->id && Registry::is_language_default( $value ) ) {
 								$selected = 'selected';
 							}
 
