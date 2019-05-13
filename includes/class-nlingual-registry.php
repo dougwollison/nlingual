@@ -108,6 +108,8 @@ final class Registry {
 		'delete_sister_posts' => false,
 		// - The patch font stack option
 		'patch_font_stack' => false,
+		// - The default no language on new posts option
+		'default_no_language' => true,
 		// - The force default language on new posts option
 		'lock_post_language' => false,
 
@@ -733,6 +735,7 @@ final class Registry {
 	/**
 	 * Load the relevant options.
 	 *
+	 * @since 2.9.0 Add smart default handling for new options.
 	 * @since 2.0.0
 	 *
 	 * @see Registry::$__loaded to prevent unnecessary reloading.
@@ -756,6 +759,16 @@ final class Registry {
 
 				// Ensure the value is the same type as the default
 				settype( $value, gettype( $default ) );
+			} else {
+				// Handle new options who's defaults that are based on existing ones
+				switch ( $option ) {
+					case 'default_no_language':
+						// This defaults to the opposite of language_is_required
+						if ( isset( $options['language_is_required'] ) ) {
+							$value = ! $options['language_is_required'];
+						}
+						break;
+				}
 			}
 
 			self::set( $option, $value );

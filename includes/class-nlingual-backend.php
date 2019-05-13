@@ -855,6 +855,7 @@ final class Backend extends Handler {
 	/**
 	 * Output the content of the translations meta box.
 	 *
+	 * @since 2.9.0 Add default_no_language option usage.
 	 * @since 2.8.0 Add lock_post_language option usage.
 	 * @since 2.6.0 Dropped post selection for translation fields,
 	 *              now uses simpler Create button that opens in new window.
@@ -876,6 +877,9 @@ final class Backend extends Handler {
 		// Get the required language option
 		$language_is_required = Registry::get( 'language_is_required' );
 
+		// Get the default language on new posts option
+		$default_no_language = Registry::get( 'default_no_language' );
+
 		// Get the force default language option
 		$lock_post_language = Registry::get( 'lock_post_language' );
 
@@ -890,6 +894,16 @@ final class Backend extends Handler {
 
 		// Get the post's post type's object
 		$post_type = get_post_type_object( $post->post_type );
+
+		// If no language is set but default should be assumed/forced, use it
+		if ( ! $post_language && (
+			// Default if forced
+			$lock_post_language ||
+			// Default if new post and shouldn't default to none
+			( $post->post_status == 'auto-draft' && ! $default_no_language )
+		) ) {
+			$post_language = Registry::default_language();
+		}
 
 		// Build the language and translation option lists
 		$language_options = array();
@@ -916,7 +930,7 @@ final class Backend extends Handler {
 		}
 		?>
 		<div class="nl-translation-manager">
-			<?php if ( $lock_post_language ) : $post_language = $post_language ?: Registry::default_language(); ?>
+			<?php if ( $lock_post_language ) : ?>
 				<input type="hidden" name="nlingual_language" id="nl_language" class="nl-input nl-language-input" value="<?php echo $post_language->id; ?>">
 				<strong><?php _e( 'Language:', 'nlingual' ); ?></strong>
 				<em><?php echo $post_language->system_name; ?></em>
@@ -925,16 +939,12 @@ final class Backend extends Handler {
 					<label for="nl_language" class="nl-field-heading"><?php _e( 'Language', 'nlingual' ); ?></label>
 					<select name="nlingual_language" id="nl_language" class="nl-input nl-language-input">
 						<?php if ( ! $language_is_required ) : ?>
-							<option value="0">&mdash; <?php _ex( 'Select Language', 'no language', 'nlingual' ); ?> &mdash;</option>
+							<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
 						<?php endif; ?>
 						<?php
 						// Print the options
 						foreach ( $language_options as $value => $label ) {
 							$selected = ( $post_language && $post_language->id == $value ) ? 'selected' : '';
-							if ( $language_is_required && $post_language && ! $post_language->id && Registry::is_language_default( $value ) ) {
-								$selected = 'selected';
-							}
-
 							printf( '<option value="%s" %s>%s</option>', $value, $selected, $label );
 						}
 						?>
