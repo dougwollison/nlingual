@@ -44,6 +44,7 @@ final class Backend extends Handler {
 	/**
 	 * Register hooks.
 	 *
+	 * @since 2.9.0 Added (un)translated filters to post list views.
 	 * @since 2.8.1 Revise setup of add_post_meta_box hook.
 	 * @since 2.8.0 Added page_attributes_dropdown_pages_args filter.
 	 * @since 2.6.0 Added fix_localized_admin_url setup.
@@ -83,10 +84,12 @@ final class Backend extends Handler {
 
 		// Posts Screen Interface
 		self::add_hook( 'query_vars', 'add_language_var' );
+		self::add_hook( 'query_vars', 'add_istranslated_var' );
 		self::add_hook( 'display_post_states', 'flag_translated_pages', 10, 2 );
 		self::add_hook( 'restrict_manage_posts', 'add_language_filter', 10, 0 );
 		self::add_hook( 'page_attributes_dropdown_pages_args', 'maybe_set_queried_language', 10, 2 );
 		foreach ( $post_types as $post_type ) {
+			self::add_hook( "views_edit-{$post_type}", 'add_translation_views', 11, 1 );
 			self::add_hook( "manage_{$post_type}_posts_columns", 'add_language_column', 15, 1 );
 			self::add_hook( "manage_{$post_type}_posts_custom_column", 'do_language_column', 10, 2 );
 		}
@@ -492,6 +495,20 @@ final class Backend extends Handler {
 	}
 
 	/**
+	 * Register the is_translated query var.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param array $vars The whitelist of query vars.
+	 *
+	 * @return array The updated whitelist.
+	 */
+	public static function add_istranslated_var( array $vars ) {
+		$vars[] = 'nl_is_translated';
+		return $vars;
+	}
+
+	/**
 	 * Filter the post states list, flagging translated versions where necessary.
 	 *
 	 * @since 2.6.0 Add check to make sure post's type is supported.
@@ -596,6 +613,118 @@ final class Backend extends Handler {
 		}
 
 		return $args;
+	}
+
+	/**
+	 * Filter list table views, add Translated and Untranslated.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param array $views The array of available list table views.
+	 *
+	 * @return array The modified list of views.
+	 */
+	public static function add_translation_views( $views ) {
+		global $wpdb;
+
+		// The query var to set/check
+		$query_var = 'nl_is_translated';
+
+		// The the post type and visible statuses
+		$post_type = get_current_screen()->post_type;
+		$stati = get_post_stati( array( 'show_in_admin_all_list' => true ) );
+
+		$placeholders = implode( ',', array_fill( 0, count( $stati ), '%s' ) );
+		$query = "
+			SELECT t.group_id, p.post_status, COUNT(t.object_id) AS num_posts
+			FROM {$wpdb->nl_translations} AS t
+				LEFT JOIN {$wpdb->posts} AS p
+					ON (p.ID = t.object_id AND t.object_type = 'post')
+			WHERE p.post_type = %s
+				AND p.post_status IN ($placeholders)
+			GROUP BY t.group_id
+		";
+		$values = (array) $post_type + (array) $stati;
+
+		// Get counts for each translation group
+		$results = $wpdb->get_results( $wpdb->prepare( $query, $values ) );
+
+		// Build counts for those with only
+		// 1 post and those with more than 1
+		$untranslated = $translated = 0;
+		foreach ( $results as $group ) {
+			if ( $group->num_posts > 1 ) {
+				$translated++;
+			} else {
+				$untranslated++;
+			}
+		}
+
+		// Abort if the only count is untranslated
+		if ( ! $translated || $untranslated ) {
+			//return $views;
+		}
+
+		// Initial args for filter links
+		$args = array( 'post_type' => $post_type );
+
+		// Add translated count/link
+		if ( $translated ) {
+			$args[ $query_var ] = 1;
+			$url = add_query_arg( $args, 'edit.php' );
+
+			$label = sprintf(
+				_nx(
+					'Translated <span class="count">(%s)</span>',
+					'Translated <span class="count">(%s)</span>',
+					$translated,
+					'posts'
+				),
+				number_format_i18n( $translated )
+			);
+
+			$is_current = '';
+			if ( isset( $_REQUEST[ $query_var ] ) && $_REQUEST[ $query_var ] === '1' ) {
+				$is_current = ' class="current" aria-current="page"';
+			}
+
+			$views['translated'] = sprintf(
+				'<a href="%s"%s>%s</a>',
+				esc_url( $url ),
+				$is_current,
+				$label
+			);
+		}
+
+		// Add untranslated count/link
+		if ( $untranslated ) {
+			$args[ $query_var ] = 0;
+			$url = add_query_arg( $args, 'edit.php' );
+
+			$label = sprintf(
+				_nx(
+					'Untranslated <span class="count">(%s)</span>',
+					'Untranslated <span class="count">(%s)</span>',
+					$untranslated,
+					'posts'
+				),
+				number_format_i18n( $untranslated )
+			);
+
+			$is_current = '';
+			if ( isset( $_REQUEST[ $query_var ] ) && $_REQUEST[ $query_var ] === '0' ) {
+				$is_current = ' class="current" aria-current="page"';
+			}
+
+			$views['untranslated'] = sprintf(
+				'<a href="%s"%s>%s</a>',
+				esc_url( $url ),
+				$is_current,
+				$label
+			);
+		}
+
+		return $views;
 	}
 
 	/**

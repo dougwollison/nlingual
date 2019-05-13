@@ -328,6 +328,7 @@ final class System extends Handler {
 	/**
 	 * Register hooks.
 	 *
+	 * @since 2.9.0 Added nl_is_translated handling.
 	 * @since 2.8.0 Moved rewrite_locale to Frontend.
 	 * @since 2.6.0 Added transition (un)flagging.
 	 * @since 2.4.0 Only add patch_font_stack hook if before 4.6.
@@ -372,6 +373,7 @@ final class System extends Handler {
 		self::add_hook( 'pre_get_posts', 'translate_excluded_posts', 20, 1 );
 		self::add_hook( 'posts_clauses', 'add_translation_clauses', 10, 2 );
 		self::add_hook( 'comments_clauses', 'add_translation_clauses', 10, 2 );
+		self::add_hook( 'posts_clauses', 'add_istranslated_clauses', 10, 2 );
 		self::add_hook( 'get_pages', 'filter_pages', 10, 2 );
 
 		// Apply font patching (if needed)
@@ -1156,7 +1158,7 @@ final class System extends Handler {
 
 		// Get the language query_var name, and the query's variables
 		$query_var = Registry::get( 'query_var' );
-		$query_vars = &$query->query_vars;
+		$query_vars = $query->query_vars;
 
 		// Abort if no language was set
 		if ( ! isset( $query_vars[ $query_var ] ) || is_null( $query_vars[ $query_var ] ) || $query_vars[ $query_var ] === '' ) {
@@ -1204,6 +1206,59 @@ final class System extends Handler {
 			// Add the new clause
 			$clauses['where'] .= " AND (" . implode( ' OR ', $where_clauses ) . ")";
 		}
+
+		return $clauses;
+	}
+
+	/**
+	 * Add the join/where clauses for handling the nl_is_translated argument.
+	 *
+	 * Will join the translations table twice to look for posts that have
+	 * belong to groups of more than 1 or only 1 depending on value.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @global \wpdb $wpdb The database abstraction class instance.
+	 *
+	 * @param array  $clauses The clauses to modify.
+	 * @param object $query   The query object this is for.
+	 *
+	 * @return array The modified clauses.
+	 */
+	public static function add_istranslated_clauses( $clauses, $query ) {
+		global $wpdb;
+
+		$query_vars = $query->query_vars;
+
+		// Abort if nl_is_translated is absent/empty
+		$query_var = 'nl_is_translated';
+		if ( ! isset( $query_vars[ $query_var ] ) || is_null( $query_vars[ $query_var ] ) || $query_vars[ $query_var ] === '' ) {
+			return $clauses;
+		}
+
+		// True for IS NOT NULL (has translation), False for IS NULL (has no translations)
+		$test = $query_vars[ $query_var ] ? 'IS NOT NULL' : 'IS NULL';
+
+		// Default shortcuts for translations table
+		$nl = $wpdb->nl_translations;
+		$nl1 = "{$nl}_istranslated1";
+		$nl2 = "{$nl}_istranslated2";
+
+		// Use existing nl_translations table join if present
+		$query_var = Registry::get( 'query_var' );
+		if ( isset( $query_vars[ $query_var ] ) && ! empty( $query_vars[ $query_var ] ) ) {
+			$nl1 = $wpdb->nl_translations;
+		} else
+		// Add first join
+		if ( $nl1 === $wpdb->nl_translations ) {
+			$clauses['join'] .= " LEFT JOIN $nl AS $nl1 ON ($id_field = $nl1.object_id AND $nl1.object_type = 'post')";
+		}
+
+		// Add second join
+		$clauses['join'] .= " LEFT JOIN $nl AS $nl2 ON ($nl1.group_id = $nl2.group_id AND $nl1.object_id != $nl2.object_id)";
+
+		// Add where clause
+		$clauses['where'] .= " AND ($nl1.language_id IS NOT NULL AND $nl2.language_id $test)";
 
 		return $clauses;
 	}
