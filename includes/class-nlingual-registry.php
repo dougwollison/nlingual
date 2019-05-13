@@ -82,6 +82,8 @@ final class Registry {
 	 *
 	 * @internal
 	 *
+	 * @since 2.9.0 Add default_no_language option.
+	 * @since 2.8.0 Add lock_post_language option.
 	 * @since 2.0.0
 	 *
 	 * @var array
