@@ -850,8 +850,8 @@ final class Localizer extends Handler {
 			// Get the localized version of the name, falling back if applicable
 			$term->name = self::get_field_value( "term.{$term->taxonomy}:term_name", $language->id, $term->term_id, $term->name );
 
-			// Get the localized version of the description, falling back if applicable
-			$term->description = self::get_field_value( "term.{$term->taxonomy}:term_description", $language->id, $term->term_id, $term->description );
+			// Get the localized version of the description
+			$term->description = self::get_field_value( "term.{$term->taxonomy}:term_description", $language->id, $term->term_id );
 		} else if ( $term_id ) {
 			$term_object = \WP_Term::get_instance( $term_id ); // Get the raw term
 
