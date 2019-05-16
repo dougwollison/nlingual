@@ -772,6 +772,7 @@ final class Frontend extends Handler {
 	/**
 	 * Add a Translate This node/menu to the Admin Bar.
 	 *
+	 * @since 2.9.0 Updated menu title format; icon+label.
 	 * @since 2.6.0
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar The admin bar object.
@@ -804,7 +805,7 @@ final class Frontend extends Handler {
 			$label = property_exists( $post_type_object->labels, 'translate_item' ) ? $post_type_object->labels->translate_item : __( 'Translate This', 'nlingual' );
 			$wp_admin_bar->add_menu( array(
 				'id' => 'nlingual',
-				'title' => $label,
+				'title' => sprintf( '<span class="ab-icon"></span><span class="ab-label">%s</span>', $label ),
 			) );
 
 			// Add links for each missing language
