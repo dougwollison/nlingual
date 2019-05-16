@@ -118,6 +118,9 @@ final class Backend extends Handler {
 
 		// Translation creation
 		self::add_hook( 'admin_post_nl_new_translation', 'new_translation', 10, 0 );
+
+		// Admin Bar Additions
+		self::add_hook( 'admin_bar_menu', 'add_switcher_menu', 81, 1 ); // should occur after New and View Page menu items
 	}
 
 	// =========================
@@ -1488,6 +1491,67 @@ final class Backend extends Handler {
 		// Redirect to the edit screen
 		if ( wp_redirect( $edit_link, 302 ) ) {
 			exit;
+		}
+	}
+
+	// =========================
+	// ! Admin Bar Additions
+	// =========================
+
+	/**
+	 * Add a Switch Language node/menu to the Admin Bar.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param WP_Admin_Bar $wp_admin_bar The admin bar object.
+	 */
+	public static function add_switcher_menu( \WP_Admin_Bar $wp_admin_bar ) {
+		// Get the current screen
+		$screen = get_current_screen();
+
+		// Get the query var
+		$query_var = Registry::get( 'query_var' );
+
+		// Add the menu item
+		$wp_admin_bar->add_menu( array(
+			'id' => 'nlingual',
+			'title' => sprintf( '<span class="ab-icon"></span><span class="ab-label">%s</span>', Registry::current_language( 'native_name' ) ),
+			'meta' => array(
+				'title' => __( 'Switch to another language', 'nlingual' ),
+			),
+		) );
+
+		// Add links for language, save the current one
+		foreach ( Registry::languages() as $language ) {
+			if ( ! Registry::is_language_current( $language ) ) {
+				$node = array(
+					'parent' => 'nlingual',
+					'id' => 'nlingual-' . $language->slug,
+					'title' => _f( 'Switch to %s', 'nlingual', $language->native_name ),
+					'href' => add_query_arg( array(
+						$query_var => $language->id,
+						'nl_switch' => true,
+					) ),
+					'meta' => array(),
+				);
+
+				// If on a post editor, replace with Edit/Translate links where applicable
+				if ( $screen->base == 'post' ) {
+					$node['meta']['target'] = '_blank';
+
+					if ( isset( $translations[ $language->id ] ) ) {
+						/* translators: %s = The name of the language */
+						$node['title'] = _f( 'Edit %s version', 'nlingual', $language->native_name );
+						$node['href'] = get_edit_post_link( $translations[ $language->id ] );
+					} else {
+						/* translators: %s = The name of the language */
+						$node['title'] = _f( 'Translate to %s', 'nlingual', $language->system_name );
+						$node['href'] = get_translate_post_link( $current_object->ID, $language->id );
+					}
+				}
+
+				$wp_admin_bar->add_node( $node );
+			}
 		}
 	}
 }
