@@ -456,6 +456,7 @@ final class System extends Handler {
 	/**
 	 * Detect the language based on the request or browser info.
 	 *
+	 * @since 2.9.0 Add detection of user language and backend language override.
 	 * @since 2.7.0 Checked for skip_default_l10n option before getting accepted language.
 	 * @since 2.0.0
 	 *
@@ -468,11 +469,21 @@ final class System extends Handler {
 	public static function detect_language() {
 		$language = false;
 
+		// Start session if not already
+		if ( session_status() == PHP_SESSION_NONE ) {
+			session_start();
+		}
+
 		// First, check if the language was specified by the GET or POST parameters
 		if ( ( $query_var = Registry::get( 'query_var' ) ) && isset( $_REQUEST[ $query_var ] ) ) {
 			// Even if the language specified is invalid, don't fallback from here.
 			$language = Registry::get_language( $_REQUEST[ $query_var ] );
 			$mode = 'REQUESTED';
+
+			// If in the backend and nl_switch is set, save it to their session
+			if ( is_backend() && isset( $_REQUEST['nl_switch'] ) ) {
+				$_SESSION['nlingual_language'] = $language->id;
+			}
 		}
 		// Failing that, get the language from the url
 		elseif ( ( $the_url = Rewriter::process_url() ) && isset( $the_url->meta['language'] ) ) {
@@ -490,6 +501,10 @@ final class System extends Handler {
 				}
 			}
 
+			$mode = 'REQUESTED';
+		}
+		// Failing that, get the language overrided for their session, but only in the backend
+		elseif ( is_backend() && isset( $_SESSION['nlingual_language'] ) && $language = Registry::get_language( $_SESSION['nlingual_language'] ) ) {
 			$mode = 'REQUESTED';
 		}
 		// If the user is logged in and has a preferred language, fallback to that, assuming skip is not enabled or we're in the backend
