@@ -69,6 +69,9 @@ final class Backend extends Handler {
 		self::add_hook( 'plugins_loaded', 'setup_documentation', 10, 0 );
 		self::add_hook( 'plugins_loaded', 'parse_default_rules', 10, 0 );
 
+		// Language Rewriting
+		self::add_hook( 'locale', 'maybe_rewrite_locale', 10, 1 );
+
 		// Plugin information
 		self::add_hook( 'in_plugin_update_message-' . plugin_basename( NL_PLUGIN_FILE ), 'update_notice', 10, 1 );
 
@@ -285,6 +288,30 @@ final class Backend extends Handler {
 		Registry::set( 'sync_rules', $sync_rules );
 		Registry::set( 'clone_rules', $clone_rules );
 		Registry::save( 'options' );
+	}
+
+	// =========================
+	// ! Language Rewriting
+	// =========================
+
+	/**
+	 * Filter the locale, replacing it with the current language if applicable.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses Registry::current_language() to get the current language.
+	 *
+	 * @param string $locale The locale ID.
+	 *
+	 * @return string The replaced locale.
+	 */
+	public static function maybe_rewrite_locale( $locale ) {
+		// If it's the accepted language or override language, use it instead
+		if ( defined( 'NL_ACCEPTED_LANGUAGE' ) ) {
+			return Registry::current_language( 'locale_name' );
+		}
+
+		return $locale;
 	}
 
 	// =========================
