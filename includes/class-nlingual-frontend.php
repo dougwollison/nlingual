@@ -45,6 +45,7 @@ final class Frontend extends Handler {
 	/**
 	 * Register hooks.
 	 *
+	 * @since 2.9.0 Move enqueue_assets to System.
 	 * @since 2.8.0 Added rewrite_locale from System.
 	 * @since 2.0.0
 	 */
@@ -92,9 +93,6 @@ final class Frontend extends Handler {
 		self::add_hook( 'template_directory_uri', 'localize_uri', 10, 1 );
 		self::add_hook( 'upload_dir', 'localize_dir', 10, 1 );
 		self::add_hook( 'the_content', 'localize_attachment_urls', 10, 1 );
-
-		// Script/Style Enqueues
-		self::add_hook( 'wp_enqueue_scripts', 'enqueue_assets', 10, 0 );
 
 		// Admin Bar Additions
 		self::add_hook( 'admin_bar_menu', 'add_translate_menu', 81, 1 ); // should occur after Edit menu item
@@ -744,25 +742,6 @@ final class Frontend extends Handler {
 			$content = str_replace( $find_url, $replace_url, $content );
 		}
 		return $content;
-	}
-
-	// =========================
-	// ! Script/Style Enqueues
-	// =========================
-
-	/**
-	 * Enqueue necessary styles and scripts.
-	 *
-	 * @since 2.6.0
-	 */
-	public static function enqueue_assets() {
-		// Abort if not showing the admin bar
-		if ( ! is_admin_bar_showing() ) {
-			return;
-		}
-
-		// Admin styling
-		wp_enqueue_style( 'nlingual-public', plugins_url( 'css/public.css', NL_PLUGIN_FILE ), NL_PLUGIN_VERSION, 'screen' );
 	}
 
 	// =========================

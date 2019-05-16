@@ -328,7 +328,7 @@ final class System extends Handler {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 2.9.0 Added nl_is_translated handling.
+	 * @since 2.9.0 Added nl_is_translated query handling, enqueue_assets.
 	 * @since 2.8.0 Moved rewrite_locale to Frontend.
 	 * @since 2.6.0 Added transition (un)flagging.
 	 * @since 2.4.0 Only add patch_font_stack hook if before 4.6.
@@ -381,6 +381,10 @@ final class System extends Handler {
 			self::add_hook( 'wp_print_scripts', 'patch_font_stack', 10, 0 );
 			self::add_hook( 'admin_print_scripts', 'patch_font_stack', 10, 0 );
 		}
+
+		// Script/Style Enqueues
+		self::add_hook( 'wp_enqueue_scripts', 'enqueue_assets', 10, 0 );
+		self::add_hook( 'admin_enqueue_scripts', 'enqueue_assets', 10, 0 );
 
 		// Finally, add the blog switching handler
 		add_action( 'switch_blog', array( __CLASS__, 'check_blog_for_support' ), 10, 0 );
@@ -1345,5 +1349,24 @@ final class System extends Handler {
 			</style>
 			<?php
 		}
+	}
+
+	// =========================
+	// ! Script/Style Enqueues
+	// =========================
+
+	/**
+	 * Enqueue necessary styles and scripts.
+	 *
+	 * @since 2.6.0
+	 */
+	public static function enqueue_assets() {
+		// Abort if not showing the admin bar
+		if ( ! is_admin_bar_showing() ) {
+			return;
+		}
+
+		// Admin styling
+		wp_enqueue_style( 'nlingual-adminbar', plugins_url( 'css/adminbar.css', NL_PLUGIN_FILE ), NL_PLUGIN_VERSION, 'screen' );
 	}
 }
