@@ -488,6 +488,10 @@ final class System extends Handler {
 
 			$mode = 'REQUESTED';
 		}
+		// If the user is logged in and has a preferred language, fallback to that, assuming skip is not enabled or we're in the backend
+		elseif ( ( is_backend() || ! Registry::get( 'skip_default_l10n' ) ) && $language = Registry::languages( 'active' )->match_tag( get_user_locale() ) ) {
+			$mode = 'ACCEPTED';
+		}
 		// Fallback to finding the first match in the accepted languages list, assuming skip is not enabled
 		elseif ( ! Registry::get( 'skip_default_l10n' ) && $language = self::get_accepted_language() ) {
 			$mode = 'ACCEPTED';
