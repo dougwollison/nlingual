@@ -1548,6 +1548,11 @@ final class Backend extends Handler {
 			),
 		) );
 
+		if ( $screen->base == 'post' ) {
+			$post_id = $_REQUEST['post'];
+			$translations = Translator::get_post_translations( $post_id );
+		}
+
 		// Add links for language, save the current one
 		foreach ( Registry::languages() as $language ) {
 			if ( ! Registry::is_language_current( $language ) ) {
@@ -1566,14 +1571,14 @@ final class Backend extends Handler {
 				if ( $screen->base == 'post' ) {
 					$node['meta']['target'] = '_blank';
 
-					if ( isset( $translations[ $language->id ] ) ) {
+					if ( $translations && isset( $translations[ $language->id ] ) ) {
 						/* translators: %s = The name of the language */
 						$node['title'] = _f( 'Edit %s version', 'nlingual', $language->native_name );
 						$node['href'] = get_edit_post_link( $translations[ $language->id ] );
 					} else {
 						/* translators: %s = The name of the language */
 						$node['title'] = _f( 'Translate to %s', 'nlingual', $language->system_name );
-						$node['href'] = get_translate_post_link( $current_object->ID, $language->id );
+						$node['href'] = get_translate_post_link( $post_id, $language->id );
 					}
 				}
 
