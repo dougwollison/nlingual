@@ -1188,8 +1188,12 @@ final class System extends Handler {
 			return $clauses;
 		}
 
-		// Get the language(s) specified, ensure it's an array
-		$requested_languages = (array) $query_vars[ $query_var ];
+		// Get the language(s) specified
+		$requested_languages = $query_vars[ $query_var ];
+		// Ensure it's an array
+		if ( ! is_array( $requested_languages ) ) {
+			$requested_languages = preg_split( '/,\s*/', $requested_languages, 0, PREG_SPLIT_NO_EMPTY );
+		}
 
 		// Get the available languages for valiation purposes
 		$all_languages = Registry::languages();
