@@ -1549,7 +1549,7 @@ final class Backend extends Handler {
 		) );
 
 		if ( $screen->base == 'post' ) {
-			$post_id = $GLOBALS['post']->ID;
+			$post_id = $_REQUEST['post'];
 			$translations = Translator::get_post_translations( $post_id );
 		}
 
