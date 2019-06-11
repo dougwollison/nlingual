@@ -432,8 +432,8 @@ final class Liaison extends Handler {
 			return $pre_value;
 		}
 
-		// Set the value to the default language (and no language)
-		$pre_value = array( Registry::default_language()->slug, '0' );
+		// Set the value to the current language (and no language)
+		$pre_value = array( Registry::current_language()->slug, '0' );
 
 		return $pre_value;
 	}
