@@ -1548,7 +1548,9 @@ final class Backend extends Handler {
 			),
 		) );
 
-		if ( $screen->base == 'post' ) {
+		$post_id = null;
+		$translations = array();
+		if ( $screen->base == 'post' && isset( $_REQUEST['post'] ) ) {
 			$post_id = $_REQUEST['post'];
 			$translations = Translator::get_post_translations( $post_id );
 		}
@@ -1568,7 +1570,7 @@ final class Backend extends Handler {
 				);
 
 				// If on a post editor, replace with Edit/Translate links where applicable
-				if ( $screen->base == 'post' ) {
+				if ( $screen->base == 'post' && $post_id ) {
 					$node['meta']['target'] = '_blank';
 
 					if ( $translations && isset( $translations[ $language->id ] ) ) {
