@@ -65,6 +65,7 @@ final class Synchronizer {
 	 * @uses Documenter::post_field_names() To get list of possible post_field options.
 	 * @uses Synchronizer::get_allowed_post_fields() To get whitelist of post_field options.
 	 *
+	 * @since 2.8.6 Fixed post_fields whitelisting.
 	 * @since 2.8.0 Added $context parameter, post_fields expanding/whitelisting.
 	 * @since 2.1.0 Made sure all entries were array|bool, including
 	 *              splitting up post_meta at the line breaks.
@@ -100,7 +101,7 @@ final class Synchronizer {
 		}
 
 		// Whitelist the $post_fields list
-		$rules['post_fields'] = array_intersect_key( $rules['post_fields'], array_flip( self::get_allowed_post_fields( $context ) ) );
+		$rules['post_fields'] = array_intersect( $rules['post_fields'], self::get_allowed_post_fields( $context ) );
 
 		// Handle the post_field aliases
 		if ( in_array( 'post_content', $rules['post_fields'] ) ) {
