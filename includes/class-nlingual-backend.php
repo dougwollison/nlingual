@@ -1552,7 +1552,9 @@ final class Backend extends Handler {
 		$translations = array();
 		if ( $screen->base == 'post' && isset( $_REQUEST['post'] ) ) {
 			$post_id = $_REQUEST['post'];
-			$translations = Translator::get_post_translations( $post_id );
+			if ( Registry::is_post_type_supported( get_post_type( $post_id ) ) ) {
+				$translations = Translator::get_post_translations( $post_id );
+			}
 		}
 
 		// Add links for language, save the current one
