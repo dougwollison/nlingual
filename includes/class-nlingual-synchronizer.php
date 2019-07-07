@@ -136,6 +136,7 @@ final class Synchronizer {
 	/**
 	 * Copy desired post fields, meta data, and terms from the original to target.
 	 *
+	 * @since 2.8.7 Fix date sync to bypass date clearing on draft targets.
 	 * @since 2.8.5 Fixed get_rules() call to specify post_type.
 	 * @since 2.8.0 Moved post_fields=true expanding to prepare_post_rules().
 	 * @since 2.6.0 Fixed typo preventing fields from being synced, also modified
@@ -232,6 +233,11 @@ final class Synchronizer {
 				$field_value = apply_filters( "nlingual_sync_post_field-{$field_name}", $field_value, $language, $target->ID, $original->ID );
 
 				$changes[ $field_name ] = $field_value;
+			}
+
+			// Include edit_date to prevent date clearing on the target
+			if ( in_array( 'post_date_gmt', $changes ) ) {
+				$changes['edit_date'] = $changes['post_date_gmt'];
 			}
 
 			// Apply the updates
