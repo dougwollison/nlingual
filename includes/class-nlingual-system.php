@@ -1067,6 +1067,11 @@ final class System extends Handler {
 			return;
 		}
 
+		// If viewing posts in the trash, abort
+		if ( $query->get( 'post_status' ) == 'trash' ) {
+			return;
+		}
+
 		// If not the admin or some kind of posts/comments feed, abort
 		if ( ! ( is_admin() || $query->is_home() || $query->is_archive() || $query->is_search() || is_a( $query, 'WP_Comment_Query' ) ) ) {
 			return;
