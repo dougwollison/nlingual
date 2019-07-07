@@ -1,9 +1,9 @@
 === nLingual ===
 Contributors: dougwollison
 Tags: multilingual, language, bilingual, translation
-Requires at least: 4.4
-Tested up to: 5.1.1
-Stable tag: 2.8.5
+Requires at least: 4.9
+Tested up to: 5.2.2
+Stable tag: 2.8.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 == Changelog ==
 
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
+
+= 2.8.7 =
+Fixed issue preventing translations from keeping the original's publish date.
 
 = 2.8.6 =
 Fixed issue causing specifically post field clone rules to be ignored.
