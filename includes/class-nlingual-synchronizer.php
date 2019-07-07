@@ -342,6 +342,7 @@ final class Synchronizer {
 	 *
 	 * All fields, meta data and terms are copied.
 	 *
+	 * @since 2.9.0 Exit with error if insert fails.
 	 * @since 2.8.0 Copy only mandatory post fields, leave the rest to sync_posts().
 	 * @since 2.0.0
 	 *
@@ -399,10 +400,11 @@ final class Synchronizer {
 		}
 
 		// Insert and get the ID
-		$translation = wp_insert_post( $post_data );
+		$translation = wp_insert_post( $post_data, 'wp_error' );
 
 		// Check if it worked
-		if ( ! $translation ) {
+		if ( is_wp_error( $translation ) ) {
+			wp_die( implode( '<br /> ', $translation->get_error_messages() ) );
 			return false;
 		}
 
