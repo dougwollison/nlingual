@@ -1029,7 +1029,8 @@ final class System extends Handler {
 	/**
 	 * Set the queried language to the current one if applicable
 	 *
-	 * @since 2.8.6 Rewrite post type checking to handle search and mixed types.
+	 * @since 2.9.0 Skip when viewing trash, rewrite post type checking
+	 *              to handle search and mixed types.
 	 * @since 2.8.0 Added check for parent's post type being supported.
 	 * @since 2.7.0 Revised support checks for post type archives.
 	 * @since 2.6.0 Perform tax query handling first, then post type archive.

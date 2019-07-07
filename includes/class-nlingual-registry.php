@@ -662,7 +662,7 @@ final class Registry {
 		/**
 		 * Filter the result.
 		 *
-		 * @since 2.8.6 Added $require_all argument.
+		 * @since 2.9.0 Added $require_all argument.
 		 * @since 2.0.0
 		 *
 		 * @param bool         $result      The result of the test.
