@@ -1138,6 +1138,10 @@ final class Backend extends Handler {
 									'order' => 'desc',
 									'posts_per_page' => -1,
 								) );
+
+								if ( $translation ) {
+									array_unshift( $available_translations, get_post( $translation ) );
+								}
 								?>
 
 								<p class="nl-translation-info">
