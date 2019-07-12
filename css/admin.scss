@@ -34,8 +34,8 @@
 	}
 	select {
 		clear: both;
-		display: block;
 		width: 100%;
+		margin: 0;
 	}
 }
 
@@ -195,7 +195,7 @@
 		float: left;
 		margin-right: 5px;
 	}
-}
+
 	.nl-translation-list {
 		margin: 0;
 	}
@@ -207,6 +207,12 @@
 			.nl-translation-language {
 				font-weight: bold;
 			}
+			.nl-translation-select {
+				display: block;
+				width: 100%;
+				margin: 10px 0 0;
+				display: none;
+			}
 
 	.nl-if-has-translation,
 	.nl-has-translation .nl-if-no-translation {
@@ -215,6 +221,7 @@
 	.nl-has-translation .nl-if-has-translation {
 		display: block;
 	}
+}
 
 #nlingual-synchronizer-form {
 	.nl-inputlist {
