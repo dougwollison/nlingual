@@ -538,8 +538,14 @@
 
 		// Open a search field to find an existing translation
 		$( '.nl-find-translation' ).click( function() {
-			// do something
-			alert( 'Currently in development' );
+			var $field, $input, $select;
+
+			$field = $( this ).parents( '.nl-field' );
+			$input = $field.find( '.nl-translation-input' );
+			$select = $field.find( '.nl-translation-select' );
+
+			$select.attr( 'name', $input.attr( 'name' ) );
+			$select.show();
 		} );
 
 		// Open the editor for the selected translation
