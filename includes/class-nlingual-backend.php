@@ -1427,6 +1427,9 @@ final class Backend extends Handler {
 			'NewTranslationError'         => __( 'Error creating translation, please try again later or create one manually.', 'nlingual' ),
 			'NoPostSelected'              => __( 'No post selected to edit.', 'nlingual' ),
 			'NewTranslation'              => __( '[New]', 'nlingual' ),
+			'NoTranslation'               => __( '[None]', 'nlingual' ),
+			'RemoveTranslationConfirm'    => __( 'Are you sure you want to unlink this translation?', 'nlingual' ),
+			'RemoveTranslationError'      => __( 'Error removing translation, please try again later.', 'nlingual' ),
 			'LocalizeThis'                => __( 'Localize This', 'nlingual' ),
 			'LocalizeFor'                 => __( 'Localize for %s', 'nlingual' ),
 		) );

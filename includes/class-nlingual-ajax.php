@@ -53,6 +53,9 @@ final class AJAX extends Handler {
 
 		// Translation creation
 		self::add_hook( 'wp_ajax_nl_new_translation', 'new_translation', 10, 0 );
+
+		// Translation removal
+		self::add_hook( 'wp_ajax_nl_drop_translation', 'drop_translation', 10, 0 );
 	}
 
 	// =========================
@@ -121,5 +124,67 @@ final class AJAX extends Handler {
 			'title' => $translation->post_title,
 		) );
 		wp_die();
+	}
+
+	// =========================
+	// ! Translation Removal
+	// =========================
+
+	/**
+	 * Unlink a translation from a post.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @uses Registry::languages() to validate the language requested.
+	 * @uses Translator::get_post_translation() to get the translation to be removed.
+	 * @uses Translator::delete_object_translation() to unlink the translation.
+	 */
+	public static function drop_translation() {
+		// Fail if no post/language id or title is passed
+		if ( ! isset( $_REQUEST['post_id'] ) || ! isset( $_REQUEST['language_id'] ) ) {
+			return;
+		}
+
+		// Fail if post does not exist
+		$post = get_post( $_REQUEST['post_id'] );
+		if ( ! $post ) {
+			return;
+		}
+
+		// Fail if translation language does not exist
+		$translation_language = Registry::get_language( $_REQUEST['language_id'] );
+		if ( ! $translation_language ) {
+			return;
+		}
+
+		// Get the existing translation for reference
+		$translation_id = Translator::get_post_translation( $post, $translation_language );
+
+		// Fail if translation does not exist
+		if ( ! $translation_id ) {
+			return;
+		}
+
+		// Delete the translation link
+		$result = Translator::delete_object_translation( $post, $translation_language );
+
+		// Fail if error removing translation
+		if ( ! $result ) {
+			return;
+		}
+
+		/**
+		 * Fires when a translation clone is successfully created.
+		 *
+		 * @since 2.2.0
+		 *
+		 * @param WP_Post  $post                 The original post.
+		 * @param Language $translation_language The language the clone is for.
+		 * @param int      $translation_id       The translation that was dropped.
+		 */
+		do_action( 'nlingual_drop_translation', $post, $translation_language, $translation_id );
+
+		// Return the details
+		wp_die( 1 );
 	}
 }

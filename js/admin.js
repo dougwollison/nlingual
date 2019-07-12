@@ -1,4 +1,4 @@
-/* globals jQuery, alert, wp, Backbone, tinymce, inlineEditPost, inlineEditTax, nlingualL10n */
+/* globals jQuery, alert, wp, Backbone, tinymce, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n */
 ( function() {
 	var nL = window.nLingual = {};
 
@@ -565,8 +565,35 @@
 
 		// Unlink the target from the current post as a translation
 		$( '.nl-drop-translation' ).click( function() {
-			// do something
-			alert( 'Currently in development' );
+			var $field, $input, post_id, translation_language_id;
+
+			if ( ! confirm( nlingualL10n.RemoveTranslationConfirm ) ) {
+				return;
+			}
+
+			$field = $( this ).parents( '.nl-field' );
+			$input = $field.find( '.nl-input' );
+			$title = $field.find( '.nl-translation-title' );
+			post_id = $( '#post_ID' ).val();
+			language_id = $input.parents( '.nl-field' ).data( 'nl_language' );
+
+			$.ajax( {
+				url: ajaxurl,
+				type: 'POST',
+				data: {
+					action      : 'nl_drop_translation',
+					post_id     : post_id,
+					language_id : language_id,
+				},
+				success: function() {
+					$input.val( null );
+					$title.text( nlingualL10n.NoTranslation );
+					$field.removeClass( 'nl-has-translation' );
+				},
+				error: function() {
+					alert( nlingualL10n.RemoveTranslationError );
+				},
+			} );
 		} );
 
 		// =========================
