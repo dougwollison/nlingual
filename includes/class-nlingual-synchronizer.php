@@ -65,7 +65,7 @@ final class Synchronizer {
 	 * @uses Documenter::post_field_names() To get list of possible post_field options.
 	 * @uses Synchronizer::get_allowed_post_fields() To get whitelist of post_field options.
 	 *
-	 * @since 2.8.5 Fixed whitelisting of post_fields.
+	 * @since 2.8.6 Fixed post_fields whitelisting.
 	 * @since 2.8.0 Added $context parameter, post_fields expanding/whitelisting.
 	 * @since 2.1.0 Made sure all entries were array|bool, including
 	 *              splitting up post_meta at the line breaks.
@@ -136,6 +136,7 @@ final class Synchronizer {
 	/**
 	 * Copy desired post fields, meta data, and terms from the original to target.
 	 *
+	 * @since 2.8.7 Fix date sync to bypass date clearing on draft targets.
 	 * @since 2.8.5 Fixed get_rules() call to specify post_type.
 	 * @since 2.8.0 Moved post_fields=true expanding to prepare_post_rules().
 	 * @since 2.6.0 Fixed typo preventing fields from being synced, also modified
@@ -232,6 +233,11 @@ final class Synchronizer {
 				$field_value = apply_filters( "nlingual_sync_post_field-{$field_name}", $field_value, $language, $target->ID, $original->ID );
 
 				$changes[ $field_name ] = $field_value;
+			}
+
+			// Include edit_date to prevent date clearing on the target
+			if ( in_array( 'post_date_gmt', $changes ) ) {
+				$changes['edit_date'] = $changes['post_date_gmt'];
 			}
 
 			// Apply the updates

@@ -1,4 +1,4 @@
-/* globals jQuery, alert, wp, Backbone, tinymce, inlineEditPost, inlineEditTax, nlingualL10n */
+/* globals jQuery, alert, confirm, wp, Backbone, tinymce, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n */
 ( function() {
 	var nL = window.nLingual = {};
 
@@ -510,28 +510,13 @@
 			$parent.find( '.nl-translation-' + id ).hide();
 		} ).change(); // Update on page load
 
-		// Show/Hide the Add/Edit buttons based on value
-		$( '.nl-translation-field' ).each( function() {
-			var value = $( this ).find( '.nl-input' ).val();
-
-			var $add = $( this ).find( '.nl-add-translation' ),
-				$edit = $( this ).find( '.nl-edit-translation' );
-
-			$edit.hide();
-			if ( parseInt( value ) ) {
-				$add.hide();
-				$edit.show();
-			}
-		} );
-
 		// Create a new translation for the assocaited language
 		$( '.nl-add-translation' ).click( function() {
-			var $field, $input, $add, $edit, post_id, post_language_id, translation_language_id;
+			var $field, $input, $select, post_id, post_language_id, translation_language_id;
 
 			$field = $( this ).parents( '.nl-field' );
-			$input = $field.find( '.nl-input' );
-			$add = $field.find( '.nl-add-translation' );
-			$edit = $field.find( '.nl-edit-translation' );
+			$input = $field.find( '.nl-translation-input' );
+			$select = $field.find( '.nl-translation-select' );
 			post_id = $( '#post_ID' ).val();
 			post_language_id = $( '#nl_language' ).val();
 			translation_language_id = $input.parents( '.nl-field' ).data( 'nl_language' );
@@ -548,10 +533,21 @@
 					id = url[1];
 
 				$input.val( id );
-
-				$add.hide();
-				$edit.show().attr( 'title' );
+				$field.addClass( 'nl-has-translation' );
+				$select.attr( 'name', null );
 			};
+		} );
+
+		// Open a search field to find an existing translation
+		$( '.nl-find-translation' ).click( function() {
+			var $field, $input, $select;
+
+			$field = $( this ).parents( '.nl-field' );
+			$input = $field.find( '.nl-translation-input' );
+			$select = $field.find( '.nl-translation-select' );
+
+			$select.attr( 'name', $input.attr( 'name' ) );
+			$select.show();
 		} );
 
 		// Open the editor for the selected translation
@@ -573,6 +569,39 @@
 			// Build the edit URL and open in a new tab
 			url = $( this ).data( 'url' ).replace( '%d', target );
 			window.open( url );
+		} );
+
+		// Unlink the target from the current post as a translation
+		$( '.nl-drop-translation' ).click( function() {
+			var $field, $input, $title, post_id, language_id;
+
+			if ( ! confirm( nlingualL10n.RemoveTranslationConfirm ) ) {
+				return;
+			}
+
+			$field = $( this ).parents( '.nl-field' );
+			$input = $field.find( '.nl-translation-input' );
+			$title = $field.find( '.nl-translation-title' );
+			post_id = $( '#post_ID' ).val();
+			language_id = $input.parents( '.nl-field' ).data( 'nl_language' );
+
+			$.ajax( {
+				url: ajaxurl,
+				type: 'POST',
+				data: {
+					action      : 'nl_drop_translation',
+					post_id     : post_id,
+					language_id : language_id,
+				},
+				success: function() {
+					$input.val( null );
+					$title.text( nlingualL10n.NoTranslation );
+					$field.removeClass( 'nl-has-translation' );
+				},
+				error: function() {
+					alert( nlingualL10n.RemoveTranslationError );
+				},
+			} );
 		} );
 
 		// =========================
