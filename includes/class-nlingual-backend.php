@@ -1134,13 +1134,13 @@ final class Backend extends Handler {
 								</p>
 
 								<div class="nl-translation-actions nl-if-no-translations">
-									<button type="button" class="button button-small button-primary nl-add-translation"><?php _e( 'Create', 'nlingual' ); ?></button>
-									<button type="button" class="button button-small nl-find-translation"><?php _e( 'Select', 'nlingual' ); ?></button>
+									<button type="button" class="button button-small button-primary nl-add-translation"><?php _e( 'Create New', 'nlingual' ); ?></button>
+									<button type="button" class="button button-small nl-find-translation"><?php _e( 'Select Existing', 'nlingual' ); ?></button>
 								</div>
 
 								<div class="nl-translation-actions nl-if-has-translations">
-									<button type="button" class="button button-small button-primary nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php _e( 'Edit', 'nlingual' ); ?></button>
-									<button type="button" class="button button-small nl-drop-translation"><?php _e( 'Remove', 'nlingual' ); ?></button>
+									<button type="button" class="button button-small button-primary nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php _e( 'Edit Translation', 'nlingual' ); ?></button>
+									<button type="button" class="button button-small nl-drop-translation"><?php _e( 'Remove Translation', 'nlingual' ); ?></button>
 								</div>
 							</li>
 						<?php endforeach; ?>
