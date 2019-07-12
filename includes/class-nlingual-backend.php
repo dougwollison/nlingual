@@ -1125,7 +1125,19 @@ final class Backend extends Handler {
 								/* translators: %s = language name */
 								$label = _f( '%s:', 'nlingual', $language->system_name );
 
+								// Get the title of the current translation
 								$title = $translation ? get_the_title( $translation ) : __( '[None]', 'nlingual' );
+
+								// Get all available translations
+								$available_translations = get_posts( array(
+									'suppress_filters' => false,
+									'post_type' => $post->post_type,
+									'nl_language' => $language->id,
+									'nl_is_translated' => false,
+									'orderby' => 'post_date',
+									'order' => 'desc',
+									'posts_per_page' => -1,
+								) );
 								?>
 
 								<p class="nl-translation-info">
@@ -1135,7 +1147,18 @@ final class Backend extends Handler {
 
 								<div class="nl-translation-actions nl-if-no-translation">
 									<button type="button" class="button button-small button-primary nl-add-translation"><?php _e( 'Create New', 'nlingual' ); ?></button>
-									<button type="button" class="button button-small nl-find-translation"><?php _e( 'Select Existing', 'nlingual' ); ?></button>
+									<?php if ( $available_translations ) : ?>
+										<button type="button" class="button button-small nl-find-translation"><?php _e( 'Select Existing', 'nlingual' ); ?></button>
+										<select class="nl-input nl-translation-select" input>
+											<option value="0">&mdash; <?php _ex( 'None', 'no translation', 'nlingual' ); ?> &mdash;</option>
+											<?php
+											// Print the options
+											foreach ( $available_translations as $option ) {
+												printf( '<option value="%s">%s</option>', $option->ID, $option->post_title );
+											}
+											?>
+										</select>
+									<?php endif; ?>
 								</div>
 
 								<div class="nl-translation-actions nl-if-has-translation">
