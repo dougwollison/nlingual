@@ -510,28 +510,12 @@
 			$parent.find( '.nl-translation-' + id ).hide();
 		} ).change(); // Update on page load
 
-		// Show/Hide the Add/Edit buttons based on value
-		$( '.nl-translation-field' ).each( function() {
-			var value = $( this ).find( '.nl-input' ).val();
-
-			var $add = $( this ).find( '.nl-add-translation' ),
-				$edit = $( this ).find( '.nl-edit-translation' );
-
-			$edit.hide();
-			if ( parseInt( value ) ) {
-				$add.hide();
-				$edit.show();
-			}
-		} );
-
 		// Create a new translation for the assocaited language
 		$( '.nl-add-translation' ).click( function() {
 			var $field, $input, $add, $edit, post_id, post_language_id, translation_language_id;
 
 			$field = $( this ).parents( '.nl-field' );
 			$input = $field.find( '.nl-input' );
-			$add = $field.find( '.nl-add-translation' );
-			$edit = $field.find( '.nl-edit-translation' );
 			post_id = $( '#post_ID' ).val();
 			post_language_id = $( '#nl_language' ).val();
 			translation_language_id = $input.parents( '.nl-field' ).data( 'nl_language' );
@@ -548,9 +532,7 @@
 					id = url[1];
 
 				$input.val( id );
-
-				$add.hide();
-				$edit.show().attr( 'title' );
+				$field.addClass( 'nl-has-translation' );
 			};
 		} );
 
