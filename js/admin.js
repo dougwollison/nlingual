@@ -512,10 +512,11 @@
 
 		// Create a new translation for the assocaited language
 		$( '.nl-add-translation' ).click( function() {
-			var $field, $input, $add, $edit, post_id, post_language_id, translation_language_id;
+			var $field, $input, $select, post_id, post_language_id, translation_language_id;
 
 			$field = $( this ).parents( '.nl-field' );
-			$input = $field.find( '.nl-input' );
+			$input = $field.find( '.nl-translation-input' );
+			$select = $field.find( '.nl-translation-select' );
 			post_id = $( '#post_ID' ).val();
 			post_language_id = $( '#nl_language' ).val();
 			translation_language_id = $input.parents( '.nl-field' ).data( 'nl_language' );
@@ -533,6 +534,7 @@
 
 				$input.val( id );
 				$field.addClass( 'nl-has-translation' );
+				$select.attr( 'name', null );
 			};
 		} );
 
