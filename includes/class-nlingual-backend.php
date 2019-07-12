@@ -1133,12 +1133,12 @@ final class Backend extends Handler {
 									<span class="nl-translation-title"><?php echo $title; ?></span>
 								</p>
 
-								<div class="nl-translation-actions nl-if-no-translations">
+								<div class="nl-translation-actions nl-if-no-translation">
 									<button type="button" class="button button-small button-primary nl-add-translation"><?php _e( 'Create New', 'nlingual' ); ?></button>
 									<button type="button" class="button button-small nl-find-translation"><?php _e( 'Select Existing', 'nlingual' ); ?></button>
 								</div>
 
-								<div class="nl-translation-actions nl-if-has-translations">
+								<div class="nl-translation-actions nl-if-has-translation">
 									<button type="button" class="button button-small button-primary nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php _e( 'Edit Translation', 'nlingual' ); ?></button>
 									<button type="button" class="button button-small nl-drop-translation"><?php _e( 'Remove Translation', 'nlingual' ); ?></button>
 								</div>

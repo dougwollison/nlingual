@@ -208,11 +208,11 @@
 				font-weight: bold;
 			}
 
-	.nl-if-has-translations,
-	.nl-has-translations .nl-if-no-translations {
+	.nl-if-has-translation,
+	.nl-has-translation .nl-if-no-translation {
 		display: none;
 	}
-	.nl-has-translations .nl-if-has-translations {
+	.nl-has-translation .nl-if-has-translation {
 		display: block;
 	}
 
