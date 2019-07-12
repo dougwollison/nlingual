@@ -536,6 +536,12 @@
 			};
 		} );
 
+		// Open a search field to find an existing translation
+		$( '.nl-find-translation' ).click( function() {
+			// do something
+			alert( 'Currently in development' );
+		} );
+
 		// Open the editor for the selected translation
 		$( '.nl-edit-translation' ).click( function() {
 			var $field, target, url;
@@ -555,6 +561,12 @@
 			// Build the edit URL and open in a new tab
 			url = $( this ).data( 'url' ).replace( '%d', target );
 			window.open( url );
+		} );
+
+		// Unlink the target from the current post as a translation
+		$( '.nl-drop-translation' ).click( function() {
+			// do something
+			alert( 'Currently in development' );
 		} );
 
 		// =========================
