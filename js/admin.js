@@ -1,4 +1,4 @@
-/* globals jQuery, alert, wp, Backbone, tinymce, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n */
+/* globals jQuery, alert, confirm, wp, Backbone, tinymce, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n */
 ( function() {
 	var nL = window.nLingual = {};
 
@@ -573,14 +573,14 @@
 
 		// Unlink the target from the current post as a translation
 		$( '.nl-drop-translation' ).click( function() {
-			var $field, $input, post_id, translation_language_id;
+			var $field, $input, $title, post_id, language_id;
 
 			if ( ! confirm( nlingualL10n.RemoveTranslationConfirm ) ) {
 				return;
 			}
 
 			$field = $( this ).parents( '.nl-field' );
-			$input = $field.find( '.nl-input' );
+			$input = $field.find( '.nl-translation-input' );
 			$title = $field.find( '.nl-translation-title' );
 			post_id = $( '#post_ID' ).val();
 			language_id = $input.parents( '.nl-field' ).data( 'nl_language' );
