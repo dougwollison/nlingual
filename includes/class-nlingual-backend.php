@@ -1091,11 +1091,11 @@ final class Backend extends Handler {
 		<div class="nl-translation-manager">
 			<?php if ( $lock_post_language ) : ?>
 				<input type="hidden" name="nlingual_language" id="nl_language" class="nl-input nl-language-input" value="<?php echo $post_language->id; ?>">
-				<strong><?php _e( 'Language:', 'nlingual' ); ?></strong>
+				<strong><?php _e( 'Assigned Language:', 'nlingual' ); ?></strong>
 				<em><?php echo $post_language->system_name; ?></em>
 			<?php else: ?>
 				<div class="nl-field nl-manage-language">
-					<label for="nl_language" class="nl-field-heading"><?php _e( 'Language', 'nlingual' ); ?></label>
+					<label for="nl_language" class="nl-field-heading"><?php _e( 'Assign Language', 'nlingual' ); ?></label>
 					<select name="nlingual_language" id="nl_language" class="nl-input nl-language-input">
 						<?php if ( ! $language_is_required ) : ?>
 							<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
@@ -1113,20 +1113,38 @@ final class Backend extends Handler {
 
 			<div class="nl-manage-translations">
 				<?php if ( $languages->count() > 1 ) : ?>
-					<h4 class="nl-field-heading"><?php _e( 'Translations', 'nlingual' ); ?></h4>
-					<?php foreach ( $languages as $language ) : ?>
-						<div class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?>" data-nl_language="<?php echo $language->id; ?>">
-							<input type="hidden" name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input" value="<?php echo $translations[ $language->id ]; ?>" />
-							<label for="nl_translation_<?php echo $language->id; ?>_input">
+					<h4 class="nl-field-heading"><?php _e( 'Manage Translations', 'nlingual' ); ?></h4>
+
+					<ul class="nl-translation-list">
+						<?php foreach ( $languages as $language ) : ?>
+							<?php $translation = $translations[ $language->id ]; ?>
+							<li class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?> <?php echo $translation ? 'nl-has-translation' : ''; ?>" data-nl_language="<?php echo $language->id; ?>">
+								<input type="hidden" name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input" value="<?php echo $translation; ?>" />
+
 								<?php
 								/* translators: %s = language name */
-								_ef( '%s Translation:', 'nlingual', $language->system_name );
-								 ?>
-								<button type="button" class="button button-small button-primary nl-add-translation"><?php _e( 'Create', 'nlingual' ); ?></button>
-								<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php _e( 'Edit', 'nlingual' ); ?></button>
-							</label>
-						</div>
-					<?php endforeach; ?>
+								$label = _f( '%s:', 'nlingual', $language->system_name );
+
+								$title = $translation ? get_the_title( $translation ) : __( '[None]', 'nlingual' );
+								?>
+
+								<p class="nl-translation-info">
+									<span class="nl-translation-language"><?php echo $label; ?></span>
+									<span class="nl-translation-title"><?php echo $title; ?></span>
+								</p>
+
+								<div class="nl-translation-actions nl-if-no-translations">
+									<button type="button" class="button button-small button-primary nl-add-translation"><?php _e( 'Create', 'nlingual' ); ?></button>
+									<button type="button" class="button button-small nl-find-translation"><?php _e( 'Select', 'nlingual' ); ?></button>
+								</div>
+
+								<div class="nl-translation-actions nl-if-has-translations">
+									<button type="button" class="button button-small button-primary nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php _e( 'Edit', 'nlingual' ); ?></button>
+									<button type="button" class="button button-small nl-drop-translation"><?php _e( 'Remove', 'nlingual' ); ?></button>
+								</div>
+							</li>
+						<?php endforeach; ?>
+					</ul>
 				<?php endif; ?>
 			</div>
 		</div>
