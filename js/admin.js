@@ -61,11 +61,11 @@
 		// Check all fields of a matching name
 		$( '.nl-checkall' ).change( function() {
 			var name = $( this ).data( 'name' );
-			$( 'input[name="' + name + '[]"]' ).attr( 'checked', this.checked );
+			$( `input[name="${name}[]"]` ).attr( 'checked', this.checked );
 		} );
 		$( '.nl-matchall' ).change( function() {
 			var name = $( this ).data( 'name' );
-			$( '[name="' + name + '"]' ).val( this.checked ? '*' : '' );
+			$( `[name="${name}"]` ).val( this.checked ? '*' : '' );
 		} );
 
 		// Hide all sections by default
@@ -145,7 +145,7 @@
 			}
 
 			// Show the associated preview while hiding the others
-			$( '.nl-preview' ).hide().filter( '.nl-redirect-' + method ).show();
+			$( '.nl-preview' ).hide().filter( `.nl-redirect-${method}` ).show();
 		} ).change();
 
 		// =========================
@@ -171,7 +171,7 @@
 
 			// Load preset selector
 			for ( const preset in nL.presets ) {
-				$preset.append( '<option value="' + preset + '">' + nL.presets[ preset ].system_name + '</option>' );
+				$preset.append( `<option value="${preset}">${nL.presets[ preset ].system_name}</option>` );
 			}
 
 			// Row builder utility
@@ -188,7 +188,7 @@
 				var $row = $( row );
 
 				// Check correct direction checkbox
-				$row.find( '.nl-language-direction input[value="' + language.get( 'direction' ) + '"]' ).attr( 'checked', true );
+				$row.find( `.nl-language-direction input[value="${language.get( 'direction' )}"]` ).attr( 'checked', true );
 
 				// Check active checkbox if true
 				$row.find( '.nl-language-active input' ).attr( 'checked', language.get( 'active' ) );
@@ -271,12 +271,13 @@
 
 		// Setup the base localizer
 		var $localizerTemplate = $( '<div class="nl-localizer"></div>' ).html( function() {
-			var html = '<div class="nl-localizer-toggle" title="' + nlingualL10n.LocalizeThis + '"></div>';
+			var html = `<div class="nl-localizer-toggle" title="${nlingualL10n.LocalizeThis}"></div>`;
 
 			Languages.each( language => {
-				html += '<div class="nl-localizer-option" title="' + nlingualL10n.LocalizeFor.replace( '%s', language.get( 'system_name' ) ) + '" data-nl_language="' + language.id + '">' +
-					'<div class="nl-option-text" data-slug="' + language.get( 'slug' ) + '">' + language.get( 'system_name' ) + '</div>' +
-				'</div>';
+				var title = nlingualL10n.LocalizeFor.replace( '%s', language.get( 'system_name' ) );
+				html += `<div class="nl-localizer-option" title="${title}" data-nl_language="${language.id}">
+					<div class="nl-option-text" data-slug="${language.get( 'slug' )}">${language.get( 'system_name' )}</div>
+				</div>`;
 			} );
 
 			return html;
@@ -329,7 +330,7 @@
 			$unlocalized.appendTo( $wrap );
 
 			// Store the unlocalized input reference in the control
-			$control.data( '$nl_localized_' + nL.default_language, $unlocalized );
+			$control.data( `$nl_localized_${nL.default_language}`, $unlocalized );
 
 			// Add hidden storage inputs
 			var hasLocalized;
@@ -344,11 +345,11 @@
 
 				// Create a hidden field for the input
 				var $localized = $( '<input type="hidden" />' );
-				$localized.attr( 'name', 'nlingual_localized[' + $field.attr( 'name' ) + '][' + language.id + ']' );
+				$localized.attr( 'name', `nlingual_localized[${$field.attr( 'name' )}][${language.id}]` );
 				$localized.val( localized );
 
 				// Store it for later use
-				$control.data( '$nl_localized_' + language.id, $localized );
+				$control.data( `$nl_localized_${language.id}`, $localized );
 
 				// Add to the wrapper
 				$localized.appendTo( $wrap );
@@ -360,11 +361,11 @@
 
 			// Add the current class to the default language if localized versions are set
 			if ( hasLocalized ) {
-				$control.find( '[data-nl_language="' + nL.default_language + '"]' ).addClass( 'nl-current' );
+				$control.find( `[data-nl_language="${nL.default_language}"]` ).addClass( 'nl-current' );
 			}
 
 			// Add the nonce field
-			$wrap.append( '<input type="hidden" name="_nl_l10n_nonce[' + field.id + ']" value="' + nonce + '" />' );
+			$wrap.append( `<input type="hidden" name="_nl_l10n_nonce[${field.id}]" value="${nonce}" />` );
 
 			// Add the control at the end
 			$control.appendTo( $wrap );
@@ -381,7 +382,7 @@
 
 			// Get the current field and the localized storage field
 			var $field     = $control.data( '$nl_localizer_field' );
-			var $localized = $control.data( '$nl_localized_' + language );
+			var $localized = $control.data( `$nl_localized_${language}` );
 
 			// Before we begin changing stuff, trigger an update on the field
 			$field.trigger( 'nl:localizer:update' );
@@ -406,7 +407,7 @@
 			var language = $control.data( 'nl_current_language' );
 
 			// Get the localized storage field
-			var $localized = $control.data( '$nl_localized_' + language );
+			var $localized = $control.data( `$nl_localized_${language}` );
 
 			// Update it with the current value
 			$localized.val( this.value );
@@ -552,8 +553,8 @@
 				var post_id = post && parseInt( this.getId( post ), 10 ) || 0;
 
 				// Get the post and edit rows
-				var $postRow = $( '#post-' + post_id );
-				var $editRow = $( '#edit-' + post_id );
+				var $postRow = $( `#post-${post_id}` );
+				var $editRow = $( `#edit-${post_id}` );
 
 				// Update the nonce field
 				var nonce = $postRow.find( '.nl-nonce' ).val();
@@ -566,7 +567,7 @@
 				// Update the translations fields
 				$editRow.find( '.nl-translation-field' ).each( function() {
 					var id = $( this ).data( 'nl_language' );
-					var translation = $postRow.find( '.nl-translation-' + id ).val();
+					var translation = $postRow.find( `.nl-translation-${id}` ).val();
 
 					$( this ).find( 'select' ).val( translation || 0 );
 				} );
