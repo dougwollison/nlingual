@@ -509,6 +509,7 @@ final class Backend extends Handler {
 	/**
 	 * Register the language query var.
 	 *
+	 * @since 2.8.0 Add default query var as well.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to get the query var option.
@@ -518,6 +519,7 @@ final class Backend extends Handler {
 	 * @return array The updated whitelist.
 	 */
 	public static function add_language_var( array $vars ) {
+		$vars[] = 'nl_language';
 		if ( $query_var = Registry::get( 'query_var' ) ) {
 			$vars[] = $query_var;
 		}
@@ -578,6 +580,7 @@ final class Backend extends Handler {
 	/**
 	 * Add <select> for filtering posts by language.
 	 *
+	 * @since 2.8.8 Support both custom and default query var.
 	 * @since 2.6.0 Default post type/status to any.
 	 * @since 2.4.0 Show all languages as filtering options.
 	 * @since 2.2.0 Fixed handling of string vs array for $current.
@@ -600,16 +603,16 @@ final class Backend extends Handler {
 		$post_type = $wp_query->get( 'post_type' ) ?: 'any';
 		$post_status = $wp_query->get( 'post_status' ) ?: 'any';
 
-		// Get the query var and it's current value
+		// Get the query var and it's current value (falling back to using the default query var)
 		$query_var = Registry::get( 'query_var' );
-		$current = $wp_query->get( $query_var );
+		$current = $wp_query->get( $query_var ) ?: $wp_query->get( 'nl_language' );
 
 		// If current is an array, use the first one
 		if ( is_array( $current ) ) {
 			$current = reset( $current );
 		}
 		?>
-		<select name="<?php echo $query_var; ?>" class="postform">
+		<select name="nl_language" class="postform">
 			<option value="-1"><?php _e( 'All Languages', 'nlingual' ); ?></option>
 			<?php
 			$count = Backend::language_posts_count( 0, $post_type, $post_status );
@@ -636,9 +639,8 @@ final class Backend extends Handler {
 	 */
 	public static function maybe_set_queried_language( $args, $post ) {
 		if ( ! Registry::get( 'show_all_languages' ) && Registry::is_post_type_supported( $post->post_type ) ) {
-			$query_var = Registry::get( 'query_var' );
 			if ( $language = Translator::get_post_language( $post ) ) {
-				$args[ $query_var ] = array( $language->id, '0' );
+				$args[ 'nl_language' ] = array( $language->id, '0' );
 			}
 		}
 

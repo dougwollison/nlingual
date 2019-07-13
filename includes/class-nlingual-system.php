@@ -1029,7 +1029,8 @@ final class System extends Handler {
 	/**
 	 * Set the queried language to the current one if applicable
 	 *
-	 * @since 2.9.0 Skip when viewing trash, rewrite post type checking
+	 * @since 2.9.0 Check for both default and custom query_var,
+	 *              Skip when viewing trash, rewrite post type checking
 	 *              to handle search and mixed types.
 	 * @since 2.8.0 Added check for parent's post type being supported.
 	 * @since 2.7.0 Revised support checks for post type archives.
@@ -1046,11 +1047,10 @@ final class System extends Handler {
 	 */
 	public static function set_queried_language( $query ) {
 		// Get the language query_var name, and the query's variables (by reference)
-		$query_var = Registry::get( 'query_var' );
-		$query_vars = &$query->query_vars;
+		$query_var = Registry::get( 'query_var', 'nl_language' );
 
-		// Abort if no query var name is set or if it's already declared
-		if ( ! $query_var || isset( $query_vars[ $query_var ] ) ) {
+		// Abort if query var is already declared
+		if ( $query->get( 'nl_language' ) || $query->get( $query_var ) ) {
 			return;
 		}
 
@@ -1064,7 +1064,7 @@ final class System extends Handler {
 		 */
 		$pre_value = apply_filters( 'nlingual_pre_set_queried_language', null, $query );
 		if ( ! is_null( $pre_value ) ) {
-			$query_vars[ $query_var ] = $pre_value;
+			$query->set( $query_var, $pre_value );
 			return;
 		}
 
@@ -1117,12 +1117,13 @@ final class System extends Handler {
 		}
 
 		// Now set the language to the current one
-		$query_vars[ $query_var ] = $value;
+		$query->set( $query_var, $value );
 	}
 
 	/**
 	 * Translated the post__not_in IDs to those for the queried language(s) if needed.
 	 *
+	 * @since 2.8.8 Use WP_Query::get() and set(), check for default query var.
 	 * @since 2.6.0 Added check to see if current query is for an unsupported post type.
 	 * @since 2.0.0
 	 *
@@ -1131,25 +1132,33 @@ final class System extends Handler {
 	public static function translate_excluded_posts( $query ) {
 		// Get the language query_var name, and the query's variables (by reference)
 		$query_var = Registry::get( 'query_var' );
-		$query_vars = &$query->query_vars;
 
 		// Abort if a query for an unsupported post type
-		if ( isset( $query_vars['post_type'] ) && $query_vars['post_type'] && ! Registry::is_post_type_supported( $query_vars['post_type'] ) ) {
+		if ( ! Registry::is_post_type_supported( $query->get( 'post_type' ) ) ) {
 			return;
 		}
 
-		// Abort if no language or exclusions were set
-		if ( ! isset( $query_vars[ $query_var ] ) || empty( $query_vars[ $query_var ] )
-		|| ! isset( $query_vars['post__not_in'] ) || empty( $query_vars['post__not_in'] ) ) {
+		$post__not_in = $query->get( 'post__not_in' );
+
+		// Abort if no exclusions were set
+		if ( ! $post__not_in ) {
 			return;
 		}
 
-		// Get the language(s) specified, ensure it's an array, filtered
-		$requested_languages = array_filter( (array) $query_vars[ $query_var ] );
+		// Get the language(s) specified
+		$requested_languages = $query->get( 'nl_language' ) ?: $query->get( $query_var );
+
+		// Abort if no language(s) was set
+		if ( is_null( $requested_languages ) || $requested_languages === '' ) {
+			return $clauses;
+		}
+
+		// Ensure languages is an array, filtered
+		$requested_languages = array_filter( (array) $requested_languages );
 
 		// Loop through the IDs
 		$exclude_ids = array();
-		foreach ( (array) $query_vars['post__not_in'] as $i => $id ) {
+		foreach ( $post__not_in as $i => $id ) {
 			// Check if it has a language
 			if ( Translator::get_post_language( $id ) ) {
 				// Add it's translations in each requested language
@@ -1163,12 +1172,13 @@ final class System extends Handler {
 			}
 		}
 
-		$query_vars['post__not_in'] = array_filter( $exclude_ids );
+		$query->set( 'post__not_in', array_filter( $exclude_ids ) );
 	}
 
 	/**
 	 * Add the translations join clause and language where clause for a query.
 	 *
+	 * @since 2.8.8 Use WP_Query::get(), accept default query var.
 	 * @since 2.6.0 Fixed handling of 0 value for filtering by no language.
 	 * @since 2.0.0
 	 *
@@ -1187,19 +1197,17 @@ final class System extends Handler {
 
 		// Get the language query_var name, and the query's variables
 		$query_var = Registry::get( 'query_var' );
-		$query_vars = $query->query_vars;
 
-		// Abort if no language was set
-		if ( ! isset( $query_vars[ $query_var ] ) || is_null( $query_vars[ $query_var ] ) || $query_vars[ $query_var ] === '' ) {
+		// Get the language(s) specified
+		$requested_languages = $query->get( 'nl_language' ) ?: $query->get( $query_var );
+
+		// Abort if no language(s) was set
+		if ( is_null( $requested_languages ) || $requested_languages === '' ) {
 			return $clauses;
 		}
 
-		// Get the language(s) specified
-		$requested_languages = $query_vars[ $query_var ];
-		// Ensure it's an array
-		if ( ! is_array( $requested_languages ) ) {
-			$requested_languages = preg_split( '/,\s*/', $requested_languages, 0, PREG_SPLIT_NO_EMPTY );
-		}
+		// Ensure languages is an array
+		$requested_languages = (array) $requested_languages;
 
 		// Get the available languages for valiation purposes
 		$all_languages = Registry::languages();
