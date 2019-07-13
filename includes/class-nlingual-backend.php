@@ -895,19 +895,17 @@ final class Backend extends Handler {
 							<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
 								<option value="0">&mdash; <?php _ex( 'None', 'no translation', 'nlingual' ); ?> &mdash;</option>
 								<?php
-								// Get all posts in this language
-								$posts = $wpdb->get_results( $wpdb->prepare( "
-									SELECT p.ID, p.post_title
-									FROM $wpdb->nl_translations AS t
-									LEFT JOIN $wpdb->posts AS p ON (t.object_id = p.ID)
-									WHERE t.object_type = 'post'
-									AND t.language_id = %d
-									AND p.post_type = %s
-									ORDER BY p.post_date DESC
-								", $language->id, $post_type ) );
+								$available_translations = get_posts( array(
+									'suppress_filters' => false,
+									'post_type' => $post->post_type,
+									'nl_language' => $language->id,
+									'orderby' => 'post_date',
+									'order' => 'desc',
+									'posts_per_page' => -1,
+								) );
 
 								// Print the options
-								foreach ( $posts as $option ) {
+								foreach ( $available_translations as $option ) {
 									printf( '<option value="%s">%s</option>', $option->ID, $option->post_title );
 								}
 								?>
@@ -1068,21 +1066,8 @@ final class Backend extends Handler {
 
 		// Build the language and translation option lists
 		$language_options = array();
-		$post_options = array();
 		foreach ( $languages as $language ) {
 			$language_options[ $language->id ] = $language->system_name;
-
-			// Get all posts of this type for this language (excluding the current one)
-			$post_options[ $language->id ] = $wpdb->get_results( $wpdb->prepare( "
-				SELECT p.ID, p.post_title
-				FROM $wpdb->nl_translations AS t
-				LEFT JOIN $wpdb->posts AS p ON (t.object_id = p.ID)
-				WHERE t.object_type = 'post'
-				AND t.language_id = %d
-				AND t.object_id != %d
-				AND p.post_type = %s
-				ORDER BY p.post_date DESC
-			", $language->id, $post->ID, $post->post_type ) );
 
 			// Set translation to for this language to 0 if not present
 			if ( ! isset( $translations[ $language->id ] ) ) {
