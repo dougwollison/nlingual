@@ -18,28 +18,28 @@
 			slug        : '',
 			locale_name : '',
 			direction   : '',
-			active      : true
-		}
+			active      : true,
+		},
 	} );
 
 	// Languages collection
 	var LanguageSet = Framework.LanguageSet = Backbone.Collection.extend( {
-		model: Language
+		model: Language,
 	} );
 
 	// LocalizableField model
 	var LocalizableField = Framework.LocalizableField = Backbone.Model.extend( {
-		idAttribute: 'field',
-		defaults: {
+		idAttribute : 'field',
+		defaults    : {
 			field_id : '',
 			values   : '',
-			nonce    : ''
-		}
+			nonce    : '',
+		},
 	} );
 
 	// LocalizableFieldSet collection
 	var LocalizableFieldSet = Framework.LocalizableFieldSet = Backbone.Collection.extend( {
-		model: LocalizableField
+		model: LocalizableField,
 	} );
 
 	// =========================
@@ -55,7 +55,6 @@
 
 	jQuery( function( $ ) {
 		var $localizerTemplate,
-			nlLocalizerSkipUpdate,
 			wpInlineEditPost_edit,
 			wpInlineEditTax_edit;
 
@@ -178,7 +177,7 @@
 			$list.sortable( {
 				items       : 'tr',
 				containment : 'parent',
-				handle      : '.handle'
+				handle      : '.handle',
 			} );
 
 			// Load preset selector
@@ -217,14 +216,14 @@
 
 			// Add button functionality
 			$addBtn.click( function() {
-				var language, preset;
+				var language, _preset;
 
 				// Check if preset was selected,
 				// otherwise make blank language
 				if ( $preset.val() ) {
-					preset = $preset.val();
-					language = new Language( nL.presets[ preset ] );
-					language.set( 'iso_code', preset );
+					_preset = $preset.val();
+					language = new Language( nL.presets[ _preset ] );
+					language.set( 'iso_code', _preset );
 
 					// Reset preset selector
 					$preset.val( null );
@@ -299,9 +298,6 @@
 			return html;
 		} );
 
-		// Flag for skipping redundant localizer update
-		nlLocalizerSkipUpdate = 'nlLocalizerSkipUpdate';
-
 		LocalizableFields.each( function( field ) {
 			var field_id, values, nonce, hasLocalized, $field, $wrap, $control, $unlocalized;
 
@@ -313,7 +309,7 @@
 
 			// Get the field if it exists and is an input/textarea
 			$field = $( '#' + field_id );
-			if ( 0 === $field.length || ! $field.is( 'input, textarea' ) ) {
+			if ( $field.length === 0 || ! $field.is( 'input, textarea' ) ) {
 				return;
 			}
 
@@ -501,7 +497,7 @@
 			$parent = $( this ).parents( '.nl-translation-manager' );
 
 			// Toggle visibility of the translations interface if language isn't set
-			$parent.find( '.nl-manage-translations' ).toggleClass( 'hidden', '0' === id );
+			$parent.find( '.nl-manage-translations' ).toggleClass( 'hidden', id === '0' );
 
 			// Show all translation fields by default
 			$parent.find( '.nl-translation-field' ).show();
@@ -518,7 +514,7 @@
 				$edit = $( this ).find( '.nl-edit-translation' );
 
 			$edit.hide();
-			if ( parseInt( value ) ) {
+			if ( parseInt( value, 10 ) ) {
 				$add.hide();
 				$edit.show();
 			}
@@ -537,7 +533,7 @@
 			translation_language_id = $input.parents( '.nl-field' ).data( 'nl_language' );
 
 			var editWindow = window.open( '/wp-admin/admin-post.php?' + $.param( {
-				action                 : 'nl_new_translation',
+				action                  : 'nl_new_translation',
 				post_id                 : post_id,
 				post_language_id        : post_language_id,
 				translation_language_id : translation_language_id,
@@ -545,7 +541,7 @@
 
 			editWindow.onload = function() {
 				var url = this.location.href.match( /post=(\d+)/ ),
-					id = url[1];
+					id = url[ 1 ];
 
 				$input.val( id );
 
@@ -565,7 +561,7 @@
 			target = $field.find( '.nl-input' ).val();
 
 			// Throw error if target isn't a valid post
-			if ( 'new' === target || parseInt( target ) <= 0 ) {
+			if ( target === 'new' || parseInt( target, 10 ) <= 0 ) {
 				alert( nlingualL10n.NoPostSelected );
 				return;
 			}
@@ -580,11 +576,11 @@
 		// =========================
 
 		// Extend inlineEditPost if available
-		if ( 'object' === typeof inlineEditPost ) {
+		if ( typeof inlineEditPost === 'object' ) {
 			wpInlineEditPost_edit = inlineEditPost.edit;
 
 			// Replace with new function
-			inlineEditPost.edit = function( id ) {
+			inlineEditPost.edit = function( post ) {
 				var post_id, $postRow, $editRow, nonce, post_language;
 
 				// Start by calling the original for default behaviour
@@ -592,8 +588,8 @@
 
 				// Get the post ID
 				post_id = 0;
-				if ( 'object' === typeof id ) {
-					post_id = parseInt( this.getId( id ) );
+				if ( typeof post === 'object' ) {
+					post_id = parseInt( this.getId( post ), 10 );
 				}
 
 				// Get the post and edit rows
@@ -621,7 +617,7 @@
 		}
 
 		// Extend inlineEditTax if available
-		if ( 'object' === typeof inlineEditTax ) {
+		if ( typeof inlineEditTax === 'object' ) {
 			wpInlineEditTax_edit = inlineEditTax.edit;
 
 			// Replace with new function
