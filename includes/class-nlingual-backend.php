@@ -509,7 +509,7 @@ final class Backend extends Handler {
 	/**
 	 * Register the language query var.
 	 *
-	 * @since 2.8.0 Add default query var as well.
+	 * @since 2.9.0 Add default query var as well.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to get the query var option.
@@ -580,7 +580,7 @@ final class Backend extends Handler {
 	/**
 	 * Add <select> for filtering posts by language.
 	 *
-	 * @since 2.8.8 Support both custom and default query var.
+	 * @since 2.9.0 Support both custom and default query var.
 	 * @since 2.6.0 Default post type/status to any.
 	 * @since 2.4.0 Show all languages as filtering options.
 	 * @since 2.2.0 Fixed handling of string vs array for $current.
@@ -630,6 +630,7 @@ final class Backend extends Handler {
 	/**
 	 * Filter the query args, adding language if applicable.
 	 *
+	 * @since 2.9.0 Use default query var, not custom.
 	 * @since 2.8.0
 	 *
 	 * @param array   $args The WP_Query arguments to filter.
@@ -837,9 +838,8 @@ final class Backend extends Handler {
 	/**
 	 * Print out the quick-edit box for post language/translations.
 	 *
+	 * @since 2.9.0 Use get_posts instead of $wdpb to get options.
 	 * @since 2.0.0
-	 *
-	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
 	 * @uses Registry::is_post_type_supported() to check for support.
 	 * @uses Registry::languages() to loop through the active languages.
@@ -849,8 +849,6 @@ final class Backend extends Handler {
 	 * @param string $post_type The post type this is for.
 	 */
 	public static function quick_edit_post_translation( $column, $post_type ) {
-		global $wpdb;
-
 		// Abort if not the correct column
 		if ( $column != 'nlingual' ) {
 			return;
@@ -1014,7 +1012,9 @@ final class Backend extends Handler {
 	/**
 	 * Output the content of the translations meta box.
 	 *
-	 * @since 2.9.0 Add default_no_language option usage.
+	 * @since 2.9.0 Add default_no_language option usage,
+	 *              restructure translation UI (add find/drop options),
+	 *              restore translation selector for assigning existing post.
 	 * @since 2.8.0 Add lock_post_language option usage.
 	 * @since 2.6.0 Dropped post selection for translation fields,
 	 *              now uses simpler Create button that opens in new window.
