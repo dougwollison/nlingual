@@ -1,5 +1,5 @@
 /* globals jQuery, alert, wp, Backbone, tinymce, inlineEditPost, inlineEditTax, nlingualL10n */
-( function() {
+( () => {
 	var nL = window.nLingual = {};
 
 	// =========================
@@ -53,7 +53,7 @@
 	// ! jQuery Stuff
 	// =========================
 
-	jQuery( function( $ ) {
+	jQuery( $ => {
 		// =========================
 		// ! Setings Pages
 		// =========================
@@ -273,7 +273,7 @@
 		var $localizerTemplate = $( '<div class="nl-localizer"></div>' ).html( function() {
 			var html = '<div class="nl-localizer-toggle" title="' + nlingualL10n.LocalizeThis + '"></div>';
 
-			Languages.each( function( language ) {
+			Languages.each( language => {
 				html += '<div class="nl-localizer-option" title="' + nlingualL10n.LocalizeFor.replace( '%s', language.get( 'system_name' ) ) + '" data-nl_language="' + language.id + '">' +
 					'<div class="nl-option-text" data-slug="' + language.get( 'slug' ) + '">' + language.get( 'system_name' ) + '</div>' +
 				'</div>';
@@ -282,7 +282,7 @@
 			return html;
 		} );
 
-		LocalizableFields.each( function( field ) {
+		LocalizableFields.each( field => {
 			var field_id = field.get( 'field_id' );
 			var values   = field.get( 'values' );
 			var nonce    = field.get( 'nonce' );
@@ -333,7 +333,7 @@
 
 			// Add hidden storage inputs
 			var hasLocalized;
-			Languages.each( function( language ) {
+			Languages.each( language => {
 				// Skip the default language
 				if ( nL.default_language === language.id ) {
 					return;
@@ -417,7 +417,7 @@
 		// =========================
 
 		if ( typeof tinymce === 'object' ) {
-			tinymce.on( 'SetupEditor', function( e ) {
+			tinymce.on( 'SetupEditor', e => {
 				// TinyMCE 4.7 changes callback arg to event CONTAINING editor
 				var editor = e.editor || e;
 
@@ -428,18 +428,18 @@
 					return;
 				}
 
-				editor.on( 'init', function() {
+				editor.on( 'init', () => {
 					$( editor.getContainer() ).parent().after( $control );
 				} );
 
-				$field.on( 'nl:localizer:update', function() {
+				$field.on( 'nl:localizer:update', () => {
 					// Get the content, clean it
 					var content = wp.editor.removep( editor.getContent() );
 
 					$field.val( content );
 				} );
 
-				$field.on( 'nl:localizer:change', function() {
+				$field.on( 'nl:localizer:change', () => {
 					// Get the value, process it
 					var content = wp.editor.autop( $field.val() );
 
@@ -500,15 +500,14 @@
 			var translation_language_id = $input.parents( '.nl-field' ).data( 'nl_language' );
 
 			var editWindow = window.open( '/wp-admin/admin-post.php?' + $.param( {
-				action                  : 'nl_new_translation',
-				post_id                 : post_id,
-				post_language_id        : post_language_id,
-				translation_language_id : translation_language_id,
+				action: 'nl_new_translation',
+				post_id,
+				post_language_id,
+				translation_language_id,
 			} ), '_blank' );
 
 			editWindow.onload = function() {
-				var url = this.location.href.match( /post=(\d+)/ );
-				var id = url[ 1 ];
+				var [ , id ] = this.location.href.match( /post=(\d+)/ );
 
 				$input.val( id );
 
