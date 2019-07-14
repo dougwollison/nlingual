@@ -659,7 +659,7 @@ final class Backend extends Handler {
 				if ( $language = Registry::get_language( $language_id ) ) {
 					echo '<li>';
 					printf( '<input type="hidden" class="nl-translation-%d" value="%d" />', $language->id, $post );
-					$link = sprintf( '<a href="%s" target="_blank">%s</a>', get_edit_post_link( $post ), get_the_title( $post ) );
+					$link = sprintf( '<a href="%s" target="_blank">%s</a>', get_edit_post_link( $post ), get_the_title( $post ) ?: __( '(no title)' ) );
 					/* translators: %1$s = The name of the language, %2$s = The title of the post, wrapped in a link */
 					_efx( '%1$s: %2$s', 'language: title', 'nlingual', $language->system_name, $link );
 					echo '<li>';
