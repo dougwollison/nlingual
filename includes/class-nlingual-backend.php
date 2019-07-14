@@ -1223,6 +1223,7 @@ final class Backend extends Handler {
 	/**
 	 * Enqueue necessary styles and scripts.
 	 *
+	 * @sicne 2.8.8 Add admin_post, for nl_new_translation call.
 	 * @since 2.6.0 Updated to use plugin version for CSS/JS files.
 	 * @since 2.0.0
 	 */
@@ -1235,6 +1236,7 @@ final class Backend extends Handler {
 
 		// Localize the javascript
 		wp_localize_script( 'nlingual-admin-js', 'nlingualL10n', array(
+			'admin_post'                  => admin_url( 'admin-post.php' ),
 			'TranslationTitle'            => __( 'Enter the title for this translation.', 'nlingual' ),
 			'TranslationTitlePlaceholder' => __( '[Needs %1$s Translation]: %2$s', 'nlingual' ),
 			'NewTranslationError'         => __( 'Error creating translation, please try again later or create one manually.', 'nlingual' ),
