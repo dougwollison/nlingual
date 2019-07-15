@@ -821,7 +821,7 @@ final class Backend extends Handler {
 				if ( $language = Registry::get_language( $language_id ) ) {
 					echo '<li>';
 					printf( '<input type="hidden" class="nl-translation-%d" value="%d" />', $language->id, $post );
-					$link = sprintf( '<a href="%s" target="_blank">%s</a>', get_edit_post_link( $post ), get_the_title( $post ) );
+					$link = sprintf( '<a href="%s" target="_blank">%s</a>', get_edit_post_link( $post ), get_the_title( $post ) ?: __( '(no title)' ) );
 					/* translators: %1$s = The name of the language, %2$s = The title of the post, wrapped in a link */
 					_efx( '%1$s: %2$s', 'language: title', 'nlingual', $language->system_name, $link );
 					echo '<li>';
@@ -1424,6 +1424,7 @@ final class Backend extends Handler {
 	/**
 	 * Enqueue necessary styles and scripts.
 	 *
+	 * @sicne 2.8.8 Add admin_post, for nl_new_translation call.
 	 * @since 2.6.0 Updated to use plugin version for CSS/JS files.
 	 * @since 2.0.0
 	 */
@@ -1436,6 +1437,7 @@ final class Backend extends Handler {
 
 		// Localize the javascript
 		wp_localize_script( 'nlingual-admin-js', 'nlingualL10n', array(
+			'admin_post'                  => admin_url( 'admin-post.php' ),
 			'TranslationTitle'            => __( 'Enter the title for this translation.', 'nlingual' ),
 			'TranslationTitlePlaceholder' => __( '[Needs %1$s Translation]: %2$s', 'nlingual' ),
 			'NewTranslationError'         => __( 'Error creating translation, please try again later or create one manually.', 'nlingual' ),

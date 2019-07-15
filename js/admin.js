@@ -485,7 +485,7 @@
 			var post_language_id        = $( '#nl_language' ).val();
 			var translation_language_id = $input.parents( '.nl-field' ).data( 'nl_language' );
 
-			var editWindow = window.open( '/wp-admin/admin-post.php?' + $.param( {
+			var editWindow = window.open( nlingualL10n.admin_post + '?' + $.param( {
 				action: 'nl_new_translation',
 				post_id,
 				post_language_id,
