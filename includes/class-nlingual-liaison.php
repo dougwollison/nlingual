@@ -59,6 +59,9 @@ final class Liaison extends Handler {
 
 		// WooCommerce compatibility
 		self::add_hook( 'plugins_loaded', 'add_woocommerce_helpers', 10, 0 );
+
+		// Relevanssi compatibility
+		self::add_hook( 'plugins_loaded', 'add_relevanssi_helpers', 10, 0 );
 	}
 
 	// =========================
@@ -659,5 +662,130 @@ final class Liaison extends Handler {
 		}
 
 		return $url;
+	}
+
+	// =========================
+	// ! Relevanssi Helpers
+	// =========================
+
+	/**
+	 * Check if Relevanssi is active, setup necessary filters.
+	 *
+	 * @since 2.9.0
+	 */
+	public static function add_relevanssi_helpers() {
+		// Abort if Relevanssi isn't present
+		if ( ! function_exists( 'relevanssi_init' ) ) {
+			return;
+		}
+
+		// Savethe search filters
+
+		// Add where/join clause filters to relevanssi query
+		self::add_hook( 'relevanssi_join', 'relevanssi_join', 10, 1 );
+		self::add_hook( 'relevanssi_where', 'relevanssi_where', 10, 1 );
+	}
+
+	/**
+	 * Add the translations JOIN clause if applicable.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param string $clause The JOIN clause for Relevanssi.
+	 *
+	 * @return string The updated JOIN clause.
+	 */
+	public static function relevanssi_join( $query_join ) {
+		global $wpdb;
+
+		// If the main query isn't a search, abort
+		// Relevansii only deals with the main query usually
+		if ( ! is_search() ) {
+			return $query_join;
+		}
+
+		// Get the language query_var name, and the query's variables
+		$query_var = Registry::get( 'query_var' );
+
+		// Get the language(s) specified
+		$requested_languages = get_query_var( 'nl_language' ) ?: get_query_var( $query_var );
+
+		// Abort if no language(s) was set
+		if ( is_null( $requested_languages ) || $requested_languages === '' ) {
+			return $query_join;
+		}
+
+		// Alias for the translations table
+		$nl = $wpdb->nl_translations;
+
+		// Add the join, object_id:doc and type:type
+		$query_join .= " LEFT JOIN $nl ON ($nl.object_id = relevanssi.doc AND relevanssi.type = $nl.object_type) ";
+
+		return $query_join;
+	}
+
+	/**
+	 * Add the language WHERE clause if applicable.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param string $query_restrictions The WHERE clause for Relevanssi.
+	 *
+	 * @return string The updated WHERE clause.
+	 */
+	public static function relevanssi_where( $query_restrictions ) {
+		global $wpdb;
+
+		// If the main query isn't a search, abort
+		// Relevansii only deals with the main query usually
+		if ( ! is_search() ) {
+			return $query_restrictions;
+		}
+
+		// Get the language query_var name, and the query's variables
+		$query_var = Registry::get( 'query_var' );
+
+		// Get the language(s) specified
+		$requested_languages = get_query_var( 'nl_language' ) ?: get_query_var( $query_var );
+
+		// Abort if no language(s) was set
+		if ( is_null( $requested_languages ) || $requested_languages === '' ) {
+			return $query_restrictions;
+		}
+
+		// Ensure languages is an array
+		$requested_languages = (array) $requested_languages;
+
+		// Get the available languages for valiation purposes
+		$all_languages = Registry::languages();
+
+		// Alias for the translations table
+		$nl = $wpdb->nl_translations;
+
+		// Loop through each language specified and build the subclause
+		$clauses = array();
+		foreach ( $requested_languages as $language ) {
+			// Skip if blank
+			if ( $language === '' ) {
+				continue;
+			}
+
+			// Check if the language specified is "None"
+			if ( $language === '0' || $language === 0 ) {
+				$clauses[] = "$nl.language_id IS NULL";
+			}
+			// Otherwise check if the language exists
+			elseif ( $language = $all_languages->get( $language ) ) {
+				$clauses[] = $wpdb->prepare( "$nl.language_id = %d", $language->id );
+			}
+		}
+
+		// If any where clauses were made, add them
+		if ( $clauses ) {
+			// Add the new clauses
+			$query_restrictions .= " AND (" . implode( ' OR ', $clauses ) . ") ";
+		}
+
+		return $query_restrictions;
 	}
 }
