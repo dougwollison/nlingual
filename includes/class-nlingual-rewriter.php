@@ -365,6 +365,7 @@ final class Rewriter {
 	/**
 	 * Attempt to localize the current page URL.
 	 *
+	 * @since 2.8.9 Unset s in query string when getting search link.
 	 * @since 2.8.4 Dropped use of localize_url() $relocalize param, will always relocalize.
 	 * @since 2.6.0 Fixed paged handling, added check to make sure queried object's post type is supported.
 	 * @since 2.2.0 Now uses get_search_link() to create the search URL.
@@ -441,6 +442,7 @@ final class Rewriter {
 			// Search page? Rebuild the link
 			elseif ( is_search() ) {
 				$url = get_search_link( get_query_var( 's' ) );
+				unset( $_GET['s'] );
 			}
 			// Give up and just get the orginally requested URL, relocalized
 			else {
