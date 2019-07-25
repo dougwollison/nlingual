@@ -1291,9 +1291,8 @@ final class System extends Handler {
 		$query_var = Registry::get( 'query_var' );
 		if ( isset( $query_vars[ $query_var ] ) && ! empty( $query_vars[ $query_var ] ) ) {
 			$nl1 = $wpdb->nl_translations;
-		} else
-		// Add first join
-		if ( $nl1 === $wpdb->nl_translations ) {
+		} else {
+			// Add first join
 			$clauses['join'] .= " LEFT JOIN $nl AS $nl1 ON ($id_field = $nl1.object_id AND $nl1.object_type = 'post')";
 		}
 
