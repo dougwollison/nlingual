@@ -1238,9 +1238,9 @@ final class System extends Handler {
 		// If any where clauses were made, add them
 		if ( $where_clauses ) {
 			// Determine the ID field to use
-			$id_field = "$wpdb->posts.ID";
+			$id_field = "{$wpdb->posts}.ID";
 			if ( is_a( $query, 'WP_Comment_Query' ) ) {
-				$id_field = "$wpdb->comments.comment_post_ID";
+				$id_field = "{$wpdb->comments}.comment_post_ID";
 			}
 
 			// Also add the join for the translations table
@@ -1286,6 +1286,12 @@ final class System extends Handler {
 		$nl = $wpdb->nl_translations;
 		$nl1 = "{$nl}_istranslated1";
 		$nl2 = "{$nl}_istranslated2";
+
+		// Determine the ID field to use
+		$id_field = "{$wpdb->posts}.ID";
+		if ( is_a( $query, 'WP_Comment_Query' ) ) {
+			$id_field = "{$wpdb->comments}.comment_post_ID";
+		}
 
 		// Use existing nl_translations table join if present
 		$query_var = Registry::get( 'query_var' );
