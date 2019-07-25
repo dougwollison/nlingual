@@ -895,7 +895,7 @@ final class Backend extends Handler {
 								<?php
 								$available_translations = get_posts( array(
 									'suppress_filters' => false,
-									'post_type' => $post->post_type,
+									'post_type' => $post_type,
 									'nl_language' => $language->id,
 									'orderby' => 'post_date',
 									'order' => 'desc',
