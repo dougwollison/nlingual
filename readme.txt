@@ -3,7 +3,7 @@ Contributors: dougwollison
 Tags: multilingual, language, bilingual, translation
 Requires at least: 4.9
 Tested up to: 5.2.2
-Stable tag: 2.8.8
+Stable tag: 2.8.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 == Changelog ==
 
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
+
+= 2.8.8.1 =
+Hotfix: minor but annoying error with URL previews on settings screen.
 
 = 2.8.8 =
 Fixed issue with Create new translation button not working on subdirectory installs.

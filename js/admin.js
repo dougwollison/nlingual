@@ -103,11 +103,11 @@
 			// Get the format; some previews are dependent on options
 			var format;
 			if ( $( this ).hasClass( 'nl-url-preview' ) ) {
-				$( this ).data( skip ? 'excluded' : 'included' );
+				format = $( this ).data( skip ? 'excluded' : 'included' );
 			} else if ( $( this ).hasClass( 'nl-override-preview' ) ) {
-				$( this ).data( override ? 'on' : 'off' );
+				format = $( this ).data( override ? 'on' : 'off' );
 			} else {
-				$( this ).data( 'format' );
+				format = $( this ).data( 'format' );
 			}
 
 			// Update the preview
