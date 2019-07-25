@@ -1086,9 +1086,11 @@ final class System extends Handler {
 		// If we're querying by taxonomy, check if it's object type is supported
 		if ( property_exists( $query, 'tax_query' ) && $query->tax_query ) {
 			foreach ( $query->tax_query->queries as $tax_query ) {
-				$taxonomy = get_taxonomy( $tax_query['taxonomy'] );
-				if ( $taxonomy && ! Registry::is_post_type_supported( $taxonomy->object_type ) ) {
-					return;
+				if ( is_array( $tax_query ) ) {
+					$taxonomy = get_taxonomy( $tax_query['taxonomy'] );
+					if ( $taxonomy && ! Registry::is_post_type_supported( $taxonomy->object_type ) ) {
+						return;
+					}
 				}
 			}
 		}
