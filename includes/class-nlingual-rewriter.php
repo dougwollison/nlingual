@@ -209,6 +209,7 @@ final class Rewriter {
 	 *
 	 * This will add the language slug subdomain/subdirecty/query var as needed.
 	 *
+	 * @since 2.8.9 Fix handling of wordpress internal URLs.
 	 * @since 2.8.4 Dropped $relocalize option, will always relocalize.
 	 * @since 2.0.0
 	 *
@@ -291,7 +292,7 @@ final class Rewriter {
 			// AND if we're not in the default language (provided skip_defalt_l10n is on)
 			// Go ahead and localize the URL
 			if ( ( ! isset( $the_url->meta['language'] ) || is_null( $the_url->meta['language'] ) )
-			&& ! preg_match( '#^wp-([\w-]+.php|(admin|content|includes)/)#', $the_url->path )
+			&& ! preg_match( '#^/wp-([\w-]+.php|(admin|content|includes)/)#', $the_url->path )
 			&& ( ! Registry::is_language_default( $language ) || ! Registry::get( 'skip_default_l10n' ) ) ) {
 				switch ( Registry::get( 'url_rewrite_method' ) ) {
 					case 'domain':
@@ -365,6 +366,7 @@ final class Rewriter {
 	/**
 	 * Attempt to localize the current page URL.
 	 *
+	 * @since 2.8.9 Unset s in query string when getting search link.
 	 * @since 2.8.4 Dropped use of localize_url() $relocalize param, will always relocalize.
 	 * @since 2.6.0 Fixed paged handling, added check to make sure queried object's post type is supported.
 	 * @since 2.2.0 Now uses get_search_link() to create the search URL.
@@ -441,6 +443,7 @@ final class Rewriter {
 			// Search page? Rebuild the link
 			elseif ( is_search() ) {
 				$url = get_search_link( get_query_var( 's' ) );
+				unset( $_GET['s'] );
 			}
 			// Give up and just get the orginally requested URL, relocalized
 			else {
