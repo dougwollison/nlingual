@@ -209,6 +209,7 @@ final class Rewriter {
 	 *
 	 * This will add the language slug subdomain/subdirecty/query var as needed.
 	 *
+	 * @since 2.8.9 Fix handling of wordpress internal URLs.
 	 * @since 2.8.4 Dropped $relocalize option, will always relocalize.
 	 * @since 2.0.0
 	 *
@@ -291,7 +292,7 @@ final class Rewriter {
 			// AND if we're not in the default language (provided skip_defalt_l10n is on)
 			// Go ahead and localize the URL
 			if ( ( ! isset( $the_url->meta['language'] ) || is_null( $the_url->meta['language'] ) )
-			&& ! preg_match( '#^wp-([\w-]+.php|(admin|content|includes)/)#', $the_url->path )
+			&& ! preg_match( '#^/wp-([\w-]+.php|(admin|content|includes)/)#', $the_url->path )
 			&& ( ! Registry::is_language_default( $language ) || ! Registry::get( 'skip_default_l10n' ) ) ) {
 				switch ( Registry::get( 'url_rewrite_method' ) ) {
 					case 'domain':
