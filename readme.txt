@@ -79,7 +79,7 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
 
 = 2.8.9 =
-Fixed issue with internal WordPress URLs (e.g. wp-content, wp-admin, etc) being blindly localized.
+Fixed issue with meta values not being localized, and internal WordPress URLs being blindly localized.
 
 = 2.8.8.1 =
 Hotfix: minor but annoying error with URL previews on settings screen.
