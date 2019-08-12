@@ -638,6 +638,7 @@ final class Registry {
 	 *
 	 * @internal
 	 *
+	 * @since 2.9.0 Added "any" $post_types value support.
 	 * @since 2.8.0 Added $require_all option.
 	 * @since 2.0.0
 	 *
@@ -649,6 +650,11 @@ final class Registry {
 	 * @return bool Wether or not the post type(s) are supported.
 	 */
 	public static function is_post_type_supported( $post_types, $require_all = false ) {
+		// Resolve "any" value
+		if ( $post_types == 'any' ) {
+			$post_types = get_post_types( array( 'exclude_from_search' => false ) );
+		}
+
 		$post_types = (array) $post_types; // Convert to array
 
 		// Get the supported post types list
