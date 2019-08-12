@@ -383,6 +383,7 @@ final class Localizer extends Handler {
 	 * This will guess the screen base based on $meta_type
 	 * if not provided.
 	 *
+	 * @since 2.8.9 Fix screen registration for term meta fields.
 	 * @since 2.8.0 Fixed ID creation when a subtype is specified.
 	 * @since 2.6.0 ID now includes subtype (post_type/taxonomy) if provided.
 	 * @since 2.0.0
@@ -411,9 +412,9 @@ final class Localizer extends Handler {
 				}
 			}
 			// For terms, check for taxonomy
-			elseif ( $meta_type == 'post' ) {
+			elseif ( $meta_type == 'term' ) {
 				// Default to general edit-tags base
-				$args['screen'] = array( 'base', 'edit-tags' );
+				$args['screen'] = array( 'base', 'term' );
 
 				// Specify taxonomy if provided
 				if ( isset( $args['taxonomy'] ) ) {
