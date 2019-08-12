@@ -765,6 +765,7 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
+	 * @since 2.8.9 Fixed typo preventing $pre_value from being updated.
 	 * @since 2.8.0 Reverted part of 2.6.0 change; pass $key, not $ids list.
 	 * @since 2.6.0 Updated to fetch by ID, with and without subtype specified,
 	 *              and to use $pre_value as the fallback.
@@ -791,7 +792,7 @@ final class Localizer extends Handler {
 		$key = "meta.{$meta_type}:{$meta_key}";
 
 		// Get the localized version of the field, falling back to $pre_value if applicable
-		$value = self::get_field_value( $key, $language->id, $object_id, $pre_value );
+		$pre_value = self::get_field_value( $key, $language->id, $object_id, $pre_value );
 
 		return $pre_value;
 	}
