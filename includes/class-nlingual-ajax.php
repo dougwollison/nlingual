@@ -166,7 +166,7 @@ final class AJAX extends Handler {
 		}
 
 		// Delete the translation link
-		$result = Translator::delete_object_translation( $post, $translation_language );
+		$result = Translator::delete_post_translation( $post, $translation_language );
 
 		// Fail if error removing translation
 		if ( ! $result ) {
