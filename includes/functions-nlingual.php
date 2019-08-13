@@ -21,6 +21,7 @@ namespace nLingual;
  *
  * @internal
  *
+ * @since 2.9.0 Added consideration for REST requests.
  * @since 2.6.0 Added consideration of WP_INSTALLING.
  * @since 2.0.0
  */
@@ -32,6 +33,11 @@ function is_backend() {
 
 	if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 		// AJAX request, check if the referrer is from wp-admin
+		return strpos( $_SERVER['HTTP_REFERER'], admin_url() ) === 0;
+	}
+
+	if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+		// REST request, check if the referrer is from wp-admin
 		return strpos( $_SERVER['HTTP_REFERER'], admin_url() ) === 0;
 	}
 
