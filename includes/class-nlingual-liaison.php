@@ -37,6 +37,17 @@ final class Liaison extends Handler {
 	 */
 	protected static $implemented_hooks = array();
 
+	/**
+	 * An internal cache index.
+	 *
+	 * @internal Used by handlers for additional context.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @var array
+	 */
+	protected static $cache = array();
+
 	// =========================
 	// ! Hook Registration
 	// =========================
@@ -679,11 +690,29 @@ final class Liaison extends Handler {
 			return;
 		}
 
-		// Savethe search filters
+		// Save the query context
+		self::add_hook( 'relevanssi_modify_wp_query', 'relevanssi_query', 999, 1 );
 
 		// Add where/join clause filters to relevanssi query
 		self::add_hook( 'relevanssi_join', 'relevanssi_join', 10, 1 );
 		self::add_hook( 'relevanssi_where', 'relevanssi_where', 10, 1 );
+	}
+
+	/**
+	 * Store the WP_Query instance internally for use by the join/where filters.
+	 *
+	 * Since Relevanssi doesn't provide query for context, this hack is needed.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param WP_Query $query The WP_Query instance Relevanssi is using.
+	 *
+	 * @return WP_Query The passed instances.
+	 */
+	public static function relevanssi_query( $query ) {
+		static::$cache['relevanssi_query'] = $query;
+
+		return $query;
 	}
 
 	/**
@@ -698,9 +727,12 @@ final class Liaison extends Handler {
 	public static function relevanssi_join( $query_join ) {
 		global $wpdb;
 
+		// Get the query being used
+		$query = static::$cache['relevanssi_query'];
+
 		// If the main query isn't a search, abort
 		// Relevansii only deals with the main query usually
-		if ( ! is_search() ) {
+		if ( ! $query->is_search() ) {
 			return $query_join;
 		}
 
@@ -708,7 +740,7 @@ final class Liaison extends Handler {
 		$query_var = Registry::get( 'query_var' );
 
 		// Get the language(s) specified
-		$requested_languages = get_query_var( 'nl_language' ) ?: get_query_var( $query_var );
+		$requested_languages = $query->get( 'nl_language' ) ?: $query->get( $query_var );
 
 		// Abort if no language(s) was set
 		if ( is_null( $requested_languages ) || $requested_languages === '' ) {
@@ -736,9 +768,12 @@ final class Liaison extends Handler {
 	public static function relevanssi_where( $query_restrictions ) {
 		global $wpdb;
 
+		// Get the query being used
+		$query = static::$cache['relevanssi_query'];
+
 		// If the main query isn't a search, abort
 		// Relevansii only deals with the main query usually
-		if ( ! is_search() ) {
+		if ( ! $query->is_search() ) {
 			return $query_restrictions;
 		}
 
@@ -746,7 +781,7 @@ final class Liaison extends Handler {
 		$query_var = Registry::get( 'query_var' );
 
 		// Get the language(s) specified
-		$requested_languages = get_query_var( 'nl_language' ) ?: get_query_var( $query_var );
+		$requested_languages = $query->get( 'nl_language' ) ?: $query->get( $query_var );
 
 		// Abort if no language(s) was set
 		if ( is_null( $requested_languages ) || $requested_languages === '' ) {
