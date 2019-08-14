@@ -1170,7 +1170,7 @@ final class System extends Handler {
 
 		// Abort if no language(s) was set
 		if ( is_null( $requested_languages ) || $requested_languages === '' ) {
-			return $clauses;
+			return;
 		}
 
 		// Ensure languages is an array, filtered
