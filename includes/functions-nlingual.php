@@ -33,12 +33,12 @@ function is_backend() {
 
 	if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 		// AJAX request, check if the referrer is from wp-admin
-		return strpos( $_SERVER['HTTP_REFERER'], admin_url() ) === 0;
+		return isset( $_SERVER['HTTP_REFERER'] ) && strpos( $_SERVER['HTTP_REFERER'], admin_url() ) === 0;
 	}
 
 	if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
 		// REST request, check if the referrer is from wp-admin
-		return strpos( $_SERVER['HTTP_REFERER'], admin_url() ) === 0;
+		return isset( $_SERVER['HTTP_REFERER'] ) && strpos( $_SERVER['HTTP_REFERER'], admin_url() ) === 0;
 	}
 
 	// Check if in the admin or otherwise the login/register page
