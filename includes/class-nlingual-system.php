@@ -1067,8 +1067,17 @@ final class System extends Handler {
 		// Get the language query_var name, and the query's variables (by reference)
 		$query_var = Registry::get( 'query_var', 'nl_language' );
 
-		// Abort if query var is already declared
-		if ( $query->get( 'nl_language' ) || $query->get( $query_var ) ) {
+		// Get the language(s) if already declared
+		$requested_languages = $query->get( $query_var ) ?: $query->get( 'nl_language' );
+
+		// Abort if already declared
+		if ( $requested_languages ) {
+			// But convert to array if applicable
+			if ( is_string( $requested_languages ) ) {
+				$requested_languages = explode( '|', $requested_languages );
+				$query->set( 'nl_language', $requested_languages );
+				$query->set( $query_var, false );
+			}
 			return;
 		}
 
