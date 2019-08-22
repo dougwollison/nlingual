@@ -581,6 +581,7 @@ final class Backend extends Handler {
 	 * Add <select> for filtering posts by language.
 	 *
 	 * @since 2.9.0 Support both custom and default query var.
+	 *              Add [default lanuage] + no language option if !language_is_required.
 	 * @since 2.6.0 Default post type/status to any.
 	 * @since 2.4.0 Show all languages as filtering options.
 	 * @since 2.2.0 Fixed handling of string vs array for $current.
@@ -609,14 +610,24 @@ final class Backend extends Handler {
 
 		// If current is an array, use the first one
 		if ( is_array( $current ) ) {
-			$current = reset( $current );
+			$current = implode( '|', $current );
 		}
 		?>
 		<select name="nl_language" class="postform">
 			<option value="-1"><?php _e( 'All Languages', 'nlingual' ); ?></option>
 			<?php
 			$count = Backend::language_posts_count( 0, $post_type, $post_status );
+
+			if ( ! Registry::get( 'language_is_required' ) ) {
+				$default_language = Registry::default_language();
+				$value = "{$default_language->slug}|0";
+				$selected = $current == $value;
+
+				printf( '<option value="%s" %s>%s/%s</option>', $value, $selected ? 'selected' : '', $default_language->system_name, __( 'No Language', 'nlingual' ) );
+			}
+
 			printf( '<option value="%s" %s>%s (%s)</option>', 0, $current == '0' ? 'selected' : '', __( 'No Language', 'nlingual' ), $count );
+
 			foreach ( Registry::languages() as $language ) {
 				$selected = $current == $language->slug;
 				$count = Backend::language_posts_count( $language->id, $post_type, $post_status );
