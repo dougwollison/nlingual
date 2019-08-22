@@ -740,7 +740,7 @@ final class Liaison extends Handler {
 		$query_var = Registry::get( 'query_var' );
 
 		// Get the language(s) specified
-		$requested_languages = $query->get( 'nl_language' ) ?: $query->get( $query_var );
+		$requested_languages = $query->get( $query_var ) ?: $query->get( 'nl_language' );
 
 		// Abort if no language(s) was set
 		if ( is_null( $requested_languages ) || $requested_languages === '' ) {
@@ -781,7 +781,7 @@ final class Liaison extends Handler {
 		$query_var = Registry::get( 'query_var' );
 
 		// Get the language(s) specified
-		$requested_languages = $query->get( 'nl_language' ) ?: $query->get( $query_var );
+		$requested_languages = $query->get( $query_var ) ?: $query->get( 'nl_language' );
 
 		// Abort if no language(s) was set
 		if ( is_null( $requested_languages ) || $requested_languages === '' ) {
