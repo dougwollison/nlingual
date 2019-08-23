@@ -1047,7 +1047,8 @@ final class System extends Handler {
 	/**
 	 * Set the queried language to the current one if applicable
 	 *
-	 * @since 2.9.0 Check for both default and custom query_var,
+	 * @since 2.9.0 Don't blindly set when in the admin,
+	 *              Check for both default and custom query_var,
 	 *              Skip when viewing trash, rewrite post type checking
 	 *              to handle search and mixed types.
 	 * @since 2.8.0 Added check for parent's post type being supported.
@@ -1100,8 +1101,8 @@ final class System extends Handler {
 			return;
 		}
 
-		// If not the admin or some kind of posts/comments feed, abort
-		if ( ! ( is_admin() || $query->is_home() || $query->is_archive() || $query->is_search() || is_a( $query, 'WP_Comment_Query' ) ) ) {
+		// If not the some kind of posts/comments feed, abort
+		if ( ! ( $query->is_home() || $query->is_archive() || $query->is_search() || is_a( $query, 'WP_Comment_Query' ) ) ) {
 			return;
 		}
 
