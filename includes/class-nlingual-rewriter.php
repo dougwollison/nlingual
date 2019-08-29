@@ -366,6 +366,7 @@ final class Rewriter {
 	/**
 	 * Attempt to localize the current page URL.
 	 *
+	 * @since 2.9.0 Only use post's translation if neither or both are published.
 	 * @since 2.8.9 Unset s in query string when getting search link.
 	 * @since 2.8.4 Dropped use of localize_url() $relocalize param, will always relocalize.
 	 * @since 2.6.0 Fixed paged handling, added check to make sure queried object's post type is supported.
@@ -399,6 +400,10 @@ final class Rewriter {
 			// Get the permalink for the translation in the specified language if applicable
 			if ( Registry::is_post_type_supported( $queried_object->post_type ) ) {
 				$translation = Translator::get_post_translation( $queried_object->ID, $language, 'return self' );
+				// If the original is published but the translation isn't, use the original
+				if ( $queried_object->post_status == 'publish' && get_post_status( $translation ) != $queried_object->post_status ) {
+					$translation = $queried_object->ID;
+				}
 				$url = get_permalink( $translation );
 			} else {
 				$url = get_permalink( $queried_object->ID );
