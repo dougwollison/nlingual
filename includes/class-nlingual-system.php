@@ -858,6 +858,7 @@ final class System extends Handler {
 	 * Namely, localize it for it's assigned language.
 	 * Also checks for localizing a home page translation.
 	 *
+	 * @since 2.9.0 Use current language unless post's language overrides.
 	 * @since 2.2.0 Modified to explicitly handle post object vs ID.
 	 *              Will no longer localize for draft/pending posts.
 	 * @since 2.0.0
@@ -893,24 +894,30 @@ final class System extends Handler {
 			return $permalink;
 		}
 
-		// Check if it has a language
-		if ( $language = Translator::get_post_language( $post_id ) ) {
-			// If it's a page, check if it's a home page translation
-			if ( current_filter() == 'page_link' ) {
-				// Get the default language translation
-				$translation = Translator::get_post_translation( $post_id, Registry::default_language(), 'return self' );
+		// Get the language to use
+		$language = Registry::current_language();
+		// If the post's language takes precedent, use it
+		if ( Registry::get( 'post_language_override', false ) ) {
+			$language = Translator::get_post_language( $post_id );
 
-				// If it's a home page translation, replace with unlocalized home url
-				if ( $translation == get_option( 'page_on_front' ) ) {
-					$permalink = get_home_url( null, '', 'unlocalized' );
-				}
+			if ( ! $language ) {
+				return $permalink;
 			}
-
-			// Just ensure the URL is localized for it's language and return it
-			return Rewriter::localize_url( $permalink, $language, 'relocalize' );
 		}
 
-		return $permalink;
+		// If it's a page, check if it's a home page translation
+		if ( current_filter() == 'page_link' ) {
+			// Get the default language translation
+			$translation = Translator::get_post_translation( $post_id, Registry::default_language(), 'return self' );
+
+			// If it's a home page translation, replace with unlocalized home url
+			if ( $translation == get_option( 'page_on_front' ) ) {
+				$permalink = get_home_url( null, '', 'unlocalized' );
+			}
+		}
+
+		// Just ensure the URL is localized for it's language and return it
+		return Rewriter::localize_url( $permalink, $language, 'relocalize' );
 	}
 
 	/**
