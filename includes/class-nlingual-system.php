@@ -896,8 +896,8 @@ final class System extends Handler {
 
 		// Get the language to use
 		$language = Registry::current_language();
-		// If the post's language takes precedent, use it
-		if ( Registry::get( 'post_language_override', false ) ) {
+		// Use the post's langauge if desired or otherwise in the backend
+		if ( Registry::get( 'post_language_override', false ) || is_backend() ) {
 			$language = Translator::get_post_language( $post_id );
 
 			if ( ! $language ) {
