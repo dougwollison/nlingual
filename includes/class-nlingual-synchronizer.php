@@ -348,7 +348,7 @@ final class Synchronizer {
 	 *
 	 * All fields, meta data and terms are copied.
 	 *
-	 * @since 2.9.0 Exit with error if insert fails.
+	 * @since 2.9.0 Exit with error if insert fails, drop post_name suffixing.
 	 * @since 2.8.0 Copy only mandatory post fields, leave the rest to sync_posts().
 	 * @since 2.0.0
 	 *
@@ -396,14 +396,10 @@ final class Synchronizer {
 		$post_data = array(
 			'post_title'     => $title,
 			'post_status'    => 'draft',
+			'post_name'      => $post->post_name,
 			'post_type'      => $post->post_type,
 			'post_mime_type' => $post->post_mime_type,
 		);
-
-		// If using default title, create a default post_name
-		if ( $_title_is_default ) {
-			$post_data['post_name'] = $post->post_name . '-' . $language->slug;
-		}
 
 		// Insert and get the ID
 		$translation = wp_insert_post( $post_data, 'wp_error' );

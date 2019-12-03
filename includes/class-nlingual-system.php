@@ -328,7 +328,8 @@ final class System extends Handler {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 2.9.0 Added nl_is_translated query handling, enqueue_assets.
+	 * @since 2.9.0 Added nl_is_translated query handling, enqueue_assets,
+	 *              unique post slug and posts result filters.
 	 * @since 2.8.0 Moved rewrite_locale to Frontend.
 	 * @since 2.6.0 Added transition (un)flagging.
 	 * @since 2.4.0 Only add patch_font_stack hook if before 4.6.
@@ -357,6 +358,7 @@ final class System extends Handler {
 		self::add_hook( 'untrashed_post', 'trash_or_untrash_sister_posts', 10, 1 );
 		self::add_hook( 'deleted_post', 'delete_sister_posts', 10, 1 );
 		self::add_hook( 'deleted_post', 'delete_post_language', 11, 1 );
+		self::add_hook( 'wp_unique_post_slug', 'unique_slug_for_language', 10, 6 );
 		self::add_hook( 'nlingual_sync_post_field-post_parent', 'use_translated_post', 10, 2 );
 
 		// URL Rewriting
@@ -376,6 +378,7 @@ final class System extends Handler {
 		self::add_hook( 'comments_clauses', 'add_translation_clauses', 10, 2 );
 		self::add_hook( 'posts_clauses', 'add_istranslated_clauses', 10, 2 );
 		self::add_hook( 'get_pages', 'filter_pages', 10, 2 );
+		self::add_hook( 'posts_results', 'find_appropriate_translation', 10, 2 );
 
 		// Apply font patching (if needed)
 		if ( is_patch_font_stack_needed() ) {
@@ -809,6 +812,49 @@ final class System extends Handler {
 		}
 
 		return $post_id;
+	}
+
+	/**
+	 * Filter the slug to use the original if unique for that language.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @uses Registry::is_post_type_supported() To check if the post uses translations.
+	 * @uses Translator::get_post_language() To get the language of a post.
+	 * @uses $wpdb To fetch and compare matching slugs.
+	 *
+	 * @param string $slug          The post slug.
+	 * @param int    $post_ID       Post ID.
+	 * @param string $post_status   The post status.
+	 * @param string $post_type     Post type.
+	 * @param int    $post_parent   Post parent ID
+	 * @param string $original_slug The original post slug.
+	 *
+	 * @return string The unique slug for the post.
+     */
+	function unique_slug_for_language( $slug, $post_id, $post_status, $post_type, $post_parent, $original_slug ) {
+		global $wpdb;
+
+		// Only bother if the slug was changed and the post's type is supported
+		if ( $slug != $original_slug && nLingual\Registry::is_post_type_supported( $post_type ) ) {
+			// Get the language for the target post
+			$language = nLingual\Translator::get_post_language( $post_id );
+
+			// Get all posts of the same type with the same slug to compare
+			$existing = $wpdb->get_col( $wpdb->prepare( "SELECT post_name FROM $wpdb->posts WHERE post_name = %s AND post_type = %s AND ID != %d", $original_slug, $post_type, $post_id ) );
+
+			// If any share the same language, use the suffixed one
+			foreach ( $existing as $id ) {
+				if ( nLingual\Translator::get_post_language( $id ) == $language ) {
+					return $slug;
+				}
+			}
+
+			// Otherwise, the original is allowed
+			return $original_slug;
+		}
+
+		return $slug;
 	}
 
 	// =========================
@@ -1393,6 +1439,43 @@ final class System extends Handler {
 		}
 
 		return $filtered_pages;
+	}
+
+	/**
+	 * Filter the post results to find the appopriate translation.
+	 *
+	 * In cases where multiple posts are matched for a slug,
+	 * find the one for the current language.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @uses Registry::is_post_type_supported() to check for support of the requested post type.
+	 * @uses Registry::current_language() as the language to filter by.
+	 * @uses Translator::get_post_language() to find the appropriate translation to use.
+	 *
+	 * @param array    $posts The fetched posts to be filtered.
+	 * @param WP_Query $query The Query the results are for.
+	 *
+	 * @return array The filtered list of posts.
+	 */
+	public static function find_appropriate_translation( $posts, $query ) {
+		// If not mulitple posts, or not a singular query, or the post type isn't supported, abort
+		if ( count( $posts ) <= 1 || ! $query->is_singular() || ! Registry::is_post_type_supported( $query->get( 'post_type' ) ) ) {
+			return $posts;
+		}
+
+		// Get the current language
+		$current_language = Registry::current_language();
+
+		// Loop through and find the post for the current language
+		foreach ( $posts as $post ) {
+			if ( Translator::get_post_language( $post ) == $current_language ) {
+				return array( $post );
+			}
+		}
+
+		// Otherwise give up
+		return $posts;
 	}
 
 	// =========================
