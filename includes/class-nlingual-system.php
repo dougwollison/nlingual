@@ -832,7 +832,7 @@ final class System extends Handler {
 	 *
 	 * @return string The unique slug for the post.
      */
-	function unique_slug_for_language( $slug, $post_id, $post_status, $post_type, $post_parent, $original_slug ) {
+	public static function unique_slug_for_language( $slug, $post_id, $post_status, $post_type, $post_parent, $original_slug ) {
 		global $wpdb;
 
 		// Only bother if the slug was changed and the post's type is supported
