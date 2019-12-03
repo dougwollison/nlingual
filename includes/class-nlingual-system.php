@@ -836,16 +836,16 @@ final class System extends Handler {
 		global $wpdb;
 
 		// Only bother if the slug was changed and the post's type is supported
-		if ( $slug != $original_slug && nLingual\Registry::is_post_type_supported( $post_type ) ) {
+		if ( $slug != $original_slug && Registry::is_post_type_supported( $post_type ) ) {
 			// Get the language for the target post
-			$language = nLingual\Translator::get_post_language( $post_id );
+			$language = Translator::get_post_language( $post_id );
 
 			// Get all posts of the same type with the same slug to compare
 			$existing = $wpdb->get_col( $wpdb->prepare( "SELECT post_name FROM $wpdb->posts WHERE post_name = %s AND post_type = %s AND ID != %d", $original_slug, $post_type, $post_id ) );
 
 			// If any share the same language, use the suffixed one
 			foreach ( $existing as $id ) {
-				if ( nLingual\Translator::get_post_language( $id ) == $language ) {
+				if ( Translator::get_post_language( $id ) == $language ) {
 					return $slug;
 				}
 			}
