@@ -425,6 +425,7 @@ final class Frontend extends Handler {
 	/**
 	 * Replace a post ID with it's translation for the default language.
 	 *
+	 * @since 2.9.0 Fallback to original ID if no default language version is found.
 	 * @since 2.6.0 Add check to make sure post's type is supported.
 	 * @since 2.0.0
 	 *
@@ -441,7 +442,7 @@ final class Frontend extends Handler {
 		if ( Registry::is_post_type_supported( get_post_type( $post_id ) ) ) {
 			$default_language = Registry::default_language();
 
-			$post_id = Translator::get_post_translation( $post_id, $default_language, false );
+			$post_id = Translator::get_post_translation( $post_id, $default_language, 'return self' );
 		}
 
 		return $post_id;
