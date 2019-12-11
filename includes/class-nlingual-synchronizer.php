@@ -236,7 +236,7 @@ final class Synchronizer {
 			}
 
 			// Include edit_date to prevent date clearing on the target
-			if ( in_array( 'post_date_gmt', $changes ) ) {
+			if ( isset( $changes['post_date_gmt'] )  ) {
 				$changes['edit_date'] = $changes['post_date_gmt'];
 			}
 
