@@ -348,7 +348,8 @@ final class Synchronizer {
 	 *
 	 * All fields, meta data and terms are copied.
 	 *
-	 * @since 2.9.0 Exit with error if insert fails, drop post_name suffixing.
+	 * @since 2.9.0 Exit with error if insert fails, drop post_name suffixing,
+	 *              use original's post status unless published.
 	 * @since 2.8.0 Copy only mandatory post fields, leave the rest to sync_posts().
 	 * @since 2.0.0
 	 *
@@ -392,10 +393,15 @@ final class Synchronizer {
 			$_title_is_default = true;
 		}
 
+		$status = $post->post_status;
+		if ( $status === 'publish' ) {
+			$status = 'draft';
+		}
+
 		// Create the new post
 		$post_data = array(
 			'post_title'     => $title,
-			'post_status'    => 'draft',
+			'post_status'    => $status,
 			'post_name'      => $post->post_name,
 			'post_type'      => $post->post_type,
 			'post_mime_type' => $post->post_mime_type,
