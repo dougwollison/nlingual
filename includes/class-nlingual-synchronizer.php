@@ -322,14 +322,15 @@ final class Synchronizer {
 		 *
 		 * @since 2.9.0
 		 *
-		 * @param WP_Post $original The post being synced from.
-		 * @param WP_Post $target   The post being synced to.
-		 * @param array   $rules    The rules to use for syncing.
+		 * @param WP_Post. $original The post being synced from.
+		 * @param WP_Post  $target   The post being synced to.
+		 * @param array    $rules    The rules to use for syncing.
 		 *		@option array      "post_fields" A whitelist of fields to copy over.
 		 *		@option bool|array "post_meta"   A whitelist of meta fields (TRUE for all).
 		 *		@option bool|array "post_terms"  A whitelist of taxonomies (TRUE for all).
+		 * @param Language $language The language of the target.
 		 */
-		do_action( "nlingual_{$context}_posts", $original, $target, $rules );
+		do_action( "nlingual_{$context}_posts", $original, $target, $rules, $language );
 
 		return true;
 	}
