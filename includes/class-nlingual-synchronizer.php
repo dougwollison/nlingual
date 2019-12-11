@@ -314,6 +314,23 @@ final class Synchronizer {
 			}
 		}
 
+		/**
+		 * Fires after the posts have been synchronized.
+		 *
+		 * The dynamic portion of the hook name, `$context`, refers to
+		 * wether the action was a sync or a clone.
+		 *
+		 * @since 2.9.0
+		 *
+		 * @param WP_Post $original The post being synced from.
+		 * @param WP_Post $target   The post being synced to.
+		 * @param array   $rules    The rules to use for syncing.
+		 *		@option array      "post_fields" A whitelist of fields to copy over.
+		 *		@option bool|array "post_meta"   A whitelist of meta fields (TRUE for all).
+		 *		@option bool|array "post_terms"  A whitelist of taxonomies (TRUE for all).
+		 */
+		do_action( "nlingual_{$context}_posts", $original, $target, $rules );
+
 		return true;
 	}
 
