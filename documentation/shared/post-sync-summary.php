@@ -38,5 +38,22 @@
 			}
 		?></li>
 		<?php endif; ?>
+
+		<?php
+		/**
+		 * Filters a list of addition items that are synchronized.
+		 *
+		 * The dynamic portion of the hook name, `$post_type`,
+		 * refers to the current screen's post type.
+		 *
+		 * @since 2.9.0
+		 *
+		 * @param array $additional A list of items not covered by the sync rules.
+		 */
+		$additional = apply_filters( "nlingual_{$post_type}_sync_summary", array() );
+
+		if ( $additional ) : ?>
+			<li><strong><?php _e( 'Additional Details', 'nlingual' ); ?></strong>: <?php echo implode( ', ', $additional ); ?></li>
+		<?php endif; ?>
 	</ul>
 <?php endif; ?>
