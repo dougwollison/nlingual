@@ -414,6 +414,7 @@ final class Backend extends Handler {
 	 * As a fallback, make sure that the original location is
 	 * set to that of the one for the default language.
 	 *
+	 * @since 2.8.10 Strip out localized version of no-longer-supported locations.
 	 * @since 2.0.0
 	 *
 	 * @param array $locations The locations.
@@ -422,14 +423,26 @@ final class Backend extends Handler {
 	 */
 	public static function handle_unlocalized_locations( $locations ) {
 		// Get the default language ID
-		$language_id = Registry::default_language( 'id' );
+		$default_language_id = Registry::default_language( 'id' );
 
 		// Loop through the locations, check if it's a localized one
 		$new_locations = array();
 		foreach ( $locations as $location => $data ) {
-			if ( preg_match( '/^(.+?)__language_' . $language_id . '$/', $location, $matches ) ) {
-				$new_locations[ $matches[1] ] = $data;
+			if ( preg_match( '/^(.+?)__language_(\d+)$/', $location, $matches ) ) {
+				$unlocalized_location = $matches[1];
+				$language_id = absint( $matches[2] );
+
+				// If this location is no longer supported, skip it
+				if ( ! Registry::is_location_supported( 'nav_menu', $unlocalized_location ) ) {
+					continue;
+				}
+
+				// If it's for the default language, update the original
+				if ( $language_id == $default_language_id ) {
+					$new_locations[ $unlocalized_location ] = $data;
+				}
 			}
+
 			$new_locations[ $location ] = $data;
 		}
 
