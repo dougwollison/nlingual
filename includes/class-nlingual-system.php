@@ -48,6 +48,17 @@ final class System extends Handler {
 	private static $language_stack = array();
 
 	/**
+	 * Blog language map.
+	 *
+	 * @internal
+	 *
+	 * @since 2.9.0
+	 *
+	 * @var array
+	 */
+	private static $blog_languages = array();
+
+	/**
 	 * The internal text domain cache.
 	 *
 	 * @internal
@@ -391,7 +402,7 @@ final class System extends Handler {
 		self::add_hook( 'admin_enqueue_scripts', 'enqueue_assets', 10, 0 );
 
 		// Finally, add the blog switching handler
-		add_action( 'switch_blog', array( __CLASS__, 'check_blog_for_support' ), 10, 0 );
+		add_action( 'switch_blog', array( __CLASS__, 'check_blog_for_support' ), 10, 2 );
 	}
 
 	// =========================
@@ -422,10 +433,17 @@ final class System extends Handler {
 	/**
 	 * Check if the new blog supports nLingual; disable querying if not.
 	 *
+	 * @since 2.9.0 Add tracking of the current language in each blog.
 	 * @since 2.8.0 Added use of is_nlingual_active() to properly test for plugin status.
 	 * @since 2.5.0
+	 *
+	 * @param int $new_blog_id  The ID of the blog being switched to.
+	 * @param int $prev_blog_id The ID of the blog being switched from.
 	 */
-	public static function check_blog_for_support() {
+	public static function check_blog_for_support( $new_blog_id, $prev_blog_id ) {
+		// First, log the current language for the previous blog
+		$previous_language = self::$blog_languages[ $prev_blog_id ] = Registry::current_language();
+
 		// Reload the registry
 		Registry::load( 'reload' );
 
@@ -440,6 +458,26 @@ final class System extends Handler {
 			Documenter::restore_all_hooks();
 			Localizer::restore_all_hooks();
 			Liaison::restore_all_hooks();
+
+			/**
+			 * @todo figure out handling of switching langauge within switching blog
+			 */
+
+			// If switching back, retrieve the previous language
+			if ( isset( self::$blog_languages[ $new_blog_id ] ) ) {
+				$current_language = self::$blog_languages[ $new_blog_id ];
+			}
+			// Otherwise, find this blog's version of the previous blog's current language
+			else {
+				$current_language = Registry::get_language( $previous_language->slug );
+				// Fallback to this blog's default language otherwise
+				if ( ! $current_language ) {
+					$current_language = Registry::default_language();
+				}
+			}
+
+			// Set the current language
+			Registry::set_language( $current_language, false, 'override' );
 		} else {
 			// Disable the various handlers' hooks
 			self::remove_all_hooks();
