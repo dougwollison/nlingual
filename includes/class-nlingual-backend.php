@@ -44,7 +44,8 @@ final class Backend extends Handler {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 2.9.0 Added (un)translated filters to post list views.
+	 * @since 2.9.0 Added (un)translated filters to post list views,
+	 *              Block Editor assets.
 	 * @since 2.8.1 Revise setup of add_post_meta_box hook.
 	 * @since 2.8.0 Added page_attributes_dropdown_pages_args filter.
 	 * @since 2.6.0 Added fix_localized_admin_url setup.
@@ -77,6 +78,7 @@ final class Backend extends Handler {
 
 		// Script/Style Enqueues
 		self::add_hook( 'admin_enqueue_scripts', 'enqueue_assets', 10, 0 );
+		self::add_hook( 'enqueue_block_editor_assets', 'enqueue_gutenberg_assets', 10, 0 );
 
 		// Theme Location Rewrites
 		self::add_hook( 'init', 'register_localized_nav_menus', 999, 0 );
@@ -1476,6 +1478,19 @@ final class Backend extends Handler {
 			'LocalizeThis'                => __( 'Localize This', 'nlingual' ),
 			'LocalizeFor'                 => __( 'Localize for %s', 'nlingual' ),
 		) );
+	}
+
+	/**
+	 * Enqueue necessary scripts for the block editor.
+	 *
+	 * @since 2.9.0
+	 */
+	public static function enqueue_gutenberg_assets() {
+		// Admin styling
+		wp_enqueue_style( 'nlingual-gutenberg', plugins_url( 'assets/css/block-editor.css', NL_PLUGIN_FILE ), array(), NL_PLUGIN_VERSION, 'screen' );
+
+		// Admin javascript
+		wp_enqueue_script( 'nlingual-gutenberg-js', plugins_url( 'assets/js/dist/block-editor.min.js', NL_PLUGIN_FILE ), array( /* to be written */ ), NL_PLUGIN_VERSION );
 	}
 
 	// =========================
