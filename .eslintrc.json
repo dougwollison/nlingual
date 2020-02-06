@@ -1,0 +1,39 @@
+{
+	"parser": "babel-eslint",
+	"parserOptions": {
+		"sourceType": "module",
+		"allowImportExportEverywhere": true,
+		"ecmaVersion": 9,
+	    "ecmaFeatures": {
+			"experimentalObjectRestSpread": true,
+			"jsx": true
+	    }
+	},
+	"env": {
+		"browser": true
+	},
+	"extends": [
+		"plugin:@wordpress/eslint-plugin/recommended"
+	],
+	"plugins": [
+		"react"
+	],
+	"settings": {
+		"react": {
+			"version": "detect",
+			"pragma": "h",
+			"pragmaFrag": "Fragment"
+		}
+	},
+	"rules": {
+		"no-alert": "off",
+		"no-use-before-define": [
+			"error",
+			{
+				"functions": false,
+				"classes": false,
+				"variables": true
+			}
+		]
+	}
+}
