@@ -1029,7 +1029,10 @@ final class Backend extends Handler {
 			array( __CLASS__, 'post_meta_box' ), // callback
 			$post_type, // screen
 			'side', // context
-			'default' // priority
+			'default', // priority
+			array(
+				'__back_compat_meta_box' => true,
+			)
 		);
 	}
 
