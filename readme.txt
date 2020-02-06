@@ -2,7 +2,7 @@
 Contributors: dougwollison
 Tags: multilingual, language, bilingual, translation
 Requires at least: 4.9
-Tested up to: 5.4.2
+Tested up to: 5.3.2
 Stable tag: 2.8.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -79,13 +79,7 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
 
 = 2.8.10 =
-Fix issue causing localized sidebars to forget their widgets.
-
-= 2.8.9.3 =
-Admin javascript now transpiled/minified for better browser compatibility.
-
-= 2.8.9.2 =
-Fixed issue with version 1 compatibility tool `nL_get_post_lang` returning object instead of slug.
+Improved blog switching support. Minor synchronizer fixes.
 
 = 2.8.9 =
 Fixed issue with meta values not being localized, and internal WordPress URLs being blindly localized.
@@ -197,11 +191,3 @@ Fixed associate_posts and added translation management to quickedit.
 
 = 1.0 =
 Initial public release.
-
-== Upgrade Notice ==
-
-= 2.8.0 =
-This update changes the cloning system to make post content cloning optional (off by default). If you wish to keep this enabled, you will need to manually do so after updating.
-
-= 2.0.0 =
-This upgrade is a complete overhaul, please test it on a development site first. [Read more about version 2](https://plugins.svn.wordpress.org/nlingual/assets/version2.html)
