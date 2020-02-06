@@ -2,9 +2,9 @@
 Contributors: dougwollison
 Tags: multilingual, language, bilingual, translation
 Requires at least: 5.2
-Tested up to: 5.3.1
+Tested up to: 5.3.2
 Requires PHP: 5.6.20
-Stable tag: 2.8.9
+Stable tag: 2.8.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,6 +78,9 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 == Changelog ==
 
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
+
+= 2.8.10 =
+Improved blog switching support. Minor synchronizer fixes.
 
 = 2.8.9 =
 Fixed issue with meta values not being localized, and internal WordPress URLs being blindly localized.
