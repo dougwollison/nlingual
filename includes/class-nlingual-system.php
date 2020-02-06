@@ -1558,6 +1558,6 @@ final class System extends Handler {
 		}
 
 		// Admin styling
-		wp_enqueue_style( 'nlingual-adminbar', plugins_url( 'css/adminbar.css', NL_PLUGIN_FILE ), NL_PLUGIN_VERSION, 'screen' );
+		wp_enqueue_style( 'nlingual-adminbar', plugins_url( 'assets/css/adminbar.css', NL_PLUGIN_FILE ), NL_PLUGIN_VERSION, 'screen' );
 	}
 }

@@ -1,4 +1,6 @@
 .DS_Store
 *.codekit
 *.codekit3
+assets/css/*
+assets/js/dist/*
 node_modules
