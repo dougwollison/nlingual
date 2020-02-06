@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "devDependencies": {
+    "@wordpress/eslint-plugin": "^3.3.0",
+    "babel-eslint": "^10.0.3",
+    "classnames": "^2.2.6",
+    "eslint": "^6.3.0",
+    "eslint-plugin-react": "^7.14.3"
+  }
+}
