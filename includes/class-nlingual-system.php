@@ -288,6 +288,7 @@ final class System extends Handler {
 	/**
 	 * Register hooks and load options.
 	 *
+	 * @since 2.9.0 Added REST_API.
 	 * @since 2.3.3 Redid table registration for multisite support,
 	 *              dropped support for old nL_translations alias.
 	 * @since 2.0.0
@@ -330,6 +331,7 @@ final class System extends Handler {
 		Documenter::register_hooks();
 		Localizer::register_hooks();
 		Liaison::register_hooks();
+		REST_API::register_hooks();
 	}
 
 	// =========================
