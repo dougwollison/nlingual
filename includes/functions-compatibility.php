@@ -81,7 +81,9 @@ function nL_query_var() {
  * @see Translator::get_post_language()
  */
 function nL_get_post_lang( $id ) {
-	return Translator::get_post_language( $id );
+	$language = Translator::get_post_language( $id );
+
+	return $language ? $language->slug : false;
 }
 
 /**
