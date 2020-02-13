@@ -81,6 +81,9 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 = 2.8.10 =
 Improved blog switching support. Minor synchronizer fixes.
 
+= 2.8.9.2 =
+Fixed issue with version 1 compatibility tool `nL_get_post_lang` returning object instead of slug.
+
 = 2.8.9 =
 Fixed issue with meta values not being localized, and internal WordPress URLs being blindly localized.
 
