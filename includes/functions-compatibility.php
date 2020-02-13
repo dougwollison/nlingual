@@ -79,6 +79,8 @@ function nL_query_var() {
 
 /**
  * @see Translator::get_post_language()
+ *
+ * @since 2.8.10 Fixed to return just the slug.
  */
 function nL_get_post_lang( $id ) {
 	$language = Translator::get_post_language( $id );
