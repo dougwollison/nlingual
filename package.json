@@ -1,6 +1,7 @@
 {
+  "name": "@dougwollison/nlingual.wp-plugin",
   "private": true,
-  "devDependencies": {
+  "dependencies": {
     "@wordpress/eslint-plugin": "^3.3.0",
     "babel-eslint": "^10.0.3",
     "classnames": "^2.2.6",
