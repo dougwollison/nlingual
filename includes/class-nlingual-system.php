@@ -1078,6 +1078,7 @@ final class System extends Handler {
 	 * Filter the query params to add the query_var option as a
 	 * possible parameter for collection requests.
 	 *
+	 * @since 2.9.0 Add 0 as language option/default if language is not required.
 	 * @since 2.6.0
 	 *
 	 * @param array $query_params The list of params to add to.
@@ -1093,12 +1094,20 @@ final class System extends Handler {
 			$language_ids[] = $language->id;
 		}
 
+		$default = array( Registry::current_language()->slug );
+		$whitelist = array_merge( $language_slugs, $language_ids );
+
+		if ( ! Registry::get( 'language_is_required' ) ) {
+			$default[] = '0';
+			$whitelist[] = '0';
+		}
+
 		$query_params[ $query_var ] = array(
-			'default'           => Registry::current_language()->slug,
+			'default'           => $default,
 			'description'       => __( 'Limit result set to posts assigned one or more registered languages.', 'nlingual' ),
 			'type'              => 'array',
 			'items'             => array(
-				'enum'          => array_merge( $language_slugs, $language_ids ),
+				'enum'          => $whitelist,
 				'type'          => 'string',
 			),
 		);
