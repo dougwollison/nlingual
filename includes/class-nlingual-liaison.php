@@ -55,6 +55,7 @@ final class Liaison extends Handler {
 	/**
 	 * Register hooks.
 	 *
+	 * @since 2.9.0 Added Relevanssi & bbPress compatibility.
 	 * @since 2.5.0 Added WooCommerce compatibility.
 	 * @since 2.0.0
 	 */
@@ -73,6 +74,9 @@ final class Liaison extends Handler {
 
 		// Relevanssi compatibility
 		self::add_hook( 'plugins_loaded', 'add_relevanssi_helpers', 10, 0 );
+
+		// bbPress compatibility
+		self::add_hook( 'plugins_loaded', 'add_bbpress_helpers', 10, 0 );
 	}
 
 	// =========================
@@ -822,5 +826,38 @@ final class Liaison extends Handler {
 		}
 
 		return $query_restrictions;
+	}
+
+	// =========================
+	// ! BBPress Helpers
+	// =========================
+
+	/**
+	 * Check if bbPress is active, setup necessary filters.
+	 *
+	 * @since 2.9.0
+	 */
+	public static function add_bbpress_helpers() {
+		// Abort if Relevanssi isn't present
+		if ( ! class_exists( 'bbPress' ) ) {
+			return;
+		}
+
+		// Fix the localized URL
+		self::add_hook( 'nlingual_localize_here', 'bbpress_localize_edit_link', 10, 2 );
+	}
+
+	/**
+	 * Append /edit/ to the path if in edit mode.
+	 *
+	 * @param string   $url      The new URL.
+	 * @param URL      $the_url  The parsed URL object.
+	 */
+	public static function bbpress_localize_edit_link( $url, $the_url ) {
+		if ( bbp_is_topic_edit() || bbp_is_reply_edit() ) {
+			$the_url->path = trailingslashit( $the_url->path ) . 'edit/';
+		}
+
+		return $the_url->build();
 	}
 }
