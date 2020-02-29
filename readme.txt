@@ -3,7 +3,7 @@ Contributors: dougwollison
 Tags: multilingual, language, bilingual, translation
 Requires at least: 4.9
 Tested up to: 5.3.2
-Stable tag: 2.8.9.2
+Stable tag: 2.8.9.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 == Changelog ==
 
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
+
+= 2.8.9.3 =
+Admin javascript now transpiled/minified for better browser compatibility.
 
 = 2.8.9.2 =
 Fixed issue with version 1 compatibility tool `nL_get_post_lang` returning object instead of slug.
