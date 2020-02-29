@@ -1196,8 +1196,8 @@ final class System extends Handler {
 			return;
 		}
 
-		// If not the some kind of posts/comments feed, abort
-		if ( ! ( $query->is_home() || $query->is_archive() || $query->is_search() || is_a( $query, 'WP_Comment_Query' ) ) ) {
+		// If not a non-singular posts query, nor a comment query, abort
+		if ( ! ( ( is_a( $query, 'WP_Query' ) && ! $query->is_singular() ) || is_a( $query, 'WP_Comment_Query' ) ) ) {
 			return;
 		}
 
