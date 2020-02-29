@@ -1167,12 +1167,12 @@ final class System extends Handler {
 		$requested_languages = $query->get( $query_var ) ?: $query->get( 'nl_language' );
 
 		// Abort if already declared
-		if ( $requested_languages ) {
+		if ( ! empty( $requested_languages ) || (string) $requested_languages === '0' ) {
 			// But convert to array if applicable
 			if ( is_string( $requested_languages ) ) {
 				$requested_languages = explode( '|', $requested_languages );
-				$query->set( 'nl_language', $requested_languages );
 				$query->set( $query_var, false );
+				$query->set( 'nl_language', $requested_languages );
 			}
 			return;
 		}
