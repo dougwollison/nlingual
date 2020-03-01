@@ -466,7 +466,7 @@
 		// Update visible translation fields based on current language
 		$( '.nl-language-input' ).change( function() {
 			var id = $( this ).val();
-			var $parent = $( this ).parents( '.nl-translations-manager' );
+			var $parent = $( this ).parents( '.nl-translation-manager' );
 
 			// Toggle visibility of the translations interface if language isn't set
 			$parent.find( '.nl-manage-translations' ).toggleClass( 'hidden', id === '0' );
