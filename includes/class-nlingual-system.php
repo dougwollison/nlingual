@@ -1094,8 +1094,9 @@ final class System extends Handler {
 			}
 		}
 
-		// If it's a post type archive, check if the post type is supported
-		if ( $query->is_post_type_archive() && ! Registry::is_post_type_supported( $query->get( 'post_type' ) ) ) {
+		// If it's by post type, check if the post type is supported
+		$post_type = $query->get( 'post_type' );
+		if ( $post_type && ! Registry::is_post_type_supported( $query->get( 'post_type' ) ) ) {
 			return;
 		}
 
