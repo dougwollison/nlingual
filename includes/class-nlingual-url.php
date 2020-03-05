@@ -165,6 +165,7 @@ final class URL extends Model {
 	/**
 	 * Export the URL back into a string.
 	 *
+	 * @since 2.9.0 Fixed path being modified during build.
 	 * @since 2.8.3 Refixed path + page handling.
 	 * @since 2.6.0 Fixed path + page handling.
 	 * @since 2.2.0 Ensure / path is included.
@@ -210,16 +211,18 @@ final class URL extends Model {
 			}
 		}
 
+		$path = $this->path;
+
 		// If the page property is present, add it to the path
 		if ( $this->page ) {
-			$this->path = rtrim( $this->path, '/' ) . sprintf( '/page/%d/', rtrim( $this->page, '/' ) );
+			$path = rtrim( $path, '/' ) . sprintf( '/page/%d/', rtrim( $this->page, '/' ) );
 		}
 
 		// Add the path
 		$url .= '/';
-		if ( $this->path ) {
+		if ( $path ) {
 			// Ensure leading slash
-			$url .= ltrim( $this->path, '/' );
+			$url .= ltrim( $path, '/' );
 		}
 
 		// Add the query string
