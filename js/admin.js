@@ -417,6 +417,9 @@
 		// ! - TinyMCE Extensions
 		// =========================
 
+		// Get the classic editor api
+		var wpEditor = wp.oldEditor || wp.editor;
+
 		if ( typeof tinymce === 'object' ) {
 			tinymce.on( 'SetupEditor', e => {
 				// TinyMCE 4.7 changes callback arg to event CONTAINING editor
@@ -435,14 +438,14 @@
 
 				$field.on( 'nl:localizer:update', () => {
 					// Get the content, clean it
-					var content = wp.editor.removep( editor.getContent() );
+					var content = wpEditor.removep( editor.getContent() );
 
 					$field.val( content );
 				} );
 
 				$field.on( 'nl:localizer:change', () => {
 					// Get the value, process it
-					var content = wp.editor.autop( $field.val() );
+					var content = wpEditor.autop( $field.val() );
 
 					editor.setContent( content );
 				} );
