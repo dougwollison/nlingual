@@ -424,6 +424,10 @@ final class Rewriter {
 			elseif ( is_post_type_archive() ) {
 				$url = get_post_type_archive_link( get_queried_object()->name );
 			}
+			// Posts page? Get link
+			elseif ( is_home() ) {
+				$url = get_post_type_archive_link( 'post' );
+			}
 			// Author archive? Get the link
 			elseif ( is_author() ) {
 				$url = get_author_posts_link( get_queried_object_id() );
