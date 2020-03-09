@@ -422,7 +422,7 @@ final class Rewriter {
 			}
 			// Post type archive? Get the link
 			elseif ( is_post_type_archive() ) {
-				$url = get_post_type_archive_link( get_queried_object()->name );
+				$url = get_post_type_archive_link( get_query_var( 'post_type' ) );
 			}
 			// Author archive? Get the link
 			elseif ( is_author() ) {
