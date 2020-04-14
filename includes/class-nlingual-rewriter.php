@@ -175,9 +175,11 @@ final class Rewriter {
 							$the_url->meta['language'] = $language;
 							$the_url->meta['source'] = 'path';
 
+							// Update the path with the remainder
 							if ( ! empty( $matches[2] ) ) {
-								// Update the path with the remainder
 								$the_url->path = $home_path . $matches[2];
+							} else {
+								$the_url->path = $home_path;
 							}
 						}
 					}
