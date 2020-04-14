@@ -94,7 +94,7 @@ final class Rewriter {
 	 *
 	 * @internal
 	 *
-	 * @since 2.8.10 Fixed path suffix handling.
+	 * @since 2.8.9.4 Fixed path suffix handling.
 	 * @since 2.8.2 Fixed path handling to preserve home path.
 	 * @since 2.6.0 Updated to use NL_ORIGINAL_URL.
 	 * @since 2.0.0
