@@ -260,7 +260,7 @@ final class System extends Handler {
 	 *
 	 * @return Language|bool The accepted language, false if no match.
 	 */
-	private static function get_accepted_language() {
+	public static function get_accepted_language() {
 		// Abort if no accept-language entry is present
 		if ( ! isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
 			return false;
@@ -494,7 +494,7 @@ final class System extends Handler {
 	 * @uses Registry::languages() to validate and retrieve a detected language.
 	 * @uses Registry::get() to get the query var option.
 	 * @uses Rewriter::process_url() to parse the current page URL.
-	 * @uses Frontend::get_accepted_language() to determine a perferred language.
+	 * @uses System::get_accepted_language() to determine a perferred language.
 	 * @uses Registry::set_language() to tentatively apply the detected language.
 	 */
 	public static function detect_language() {
