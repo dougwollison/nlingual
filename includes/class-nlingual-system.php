@@ -1079,6 +1079,7 @@ final class System extends Handler {
 	 * possible parameter for collection requests.
 	 *
 	 * @since 2.9.0 Add 0 as language option/default if language is not required.
+	 * @since 2.8.10 Whitelist all languages if logged in, cast IDs to string.
 	 * @since 2.6.0
 	 *
 	 * @param array $query_params The list of params to add to.
@@ -1087,11 +1088,12 @@ final class System extends Handler {
 	 */
 	public static function rest_register_query_var( $query_params ) {
 		$query_var = Registry::get( 'query_var' );
+		$languages = Registry::languages( is_user_logged_in() ? null : 'active' );
 
 		$language_slugs = $language_ids = array();
-		foreach ( Registry::languages( 'active' ) as $language ) {
+		foreach ( $languages as $language ) {
 			$language_slugs[] = $language->slug;
-			$language_ids[] = $language->id;
+			$language_ids[] = (string) $language->id;
 		}
 
 		$default = array( Registry::current_language()->slug );
