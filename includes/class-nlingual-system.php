@@ -389,7 +389,8 @@ final class System extends Handler {
 		self::add_hook( 'comments_clauses', 'add_translation_clauses', 10, 2 );
 		self::add_hook( 'posts_clauses', 'add_istranslated_clauses', 10, 2 );
 		self::add_hook( 'get_pages', 'filter_pages', 10, 2 );
-		self::add_hook( 'posts_results', 'find_appropriate_translation', 10, 2 );
+		self::add_hook( 'parse_query', 'find_appropriate_page_translation', 10, 1 );
+		self::add_hook( 'posts_results', 'find_appropriate_post_translation', 10, 2 );
 
 		// Apply font patching (if needed)
 		if ( is_patch_font_stack_needed() ) {
@@ -1486,6 +1487,58 @@ final class System extends Handler {
 	}
 
 	/**
+	 * Modify the query to find the appropriate page translation.
+	 *
+	 * In cases where a page's translation for the current language
+	 * has the same slug, replace the queried object with the translation.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @uses Registry::is_post_type_supported() to check for support of the requested post type.
+	 * @uses Registry::current_language() as the language to filter by.
+	 * @uses Translator::get_post_language() to find the appropriate translation to use.
+	 *
+	 * @param array    $posts The fetched posts to be filtered.
+	 * @param WP_Query $query The Query the results are for.
+	 *
+	 * @return array The filtered list of posts.
+	 */
+	public static function find_appropriate_page_translation( $query ) {
+		// Check if a page was queried and supports translation
+		if ( $query->is_page && is_a( $query->queried_object, 'WP_Post' ) && $query->queried_object->post_type == 'page' && Registry::is_post_type_supported( 'page' ) ) {
+			$the_page = $query->queried_object;
+
+			// Get the current language
+			$current_language = Registry::current_language();
+
+			// Skip if the page is already in the requested language
+			if ( Translator::get_post_language( $the_page->ID ) == $current_language ) {
+				return;
+			}
+
+			// Get the translation of this page in the current language
+			$translated_page_id = Translator::get_post_translation( $the_page->ID );
+
+			// Skip if no translation
+			if ( ! $translated_page_id ) {
+				return;
+			}
+
+			// Get the translated page
+			$translated_page = get_post( $translated_page_id );
+
+			// Skip if the translation uses a different slug
+			if ( $the_page->post_name !== $translated_page->post_name ) {
+				return;
+			}
+
+			// Replace the queried object
+			$query->queried_object = $translated_page;
+			$query->queried_object_id = $translated_page_id;
+		}
+	}
+
+	/**
 	 * Filter the post results to find the appopriate translation.
 	 *
 	 * In cases where multiple posts are matched for a slug,
@@ -1502,7 +1555,7 @@ final class System extends Handler {
 	 *
 	 * @return array The filtered list of posts.
 	 */
-	public static function find_appropriate_translation( $posts, $query ) {
+	public static function find_appropriate_post_translation( $posts, $query ) {
 		// If not mulitple posts, or not a singular query, or the post type isn't supported, abort
 		if ( count( $posts ) <= 1 || ! $query->is_singular() || ! Registry::is_post_type_supported( $query->get( 'post_type' ) ) ) {
 			return $posts;
