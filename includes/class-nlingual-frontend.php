@@ -451,7 +451,8 @@ final class Frontend extends Handler {
 	/**
 	 * Replace a post ID with it's translation for the current language.
 	 *
-	 * @since 2.6.0 Add check to make sure post's type is supported.
+	 * @since 2.8.10 Add check to make sure the post's status is usable.
+	 * @since 2.6.0  Add check to make sure post's type is supported.
 	 * @since 2.0.0
 	 *
 	 * @api
@@ -467,7 +468,13 @@ final class Frontend extends Handler {
 		if ( Registry::is_post_type_supported( get_post_type( $post_id ) ) ) {
 			$current_language = Registry::current_language();
 
-			$post_id = Translator::get_post_translation( $post_id, $current_language, 'return self' );
+			$translation_id = Translator::get_post_translation( $post_id, $current_language );
+			$translation_status = get_post_status( $translation_id );
+
+			// If the translation is published, or the same as the original, use it
+			if ( $translation_status == 'publish' || $translation_status == get_post_status( $post_id ) ) {
+				return $translation_id;
+			}
 		}
 
 		return $post_id;
