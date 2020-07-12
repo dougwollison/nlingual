@@ -79,7 +79,7 @@ final class Backend extends Handler {
 		self::add_hook( 'widgets_init', 'register_localized_sidebars', 999, 0 );
 		self::add_hook( 'pre_set_theme_mod_nav_menu_locations', 'handle_unlocalized_locations', 10, 1 );
 		self::add_hook( 'pre_update_option_sidebars_widgets', 'handle_unlocalized_locations', 10, 1 );
-		self::add_hook( 'sidebars_widgets', 'hide_unlocalized_locations', 10, 1 );
+		self::add_hook( 'sidebars_widgets', 'hide_unlocalized_sidebars', 10, 1 );
 
 		// Posts Screen Interface
 		self::add_hook( 'query_vars', 'add_language_var' );
@@ -455,13 +455,14 @@ final class Backend extends Handler {
 	 * This will prevent the originals for localized sidebars or the versions
 	 * of no-longer-localized sidebars from showing up as inactive sidebars.
 	 *
+	 * @since 2.8.10 Renamed from locations to sidebars for clarity.
 	 * @since 2.0.0
 	 *
 	 * @param array $sidebars_widgets The sidebars and their widgets.
 	 *
 	 * @return array The filtered sidebars.
 	 */
-	public static function hide_unlocalized_locations( $sidebars_widgets ) {
+	public static function hide_unlocalized_sidebars( $sidebars_widgets ) {
 		// Get the default language ID
 		$language_id = Registry::default_language( 'id' );
 
