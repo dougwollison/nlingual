@@ -197,3 +197,11 @@ Fixed associate_posts and added translation management to quickedit.
 
 = 1.0 =
 Initial public release.
+
+== Upgrade Notice ==
+
+= 2.8.0 =
+This update changes the cloning system to make post content cloning optional (off by default). If you wish to keep this enabled, you will need to manually do so after updating.
+
+= 2.0.0 =
+This upgrade is a complete overhaul, please test it on a development site first. [Read more about version 2](https://plugins.svn.wordpress.org/nlingual/assets/version2.html)
