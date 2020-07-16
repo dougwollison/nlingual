@@ -174,8 +174,14 @@ final class Rewriter {
 							$the_url->meta['language'] = $language;
 							$the_url->meta['source'] = 'path';
 
-							// Update the path with the remainder
-							$the_url->path = $home_path . $matches[2];
+							// Update the path with the remainder, if any.
+							// If there's no remainder then the URL is of the form "example.com/en"
+							// with no trailing slash, so add one for consistency.
+							if(sizeof($matches) > 2) {
+								$the_url->path = $home_path . $matches[2];
+							} else {
+								$the_url->path = trailingslashit($the_url->path);
+							}
 						}
 					}
 					break;
