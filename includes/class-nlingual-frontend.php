@@ -230,7 +230,7 @@ final class Frontend extends Handler {
 	 *                     otherwise the intended redirect URL.
 	 */
 	public static function localize_canonical( $redirect_url, $requested_url ) {
-		if( Rewriter::localize_url( $redirect_url ) == Rewriter::localize_url( $requested_url ) ) {
+		if ( Rewriter::localize_url( $redirect_url ) == Rewriter::localize_url( $requested_url ) ) {
 			return false;
 		}
 
