@@ -90,6 +90,7 @@ final class Backend extends Handler {
 		self::add_hook( 'query_vars', 'add_istranslated_var' );
 		self::add_hook( 'display_post_states', 'flag_translated_pages', 10, 2 );
 		self::add_hook( 'restrict_manage_posts', 'add_language_filter', 10, 0 );
+		self::add_hook( 'manage_posts_extra_tablenav', 'add_translation_view_input', 10, 0 );
 		self::add_hook( 'page_attributes_dropdown_pages_args', 'maybe_set_queried_language', 10, 2 );
 		foreach ( $post_types as $post_type ) {
 			self::add_hook( "views_edit-{$post_type}", 'add_translation_views', 11, 1 );
@@ -649,6 +650,28 @@ final class Backend extends Handler {
 			?>
 		</select>
 		<?php
+	}
+
+	/**
+	 * Add hidden <input> for current translation status.
+	 *
+	 * This will allow further filtering when picking a translation view.
+	 *
+	 * @uses Registry::is_post_type_supported() to check for support.
+	 */
+	public static function add_translation_view_input() {
+		global $typenow, $wp_query;
+
+		// Abort if current post type isn't supported
+		if ( ! Registry::is_post_type_supported( $typenow ) ) {
+			return;
+		}
+
+		$is_translated = $wp_query->get( 'nl_is_translated', '' );
+
+		if ( $is_translated !== '' ) {
+			printf( '<input type="hidden" name="nl_is_translated" value="%s" />', $is_translated );
+		}
 	}
 
 	/**
