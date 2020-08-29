@@ -482,10 +482,11 @@ final class System extends Handler {
 		// Failing that, get the language from the url
 		elseif ( ( $the_url = Rewriter::process_url() ) && isset( $the_url->meta['language'] ) ) {
 			$language = $the_url->meta['language'];
-			// If the language was determined but skip is enabled, redirect.
+
+			// If the language was determined, but skip is enabled,
+			// and skip_default_l10n applies, redirect to unlocalized
 			if ( Registry::is_language_default( $language )
-			&& Registry::get( 'skip_default_l10n' )
-			&& Registry::get( 'url_rewrite_method' ) == 'path' ) {
+			&& Registry::does_skip_default_l10n_apply( $language ) ) {
 				// Determine the status code to use
 				$status = Registry::get( 'redirection_permanent' ) ? 301 : 302;
 

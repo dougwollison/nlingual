@@ -753,6 +753,43 @@ final class Registry {
 		}
 	}
 
+	/**
+	 * Test if the skip_default_l10n rule applies.
+	 *
+	 * This setting applies if:
+	 * - it's enabled
+	 * - the default langauge is requested
+	 * - the accepted language doesn't match
+	 *   another available language
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param mixed $language The language to compare.
+	 *
+	 * @return bool Wether or not the skip_default_l10n rule applies.
+	 */
+	public static function does_skip_default_l10n_apply( $language ) {
+		// Setting not enabled, does not apply
+		if ( ! self::get( 'skip_default_l10n' ) ) {
+			return false;
+		}
+
+		// Requested language is not the default, does not apply
+		if ( ! self::is_language_default( $language ) ) {
+			return false;
+		}
+
+		// Accepted language matches another, does not apply
+		$accepted_language = self::accepted_language();
+		if ( $accepted_language && ! self::is_language_default( $accepted_language ) ) {
+			// This allows localization of the default language
+			// in order to override using the accepted language
+			return false;
+		}
+
+		return true;
+	}
+
 	// =========================
 	// ! Setup Method
 	// =========================
