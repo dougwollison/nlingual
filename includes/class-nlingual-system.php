@@ -497,8 +497,8 @@ final class System extends Handler {
 
 			$mode = 'REQUESTED';
 		}
-		// Fallback to finding the first match in the accepted languages list, assuming skip is not enabled
-		elseif ( ! Registry::get( 'skip_default_l10n' ) && $language = Registry::accepted_language() ) {
+		// Fallback to the accepted language
+		elseif ( $language = Registry::accepted_language() ) {
 			$mode = 'ACCEPTED';
 		}
 
