@@ -293,7 +293,7 @@ final class Rewriter {
 			// Go ahead and localize the URL
 			if ( ( ! isset( $the_url->meta['language'] ) || is_null( $the_url->meta['language'] ) )
 			&& ! preg_match( '#^/wp-([\w-]+.php|(admin|content|includes)/)#', $the_url->path )
-			&& ( ! Registry::is_language_default( $language ) || ! Registry::get( 'skip_default_l10n' ) ) ) {
+			&& ! ( Registry::is_language_default( $language ) && Registry::get( 'skip_default_l10n' ) ) ) {
 				switch ( Registry::get( 'url_rewrite_method' ) ) {
 					case 'domain':
 						// Prepend hostname with language slug
