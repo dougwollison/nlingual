@@ -171,8 +171,8 @@ final class Frontend extends Handler {
 				if ( $post_language ) {
 					// Now, check if it's different from the current language
 					if ( ! Registry::is_language_current( $post_language ) ) {
-						// Check if post_language_override is set, or otherwise no language was specified
-						if ( Registry::get( 'post_language_override', false ) || ! defined( 'NL_REQUESTED_LANGUAGE' ) ) {
+						// Check if post_language_override is set
+						if ( Registry::get( 'post_language_override', false ) ) {
 							// Finally, check if the homepage is being requested when there's no translation
 							if ( ! ( is_front_page() && ! Translator::get_post_translation( $queried_object ) ) ) {
 								$redirect_language = $post_language;
