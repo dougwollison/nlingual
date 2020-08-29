@@ -333,7 +333,6 @@
 			$control.data( `$nl_localized_${nL.default_language}`, $unlocalized );
 
 			// Add hidden storage inputs
-			var hasLocalized;
 			Languages.each( language => {
 				// Skip the default language
 				if ( nL.default_language === language.id ) {
