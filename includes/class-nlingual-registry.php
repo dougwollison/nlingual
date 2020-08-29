@@ -515,6 +515,35 @@ final class Registry {
 		return self::get_language( $language_id, $field );
 	}
 
+	/**
+	 * Check the accept-language header for a matching supported language.
+	 *
+	 * @since 2.9.0 Renamed and moved to Registry for global use.
+	 * @since 2.0.0
+	 *
+	 * @return Language|bool The accepted language, false if no match.
+	 */
+	public static function accepted_language() {
+		// Abort if no accept-language entry is present
+		if ( ! isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
+			return false;
+		}
+
+		$accepted_languages = explode( ',', $_SERVER['HTTP_ACCEPT_LANGUAGE'] );
+		// Loop through them and get the first match
+		foreach ( $accepted_languages as $language_tag ) {
+			// Remove the quality flag
+			$language_tag = preg_replace( '/;q=[\d\.]+/', '', $language_tag );
+
+			// Stop at the first matched language found
+			if ( $language = self::languages( 'active' )->match_tag( $language_tag ) ) {
+				return $language;
+			}
+		}
+
+		return false;
+	}
+
 	// =========================
 	// ! Language Testing
 	// =========================

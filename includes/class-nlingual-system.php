@@ -255,32 +255,6 @@ final class System extends Handler {
 		}
 	}
 
-	/**
-	 * @since 2.0.0
-	 *
-	 * @return Language|bool The accepted language, false if no match.
-	 */
-	public static function get_accepted_language() {
-		// Abort if no accept-language entry is present
-		if ( ! isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
-			return false;
-		}
-
-		$accepted_languages = explode( ',', $_SERVER['HTTP_ACCEPT_LANGUAGE'] );
-		// Loop through them and get the first match
-		foreach ( $accepted_languages as $language_tag ) {
-			// Remove the quality flag
-			$language_tag = preg_replace( '/;q=[\d\.]+/', '', $language_tag );
-
-			// Stop at the first matched language found
-			if ( $language = Registry::languages( 'active' )->match_tag( $language_tag ) ) {
-				return $language;
-			}
-		}
-
-		return false;
-	}
-
 	// =========================
 	// ! Master Setup Method
 	// =========================
@@ -493,7 +467,7 @@ final class System extends Handler {
 	 * @uses Registry::languages() to validate and retrieve a detected language.
 	 * @uses Registry::get() to get the query var option.
 	 * @uses Rewriter::process_url() to parse the current page URL.
-	 * @uses System::get_accepted_language() to determine a perferred language.
+	 * @uses Registry::accepted_language() to determine a perferred language.
 	 * @uses Registry::set_language() to tentatively apply the detected language.
 	 */
 	public static function detect_language() {
@@ -524,7 +498,7 @@ final class System extends Handler {
 			$mode = 'REQUESTED';
 		}
 		// Fallback to finding the first match in the accepted languages list, assuming skip is not enabled
-		elseif ( ! Registry::get( 'skip_default_l10n' ) && $language = self::get_accepted_language() ) {
+		elseif ( ! Registry::get( 'skip_default_l10n' ) && $language = Registry::accepted_language() ) {
 			$mode = 'ACCEPTED';
 		}
 
