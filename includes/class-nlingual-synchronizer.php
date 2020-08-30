@@ -348,6 +348,7 @@ final class Synchronizer {
 	 *
 	 * All fields, meta data and terms are copied.
 	 *
+	 * @since 2.9.0 Drop custom title support.
 	 * @since 2.8.0 Copy only mandatory post fields, leave the rest to sync_posts().
 	 * @since 2.0.0
 	 *
@@ -358,8 +359,8 @@ final class Synchronizer {
 	 * @uses Translator::set_post_language() to assign the language to the clone.
 	 * @uses Translator::set_post_translation() to link the clone to the original.
 	 *
-	 * @param int|WP_Post  $post             The ID/object of the post to clone.
-	 * @param int|Language $language          The language to assign the clone to.
+	 * @param int|WP_Post  $post     The ID/object of the post to clone.
+	 * @param int|Language $language The language to assign the clone to.
 	 *
 	 * @throws Exception If the post specified does not exist.
 	 * @throws Exception If the language specified does not exist.
