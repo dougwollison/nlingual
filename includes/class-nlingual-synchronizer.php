@@ -360,16 +360,13 @@ final class Synchronizer {
 	 *
 	 * @param int|WP_Post  $post             The ID/object of the post to clone.
 	 * @param int|Language $language          The language to assign the clone to.
-	 * @param string       $title             Optional. The custom title for the clone.
-	 * @param bool         $_title_is_default Optional. Was $title the default "Translate to..."?
-	 *                                        Internal use only by Backend::ajax_new_translation()
 	 *
 	 * @throws Exception If the post specified does not exist.
 	 * @throws Exception If the language specified does not exist.
 	 *
 	 * @return WP_Post|false The cloned post or false on failure.
 	 */
-	public static function clone_post( $post, $language, $title = null, $_title_is_default = false ) {
+	public static function clone_post( $post, $language ) {
 		// Validate $post if an ID
 		if ( ! is_a( $post, 'WP_Post' ) ) {
 			$post = get_post( $post );
@@ -384,25 +381,22 @@ final class Synchronizer {
 			throw new Exception( 'The language specified does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
 		}
 
-		// Default title if not passed
-		if ( is_null( $title ) ) {
-			/* translators: %1$s = The name of the language, %2$s = The post title */
-			$title = _f( '[Needs %1$s Translation]: %2$s', 'nlingual', $language->system_name, $post->post_title );
-			$_title_is_default = true;
-		}
+		// Since this is a draft, prefix the title with a note about translation being needed
+
+		/* translators: %1$s = The name of the language, %2$s = The post title */
+		$title = _f( '[Needs %1$s Translation]: %2$s', 'nlingual', $language->system_name, $post->post_title );
+
+		// And default the post_name to the original + the language slug
+		$slug = $post->post_name . '-' . $language->slug;
 
 		// Create the new post
 		$post_data = array(
 			'post_title'     => $title,
+			'post_name'      => $slug,
 			'post_status'    => 'draft',
 			'post_type'      => $post->post_type,
 			'post_mime_type' => $post->post_mime_type,
 		);
-
-		// If using default title, create a default post_name
-		if ( $_title_is_default ) {
-			$post_data['post_name'] = $post->post_name . '-' . $language->slug;
-		}
 
 		// Insert and get the ID
 		$translation = wp_insert_post( $post_data );
