@@ -314,7 +314,6 @@ final class System extends Handler {
 		// Register the hooks of the subsystems
 		Frontend::register_hooks();
 		Backend::register_hooks();
-		AJAX::register_hooks();
 		Manager::register_hooks();
 		Documenter::register_hooks();
 		Localizer::register_hooks();
