@@ -293,12 +293,10 @@ final class Rewriter {
 			// Process
 			$the_url = new URL( $url );
 
-			// If no language could be gleaned,
-			// and provided it's not a wordpress internal URL,
+			// If it's not a wordpress internal URL,
 			// AND skip_defalt_l10n does not apply,
 			// Go ahead and localize the URL
-			if ( ( ! isset( $the_url->meta['language'] ) || is_null( $the_url->meta['language'] ) )
-			&& ! preg_match( '#^/wp-([\w-]+.php|(admin|content|includes)/)#', $the_url->path )
+			if ( ! preg_match( '#^/wp-([\w-]+.php|(admin|content|includes)/)#', $the_url->path )
 			&& ! Registry::does_skip_default_l10n_apply( $language ) ) {
 				switch ( Registry::get( 'url_rewrite_method' ) ) {
 					case 'domain':
