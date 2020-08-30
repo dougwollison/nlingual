@@ -1,4 +1,4 @@
-/* globals jQuery, alert, confirm, wp, Backbone, tinymce, ajaxurl, inlineEditPost, inlineEditTax, nlingualL10n */
+/* globals jQuery, alert, confirm, wp, Backbone, tinymce, ajaxurl, inlineEditPost, nlingualL10n */
 ( () => {
 	var nL = window.nLingual = {};
 
@@ -598,18 +598,6 @@
 
 					$( this ).find( 'select' ).val( translation || 0 );
 				} );
-			};
-		}
-
-		// Extend inlineEditTax if available
-		if ( typeof inlineEditTax === 'object' ) {
-			const wpInlineEditTax_edit = inlineEditTax.edit;
-
-			// Replace with new function
-			inlineEditTax.edit = function( /* id */ ) {
-
-				// Start by calling the original for default behaviour
-				wpInlineEditTax_edit.apply( this, arguments );
 			};
 		}
 	} );
