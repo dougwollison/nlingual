@@ -519,6 +519,35 @@ final class Registry {
 		return self::get_language( $language_id, $field );
 	}
 
+	/**
+	 * Check the accept-language header for a matching supported language.
+	 *
+	 * @since 2.9.0 Renamed and moved to Registry for global use.
+	 * @since 2.0.0
+	 *
+	 * @return Language|bool The accepted language, false if no match.
+	 */
+	public static function accepted_language() {
+		// Abort if no accept-language entry is present
+		if ( ! isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
+			return false;
+		}
+
+		$accepted_languages = explode( ',', $_SERVER['HTTP_ACCEPT_LANGUAGE'] );
+		// Loop through them and get the first match
+		foreach ( $accepted_languages as $language_tag ) {
+			// Remove the quality flag
+			$language_tag = preg_replace( '/;q=[\d\.]+/', '', $language_tag );
+
+			// Stop at the first matched language found
+			if ( $language = self::languages( 'active' )->match_tag( $language_tag ) ) {
+				return $language;
+			}
+		}
+
+		return false;
+	}
+
 	// =========================
 	// ! Language Testing
 	// =========================
@@ -734,6 +763,43 @@ final class Registry {
 			$permalink_structure = get_option( 'permalink_structure' );
 			return ! empty( $permalink_structure );
 		}
+	}
+
+	/**
+	 * Test if the skip_default_l10n rule applies.
+	 *
+	 * This setting applies if:
+	 * - it's enabled
+	 * - the default langauge is requested
+	 * - the accepted language doesn't match
+	 *   another available language
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param mixed $language The language to compare.
+	 *
+	 * @return bool Wether or not the skip_default_l10n rule applies.
+	 */
+	public static function does_skip_default_l10n_apply( $language ) {
+		// Setting not enabled, does not apply
+		if ( ! self::get( 'skip_default_l10n' ) ) {
+			return false;
+		}
+
+		// Requested language is not the default, does not apply
+		if ( ! self::is_language_default( $language ) ) {
+			return false;
+		}
+
+		// Accepted language matches another, does not apply
+		$accepted_language = self::accepted_language();
+		if ( $accepted_language && ! self::is_language_default( $accepted_language ) ) {
+			// This allows localization of the default language
+			// in order to override using the accepted language
+			return false;
+		}
+
+		return true;
 	}
 
 	// =========================

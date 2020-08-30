@@ -97,8 +97,8 @@
 			var qvar = $( '#nlingual_query_var' ).val() || 'nl_language';
 
 			// Get the skip and override options
-			var skip = $( '#nlingual_skip_default_l10n' ).attr( 'checked' );
-			var override = $( '#nlingual_post_language_override' ).attr( 'checked' );
+			var skip = $( '#nlingual_skip_default_l10n' ).is( ':checked' );
+			var override = $( '#nlingual_post_language_override' ).is( ':checked' );
 
 			// Get the format; some previews are dependent on options
 			var format;
@@ -333,7 +333,6 @@
 			$control.data( `$nl_localized_${nL.default_language}`, $unlocalized );
 
 			// Add hidden storage inputs
-			var hasLocalized;
 			Languages.each( language => {
 				// Skip the default language
 				if ( nL.default_language === language.id ) {

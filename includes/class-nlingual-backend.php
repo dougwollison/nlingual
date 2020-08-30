@@ -44,10 +44,11 @@ final class Backend extends Handler {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 2.9.0 Added (un)translated filters to post list views.
-	 * @since 2.8.1 Revise setup of add_post_meta_box hook.
-	 * @since 2.8.0 Added page_attributes_dropdown_pages_args filter.
-	 * @since 2.6.0 Added fix_localized_admin_url setup.
+	 * @since 2.10.0 Added (un)translated filters to post list views.
+	 * @since 2.8.10 Renamed callbacks related to unlocalized locations.
+	 * @since 2.8.1  Revise setup of add_post_meta_box hook.
+	 * @since 2.8.0  Added page_attributes_dropdown_pages_args filter.
+	 * @since 2.6.0  Added fix_localized_admin_url setup.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to retrieve enabled post types.
@@ -81,9 +82,9 @@ final class Backend extends Handler {
 		// Theme Location Rewrites
 		self::add_hook( 'init', 'register_localized_nav_menus', 999, 0 );
 		self::add_hook( 'widgets_init', 'register_localized_sidebars', 999, 0 );
-		self::add_hook( 'pre_set_theme_mod_nav_menu_locations', 'handle_unlocalized_locations', 10, 1 );
-		self::add_hook( 'pre_update_option_sidebars_widgets', 'handle_unlocalized_locations', 10, 1 );
-		self::add_hook( 'sidebars_widgets', 'hide_unlocalized_locations', 10, 1 );
+		self::add_hook( 'pre_set_theme_mod_nav_menu_locations', 'handle_unlocalized_nav_menus', 10, 1 );
+		self::add_hook( 'pre_update_option_sidebars_widgets', 'handle_unlocalized_sidebars', 10, 1 );
+		self::add_hook( 'sidebars_widgets', 'hide_unlocalized_sidebars', 10, 1 );
 
 		// Posts Screen Interface
 		self::add_hook( 'query_vars', 'add_language_var' );
@@ -336,7 +337,7 @@ final class Backend extends Handler {
 		$notice = get_transient( $transient );
 		if ( $notice === false ) {
 			// Hasn't been saved, fetch it from the SVN repo
-			$notice = @file_get_contents( "http://plugins.svn.wordpress.org/nlingual/assets/notice-{$version}.txt" ) ?: '';
+			$notice = @file_get_contents( "https://plugins.svn.wordpress.org/nlingual/assets/notice-{$version}.txt" ) ?: '';
 
 			// Save the notice
 			set_transient( $transient, $notice, YEAR_IN_SECONDS );
@@ -443,19 +444,22 @@ final class Backend extends Handler {
 	}
 
 	/**
-	 * Handle fallbacks for unlocalized locations.
+	 * Shared logic for handling unlocalized location fallbacks.
 	 *
 	 * As a fallback, make sure that the original location is
-	 * set to that of the one for the default language.
+	 * set to that of the one for the default language. This way,
+	 * if the location becomes unmarked for localization, the unlocalized
+	 * nav items/widgets won't vanish.
 	 *
-	 * @since 2.8.10 Strip out localized version of no-longer-supported locations.
+	 * @since 2.8.10  Added $type argument, previously treated everything as a nav menu location.
+	 * @since 2.8.9.2 Strip out localized version of no-longer-supported locations.
 	 * @since 2.0.0
 	 *
 	 * @param array $locations The locations.
 	 *
 	 * @return array The filtered locations array.
 	 */
-	public static function handle_unlocalized_locations( $locations ) {
+	public static function handle_unlocalized_locations( $type, $locations ) {
 		// Get the default language ID
 		$default_language_id = Registry::default_language( 'id' );
 
@@ -466,8 +470,8 @@ final class Backend extends Handler {
 				$unlocalized_location = $matches[1];
 				$language_id = absint( $matches[2] );
 
-				// If this location is no longer supported, skip it
-				if ( ! Registry::is_location_supported( 'nav_menu', $unlocalized_location ) ) {
+				// If this location is no longer supported, drop it
+				if ( ! Registry::is_location_supported( $type, $unlocalized_location ) ) {
 					continue;
 				}
 
@@ -484,18 +488,41 @@ final class Backend extends Handler {
 	}
 
 	/**
+	 * Handle fallbacks for unlocalized nav menus.
+	 *
+	 * @since 2.8.10
+	 *
+	 * @see Backend::handle_unlocalized_locations()
+	 */
+	public static function handle_unlocalized_nav_menus( $locations ) {
+		return self::handle_unlocalized_locations( 'nav_menu', $locations );
+	}
+
+	/**
+	 * Handle fallbacks for unlocalized sidebars.
+	 *
+	 * @since 2.8.10
+	 *
+	 * @see Backend::handle_unlocalized_locations()
+	 */
+	public static function handle_unlocalized_sidebars( $locations ) {
+		return self::handle_unlocalized_locations( 'sidebar', $locations );
+	}
+
+	/**
 	 * Clean up localized and unlocalized sidebars as needed.
 	 *
 	 * This will prevent the originals for localized sidebars or the versions
 	 * of no-longer-localized sidebars from showing up as inactive sidebars.
 	 *
+	 * @since 2.8.10 Renamed from locations to sidebars for clarity.
 	 * @since 2.0.0
 	 *
 	 * @param array $sidebars_widgets The sidebars and their widgets.
 	 *
 	 * @return array The filtered sidebars.
 	 */
-	public static function hide_unlocalized_locations( $sidebars_widgets ) {
+	public static function hide_unlocalized_sidebars( $sidebars_widgets ) {
 		// Get the default language ID
 		$language_id = Registry::default_language( 'id' );
 
@@ -543,7 +570,7 @@ final class Backend extends Handler {
 	/**
 	 * Register the is_translated query var.
 	 *
-	 * @since 2.9.0
+	 * @since 2.10.0
 	 *
 	 * @param array $vars The whitelist of query vars.
 	 *
@@ -698,7 +725,7 @@ final class Backend extends Handler {
 	/**
 	 * Filter list table views, add Translated and Untranslated.
 	 *
-	 * @since 2.9.0
+	 * @since 2.10.0
 	 *
 	 * @param array $views The array of available list table views.
 	 *

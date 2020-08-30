@@ -94,7 +94,7 @@ final class Rewriter {
 	 *
 	 * @internal
 	 *
-	 * @since 2.8.9.4 Fixed path suffix handling.
+	 * @since 2.9.0 Fixed path suffix handling.
 	 * @since 2.8.2 Fixed path handling to preserve home path.
 	 * @since 2.6.0 Updated to use NL_ORIGINAL_URL.
 	 * @since 2.0.0
@@ -214,24 +214,27 @@ final class Rewriter {
 	 *
 	 * This will add the language slug subdomain/subdirecty/query var as needed.
 	 *
+	 * @since 2.9.0 Use does_skip_default_l10n_apply() to handle default URL localization logic,
+	 *              Added $force_localize to allow overriding skip_default_l10n even if it applies.
 	 * @since 2.8.9 Fix handling of wordpress internal URLs.
 	 * @since 2.8.4 Dropped $relocalize option, will always relocalize.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current Language object if not passed.
 	 * @uses Rewriter::delocalize_url() to clean the URL for relocalizing if desired.
-	 * @uses Rewriter::process_url() to process the URL into it's components.
+	 * @uses Registry::does_skip_default_l10n_apply() to see if the default language URL should be unlocalized.
 	 * @uses Registry::is_language_default() to check if the language provided is the default.
 	 * @uses Registry::get() to get the skip_default_l10n, url_rewrite_method and query_var options.
 	 *
-	 * @param string $url      The URL to parse.
-	 * @param mixed  $language Optional. The desired language to localize to.
+	 * @param string $url            The URL to parse.
+	 * @param mixed  $language       Optional. The desired language to localize to.
+	 * @param bool   $force_localize Optional. Wether or not to ignore skip_default_l10n.
 	 *
 	 * @throws Exception If the language requested does not exist.
 	 *
 	 * @return string The new localized URL.
 	 */
-	public static function localize_url( $url, $language = null ) {
+	public static function localize_url( $url, $language = null, $force_localize = false ) {
 		// If localization is disabled, abort
 		if ( ! self::$do_localization ) {
 			return $url;
@@ -292,13 +295,11 @@ final class Rewriter {
 			// Process
 			$the_url = new URL( $url );
 
-			// If no language could be gleaned,
-			// and provided it's not a wordpress internal URL,
-			// AND if we're not in the default language (provided skip_defalt_l10n is on)
+			// If it's not a wordpress internal URL,
+			// AND skip_defalt_l10n does not apply,
 			// Go ahead and localize the URL
-			if ( ( ! isset( $the_url->meta['language'] ) || is_null( $the_url->meta['language'] ) )
-			&& ! preg_match( '#^/wp-([\w-]+.php|(admin|content|includes)/)#', $the_url->path )
-			&& ( ! Registry::is_language_default( $language ) || ! Registry::get( 'skip_default_l10n' ) ) ) {
+			if ( ! preg_match( '#^/wp-([\w-]+.php|(admin|content|includes)/)#', $the_url->path )
+			&& ( $force_localize || ! Registry::does_skip_default_l10n_apply( $language ) ) ) {
 				switch ( Registry::get( 'url_rewrite_method' ) ) {
 					case 'domain':
 						// Prepend hostname with language slug
@@ -371,12 +372,15 @@ final class Rewriter {
 	/**
 	 * Attempt to localize the current page URL.
 	 *
-	 * @since 2.9.0 Only use post's translation if neither or both are published.
-	 * @since 2.8.9 Unset s in query string when getting search link.
-	 * @since 2.8.4 Dropped use of localize_url() $relocalize param, will always relocalize.
-	 * @since 2.6.0 Fixed paged handling, added check to make sure queried object's post type is supported.
-	 * @since 2.2.0 Now uses get_search_link() to create the search URL.
+	 * @since 2.10.0 Only use post's translation if neither or both are published.
+	 * @since 2.9.0  Add checks for SINGLE term/post_type query.
+	 * @since 2.8.9  Unset s in query string when getting search link.
+	 * @since 2.8.4  Dropped use of localize_url() $relocalize param, will always relocalize.
+	 * @since 2.6.0  Fixed paged handling, added check to make sure queried object's post type is supported.
+	 * @since 2.2.0  Now uses get_search_link() to create the search URL.
 	 * @since 2.0.0
+
+	 * @global WP_Query $wp_query The main query object.
 	 *
 	 * @uses Registry::get() to check for backwards compatibility.
 	 * @uses Registry::current_language() to get the current Language object.
@@ -393,22 +397,35 @@ final class Rewriter {
 	 * @return string The localized URL.
 	 */
 	public static function localize_here( $language = null ) {
+		global $wp_query;
+
 		// Ensure $language is a Language, defaulting to current
 		if ( ! validate_language( $language, 'default current' ) ) {
 			// Throw exception if not found
 			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
 		}
 
-		// First, check if it's the queried object is a post
+		// Get the queried object for testing
 		$queried_object = get_queried_object();
-		if ( is_a( $queried_object, 'WP_Post' ) ) {
+
+		// First, check if we're on the home page, as that's the simplest to handle
+		if ( is_front_page() ) {
+			$url = home_url( '/' );
+
+			// Relocalize the URL
+			$url = self::localize_url( $url, $language );
+		}
+		// If the queried object is a post, use it's permalink
+		elseif ( is_a( $queried_object, 'WP_Post' ) ) {
 			// Get the permalink for the translation in the specified language if applicable
 			if ( Registry::is_post_type_supported( $queried_object->post_type ) ) {
 				$translation = Translator::get_post_translation( $queried_object->ID, $language, 'return self' );
+
 				// If the original is published but the translation isn't, use the original
 				if ( $queried_object->post_status == 'publish' && get_post_status( $translation ) != $queried_object->post_status ) {
 					$translation = $queried_object->ID;
 				}
+
 				$url = get_permalink( $translation );
 			} else {
 				$url = get_permalink( $queried_object->ID );
@@ -422,17 +439,20 @@ final class Rewriter {
 
 			// Now try various other conditional tags...
 
-			// Front page? just use home_url()
-			if ( is_front_page() ) {
-				$url = home_url( '/' );
+			// Single Post Type archive? Get the archive link
+			if ( is_post_type_archive() && count( (array) $wp_query->query_vars['post_type'] ) == 1 ) {
+				$post_types = (array) $wp_query->query_vars['post_type'];
+				$url = get_post_type_archive_link( $post_types[0] );
 			}
-			// Term page? Get the term link
-			elseif ( is_tax() || is_tag() || is_category() ) {
+			// Single Term page? Get the term link
+			elseif ( ( is_tax() || is_tag() || is_category() )
+			&& count( $wp_query->tax_query->queries ) == 1
+			&& count( $wp_query->tax_query->queries[0]['terms'] ) == 1 ) {
 				$url = get_term_link( get_queried_object() );
 			}
-			// Post type archive? Get the link
-			elseif ( is_post_type_archive() ) {
-				$url = get_post_type_archive_link( get_query_var( 'post_type' ) );
+			// Posts page? Get link
+			elseif ( is_home() ) {
+				$url = get_post_type_archive_link( 'post' );
 			}
 			// Posts page? Get link
 			elseif ( is_home() ) {

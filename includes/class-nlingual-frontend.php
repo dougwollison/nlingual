@@ -130,7 +130,6 @@ final class Frontend extends Handler {
 	 * @since 2.2.0 Regigged post language redirecting to account for untranslated homepage.
 	 * @since 2.0.0
 	 *
-	 * @uses NL_REQUESTED_LANGUAGE to check if the language was specifically requested.
 	 * @uses NL_ORIGINAL_URL to compare the redirect URL with the original, to prevent loops.
 	 * @uses Registry::current_language() to get the current language object.
 	 * @uses Translator::get_post_language() to get the language of the queried post.
@@ -169,8 +168,8 @@ final class Frontend extends Handler {
 				if ( $post_language ) {
 					// Now, check if it's different from the current language
 					if ( ! Registry::is_language_current( $post_language ) ) {
-						// Check if post_language_override is set, or otherwise no language was specified
-						if ( Registry::get( 'post_language_override', false ) || ! defined( 'NL_REQUESTED_LANGUAGE' ) ) {
+						// Check if post_language_override is set
+						if ( Registry::get( 'post_language_override', false ) ) {
 							// Finally, check if the homepage is being requested when there's no translation
 							if ( ! ( is_front_page() && ! Translator::get_post_translation( $queried_object ) ) ) {
 								$redirect_language = $post_language;
@@ -180,14 +179,10 @@ final class Frontend extends Handler {
 				}
 			}
 		}
-		// If it's the default and skip is enabled, do nothing
-		elseif ( Registry::in_default_language() && Registry::get( 'skip_default_l10n' ) ) {
-			return;
-		}
 
 		// If the language isn't active (and they're not logged in), fallback to the accepted or default language
 		if ( ! $redirect_language->active && ! is_user_logged_in() ) {
-			$redirect_language = System::get_accepted_language() ?: Registry::default_language();
+			$redirect_language = Registry::accepted_language() ?: Registry::default_language();
 		}
 
 		// Get the new URL localized for the redirect language
@@ -451,8 +446,8 @@ final class Frontend extends Handler {
 	/**
 	 * Replace a post ID with it's translation for the current language.
 	 *
-	 * @since 2.8.10 Add check to make sure the post's status is usable.
-	 * @since 2.6.0  Add check to make sure post's type is supported.
+	 * @since 2.9.0 Add check to make sure the post's status is usable.
+	 * @since 2.6.0 Add check to make sure post's type is supported.
 	 * @since 2.0.0
 	 *
 	 * @api

@@ -219,7 +219,7 @@ final class Languages implements \Iterator {
 		}
 
 		$filtered = new static;
-		foreach ( $this as $language ) {
+		foreach ( $this->items as $language ) {
 			if ( $language->$filter === $value xor $inverse ) {
 				$filtered->add( $language, false );
 			}

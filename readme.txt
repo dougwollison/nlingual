@@ -1,10 +1,10 @@
 === nLingual ===
 Contributors: dougwollison
 Tags: multilingual, language, bilingual, translation
-Requires at least: 5.2
-Tested up to: 5.3.2
+Requires at least: 4.9
+Tested up to: 5.5.0
 Requires PHP: 5.6.20
-Stable tag: 2.8.10
+Stable tag: 2.9.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,14 +79,17 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
 
+= 2.9.0 =
+Improved redirection handling, URL rewriting, and blog switching support. Minor synchronizer fixes.
+
 = 2.8.10 =
-Improved blog switching support. Minor synchronizer fixes.
+Fix issue causing localized sidebars to forget their widgets.
 
 = 2.8.9.3 =
 Admin javascript now transpiled/minified for better browser compatibility.
 
 = 2.8.9.2 =
-Fixed issue with version 1 compatibility tool `nL_get_post_lang` returning object instead of slug.
+Fix return value of nL_get_post_lang back-compat function.
 
 = 2.8.9 =
 Fixed issue with meta values not being localized, and internal WordPress URLs being blindly localized.

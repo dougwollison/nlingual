@@ -255,32 +255,6 @@ final class System extends Handler {
 		}
 	}
 
-	/**
-	 * @since 2.0.0
-	 *
-	 * @return Language|bool The accepted language, false if no match.
-	 */
-	public static function get_accepted_language() {
-		// Abort if no accept-language entry is present
-		if ( ! isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
-			return false;
-		}
-
-		$accepted_languages = explode( ',', $_SERVER['HTTP_ACCEPT_LANGUAGE'] );
-		// Loop through them and get the first match
-		foreach ( $accepted_languages as $language_tag ) {
-			// Remove the quality flag
-			$language_tag = preg_replace( '/;q=[\d\.]+/', '', $language_tag );
-
-			// Stop at the first matched language found
-			if ( $language = Registry::languages( 'active' )->match_tag( $language_tag ) ) {
-				return $language;
-			}
-		}
-
-		return false;
-	}
-
 	// =========================
 	// ! Master Setup Method
 	// =========================
@@ -325,7 +299,6 @@ final class System extends Handler {
 		// Register the hooks of the subsystems
 		Frontend::register_hooks();
 		Backend::register_hooks();
-		AJAX::register_hooks();
 		Manager::register_hooks();
 		Documenter::register_hooks();
 		Localizer::register_hooks();
@@ -339,12 +312,12 @@ final class System extends Handler {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 2.9.0 Added nl_is_translated query handling, enqueue_assets,
-	 *              unique post slug and posts result filters.
-	 * @since 2.8.0 Moved rewrite_locale to Frontend.
-	 * @since 2.6.0 Added transition (un)flagging.
-	 * @since 2.4.0 Only add patch_font_stack hook if before 4.6.
-	 * @since 2.2.0 Reassigned synchronize_posts to wp_insert_post (better hook to use).
+	 * @since 2.10.0 Added nl_is_translated query handling, enqueue_assets,
+	 *               unique post slug and posts result filters.
+	 * @since 2.8.0  Moved rewrite_locale to Frontend.
+	 * @since 2.6.0  Added transition (un)flagging.
+	 * @since 2.4.0  Only add patch_font_stack hook if before 4.6.
+	 * @since 2.2.0  Reassigned synchronize_posts to wp_insert_post (better hook to use).
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
@@ -499,24 +472,27 @@ final class System extends Handler {
 	/**
 	 * Detect the language based on the request or browser info.
 	 *
-	 * @since 2.9.0 Add detection of user language and backend language override.
-	 * @since 2.7.0 Checked for skip_default_l10n option before getting accepted language.
+	 * @since 2.10.0 Add detection of user language and backend language override.
+	 * @since 2.9.0  Drop redirect handling, let Frontend handle it.
+	 * @since 2.7.0  Checked for skip_default_l10n option before getting accepted language.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::languages() to validate and retrieve a detected language.
 	 * @uses Registry::get() to get the query var option.
 	 * @uses Rewriter::process_url() to parse the current page URL.
-	 * @uses System::get_accepted_language() to determine a perferred language.
+	 * @uses Registry::does_skip_default_l10n_apply() to see if the default language URL should be unlocalized.
+	 * @uses Registry::accepted_language() to determine a perferred language.
 	 * @uses Registry::set_language() to tentatively apply the detected language.
 	 */
 	public static function detect_language() {
 		$language = false;
+		$source = null;
 
 		// First, check if the language was specified by the GET or POST parameters
 		if ( ( $query_var = Registry::get( 'query_var' ) ) && isset( $_REQUEST[ $query_var ] ) ) {
 			// Even if the language specified is invalid, don't fallback from here.
 			$language = Registry::get_language( $_REQUEST[ $query_var ] );
-			$mode = 'REQUESTED';
+			$source = 'request';
 
 			// If in the backend and nl_switch is set, save it to a cookie
 			if ( is_admin() && isset( $_REQUEST['nl_switch'] ) ) {
@@ -526,32 +502,15 @@ final class System extends Handler {
 		// Failing that, get the language from the url
 		elseif ( ( $the_url = Rewriter::process_url() ) && isset( $the_url->meta['language'] ) ) {
 			$language = $the_url->meta['language'];
-			// If the language was determined but skip is enabled, redirect.
-			if ( Registry::is_language_default( $language )
-			&& Registry::get( 'skip_default_l10n' )
-			&& Registry::get( 'url_rewrite_method' ) == 'path' ) {
-				// Determine the status code to use
-				$status = Registry::get( 'redirection_permanent' ) ? 301 : 302;
-
-				// Redirect, exit if successful
-				if ( wp_redirect( $the_url->build(), $status ) ) {
-					exit;
-				}
-			}
-
-			$mode = 'REQUESTED';
+			$source = 'url';
 		}
 		// Failing that, get the language overrided for their session, but only in the backend
 		elseif ( is_admin() && isset( $_COOKIE['nlingual_language'] ) && $language = Registry::get_language( $_COOKIE['nlingual_language'] ) ) {
-			$mode = 'REQUESTED';
+			$mode = 'cookie';
 		}
-		// If the user is logged in and has a preferred language, fallback to that, assuming skip is not enabled or we're in the backend
-		elseif ( ( is_backend() || ! Registry::get( 'skip_default_l10n' ) ) && $language = Registry::languages( 'active' )->match_tag( get_user_locale() ) ) {
-			$mode = 'ACCEPTED';
-		}
-		// Fallback to finding the first match in the accepted languages list, assuming skip is not enabled
-		elseif ( ! Registry::get( 'skip_default_l10n' ) && $language = self::get_accepted_language() ) {
-			$mode = 'ACCEPTED';
+		// Fallback to the accepted language
+		elseif ( $language = Registry::accepted_language() ) {
+			$source = 'accept';
 		}
 
 		/**
@@ -563,16 +522,29 @@ final class System extends Handler {
 		 */
 		$language = apply_filters( 'nlingual_detected_language', $language );
 
-		if ( $language ) {
-			/**
-			 * Stores the language originally requested or accepted.
-			 *
-			 * @since 2.0.0
-			 *
-			 * @var bool|int
-			 */
-			define( "NL_{$mode}_LANGUAGE", $language->id );
+		/**
+		 * Stores the ID of the detected language.
+		 *
+		 * @since 2.9.0
+		 *
+		 * @var int|null
+		 */
+		define( 'NL_DETECTED_LANGUAGE', $language ? $language->id : null );
 
+		/**
+		 * Stores the source of the detected language.
+		 *
+		 * request = specified via GET/POST param
+		 * url = specified via subdomain/path
+		 * accept = specified via HTTP Accept-Language header
+		 *
+		 * @since 2.9.0
+		 *
+		 * @var string|null
+		 */
+		define( 'NL_DETECTED_SOURCE', $source );
+
+		if ( $language ) {
 			// Set the language, but don't lock it
 			Registry::set_language( $language );
 		}
@@ -912,7 +884,7 @@ final class System extends Handler {
 	 */
 	public static function localize_home_url( $url, $path, $scheme ) {
 		// If the language wasn't specified and we haven't parsed the request yet, abort
-		if ( ! defined( 'NL_REQUESTED_LANGUAGE' ) && ! did_action( 'send_headers' ) ) {
+		if ( ! defined( 'NL_DETECTED_LANGUAGE' ) && ! did_action( 'send_headers' ) ) {
 			// This is mostly to prevent WP::parse_request() from getting the wrong home path to work with
 			// but, in case do_parse_request returns false, we have to check if we've sent headers or not
 			return $url;
@@ -928,8 +900,11 @@ final class System extends Handler {
 			return $url;
 		}
 
+		// If the languge was detected via URL and we're still parsing the request, force localization
+		$force_localize = defined( 'NL_DETECTED_SOURCE' ) && NL_DETECTED_SOURCE == 'url' && ! did_action( 'parse_request' );
+
 		// Return the localized version of the URL
-		return Rewriter::localize_url( $url );
+		return Rewriter::localize_url( $url, null, $force_localize );
 	}
 
 	/**
@@ -938,9 +913,10 @@ final class System extends Handler {
 	 * Namely, localize it for it's assigned language.
 	 * Also checks for localizing a home page translation.
 	 *
-	 * @since 2.9.0 Use current language unless post's language overrides.
-	 * @since 2.2.0 Modified to explicitly handle post object vs ID.
-	 *              Will no longer localize for draft/pending posts.
+	 * @since 2.10.0 Use current language unless post's language overrides.
+	 * @since 2.9.0  Dropped outdated $relocalize use in Rewriter::localize_url().
+	 * @since 2.2.0  Modified to explicitly handle post object vs ID.
+	 *               Will no longer localize for draft/pending posts.
 	 * @since 2.0.0
 	 *
 	 * @uses Translator::get_post_language() to get the post's language.
@@ -997,7 +973,7 @@ final class System extends Handler {
 		}
 
 		// Just ensure the URL is localized for it's language and return it
-		return Rewriter::localize_url( $permalink, $language, 'relocalize' );
+		return Rewriter::localize_url( $permalink, $language );
 	}
 
 	/**
@@ -1079,8 +1055,8 @@ final class System extends Handler {
 	 * Filter the query params to add the query_var option as a
 	 * possible parameter for collection requests.
 	 *
-	 * @since 2.9.0 Add 0 as language option/default if language is not required.
-	 * @since 2.8.10 Whitelist all languages if logged in, cast IDs to string.
+	 * @since 2.10.0 Add 0 as language option/default if language is not required.
+	 * @since 2.9.0  Whitelist all languages if logged in, cast IDs to string.
 	 * @since 2.6.0
 	 *
 	 * @param array $query_params The list of params to add to.
@@ -1106,12 +1082,12 @@ final class System extends Handler {
 		}
 
 		$query_params[ $query_var ] = array(
-			'default'           => $default,
-			'description'       => __( 'Limit result set to posts assigned one or more registered languages.', 'nlingual' ),
-			'type'              => 'array',
-			'items'             => array(
-				'enum'          => $whitelist,
-				'type'          => 'string',
+			'default'     => $default,
+			'description' => __( 'Limit result set to posts assigned one or more registered languages.', 'nlingual' ),
+			'type'        => 'array',
+			'items'       => array(
+				'enum' => $whitelist,
+				'type' => 'string',
 			),
 		);
 
@@ -1222,7 +1198,13 @@ final class System extends Handler {
 		}
 
 		// If we're querying by post type, check if ANY are supported
-		if ( $query->get( 'post_type' ) && ! Registry::is_post_type_supported( $query->get( 'post_type' ) ) ) {
+		$post_type = $query->get( 'post_type' );
+		if ( $post_type && ! Registry::is_post_type_supported( $post_type ) ) {
+			return;
+		}
+
+		// If it's the home feed, check if posts are supported
+		if ( $query->is_home() && ! Registry::is_post_type_supported( 'post' ) ) {
 			return;
 		}
 
