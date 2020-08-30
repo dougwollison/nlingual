@@ -846,6 +846,7 @@ final class System extends Handler {
 	 * Namely, localize it for it's assigned language.
 	 * Also checks for localizing a home page translation.
 	 *
+	 * @since 2.9.0 Dropped outdated $relocalize use in Rewriter::localize_url().
 	 * @since 2.2.0 Modified to explicitly handle post object vs ID.
 	 *              Will no longer localize for draft/pending posts.
 	 * @since 2.0.0
@@ -895,7 +896,7 @@ final class System extends Handler {
 			}
 
 			// Just ensure the URL is localized for it's language and return it
-			return Rewriter::localize_url( $permalink, $language, 'relocalize' );
+			return Rewriter::localize_url( $permalink, $language );
 		}
 
 		return $permalink;
