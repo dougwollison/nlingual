@@ -461,7 +461,7 @@ final class System extends Handler {
 	/**
 	 * Detect the language based on the request or browser info.
 	 *
-	 * @since 2.9.0 Add does_skip_default_l10n_apply() to handle default URL localization logic.
+	 * @since 2.9.0 Drop redirect handling, let Frontend handle it.
 	 * @since 2.7.0 Checked for skip_default_l10n option before getting accepted language.
 	 * @since 2.0.0
 	 *
@@ -474,35 +474,22 @@ final class System extends Handler {
 	 */
 	public static function detect_language() {
 		$language = false;
+		$source = null;
 
 		// First, check if the language was specified by the GET or POST parameters
 		if ( ( $query_var = Registry::get( 'query_var' ) ) && isset( $_REQUEST[ $query_var ] ) ) {
 			// Even if the language specified is invalid, don't fallback from here.
 			$language = Registry::get_language( $_REQUEST[ $query_var ] );
-			$mode = 'REQUESTED';
+			$source = 'request';
 		}
 		// Failing that, get the language from the url
 		elseif ( ( $the_url = Rewriter::process_url() ) && isset( $the_url->meta['language'] ) ) {
 			$language = $the_url->meta['language'];
-
-			// If the language was determined, but skip is enabled,
-			// and skip_default_l10n applies, redirect to unlocalized
-			if ( Registry::is_language_default( $language )
-			&& Registry::does_skip_default_l10n_apply( $language ) ) {
-				// Determine the status code to use
-				$status = Registry::get( 'redirection_permanent' ) ? 301 : 302;
-
-				// Redirect, exit if successful
-				if ( wp_redirect( $the_url->build(), $status ) ) {
-					exit;
-				}
-			}
-
-			$mode = 'REQUESTED';
+			$source = 'url';
 		}
 		// Fallback to the accepted language
 		elseif ( $language = Registry::accepted_language() ) {
-			$mode = 'ACCEPTED';
+			$source = 'accept';
 		}
 
 		/**
@@ -514,16 +501,29 @@ final class System extends Handler {
 		 */
 		$language = apply_filters( 'nlingual_detected_language', $language );
 
-		if ( $language ) {
-			/**
-			 * Stores the language originally requested or accepted.
-			 *
-			 * @since 2.0.0
-			 *
-			 * @var bool|int
-			 */
-			define( "NL_{$mode}_LANGUAGE", $language->id );
+		/**
+		 * Stores the ID of the detected language.
+		 *
+		 * @since 2.9.0
+		 *
+		 * @var int|null
+		 */
+		define( 'NL_DETECTED_LANGUAGE', $language ? $language->id : null );
 
+		/**
+		 * Stores the source of the detected language.
+		 *
+		 * request = specified via GET/POST param
+		 * url = specified via subdomain/path
+		 * accept = specified via HTTP Accept-Language header
+		 *
+		 * @since 2.9.0
+		 *
+		 * @var string|null
+		 */
+		define( 'NL_DETECTED_SOURCE', $source );
+
+		if ( $language ) {
 			// Set the language, but don't lock it
 			Registry::set_language( $language );
 		}
@@ -820,7 +820,7 @@ final class System extends Handler {
 	 */
 	public static function localize_home_url( $url, $path, $scheme ) {
 		// If the language wasn't specified and we haven't parsed the request yet, abort
-		if ( ! defined( 'NL_REQUESTED_LANGUAGE' ) && ! did_action( 'send_headers' ) ) {
+		if ( ! defined( 'NL_DETECTED_LANGUAGE' ) && ! did_action( 'send_headers' ) ) {
 			// This is mostly to prevent WP::parse_request() from getting the wrong home path to work with
 			// but, in case do_parse_request returns false, we have to check if we've sent headers or not
 			return $url;
@@ -836,8 +836,11 @@ final class System extends Handler {
 			return $url;
 		}
 
+		// If the languge was detected via URL and we're still parsing the request, force localization
+		$force_localize = defined( 'NL_DETECTED_SOURCE' ) && NL_DETECTED_SOURCE == 'url' && ! did_action( 'parse_request' );
+
 		// Return the localized version of the URL
-		return Rewriter::localize_url( $url );
+		return Rewriter::localize_url( $url, null, $force_localize );
 	}
 
 	/**

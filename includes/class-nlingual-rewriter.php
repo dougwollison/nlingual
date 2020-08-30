@@ -214,7 +214,8 @@ final class Rewriter {
 	 *
 	 * This will add the language slug subdomain/subdirecty/query var as needed.
 	 *
-	 * @since 2.9.0 Use does_skip_default_l10n_apply() to handle default URL localization logic.
+	 * @since 2.9.0 Use does_skip_default_l10n_apply() to handle default URL localization logic,
+	 *              Added $force_localize to allow overriding skip_default_l10n even if it applies.
 	 * @since 2.8.9 Fix handling of wordpress internal URLs.
 	 * @since 2.8.4 Dropped $relocalize option, will always relocalize.
 	 * @since 2.0.0
@@ -225,14 +226,15 @@ final class Rewriter {
 	 * @uses Registry::is_language_default() to check if the language provided is the default.
 	 * @uses Registry::get() to get the skip_default_l10n, url_rewrite_method and query_var options.
 	 *
-	 * @param string $url      The URL to parse.
-	 * @param mixed  $language Optional. The desired language to localize to.
+	 * @param string $url            The URL to parse.
+	 * @param mixed  $language       Optional. The desired language to localize to.
+	 * @param bool   $force_localize Optional. Wether or not to ignore skip_default_l10n.
 	 *
 	 * @throws Exception If the language requested does not exist.
 	 *
 	 * @return string The new localized URL.
 	 */
-	public static function localize_url( $url, $language = null ) {
+	public static function localize_url( $url, $language = null, $force_localize = false ) {
 		// If localization is disabled, abort
 		if ( ! self::$do_localization ) {
 			return $url;
@@ -297,7 +299,7 @@ final class Rewriter {
 			// AND skip_defalt_l10n does not apply,
 			// Go ahead and localize the URL
 			if ( ! preg_match( '#^/wp-([\w-]+.php|(admin|content|includes)/)#', $the_url->path )
-			&& ! Registry::does_skip_default_l10n_apply( $language ) ) {
+			&& ( $force_localize || ! Registry::does_skip_default_l10n_apply( $language ) ) ) {
 				switch ( Registry::get( 'url_rewrite_method' ) ) {
 					case 'domain':
 						// Prepend hostname with language slug
