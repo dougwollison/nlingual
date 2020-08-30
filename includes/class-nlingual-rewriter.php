@@ -214,13 +214,14 @@ final class Rewriter {
 	 *
 	 * This will add the language slug subdomain/subdirecty/query var as needed.
 	 *
+	 * @since 2.9.0 Use does_skip_default_l10n_apply() to handle default URL localization logic.
 	 * @since 2.8.9 Fix handling of wordpress internal URLs.
 	 * @since 2.8.4 Dropped $relocalize option, will always relocalize.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::current_language() to get the current Language object if not passed.
 	 * @uses Rewriter::delocalize_url() to clean the URL for relocalizing if desired.
-	 * @uses Rewriter::process_url() to process the URL into it's components.
+	 * @uses Registry::does_skip_default_l10n_apply() to see if the default language URL should be unlocalized.
 	 * @uses Registry::is_language_default() to check if the language provided is the default.
 	 * @uses Registry::get() to get the skip_default_l10n, url_rewrite_method and query_var options.
 	 *

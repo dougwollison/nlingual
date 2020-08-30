@@ -461,12 +461,14 @@ final class System extends Handler {
 	/**
 	 * Detect the language based on the request or browser info.
 	 *
+	 * @since 2.9.0 Add does_skip_default_l10n_apply() to handle default URL localization logic.
 	 * @since 2.7.0 Checked for skip_default_l10n option before getting accepted language.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::languages() to validate and retrieve a detected language.
 	 * @uses Registry::get() to get the query var option.
 	 * @uses Rewriter::process_url() to parse the current page URL.
+	 * @uses Registry::does_skip_default_l10n_apply() to see if the default language URL should be unlocalized.
 	 * @uses Registry::accepted_language() to determine a perferred language.
 	 * @uses Registry::set_language() to tentatively apply the detected language.
 	 */
