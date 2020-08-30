@@ -85,6 +85,12 @@ Improved redirection handling, URL rewriting, and blog switching support. Minor 
 = 2.8.10 =
 Fix issue causing localized sidebars to forget their widgets.
 
+= 2.8.9.3 =
+Admin javascript now transpiled/minified for better browser compatibility.
+
+= 2.8.9.2 =
+Fix return value of nL_get_post_lang back-compat function.
+
 = 2.8.9 =
 Fixed issue with meta values not being localized, and internal WordPress URLs being blindly localized.
 
