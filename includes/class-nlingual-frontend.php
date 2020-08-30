@@ -453,8 +453,8 @@ final class Frontend extends Handler {
 	/**
 	 * Replace a post ID with it's translation for the current language.
 	 *
-	 * @since 2.8.10 Add check to make sure the post's status is usable.
-	 * @since 2.6.0  Add check to make sure post's type is supported.
+	 * @since 2.9.0 Add check to make sure the post's status is usable.
+	 * @since 2.6.0 Add check to make sure post's type is supported.
 	 * @since 2.0.0
 	 *
 	 * @api

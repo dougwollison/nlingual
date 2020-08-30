@@ -986,7 +986,7 @@ final class System extends Handler {
 	 * Filter the query params to add the query_var option as a
 	 * possible parameter for collection requests.
 	 *
-	 * @since 2.8.10 Whitelist all languages if logged in, cast IDs to string.
+	 * @since 2.9.0 Whitelist all languages if logged in, cast IDs to string.
 	 * @since 2.6.0
 	 *
 	 * @param array $query_params The list of params to add to.
