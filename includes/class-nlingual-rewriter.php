@@ -397,8 +397,17 @@ final class Rewriter {
 			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
 		}
 
-		// First, check if it's the queried object is a post
+		// Get the queried object for testing
 		$queried_object = get_queried_object();
+
+		// First, check if we're on the home page, as that's the simplest to handle
+		if ( is_front_page() ) {
+			$url = home_url( '/' );
+
+			// Relocalize the URL
+			$url = self::localize_url( $url, $language );
+		} else
+		// If the queried object is a post, use it's permalink
 		if ( is_a( $queried_object, 'WP_Post' ) ) {
 			// Get the permalink for the translation in the specified language if applicable
 			if ( Registry::is_post_type_supported( $queried_object->post_type ) ) {
@@ -416,12 +425,8 @@ final class Rewriter {
 
 			// Now try various other conditional tags...
 
-			// Front page? just use home_url()
-			if ( is_front_page() ) {
-				$url = home_url( '/' );
-			}
 			// Term page? Get the term link
-			elseif ( is_tax() || is_tag() || is_category() ) {
+			if ( is_tax() || is_tag() || is_category() ) {
 				$url = get_term_link( get_queried_object() );
 			}
 			// Post type archive? Get the link
