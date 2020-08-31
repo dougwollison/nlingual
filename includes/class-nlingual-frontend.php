@@ -466,11 +466,15 @@ final class Frontend extends Handler {
 			$current_language = Registry::current_language();
 
 			$translation_id = Translator::get_post_translation( $post_id, $current_language );
-			$translation_status = get_post_status( $translation_id );
 
-			// If the translation is published, or the same as the original, use it
-			if ( $translation_status == 'publish' || $translation_status == get_post_status( $post_id ) ) {
-				return $translation_id;
+			// If translation is found, check status
+			if ( $translation_id ) {
+				$translation_status = get_post_status( $translation_id );
+
+				// If the translation is published, or the same as the original, use it
+				if ( $translation_status == 'publish' || $translation_status == get_post_status( $post_id ) ) {
+					return $translation_id;
+				}
 			}
 		}
 
