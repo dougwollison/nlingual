@@ -90,6 +90,7 @@ final class Translator {
 	 *
 	 * @internal
 	 *
+	 * @since 2.10.0 Ensure $group_id is an integer.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
@@ -113,6 +114,9 @@ final class Translator {
 		// Attempt to retrieve the group ID for the object if present
 		$group_id = $wpdb->get_var( $wpdb->prepare( "SELECT group_id FROM $wpdb->nl_translations WHERE object_type = %s AND object_id = %d LIMIT 1", $object_type, $object_id ) );
 
+		// Cast to integer
+		$group_id = intval( $group_id );
+
 		// Add it to the cache
 		wp_cache_set( $cache_id, $group_id, 'nlingual:group_id' );
 
@@ -124,6 +128,7 @@ final class Translator {
 	 *
 	 * @internal
 	 *
+	 * @since 2.10.0 Ensure *_id values are integers.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
@@ -166,16 +171,19 @@ final class Translator {
 		$group = false;
 		if ( $result = $wpdb->get_results( $query, ARRAY_A ) ) {
 			// Get the group ID
-			$group_id = $result[0]['group_id'];
+			$group_id = intval( $result[0]['group_id'] );
 
 			// Build the group index
 			$group = array();
 			foreach ( $result as $row ) {
-				$group['language_by_object'][ $row['object_id'] ] = $row['language_id'];
-				$group['object_by_language'][ $row['language_id'] ] = $row['object_id'];
+				$language_id = intval( $row['language_id'] );
+				$object_id = intval( $row['object_id'] );
+
+				$group['language_by_object'][ $object_id ] = $language_id;
+				$group['object_by_language'][ $language_id ] = $object_id;
 
 				// Cache the group ID for each object
-				wp_cache_set( "{$row['object_type']}/{$row['object_id']}", $group_id, 'nlingual:group_id' );
+				wp_cache_set( "{$row['object_type']}/{$object_id}", $group_id, 'nlingual:group_id' );
 			}
 		}
 
