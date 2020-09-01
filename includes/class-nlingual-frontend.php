@@ -221,7 +221,7 @@ final class Frontend extends Handler {
 	 * @param string  $redirect_url  The intended redirect URL.
 	 * @param string  $requested_url The originally requested URL.
 	 *
-	 * @return bool|string False if localized versions of both URLs match,
+	 * @return false|string False if localized versions of both URLs match,
 	 *                     otherwise the intended redirect URL.
 	 */
 	public static function localize_canonical( $redirect_url, $requested_url ) {

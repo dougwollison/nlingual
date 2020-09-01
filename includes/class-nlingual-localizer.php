@@ -152,7 +152,7 @@ final class Localizer extends Handler {
 	 *
 	 * @param string|array $ids The ID (or list of IDs to try) of the field to retrieve.
 	 *
-	 * @return Localizer_Field|bool The retreived field, FALSE on failure.
+	 * @return Localizer_Field|false The retreived field, FALSE on failure.
 	 */
 	public static function get_field( $ids ) {
 		$ids = (array) $ids;
@@ -515,7 +515,7 @@ final class Localizer extends Handler {
 	 * @param string       $fallback    Optional. A fallback to use if the result is empty/null.
 	 * @param bool         $check_reg   Optional. Wether or not to check if the field is regsitered before fetching (default TRUE).
 	 *
-	 * @return field|bool The localized version, false if nothing found.
+	 * @return field|false The localized version, false if nothing found.
 	 */
 	public static function get_field_value( $id, $language_id, $object_id = 0, $fallback = null, $check_reg = true ) {
 		global $wpdb;

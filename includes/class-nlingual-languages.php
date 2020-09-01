@@ -237,7 +237,7 @@ final class Languages implements \Iterator {
 	 * @param int|string $value A value to retrieve the language by.
 	 * @param string     $field Optional. The field to search in (defaults to id or slug).
 	 *
-	 * @return bool|Language The language if found (false if not).
+	 * @return Language|false The language if found (false if not).
 	 */
 	public function get( $value, $field = null ) {
 		// Guess $field based on nature of $language if not provided
@@ -275,7 +275,7 @@ final class Languages implements \Iterator {
 	 *
 	 * @param int $index The index to get the item at.
 	 *
-	 * @return bool|Language The language if found (false if not).
+	 * @return Language|false The result of Languages::get().
 	 */
 	public function nth( $index ) {
 		return $this->get( $index, '@' );
@@ -288,7 +288,7 @@ final class Languages implements \Iterator {
 	 *
 	 * @param mixed $language The language object, ID or slug.
 	 *
-	 * @return int|bool The index if found, false otherwise.
+	 * @return int|false The index if found, false otherwise.
 	 */
 	public function find( $language ) {
 		// Get the language object
@@ -386,7 +386,7 @@ final class Languages implements \Iterator {
 	 *
 	 * @param string $language_tag The language tag to try and find a match for.
 	 *
-	 * @return bool|Language The language object if found, false otherwise.
+	 * @return Language|false The language object if found, false otherwise.
 	 */
 	public function match_tag( $language_tag ) {
 		// Sanitize for looser comparison

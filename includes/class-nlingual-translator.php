@@ -20,14 +20,14 @@ namespace nLingual;
  *
  * @since 2.0.0
  *
- * @method bool|Language get_*_language() get an object's language.
- * @method bool          set_*_language() set an object's language.
- * @method bool          delete_*_language() delete an object's language.
- * @method bool|int      get_*_translation() get an object's translation.
- * @method bool          set_*_translation() set an object's translation.
- * @method bool          delete_*_translation() delete an object's translation.
- * @method bool|array    get_*_translations() get an object's translations.
- * @method bool          set_*_translations() set an object's translations.
+ * @method Language|false get_*_language() get an object's language.
+ * @method bool           set_*_language() set an object's language.
+ * @method bool           delete_*_language() delete an object's language.
+ * @method int|false      get_*_translation() get an object's translation.
+ * @method bool           set_*_translation() set an object's translation.
+ * @method bool           delete_*_translation() delete an object's translation.
+ * @method array          get_*_translations() get an object's translations.
+ * @method bool           set_*_translations() set an object's translations.
  */
 final class Translator {
 	// =========================
@@ -136,7 +136,7 @@ final class Translator {
 	 * @param string $object_type The type of object.
 	 * @param int    $object_id   The ID of the object.
 	 *
-	 * @return bool|array The list of entries in the group, with object_id and language_id indexes (false if not found).
+	 * @return array|false The list of entries in the group, with object_id and language_id indexes (false if not found).
 	 */
 	private static function get_group( $object_type, $object_id ) {
 		global $wpdb;
@@ -211,7 +211,7 @@ final class Translator {
 	 * @param int    $object_id   The ID of the object.
 	 * @param bool   $true_value  Wether or not to bypass language_is_requried fallback.
 	 *
-	 * @return bool|Language The language of the object (false if not found).
+	 * @return Language|false The language of the object (false if not found).
 	 */
 	public static function get_object_language( $object_type, $object_id, $true_value = false ) {
 		// Get the translation group for the object
@@ -381,7 +381,7 @@ final class Translator {
 	 * @param mixed  $language    Optional. The language to retrieve for (defaults to current).
 	 * @param bool   $return_self Optional. Return $object_id if nothing is found (default false).
 	 *
-	 * @return bool|int The id of the translation.
+	 * @return int|false The id of the translation, false if not found or language is invalid (latter will log warning).
 	 */
 	public static function get_object_translation( $object_type, $object_id, $language = null, $return_self = false ) {
 		// Ensure $language is a Language, defaulting to current

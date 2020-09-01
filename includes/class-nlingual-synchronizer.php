@@ -67,7 +67,7 @@ final class Synchronizer {
 	 *
 	 * @since 2.8.6 Fixed post_fields whitelisting.
 	 * @since 2.8.0 Added $context parameter, post_fields expanding/whitelisting.
-	 * @since 2.1.0 Made sure all entries were array|bool, including
+	 * @since 2.1.0 Made sure all entries were array|true, including
 	 *              splitting up post_meta at the line breaks.
 	 * @since 2.0.0
 	 *
@@ -157,8 +157,8 @@ final class Synchronizer {
 	 * @param int|WP_Post $target   The target post ID/object.
 	 * @param array       $rules    Optional. The rules to use for syncing.
 	 *		@option array      "post_fields" A whitelist of fields to copy over.
-	 *		@option bool|array "post_meta"   A whitelist of meta fields (TRUE for all).
-	 *		@option bool|array "post_terms"  A whitelist of taxonomies (TRUE for all).
+	 *		@option array|true "post_meta"   A whitelist of meta fields (TRUE for all).
+	 *		@option array|true "post_terms"  A whitelist of taxonomies (TRUE for all).
 	 * @param string      $context  Optional. The context for preparing the rules ("sync" or "clone"),
 	 *                              also dictates what rules are fetched if they aren't provided.
 	 *
@@ -326,8 +326,8 @@ final class Synchronizer {
 		 * @param WP_Post  $target   The post being synced to.
 		 * @param array    $rules    The rules to use for syncing.
 		 *		@option array      "post_fields" A whitelist of fields to copy over.
-		 *		@option bool|array "post_meta"   A whitelist of meta fields (TRUE for all).
-		 *		@option bool|array "post_terms"  A whitelist of taxonomies (TRUE for all).
+		 *		@option array|true "post_meta"   A whitelist of meta fields (TRUE for all).
+		 *		@option array|true "post_terms"  A whitelist of taxonomies (TRUE for all).
 		 * @param Language $language The language of the target.
 		 */
 		do_action( "nlingual_{$context}_posts", $original, $target, $rules, $language );

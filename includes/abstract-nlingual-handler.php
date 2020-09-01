@@ -176,7 +176,7 @@ abstract class Handler {
 	 * @param string $method       The name of the called class' method to remove.
 	 * @param bool   $dont_disable Wether or not to skip flagging it at disabled.
 	 *
-	 * @return bool|int The priority it originally had (false if wasn't added).
+	 * @return int|false The priority it originally had (false if wasn't added).
 	 */
 	final public static function remove_hook( $tag, $method, $dont_disable = false ) {
 		$class = get_called_class();

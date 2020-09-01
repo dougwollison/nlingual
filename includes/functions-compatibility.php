@@ -124,7 +124,7 @@ function nL_associated_posts( $id, $include_self = false ) {
  * @uses Languages->get() to get the language specified.
  * @uses Language->dump() to get the language in array form.
  *
- * @param bool|mixed $field    The name of the field, TRUE to get the whole language as an array.
+ * @param mixed|true $field    The name of the field, TRUE to get the whole language as an array.
  * @param int|string $language The id or slug of the language to retrieve. NULL for current.
  *
  * @return mixed The desired language array or field.

@@ -525,7 +525,7 @@ final class Registry {
 	 * @since 2.9.0 Renamed and moved to Registry for global use.
 	 * @since 2.0.0
 	 *
-	 * @return Language|bool The accepted language, false if no match.
+	 * @return Language|false The accepted language, false if no match.
 	 */
 	public static function accepted_language() {
 		// Abort if no accept-language entry is present
