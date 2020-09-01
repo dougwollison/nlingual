@@ -92,11 +92,11 @@ final class Registry {
 		/* General Options */
 
 		// - The default language id
-		'default_language' => 0,
+		'default_language' => 1,
 		// - The localize date format string option
 		'localize_date' => false,
 		// - The patch WP_Locale option
-		'patch_wp_locale' => true,
+		'patch_wp_locale' => false,
 		// - The backwards compatibility option
 		'backwards_compatible' => false,
 
@@ -122,9 +122,9 @@ final class Registry {
 		// - The URL redirection method
 		'url_rewrite_method' => 'get',
 		// - The skip default language localizing option
-		'skip_default_l10n' => false,
+		'skip_default_l10n' => true,
 		// - The post language override option
-		'post_language_override' => true,
+		'post_language_override' => false,
 		// - The must_have_language option
 		'language_is_required' => false,
 		// - The permanent redirection option
