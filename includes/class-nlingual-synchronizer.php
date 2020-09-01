@@ -252,8 +252,13 @@ final class Synchronizer {
 				$rules['post_terms'] = get_object_taxonomies( $original, 'names' );
 			}
 
-			// Assign all the same meta values
+			// Assign all the same terms
 			foreach ( $rules['post_terms'] as $taxonomy ) {
+				// If taxonomy is not currently registered, skip
+				if ( ! taxonomy_exists( $taxonomy ) ) {
+					continue;
+				}
+
 				// Get the terms of the original
 				$term_ids = wp_get_object_terms( $original->ID, $taxonomy, array( 'fields' => 'ids' ) );
 
