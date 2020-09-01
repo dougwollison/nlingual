@@ -33,11 +33,11 @@ final class Settings {
 	 *
 	 * @param string $field   The name of the field.
 	 * @param array  $options The options for the field.
-	 * 		@option string "title" The title of the field.
-	 * 		@option string "label" Additional label for the input.
-	 *		@option string "help"  The help text for the field.
-	 *		@option string "type"  The type of field to print out.
-	 *		@option string "args"  Special arguments for the field callback.
+	 *     @option string "title" The title of the field.
+	 *     @option string "label" Additional label for the input.
+	 *     @option string "help"  The help text for the field.
+	 *     @option string "type"  The type of field to print out.
+	 *     @option string "args"  Special arguments for the field callback.
 	 * @param string $page    The name of the page to display on.
 	 * @param string $section Optional. The name of the section to display in.
 	 */
@@ -186,10 +186,10 @@ final class Settings {
 	 * @uses Settings::get_value() to retrieve a value for the field.
 	 *
 	 * @param array $args The arguments for the field.
-	 *		@option string "name" The field name/ID.
-	 *		@option string "type" The field type.
-	 *		@option mixed  "data" Optional. data for the field.
-	 * 		@option string "help" Optional. Help text.
+	 *     @option string "name" The field name/ID.
+	 *     @option string "type" The field type.
+	 *     @option mixed  "data" Optional. data for the field.
+	 *     @option string "help" Optional. Help text.
 	 * @param mixed $value Optional. A specifi value to use
 	 *                     instead of dynamically retrieving it.
 	 */
@@ -385,8 +385,8 @@ final class Settings {
 	 * @param string $name    The name of the field.
 	 * @param mixed  $value   The value of the field.
 	 * @param string $options The field options.
-	 *		@option string "post_type" The post type this is for.
-	 *		@option array  "allowed_fields" The allowed fields list to offer.
+	 *     @option string "post_type" The post type this is for.
+	 *     @option array  "allowed_fields" The allowed fields list to offer.
 	 */
 	private static function build_sync_settings_field( $name, $value, $options ) {
 		$value = wp_parse_args( $value, array(

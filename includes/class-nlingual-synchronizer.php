@@ -156,9 +156,9 @@ final class Synchronizer {
 	 * @param int|WP_Post $original The original post ID/object.
 	 * @param int|WP_Post $target   The target post ID/object.
 	 * @param array       $rules    Optional. The rules to use for syncing.
-	 *		@option array      "post_fields" A whitelist of fields to copy over.
-	 *		@option bool|array "post_meta"   A whitelist of meta fields (TRUE for all).
-	 *		@option bool|array "post_terms"  A whitelist of taxonomies (TRUE for all).
+	 *     @option array      "post_fields" A whitelist of fields to copy over.
+	 *     @option bool|array "post_meta"   A whitelist of meta fields (TRUE for all).
+	 *     @option bool|array "post_terms"  A whitelist of taxonomies (TRUE for all).
 	 * @param string      $context  Optional. The context for preparing the rules ("sync" or "clone"),
 	 *                              also dictates what rules are fetched if they aren't provided.
 	 *

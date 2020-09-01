@@ -118,12 +118,12 @@ final class Localizer_Field extends Model {
 	 *
 	 * @param int   $id     The ID of the field.
 	 * @param array $values The property values.
-	 *		@option string "key"         The database key to store the field under.
-	 *		@option string "type"        The type of field.
-	 *		@option array  "screen"      The screen id or property/value pair.
-	 *		@option string "field"       The name of the field the field is tied to.
-	 *		@option string "field_id"    The ID of the field the field is tied to.
-	 *		@option string "allow_empty" Don't use the fallback value if empty/null.
+	 *     @option string "key"         The database key to store the field under.
+	 *     @option string "type"        The type of field.
+	 *     @option array  "screen"      The screen id or property/value pair.
+	 *     @option string "field"       The name of the field the field is tied to.
+	 *     @option string "field_id"    The ID of the field the field is tied to.
+	 *     @option string "allow_empty" Don't use the fallback value if empty/null.
 	 */
 	public function __construct( $id, array $values ) {
 		$values = wp_parse_args( $values, array(
