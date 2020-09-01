@@ -385,7 +385,7 @@ final class Synchronizer {
 	 * @throws Exception If the post specified does not exist.
 	 * @throws Exception If the language specified does not exist.
 	 *
-	 * @return WP_Post|false The cloned post or false on failure.
+	 * @return WP_Post|WP_Error The cloned post or WP_Error on failure.
 	 */
 	public static function clone_post( $post, $language ) {
 		// Validate $post if an ID
@@ -427,10 +427,9 @@ final class Synchronizer {
 		// Insert and get the ID
 		$translation = wp_insert_post( $post_data, 'wp_error' );
 
-		// Check if it worked
+		// Check if it worked, return error if not
 		if ( is_wp_error( $translation ) ) {
-			wp_die( implode( '<br /> ', $translation->get_error_messages() ) );
-			return false;
+			return $translation;
 		}
 
 		// Get the post object

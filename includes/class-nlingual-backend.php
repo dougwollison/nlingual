@@ -1607,9 +1607,15 @@ final class Backend extends Handler {
 		// Create the translated clone
 		$translation = Synchronizer::clone_post( $post, $translation_language );
 
-		// Fail if error creating translation
-		if ( ! $translation ) {
-			wp_die( __( 'Error creating translation: unable to create clone.', 'nlingual' ) );
+		// Display error(s) if creation of clone failed
+		if ( is_wp_error( $translation ) ) {
+			$errors = $translation->get_error_message();
+
+			wp_die(
+				__( 'Error creating translation:', 'nlingual' )
+				. '<br />'
+				. implode( '<br />', $errors )
+			);
 		}
 
 		/**
