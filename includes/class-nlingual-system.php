@@ -1539,7 +1539,8 @@ final class System extends Handler {
 	 */
 	public static function find_appropriate_post_translation( $posts, $query ) {
 		// If not mulitple posts, or not a singular query, or the post type isn't supported, abort
-		if ( count( $posts ) <= 1 || ! $query->is_singular() || ! Registry::is_post_type_supported( $query->get( 'post_type' ) ) ) {
+		$post_type = $query->get( 'post_type' ) ?: 'post';
+		if ( count( $posts ) <= 1 || ! $query->is_singular() || ! Registry::is_post_type_supported( $post_type ) ) {
 			return $posts;
 		}
 
