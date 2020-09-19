@@ -23,6 +23,8 @@ namespace nLingual;
  *
  * @since 2.6.0 Added consideration of WP_INSTALLING.
  * @since 2.0.0
+ *
+ * @return bool Wether or not this should be considered a "backend" request.
  */
 function is_backend() {
 	if ( defined( 'WP_INSTALLING' ) && WP_INSTALLING ) {
@@ -45,6 +47,8 @@ function is_backend() {
  * @internal
  *
  * @since 2.4.0
+ *
+ * @return bool Wether or not we're running on 4.6 or earlier.
  */
 function is_patch_font_stack_needed() {
 	// Only needed prior to 4.6
