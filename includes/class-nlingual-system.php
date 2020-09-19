@@ -1024,6 +1024,7 @@ final class System extends Handler {
 	/**
 	 * Set the queried language to the current one if applicable
 	 *
+	 * @since 2.9.1 Add check for sitemap requests.
 	 * @since 2.8.0 Added check for parent's post type being supported.
 	 * @since 2.7.0 Revised support checks for post type archives.
 	 * @since 2.6.0 Perform tax query handling first, then post type archive.
@@ -1063,6 +1064,11 @@ final class System extends Handler {
 
 		// If not the admin or some kind of posts/comments feed, abort
 		if ( ! ( is_admin() || $query->is_home() || $query->is_archive() || $query->is_search() || is_a( $query, 'WP_Comment_Query' ) ) ) {
+			return;
+		}
+
+		// If a sitemap request, don't set the language
+		if ( $query->get( 'sitemap' ) || $query->get( 'sitemap-stylesheet' ) ) {
 			return;
 		}
 
