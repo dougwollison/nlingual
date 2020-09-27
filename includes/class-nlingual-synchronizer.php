@@ -156,9 +156,9 @@ final class Synchronizer {
 	 * @param int|WP_Post $original The original post ID/object.
 	 * @param int|WP_Post $target   The target post ID/object.
 	 * @param array       $rules    Optional. The rules to use for syncing.
-	 *		@option array      "post_fields" A whitelist of fields to copy over.
-	 *		@option array|true "post_meta"   A whitelist of meta fields (TRUE for all).
-	 *		@option array|true "post_terms"  A whitelist of taxonomies (TRUE for all).
+	 *     @option array      "post_fields" A whitelist of fields to copy over.
+	 *     @option bool|array "post_meta"   A whitelist of meta fields (TRUE for all).
+	 *     @option bool|array "post_terms"  A whitelist of taxonomies (TRUE for all).
 	 * @param string      $context  Optional. The context for preparing the rules ("sync" or "clone"),
 	 *                              also dictates what rules are fetched if they aren't provided.
 	 *
@@ -252,8 +252,13 @@ final class Synchronizer {
 				$rules['post_terms'] = get_object_taxonomies( $original, 'names' );
 			}
 
-			// Assign all the same meta values
+			// Assign all the same terms
 			foreach ( $rules['post_terms'] as $taxonomy ) {
+				// If taxonomy is not currently registered, skip
+				if ( ! taxonomy_exists( $taxonomy ) ) {
+					continue;
+				}
+
 				// Get the terms of the original
 				$term_ids = wp_get_object_terms( $original->ID, $taxonomy, array( 'fields' => 'ids' ) );
 

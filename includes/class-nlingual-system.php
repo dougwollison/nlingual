@@ -1121,6 +1121,7 @@ final class System extends Handler {
 	/**
 	 * Set the queried language to the current one if applicable
 	 *
+	 * @since 2.9.1 Add check for sitemap requests.
 	 * @since 2.9.0 Don't blindly set when in the admin,
 	 *              Check for both default and custom query_var,
 	 *              Skip when viewing trash, rewrite post type checking
@@ -1182,6 +1183,11 @@ final class System extends Handler {
 
 		// If it's the home feed, check if posts are supported
 		if ( $query->is_home() && ! Registry::is_post_type_supported( 'post' ) ) {
+			return;
+		}
+
+		// If a sitemap request, don't set the language
+		if ( get_query_var( 'sitemap' ) || get_query_var( 'sitemap-stylesheet' ) ) {
 			return;
 		}
 

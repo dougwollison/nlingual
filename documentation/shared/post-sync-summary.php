@@ -18,7 +18,7 @@
 		?></li>
 		<?php endif; ?>
 
-		<?php if ( isset( $rules['post_terms'] ) && $rules['post_terms'] ) : ?>
+		<?php if ( isset( $rules['post_terms'] ) && $rules['post_terms'] && array_filter( $rules['post_terms'], 'taxonomy_exists' ) ) : ?>
 		<li><strong><?php _e( 'Taxonomies', 'nlingual' ); ?></strong>: <?php
 			$taxonomies = array();
 			// Get the names of each field

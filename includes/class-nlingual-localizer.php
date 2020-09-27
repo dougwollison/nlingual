@@ -310,9 +310,9 @@ final class Localizer extends Handler {
 	 * @param string $option The name of the option (as identified by get_option()).
 	 * @param string $page   The id or base of the screen the field should be found on.
 	 * @param array  $args   The custom arguments for the field.
-	 *		@option string|array "screen"      A screen ID or property/value pair to match.
-	 * 		@option string       "field"       The name of the input that handles this field.
-	 * 		@option string       "field_id"    The id of the HTML input to target. (Defaults to input name)
+	 *     @option string|array "screen"   A screen ID or property/value pair to match.
+	 *     @option string       "field"    The name of the input that handles this field.
+	 *     @option string       "field_id" The id of the HTML input to target. (Defaults to input name)
 	 */
 	public static function register_option_field( $option, $page, $args = array() ) {
 		// Build the args for the field and register it
@@ -346,8 +346,8 @@ final class Localizer extends Handler {
 	 * @param string $post_type  The post type this applies to.
 	 * @param string $field_name The post_field name (and the field name/ID).
 	 * @param array  $args       The custom arguments for the field.
-	 * 		@option string "field"       The name of the input that handles this field.
-	 * 		@option string "field_id"    The id of the HTML input to target (Defaults to input name).
+	 *     @option string "field"    The name of the input that handles this field.
+	 *     @option string "field_id" The id of the HTML input to target (Defaults to input name).
 	 */
 	public static function register_post_field( $post_type, $field_name, $args = array() ) {
 		// Abort if the field name isn't allowed
@@ -391,9 +391,9 @@ final class Localizer extends Handler {
 	 * @param string $meta_type The type of object the meta data is for.
 	 * @param string $meta_key  The metadata key (and the field name/ID).
 	 * @param array  $args      The custom arguments for the field.
-	 *		@option string|array "screen"      A screen ID or property/value pair to match.
-	 * 		@option string       "field"       The name of the input that handles this field.
-	 * 		@option string       "field_id"    The id of the HTML input to target (Defaults to input name).
+	 *     @option string|array "screen"   A screen ID or property/value pair to match.
+	 *     @option string       "field"    The name of the input that handles this field.
+	 *     @option string       "field_id" The id of the HTML input to target (Defaults to input name).
 	 */
 	public static function register_metadata_field( $meta_type, $meta_key, $args = array() ) {
 		$subtype = null;
