@@ -1,6 +1,9 @@
 <?php
 // Get the current post type and singular/plural labels
 $post_type = get_current_screen()->post_type;
+if ( ! $post_type ) {
+	return;
+}
 $singular = strtolower( get_post_type_object( $post_type )->labels->singular_name );
 $plural = strtolower( get_post_type_object( $post_type )->labels->name );
 ?>
