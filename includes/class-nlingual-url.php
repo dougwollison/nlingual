@@ -176,11 +176,6 @@ final class URL extends Model {
 	public function build() {
 		$url = '';
 
-		// Build the query string if args are present
-		if ( is_array( $this->args ) ) {
-			$this->query = http_build_query( $this->args );
-		}
-
 		// Start with the scheme
 		if ( $this->scheme ) {
 			$url .= $this->scheme . '://';
@@ -225,9 +220,9 @@ final class URL extends Model {
 			$url .= ltrim( $path, '/' );
 		}
 
-		// Add the query string
-		if ( $this->query ) {
-			$url .= '?' . $this->query;
+		// Add the query args
+		if ( $this->args ) {
+			$url = add_query_arg( $this->args, $url );
 		}
 
 		// Finishe with the fragment
