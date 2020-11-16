@@ -222,7 +222,12 @@ final class URL extends Model {
 
 		// Add the query args
 		if ( $this->args ) {
-			$url = add_query_arg( $this->args, $url );
+			$args = array_combine(
+				rawurlencode_deep( array_keys( $this->args ) ),
+				rawurlencode_deep( array_values( $this->args ) ),
+			);
+
+			$url = add_query_arg( $args, $url );
 		}
 
 		// Finishe with the fragment
