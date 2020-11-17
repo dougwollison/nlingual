@@ -449,7 +449,7 @@ final class Rewriter {
 			}
 			// Author archive? Get the link
 			elseif ( is_author() ) {
-				$url = get_author_posts_link( get_queried_object_id() );
+				$url = get_the_author_posts_link( get_queried_object_id() );
 			}
 			// Date archive? Get link
 			elseif ( is_day() ) {
