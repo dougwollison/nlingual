@@ -211,6 +211,11 @@ final class Documenter extends Handler {
 		include $path;
 		$html = ob_get_clean();
 
+		// If no content, skip
+		if ( ! $html ) {
+			return false;
+		}
+
 		// Parse the HTML to get the title and content
 		preg_match( '#^(?:<title>(.+?)</title>)?\s*([\s\S]+)$#', $html, $matches );
 
