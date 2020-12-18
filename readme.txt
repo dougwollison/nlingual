@@ -82,6 +82,9 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 = 2.9.1 =
 Fixed issue causing wp-sitemap requests to redirect to posts page.
 
+= 2.9.0.1 =
+Hotfix: long-overlooked typo localizing author posts pages.
+
 = 2.9.0 =
 Improved redirection handling, URL rewriting, and blog switching support. Minor synchronizer fixes.
 
