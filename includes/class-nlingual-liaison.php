@@ -59,6 +59,9 @@ final class Liaison extends Handler {
 
 		// WooCommerce compatibility
 		self::add_hook( 'plugins_loaded', 'add_woocommerce_helpers', 10, 0 );
+
+		// SEO Plugins compatibility
+		self::add_hook( 'plugins_loaded', 'add_seo_helpers', 10, 0 );
 	}
 
 	// =========================
@@ -659,5 +662,38 @@ final class Liaison extends Handler {
 		}
 
 		return $url;
+	}
+
+	// =========================
+	// ! SEO Plugin Helpers
+	// =========================
+
+	/**
+	 * Check if certian SEO plugins are active, setup necessary helpers.
+	 *
+	 * @since 2.9.1
+	 */
+	public static function add_seo_helpers() {
+		// All-in-one SEO, disable language redirect for sitemaps
+		if ( function_exists( 'aioseo' ) ) {
+			self::add_hook( 'nlingual_maybe_redirect_language', 'aioseo_skip_redirect_for_sitemap', 10, 1 );
+		}
+	}
+
+	/**
+	 * Filter the language redirect URL, disable if a sitemap request.
+	 *
+	 * @since 2.9.1
+	 *
+	 * @param bool $redirect_url The URL to redirect to.
+	 *
+	 * @return string|bool False if a sitemap request, the original URL otherwise.
+	 */
+	public static function aioseo_skip_redirect_for_sitemap( $redirect_url ) {
+		if ( get_query_var( 'aiosp_sitemap_path' ) ) {
+			return false;
+		}
+
+		return $redirect_url;
 	}
 }
