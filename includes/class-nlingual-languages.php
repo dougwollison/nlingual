@@ -381,7 +381,7 @@ final class Languages implements \Iterator {
 	/**
 	 * Try to find a language whose accept_code matches the language tag specified.
 	 *
-	 * @since 2.X.X Drop checking of locale/ISO for match.
+	 * @since 2.9.1 Drop checking of locale/ISO for match.
 	 * @sicne 2.2.0 Changed to check all locales before checking ISO codes.
 	 * @since 2.0.0
 	 *
