@@ -379,8 +379,9 @@ final class Languages implements \Iterator {
 	}
 
 	/**
-	 * Try to find a language whose locale_name/iso_code matches the language tag specified.
+	 * Try to find a language whose accept_code matches the language tag specified.
 	 *
+	 * @since 2.X.X Drop checking of locale/ISO for match.
 	 * @sicne 2.2.0 Changed to check all locales before checking ISO codes.
 	 * @since 2.0.0
 	 *
@@ -397,20 +398,6 @@ final class Languages implements \Iterator {
 			$codes = strtolower( $language->accept_code );
 			$codes = preg_split( '/[\s,]+/', $codes, 0, PREG_SPLIT_NO_EMPTY );
 			if ( in_array( $language_tag, $codes ) ) {
-				return $language;
-			}
-		}
-
-		// Loop through all languages, try matching locale
-		foreach ( $this->items as $language ) {
-			if ( sanitize_tag( $language->locale_name, '_' ) == $language_tag ) {
-				return $language;
-			}
-		}
-
-		// Loop through all languages, try matching just ISO code
-		foreach ( $this->items as $language ) {
-			if ( strtolower( $language->iso_code ) == substr( $language_tag, 0, 2 ) ) {
 				return $language;
 			}
 		}
