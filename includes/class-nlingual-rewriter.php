@@ -214,6 +214,7 @@ final class Rewriter {
 	 *
 	 * This will add the language slug subdomain/subdirecty/query var as needed.
 	 *
+	 * @since 2.9.1 Adjust URL building and trainling slash handling.
 	 * @since 2.9.0 Use does_skip_default_l10n_apply() to handle default URL localization logic,
 	 *              Added $force_localize to allow overriding skip_default_l10n even if it applies.
 	 * @since 2.8.9 Fix handling of wordpress internal URLs.
@@ -311,11 +312,11 @@ final class Rewriter {
 						$request_path = substr( $the_url->path, strlen( $home_path ) );
 
 						// Trim excess slashes
-						$home_path = trim( $home_path, '/' );
-						$request_path = trim( $request_path, '/' );
+						$home_path = rtrim( $home_path, '/' );
+						$request_path = ltrim( $request_path, '/' );
 
 						// Build the new path
-						$the_url->path = trailingslashit( $home_path . "/{$language->slug}/" . $request_path );
+						$the_url->path = $home_path . "/{$language->slug}/" . $request_path;
 						break;
 					default:
 						// Add the query argument

@@ -2,7 +2,7 @@
 Contributors: dougwollison
 Tags: multilingual, language, bilingual, translation
 Requires at least: 4.9
-Tested up to: 5.5.1
+Tested up to: 5.6.0
 Requires PHP: 5.6.20
 Stable tag: 2.9.1
 License: GPLv2 or later
@@ -80,7 +80,7 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
 
 = 2.9.1 =
-Fixed issue causing wp-sitemap requests to redirect to posts page.
+Fixed issue causing sitemap requests to redirect to posts page. Simplified accept-language handling.
 
 = 2.9.0.1 =
 Hotfix: long-overlooked typo localizing author posts pages.
