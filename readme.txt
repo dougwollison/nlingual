@@ -4,7 +4,7 @@ Tags: multilingual, language, bilingual, translation
 Requires at least: 4.9
 Tested up to: 5.6.0
 Requires PHP: 5.6.20
-Stable tag: 2.9.1
+Stable tag: 2.9.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,6 +78,9 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 == Changelog ==
 
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
+
+= 2.9.1.1 =
+Hotfix: cleanup of language saving, allow specifying no accept codes for a language.
 
 = 2.9.1 =
 Fixed issue causing sitemap requests to redirect to posts page. Simplified accept-language handling.
