@@ -50,7 +50,7 @@ define( 'NL_PLUGIN_SLUG', basename( NL_PLUGIN_DIR ) . '/' . basename( NL_PLUGIN_
  *
  * @var string
  */
-define( 'NL_PLUGIN_VERSION', '2.9.0.1' );
+define( 'NL_PLUGIN_VERSION', '2.9.1' );
 
 /**
  * Identifies the current database version.
