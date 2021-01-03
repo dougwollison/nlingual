@@ -189,17 +189,16 @@ final class Manager extends Handler {
 		// Get the languages
 		$languages = $_POST['nlingual_languages'];
 
-		// The fields to check
+		// The fields whitelist + required status
 		$fields = array(
-			'system_name' => '%s',
-			'native_name' => '%s',
-			'short_name'  => '%s',
-			'locale_name' => '%s',
-			'accept_code' => '%s',
-			'iso_code'    => '%s',
-			'slug'        => '%s',
+			'system_name' => true,
+			'native_name' => true,
+			'short_name'  => true,
+			'locale_name' => true,
+			'accept_code' => false,
+			'iso_code'    => true,
+			'slug'        => true,
 		);
-		$formats = array_values( $fields );
 
 		// Loop through languages and update/insert
 		$i = 0;
@@ -211,40 +210,42 @@ final class Manager extends Handler {
 				continue;
 			}
 
-			// Ensure all fields are set
-			foreach ( $fields as $field => $format ) {
-				if ( ! isset( $language[ $field ] ) || empty( $language[ $field ] ) ) {
+			$entry = array();
+
+			// Populate entry
+			foreach ( $fields as $field => $required ) {
+				// Abort if a required field missing
+				if ( $required && empty( $language[ $field ] ) ) {
 					add_settings_error(
 						'nlingual-languages',
 						'nl_language',
 						__( 'One or more languages were incomplete and were not saved.', 'nlingual' ),
 						'error'
 					);
-					break;
+					break 2;
 				}
 
-				$entry[ $field ] = $language[ $field ];
+				if ( isset( $language[ $field ] ) ) {
+					$entry[ $field ] = $language[ $field ];
+				}
 			}
 
 			// Sanitize the slug
 			$language['slug'] = sanitize_title( $language['slug'] );
 
 			// Default active to 0
-			$formats[] = '%d';
 			$entry['active'] = 0;
 			if ( isset( $language['active'] ) ) {
 				$entry['active'] = $language['active'];
 			}
 
-			// Default text direction to ltr if not set or otherwise not ltr
-			$formats[] = '%s';
+			// Default text direction to ltr if not set, rtl if not explictly ltr
 			$entry['direction'] = 'ltr';
 			if ( isset( $language['direction'] ) && $language['direction'] != 'ltr' ) {
 				$entry['direction'] = 'rtl';
 			}
 
 			// Add list_order
-			$formats[] = '%d';
 			$entry['list_order'] = $i;
 			$i++;
 
