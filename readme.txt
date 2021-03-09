@@ -4,7 +4,7 @@ Tags: multilingual, language, bilingual, translation
 Requires at least: 4.9
 Tested up to: 5.6.0
 Requires PHP: 5.6.20
-Stable tag: 2.9.1
+Stable tag: 2.10.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
