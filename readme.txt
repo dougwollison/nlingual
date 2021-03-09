@@ -79,6 +79,12 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
 
+= 2.9.1.2 =
+Hotfix: remove syntax error on php < 7.3
+
+= 2.9.1.1 =
+Hotfix: cleanup of language saving, allow specifying no accept codes for a language.
+
 = 2.9.1 =
 Fixed issue causing sitemap requests to redirect to posts page. Simplified accept-language handling.
 

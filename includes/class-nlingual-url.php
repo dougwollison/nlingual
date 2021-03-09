@@ -225,7 +225,7 @@ final class URL extends Model {
 		if ( $this->args ) {
 			$args = array_combine(
 				rawurlencode_deep( array_keys( $this->args ) ),
-				rawurlencode_deep( array_values( $this->args ) ),
+				rawurlencode_deep( array_values( $this->args ) )
 			);
 
 			$url = add_query_arg( $args, $url );
