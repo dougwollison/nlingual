@@ -325,7 +325,7 @@ final class Synchronizer {
 		 * The dynamic portion of the hook name, `$context`, refers to
 		 * wether the action was a sync or a clone.
 		 *
-		 * @since 2.9.0
+		 * @since 2.10.0
 		 *
 		 * @param WP_Post. $original The post being synced from.
 		 * @param WP_Post  $target   The post being synced to.

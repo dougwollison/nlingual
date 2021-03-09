@@ -55,7 +55,7 @@ final class Liaison extends Handler {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 2.9.0 Added Relevanssi & bbPress compatibility.
+	 * @since 2.10.0 Added Relevanssi & bbPress compatibility.
 	 * @since 2.5.0 Added WooCommerce compatibility.
 	 * @since 2.0.0
 	 */
@@ -689,7 +689,7 @@ final class Liaison extends Handler {
 	/**
 	 * Check if Relevanssi is active, setup necessary filters.
 	 *
-	 * @since 2.9.0
+	 * @since 2.10.0
 	 */
 	public static function add_relevanssi_helpers() {
 		// Abort if Relevanssi isn't present
@@ -710,7 +710,7 @@ final class Liaison extends Handler {
 	 *
 	 * Since Relevanssi doesn't provide query for context, this hack is needed.
 	 *
-	 * @since 2.9.0
+	 * @since 2.10.0
 	 *
 	 * @param WP_Query $query The WP_Query instance Relevanssi is using.
 	 *
@@ -725,7 +725,7 @@ final class Liaison extends Handler {
 	/**
 	 * Add the translations JOIN clause if applicable.
 	 *
-	 * @since 2.9.0
+	 * @since 2.10.0
 	 *
 	 * @param string $clause The JOIN clause for Relevanssi.
 	 *
@@ -766,7 +766,7 @@ final class Liaison extends Handler {
 	/**
 	 * Add the language WHERE clause if applicable.
 	 *
-	 * @since 2.9.0
+	 * @since 2.10.0
 	 *
 	 * @param string $query_restrictions The WHERE clause for Relevanssi.
 	 *
@@ -838,7 +838,7 @@ final class Liaison extends Handler {
 	/**
 	 * Check if bbPress is active, setup necessary filters.
 	 *
-	 * @since 2.9.0
+	 * @since 2.10.0
 	 */
 	public static function add_bbpress_helpers() {
 		// Abort if Relevanssi isn't present
@@ -852,6 +852,8 @@ final class Liaison extends Handler {
 
 	/**
 	 * Append /edit/ to the path if in edit mode.
+	 *
+	 * @since 2.10.0
 	 *
 	 * @param string   $url      The new URL.
 	 * @param URL      $the_url  The parsed URL object.

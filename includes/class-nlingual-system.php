@@ -823,7 +823,7 @@ final class System extends Handler {
 	/**
 	 * Filter the slug to use the original if unique for that language.
 	 *
-	 * @since 2.9.0
+	 * @since 2.10.0
 	 *
 	 * @uses Registry::is_post_type_supported() To check if the post uses translations.
 	 * @uses Translator::get_post_language() To get the language of a post.
@@ -979,7 +979,7 @@ final class System extends Handler {
 	/**
 	 * Unlocalize the URL before resolving.
 	 *
-	 * @since 2.9.0
+	 * @since 2.10.0
 	 *
 	 * @param string $url The URL being resolved.
 	 *
@@ -1121,15 +1121,15 @@ final class System extends Handler {
 	/**
 	 * Set the queried language to the current one if applicable
 	 *
-	 * @since 2.9.1 Add check for sitemap requests.
-	 * @since 2.9.0 Don't blindly set when in the admin,
-	 *              Check for both default and custom query_var,
-	 *              Skip when viewing trash, rewrite post type checking
-	 *              to handle search and mixed types.
-	 * @since 2.8.0 Added check for parent's post type being supported.
-	 * @since 2.7.0 Revised support checks for post type archives.
-	 * @since 2.6.0 Perform tax query handling first, then post type archive.
-	 * @since 2.1.1 Fixed post type and taxonomy checks to be more less picky.
+	 * @since 2.10.0 Don't blindly set when in the admin,
+	 *               Check for both default and custom query_var,
+	 *               Skip when viewing trash, rewrite post type checking
+	 *               to handle search and mixed types.
+	 * @since 2.9.1  Add check for sitemap requests.
+	 * @since 2.8.0  Added check for parent's post type being supported.
+	 * @since 2.7.0  Revised support checks for post type archives.
+	 * @since 2.6.0  Perform tax query handling first, then post type archive.
+	 * @since 2.1.1  Fixed post type and taxonomy checks to be more less picky.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to get the query_var, show_all_languages options.
@@ -1239,8 +1239,8 @@ final class System extends Handler {
 	/**
 	 * Translated the post__not_in IDs to those for the queried language(s) if needed.
 	 *
-	 * @since 2.8.8 Use WP_Query::get() and set(), check for default query var.
-	 * @since 2.6.0 Added check to see if current query is for an unsupported post type.
+	 * @since 2.10.0 Use WP_Query::get() and set(), check for default query var.
+	 * @since 2.6.0  Added check to see if current query is for an unsupported post type.
 	 * @since 2.0.0
 	 *
 	 * @param object $query The query object.
@@ -1294,8 +1294,8 @@ final class System extends Handler {
 	/**
 	 * Add the translations join clause and language where clause for a query.
 	 *
-	 * @since 2.8.8 Use WP_Query::get(), accept default query var.
-	 * @since 2.6.0 Fixed handling of 0 value for filtering by no language.
+	 * @since 2.10.0 Use WP_Query::get(), accept default query var.
+	 * @since 2.6.0  Fixed handling of 0 value for filtering by no language.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
@@ -1373,7 +1373,7 @@ final class System extends Handler {
 	 * Will join the translations table twice to look for posts that have
 	 * belong to groups of more than 1 or only 1 depending on value.
 	 *
-	 * @since 2.9.0
+	 * @since 2.10.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
@@ -1480,7 +1480,7 @@ final class System extends Handler {
 	 * In cases where a page's translation for the current language
 	 * has the same slug, replace the queried object with the translation.
 	 *
-	 * @since 2.9.0
+	 * @since 2.10.0
 	 *
 	 * @uses Registry::is_post_type_supported() to check for support of the requested post type.
 	 * @uses Registry::current_language() as the language to filter by.
@@ -1532,7 +1532,7 @@ final class System extends Handler {
 	 * In cases where multiple posts are matched for a slug,
 	 * find the one for the current language.
 	 *
-	 * @since 2.9.0
+	 * @since 2.10.0
 	 *
 	 * @uses Registry::is_post_type_supported() to check for support of the requested post type.
 	 * @uses Registry::current_language() as the language to filter by.
@@ -1602,6 +1602,7 @@ final class System extends Handler {
 	/**
 	 * Enqueue necessary styles and scripts.
 	 *
+	 * @since 2.10.0 Moved from Frontend to System.
 	 * @since 2.6.0
 	 */
 	public static function enqueue_assets() {

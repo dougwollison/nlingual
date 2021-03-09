@@ -299,7 +299,7 @@ final class Backend extends Handler {
 	/**
 	 * Filter the locale, replacing it with the current language if applicable.
 	 *
-	 * @since 2.0.0
+	 * @since 2.10.0
 	 *
 	 * @uses Registry::current_language() to get the current language.
 	 *
@@ -550,7 +550,7 @@ final class Backend extends Handler {
 	/**
 	 * Register the language query var.
 	 *
-	 * @since 2.9.0 Add default query var as well.
+	 * @since 2.10.0 Add default query var as well.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to get the query var option.
@@ -621,11 +621,11 @@ final class Backend extends Handler {
 	/**
 	 * Add <select> for filtering posts by language.
 	 *
-	 * @since 2.9.0 Support both custom and default query var.
-	 *              Add [default lanuage] + no language option if !language_is_required.
-	 * @since 2.6.0 Default post type/status to any.
-	 * @since 2.4.0 Show all languages as filtering options.
-	 * @since 2.2.0 Fixed handling of string vs array for $current.
+	 * @since 2.10.0 Support both custom and default query var.
+	 *               Add [default lanuage] + no language option if !language_is_required.
+	 * @since 2.6.0  Default post type/status to any.
+	 * @since 2.4.0  Show all languages as filtering options.
+	 * @since 2.2.0  Fixed handling of string vs array for $current.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::is_post_type_supported() to check for support.
@@ -684,6 +684,8 @@ final class Backend extends Handler {
 	 *
 	 * This will allow further filtering when picking a translation view.
 	 *
+	 * @since 2.10.0
+	 *
 	 * @uses Registry::is_post_type_supported() to check for support.
 	 */
 	public static function add_translation_view_input() {
@@ -704,7 +706,7 @@ final class Backend extends Handler {
 	/**
 	 * Filter the query args, adding language if applicable.
 	 *
-	 * @since 2.9.0 Use default query var, not custom.
+	 * @since 2.10.0 Use default query var, not custom.
 	 * @since 2.8.0
 	 *
 	 * @param array   $args The WP_Query arguments to filter.
@@ -912,7 +914,7 @@ final class Backend extends Handler {
 	/**
 	 * Print out the quick-edit box for post language/translations.
 	 *
-	 * @since 2.9.0 Use get_posts instead of $wdpb to get options.
+	 * @since 2.10.0 Use get_posts instead of $wdpb to get options.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::is_post_type_supported() to check for support.
@@ -1086,13 +1088,13 @@ final class Backend extends Handler {
 	/**
 	 * Output the content of the translations meta box.
 	 *
-	 * @since 2.9.0 Add default_no_language option usage,
-	 *              restructure translation UI (add find/drop options),
-	 *              restore translation selector for assigning existing post.
-	 * @since 2.8.0 Add lock_post_language option usage.
-	 * @since 2.6.0 Dropped post selection for translation fields,
-	 *              now uses simpler Create button that opens in new window.
-	 * @since 2.1.0 Added bypass of language_is_required.
+	 * @since 2.10.0 Add default_no_language option usage,
+	 *               restructure translation UI (add find/drop options),
+	 *               restore translation selector for assigning existing post.
+	 * @since 2.8.0  Add lock_post_language option usage.
+	 * @since 2.6.0  Dropped post selection for translation fields,
+	 *               now uses simpler Create button that opens in new window.
+	 * @since 2.1.0  Added bypass of language_is_required.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
@@ -1645,7 +1647,7 @@ final class Backend extends Handler {
 	/**
 	 * Add a Switch Language node/menu to the Admin Bar.
 	 *
-	 * @since 2.9.0
+	 * @since 2.10.0
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar The admin bar object.
 	 */

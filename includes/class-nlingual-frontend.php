@@ -45,8 +45,8 @@ final class Frontend extends Handler {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 2.9.0 Move enqueue_assets to System.
-	 * @since 2.8.0 Added rewrite_locale from System.
+	 * @since 2.10.0 Move enqueue_assets to System.
+	 * @since 2.8.0  Added rewrite_locale from System.
 	 * @since 2.0.0
 	 */
 	public static function register_hooks() {
@@ -759,7 +759,7 @@ final class Frontend extends Handler {
 	/**
 	 * Add a Translate This node/menu to the Admin Bar.
 	 *
-	 * @since 2.9.0 Updated menu title format; icon+label.
+	 * @since 2.10.0 Updated menu title format; icon+label.
 	 * @since 2.6.0
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar The admin bar object.
