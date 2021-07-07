@@ -411,7 +411,7 @@ final class Localizer extends Handler {
 				}
 			}
 			// For terms, check for taxonomy
-			elseif ( $meta_type == 'post' ) {
+			elseif ( $meta_type == 'term' ) {
 				// Default to general edit-tags base
 				$args['screen'] = array( 'base', 'edit-tags' );
 
