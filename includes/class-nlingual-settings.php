@@ -411,6 +411,10 @@ final class Settings {
 
 		// Taxonomies values
 		$post_taxs = get_object_taxonomies( $post_type, 'objects' );
+		// post_format won't be retrieved for custom post types, check support
+		if ( $post_type !== 'post' && post_type_supports( $post_type, 'post-formats' ) ) {
+			$post_taxs['post_format'] = get_taxonomy( 'post_format' );
+		}
 		foreach ( $post_taxs as &$tax ) {
 			$tax = $tax->labels->name;
 		}
