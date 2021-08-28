@@ -175,6 +175,8 @@ final class URL extends Model {
 	 * @return string $url The URL in string form.
 	 */
 	public function build() {
+		global $wp_rewrite;
+
 		$url = '';
 
 		// Start with the scheme
@@ -209,9 +211,13 @@ final class URL extends Model {
 
 		$path = $this->path;
 
-		// If the page property is present, add it to the path
+		// If the page property is present, add it to args or path
 		if ( $this->page ) {
-			$path = rtrim( $path, '/' ) . sprintf( '/page/%d/', rtrim( $this->page, '/' ) );
+			if ( ! get_option( 'permalink_structure' ) ) {
+				$this->args['page'] = $this->page;
+			} else {
+				$path .= user_trailingslashit( "{$wp_rewrite->pagination_base}/" . $this->page, 'single_paged' );
+			}
 		}
 
 		// Add the path
