@@ -433,8 +433,6 @@ final class Rewriter {
 			if ( ( $page = get_query_var( 'page' ) ) && $page > 1 ) {
 				if ( ! get_option( 'permalink_structure' ) || in_array( $queried_object->post_status, array( 'draft', 'pending' ), true ) ) {
 					$url = add_query_arg( 'page', $page, $url );
-				} elseif ( 'page' === get_option( 'show_on_front' ) && get_option( 'page_on_front' ) == $queried_object->ID ) {
-					$url .= user_trailingslashit( "{$wp_rewrite->pagination_base}/" . $page, 'single_paged' );
 				} else {
 					$url .= user_trailingslashit( $page, 'single_paged' );
 				}
