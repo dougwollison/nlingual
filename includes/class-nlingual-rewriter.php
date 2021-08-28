@@ -496,7 +496,7 @@ final class Rewriter {
 
 		// Check if paged and add entry to $url_data
 		if ( is_paged() ) {
-			$the_url->page = get_query_var( 'paged' );
+			$the_url->page = get_query_var( 'paged' ) ?: get_query_var( 'page' );
 		}
 
 		// Build the URL
