@@ -350,7 +350,7 @@ final class System extends Handler {
 		self::add_hook( 'page_link', 'localize_post_link', 10, 3 );
 		self::add_hook( 'post_link', 'localize_post_link', 10, 3 );
 		self::add_hook( 'post_type_link', 'localize_post_link', 10, 3 );
-		self::add_hook( 'url_to_postid', 'unlocalize_url', 10, 1 );
+		self::add_hook( 'url_to_postid', 'relocalize_url_for_postid', 10, 1 );
 		self::add_hook( 'mod_rewrite_rules', 'fix_mod_rewrite_rules', 0, 1 );
 		self::add_hook( 'wp_loaded', 'rest_query_var_setup', 10, 1 );
 
@@ -977,17 +977,17 @@ final class System extends Handler {
 	}
 
 	/**
-	 * Unlocalize the URL before resolving.
+	 * Relocalize URL to current language before resolving for Post ID.
 	 *
 	 * @since 2.10.0
 	 *
 	 * @param string $url The URL being resolved.
 	 *
-	 * @return string The unlocalized URL.
+	 * @return string The relocalized URL.
 	 */
-	public static function unlocalize_url( $url ) {
-		if ( strpos( $url, home_url() ) === 0 ) {
-			$url = Rewriter::delocalize_url( $url );
+	public static function relocalize_url_for_postid( $url ) {
+		if ( strpos( $url, home_url( '', 'unlocalized' ) ) === 0 ) {
+			$url = Rewriter::localize_url( $url );
 		}
 
 		return $url;
