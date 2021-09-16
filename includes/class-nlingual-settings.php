@@ -376,6 +376,7 @@ final class Settings {
 	/**
 	 * Build a sync settings interface.
 	 *
+	 * @since 2.9.2 Ensure post_format is included if object type supports it
 	 * @since 2.4.0 Ensure post_fields/terms/meta entries are present.
 	 * @since 2.0.0
 	 *
@@ -411,6 +412,10 @@ final class Settings {
 
 		// Taxonomies values
 		$post_taxs = get_object_taxonomies( $post_type, 'objects' );
+		// post_format won't be retrieved for custom post types, check support
+		if ( ! isset( $post_taxs['post_format'] ) && post_type_supports( $post_type, 'post-formats' ) ) {
+			$post_taxs['post_format'] = get_taxonomy( 'post_format' );
+		}
 		foreach ( $post_taxs as &$tax ) {
 			$tax = $tax->labels->name;
 		}
