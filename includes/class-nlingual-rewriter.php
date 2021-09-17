@@ -434,7 +434,6 @@ final class Rewriter {
 			}
 
 			// Relocalize the URL
-			$url = get_permalink( $queried_object->ID );
 			$url = self::localize_url( $url, $language );
 
 			// Handle pagination (e.g. nextpage) if present
