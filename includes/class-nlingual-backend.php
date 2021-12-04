@@ -691,21 +691,27 @@ final class Backend extends Handler {
 		printf( '<input type="hidden" class="nl-language" value="%d" />', $language->id );
 		printf( '<strong>%s</strong>', $language->system_name );
 
-		// Now print out the translations
-		$translations = Translator::get_post_translations( $post_id );
-		if ( $translations ) {
-			echo '<ul>';
-			foreach ( $translations as $language_id => $post ) {
-				if ( $language = Registry::get_language( $language_id ) ) {
-					echo '<li>';
-					printf( '<input type="hidden" class="nl-translation-%d" value="%d" />', $language->id, $post );
-					$link = sprintf( '<a href="%s" target="_blank">%s</a>', get_edit_post_link( $post ), get_the_title( $post ) ?: __( '(no title)' ) );
-					/* translators: %1$s = The name of the language, %2$s = The title of the post, wrapped in a link */
-					_efx( '%1$s: %2$s', 'language: title', 'nlingual', $language->system_name, $link );
-					echo '<li>';
-				}
+		// Print links to either existing translations or Translate This actions.
+		$links = array();
+		foreach ( Registry::languages() as $other_language ) {
+			if ( $language->id === $other_language->id ) {
+				continue;
 			}
-			echo '</ul>';
+
+			$translation = Translator::get_post_translation( $post_id, $other_language );
+
+			$link = sprintf( '<input type="hidden" class="nl-translation-%d" value="%d" />', $other_language->id, $translation );
+			if ( $translation ) {
+				$link .= sprintf( '<a href="%s" target="_blank">%s</a>', get_edit_post_link( $translation ), get_the_title( $translation ) ?: __( '(no title)' ) );
+			} else {
+				$link .= sprintf( '<a href="%s" target="_blank">%s</a>', get_translate_post_link( $post_id, $other_language->id ), __( '[Create translation]' ) );
+			}
+
+			/* translators: %1$s = The name of the language, %2$s = The title of the post, wrapped in a link */
+			$links[] = _fx( '%1$s: %2$s', 'language: title', 'nlingual', $other_language->system_name, $link );
+		}
+		if ( $links ) {
+			echo '<ul><li>' . implode( '</li><li>', $links ) . '</li></ul>';
 		}
 	}
 
