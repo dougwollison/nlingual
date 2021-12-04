@@ -344,8 +344,22 @@ final class Frontend extends Handler {
 			}
 		}
 
+		// If the location is set but not already localizable, localize the items
+		$localize_items = $theme_location && ! Registry::is_location_supported( 'nav_menu', $theme_location );
+
+		/**
+		 * Filters the result.
+		 *
+		 * @since 2.9.2
+		 *
+		 * @param bool   $localize_items Wether or not to localize menu items.
+		 * @param object $menu           The menu being considered.
+		 * @param array  $items          The items for the menu.
+		 */
+		$localize_items = apply_filters( 'nlingual_localize_menu_items', $localize_items, $menu, $items );
+
 		// Don't bother if the location wasn't found or is already localizable
-		if ( $theme_location && ! Registry::is_location_supported( 'nav_menu', $theme_location ) ) {
+		if ( $localize_items ) {
 			// Loop through each item, attempt to localize
 			foreach ( $items as $item ) {
 				// If it's for a (supported) post that has a translation (that's not itself),

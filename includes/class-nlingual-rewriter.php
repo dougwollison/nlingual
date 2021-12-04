@@ -373,6 +373,7 @@ final class Rewriter {
 	/**
 	 * Attempt to localize the current page URL.
 	 *
+	 * @since 2.9.2 Fix handling for paginated posts/pages.
 	 * @since 2.9.0 Add checks for SINGLE term/post_type query.
 	 * @since 2.8.9 Unset s in query string when getting search link.
 	 * @since 2.8.4 Dropped use of localize_url() $relocalize param, will always relocalize.
@@ -397,7 +398,7 @@ final class Rewriter {
 	 * @return string The localized URL.
 	 */
 	public static function localize_here( $language = null ) {
-		global $wp_query;
+		global $wp_query, $wp_rewrite;
 
 		// Ensure $language is a Language, defaulting to current
 		if ( ! validate_language( $language, 'default current' ) ) {
@@ -417,16 +418,25 @@ final class Rewriter {
 		}
 		// If the queried object is a post, use it's permalink
 		elseif ( is_a( $queried_object, 'WP_Post' ) ) {
-			// Get the permalink for the translation in the specified language if applicable
+			// Switch to the translation if applicable
 			if ( Registry::is_post_type_supported( $queried_object->post_type ) ) {
 				$translation = Translator::get_post_translation( $queried_object->ID, $language, 'return self' );
-				$url = get_permalink( $translation );
-			} else {
-				$url = get_permalink( $queried_object->ID );
+				$queried_object = get_post( $translation );
 			}
 
 			// Relocalize the URL
+			$url = get_permalink( $queried_object->ID );
 			$url = self::localize_url( $url, $language );
+
+			// Handle pagination (e.g. nextpage) if present
+			// mostly copied from _wp_link_page()
+			if ( ( $page = get_query_var( 'page' ) ) && $page > 1 ) {
+				if ( ! get_option( 'permalink_structure' ) || in_array( $queried_object->post_status, array( 'draft', 'pending' ), true ) ) {
+					$url = add_query_arg( 'page', $page, $url );
+				} else {
+					$url .= user_trailingslashit( $page, 'single_paged' );
+				}
+			}
 		} else {
 			// Switch to the language (redundant for current one but doesn't matter)
 			System::switch_language( $language );
@@ -450,7 +460,7 @@ final class Rewriter {
 			}
 			// Author archive? Get the link
 			elseif ( is_author() ) {
-				$url = get_the_author_posts_link( get_queried_object_id() );
+				$url = get_author_posts_url( get_queried_object_id() );
 			}
 			// Date archive? Get link
 			elseif ( is_day() ) {
@@ -486,7 +496,7 @@ final class Rewriter {
 
 		// Check if paged and add entry to $url_data
 		if ( is_paged() ) {
-			$the_url->page = get_query_var( 'paged' );
+			$the_url->page = get_query_var( 'paged' ) ?: get_query_var( 'page' );
 		}
 
 		// Build the URL
