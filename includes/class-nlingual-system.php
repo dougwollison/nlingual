@@ -1070,24 +1070,22 @@ final class System extends Handler {
 		$language_slugs = $language_ids = array();
 		foreach ( $languages as $language ) {
 			$language_slugs[] = $language->slug;
-			$language_ids[] = (string) $language->id;
+			$language_ids[] = $language->id;
 		}
 
-		$default = array( Registry::current_language()->slug );
-		$whitelist = array_merge( $language_slugs, $language_ids );
-
+		$defaults = array( Registry::current_language()->slug );
 		if ( ! Registry::get( 'language_is_required' ) ) {
-			$default[] = '0';
-			$whitelist[] = '0';
+			$language_ids[] = 0;
+			$defaults[] = 0;
 		}
 
 		$query_params[ $query_var ] = array(
-			'default'     => $default,
-			'description' => __( 'Limit result set to posts assigned one or more registered languages.', 'nlingual' ),
-			'type'        => 'array',
-			'items'       => array(
-				'enum' => $whitelist,
-				'type' => 'string',
+			'default'           => $defaults,
+			'description'       => __( 'Limit result set to posts assigned one or more registered languages.', 'nlingual' ),
+			'type'              => 'array',
+			'items'             => array(
+				'enum'          => array_merge( $language_slugs, $language_ids ),
+				'type'          => array( 'string', 'number' ),
 			),
 		);
 
@@ -1108,7 +1106,7 @@ final class System extends Handler {
 		$query_var = Registry::get( 'query_var' );
 
 		if ( $languages = $request->get_param( $query_var ) ) {
-			$args[ $query_var ] = $languages;
+			$args[ $query_var ] = array_map( 'strval', $languages );
 		}
 
 		return $args;

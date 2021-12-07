@@ -242,7 +242,7 @@ final class Synchronizer {
 
 			// Apply the updates
 			$changes[ 'ID' ] = $target->ID;
-			wp_update_post( $changes );
+			wp_update_post( wp_slash( $changes ) );
 		}
 
 		// Post Terms
@@ -430,7 +430,7 @@ final class Synchronizer {
 		);
 
 		// Insert and get the ID
-		$translation = wp_insert_post( $post_data, 'wp_error' );
+		$translation = wp_insert_post( wp_slash( $post_data ), 'wp_error' );
 
 		// Check if it worked, return error if not
 		if ( is_wp_error( $translation ) ) {
