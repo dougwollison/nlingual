@@ -288,6 +288,7 @@ final class Frontend extends Handler {
 	/**
 	 * Replaces the registered nav menus with versions for each active language.
 	 *
+	 * @since 2.9.2 Ensure $_wp_registered_nav_menus is populated.
 	 * @since 2.0.0
 	 *
 	 * @see Frontend::localize_locations()
@@ -297,7 +298,9 @@ final class Frontend extends Handler {
 	public static function localize_nav_menu_locations( $locations ) {
 		global $_wp_registered_nav_menus;
 
-		$locations = self::localize_locations( 'nav_menu', $locations, $_wp_registered_nav_menus );
+		if ( $_wp_registered_nav_menus ) {
+			$locations = self::localize_locations( 'nav_menu', $locations, $_wp_registered_nav_menus );
+		}
 
 		return $locations;
 	}
@@ -305,6 +308,7 @@ final class Frontend extends Handler {
 	/**
 	 * Replaces the registered sidebars with versions for each active language.
 	 *
+	 * @since 2.9.2 Ensure $wp_registered_sidebars is populated.
 	 * @since 2.0.0
 	 *
 	 * @see Frontend::localize_locations()
@@ -314,7 +318,9 @@ final class Frontend extends Handler {
 	public static function localize_sidebar_locations( $locations ) {
 		global $wp_registered_sidebars;
 
-		$locations = self::localize_locations( 'sidebar', $locations, $wp_registered_sidebars );
+		if ( $wp_registered_sidebars ) {
+			$locations = self::localize_locations( 'sidebar', $locations, $wp_registered_sidebars );
+		}
 
 		return $locations;
 	}
