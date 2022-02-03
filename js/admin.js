@@ -420,10 +420,7 @@
 		var wpEditor = wp.oldEditor || wp.editor;
 
 		if ( typeof tinymce === 'object' ) {
-			tinymce.on( 'SetupEditor', e => {
-				// TinyMCE 4.7 changes callback arg to event CONTAINING editor
-				var editor = e.editor || e;
-
+			function localizeEditor( editor ) {
 				var $field = $( editor.getElement() ),
 					$control = $field.data( '$nl_localizer' );
 
@@ -448,6 +445,17 @@
 
 					editor.setContent( content );
 				} );
+			}
+
+			// Handle existing editors
+			tinymce.editors.forEach( localizeEditor );
+
+			// Backwards compatiblity; catch any late-registered editors
+			tinymce.on( 'SetupEditor', e => {
+				// TinyMCE 4.7 changes callback arg to event CONTAINING editor
+				var editor = e.editor || e;
+
+				localizeEditor( editor );
 			} );
 
 			var oldEditorSave = tinymce.Editor.prototype.save;
