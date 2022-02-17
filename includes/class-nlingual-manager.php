@@ -439,7 +439,7 @@ final class Manager extends Handler {
 			),
 			'use_accepted_language'  => array(
 				'title' => __( 'Use visitor’s browser language?', 'nlingual' ),
-				'help'  => __( 'Unless requesting the page in another language, visitors will be redirected to the language their browser uses if available', 'nlingual' ),
+				'help'  => __( 'Unless requesting the page in another language, visitors will be redirected to the language their browser uses, if available.', 'nlingual' ),
 				'type'  => 'checkbox',
 			),
 			'skip_default_l10n' => array(
