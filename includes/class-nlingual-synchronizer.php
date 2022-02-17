@@ -136,6 +136,7 @@ final class Synchronizer {
 	/**
 	 * Copy desired post fields, meta data, and terms from the original to target.
 	 *
+	 * @since 2.9.2 Need to slash data for sync; blocks break otherwise.
 	 * @since 2.8.7 Fix date sync to bypass date clearing on draft targets.
 	 * @since 2.8.5 Fixed get_rules() call to specify post_type.
 	 * @since 2.8.0 Moved post_fields=true expanding to prepare_post_rules().
@@ -353,6 +354,7 @@ final class Synchronizer {
 	 *
 	 * All fields, meta data and terms are copied.
 	 *
+	 * @since 2.9.2 Need to slash data for cloning; blocks break otherwise.
 	 * @since 2.9.0 Drop custom title support.
 	 * @since 2.8.0 Copy only mandatory post fields, leave the rest to sync_posts().
 	 * @since 2.0.0
