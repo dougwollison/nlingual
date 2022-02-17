@@ -128,6 +128,7 @@ final class Frontend extends Handler {
 	 * For example, if the language requested doesn't match that of the queried object,
 	 * or if the language requested is inactive.
 	 *
+	 * @since 2.9.2 Specify redirected-by for wp_redirect().
 	 * @since 2.9.1 Added check for sitemap requests.
 	 * @since 2.6.0 Allow inactive language if user is logged in.
 	 * @since 2.2.0 Regigged post language redirecting to account for untranslated homepage.
@@ -208,7 +209,7 @@ final class Frontend extends Handler {
 		if ( $redirect_url && untrailingslashit( NL_ORIGINAL_URL ) != untrailingslashit( $redirect_url ) ) {
 			// Exit if redirect was successful
 			header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
-			if ( wp_redirect( $redirect_url, $status ) ) {
+			if ( wp_redirect( $redirect_url, $status, 'nLingual' ) ) {
 				exit;
 			}
 		}
