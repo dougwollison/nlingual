@@ -416,7 +416,6 @@ final class System extends Handler {
 			self::restore_all_hooks();
 			Frontend::restore_all_hooks();
 			Backend::restore_all_hooks();
-			AJAX::restore_all_hooks();
 			Manager::restore_all_hooks();
 			Documenter::restore_all_hooks();
 			Localizer::restore_all_hooks();
@@ -446,7 +445,6 @@ final class System extends Handler {
 			self::remove_all_hooks();
 			Frontend::remove_all_hooks();
 			Backend::remove_all_hooks();
-			AJAX::remove_all_hooks();
 			Manager::remove_all_hooks();
 			Documenter::remove_all_hooks();
 			Localizer::remove_all_hooks();
