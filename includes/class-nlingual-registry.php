@@ -360,7 +360,7 @@ final class Registry {
 	 * @param string $value   Optional. A filter value to pass to Languages->filter().
 	 * @param bool   $inverse Optional. The inverse option to pass to Languages->filter().
 	 *
-	 * @return Language The languages collection (optionally filtered).
+	 * @return Languages The languages collection (optionally filtered).
 	 */
 	public static function languages( $filter = null, $value = null, $inverse = false ) {
 		return self::$languages->filter( $filter, $value, $inverse );
