@@ -437,6 +437,11 @@ final class Manager extends Handler {
 					'domain' => __( 'Subdomain', 'nlingual' ),
 				),
 			),
+			'use_accepted_language'  => array(
+				'title' => __( 'Use visitor’s browser language?', 'nlingual' ),
+				'help'  => __( 'Unless requesting the page in another language, visitors will be redirected to the language their browser uses if available', 'nlingual' ),
+				'type'  => 'checkbox',
+			),
 			'skip_default_l10n' => array(
 				'title' => __( 'Skip Localization for Default Language?', 'nlingual' ),
 				'help'  => __( 'URLs for the default language will be unmodified.', 'nlingual' ) .

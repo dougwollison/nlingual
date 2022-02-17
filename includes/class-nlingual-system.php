@@ -461,6 +461,7 @@ final class System extends Handler {
 	/**
 	 * Detect the language based on the request or browser info.
 	 *
+	 * @since 2.9.2 Check use_accepted_language before retrieving.
 	 * @since 2.9.0 Drop redirect handling, let Frontend handle it.
 	 * @since 2.7.0 Checked for skip_default_l10n option before getting accepted language.
 	 * @since 2.0.0
@@ -488,7 +489,7 @@ final class System extends Handler {
 			$source = 'url';
 		}
 		// Fallback to the accepted language
-		elseif ( $language = Registry::accepted_language() ) {
+		elseif ( Registry::get( 'use_accepted_language' ) && $language = Registry::accepted_language() ) {
 			$source = 'accept';
 		}
 
