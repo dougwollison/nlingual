@@ -427,7 +427,6 @@ final class System extends Handler {
 			self::restore_all_hooks();
 			Frontend::restore_all_hooks();
 			Backend::restore_all_hooks();
-			AJAX::restore_all_hooks();
 			Manager::restore_all_hooks();
 			Documenter::restore_all_hooks();
 			Localizer::restore_all_hooks();
@@ -457,7 +456,6 @@ final class System extends Handler {
 			self::remove_all_hooks();
 			Frontend::remove_all_hooks();
 			Backend::remove_all_hooks();
-			AJAX::remove_all_hooks();
 			Manager::remove_all_hooks();
 			Documenter::remove_all_hooks();
 			Localizer::remove_all_hooks();
@@ -473,6 +471,7 @@ final class System extends Handler {
 	 * Detect the language based on the request or browser info.
 	 *
 	 * @since 2.10.0 Add detection of user language and backend language override.
+	 * @since 2.9.2  Check use_accepted_language before retrieving.
 	 * @since 2.9.0  Drop redirect handling, let Frontend handle it.
 	 * @since 2.7.0  Checked for skip_default_l10n option before getting accepted language.
 	 * @since 2.0.0
@@ -509,7 +508,7 @@ final class System extends Handler {
 			$mode = 'cookie';
 		}
 		// Fallback to the accepted language
-		elseif ( $language = Registry::accepted_language() ) {
+		elseif ( Registry::get( 'use_accepted_language' ) && $language = Registry::accepted_language() ) {
 			$source = 'accept';
 		}
 

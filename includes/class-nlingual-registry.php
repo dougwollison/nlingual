@@ -121,6 +121,8 @@ final class Registry {
 		'query_var' => 'nl_language',
 		// - The URL redirection method
 		'url_rewrite_method' => 'get',
+		// - Use visitor's browser language
+		'use_accepted_language' => true,
 		// - The skip default language localizing option
 		'skip_default_l10n' => true,
 		// - The post language override option
@@ -364,7 +366,7 @@ final class Registry {
 	 * @param string $value   Optional. A filter value to pass to Languages->filter().
 	 * @param bool   $inverse Optional. The inverse option to pass to Languages->filter().
 	 *
-	 * @return Language The languages collection (optionally filtered).
+	 * @return Languages The languages collection (optionally filtered).
 	 */
 	public static function languages( $filter = null, $value = null, $inverse = false ) {
 		return self::$languages->filter( $filter, $value, $inverse );
@@ -792,11 +794,13 @@ final class Registry {
 		}
 
 		// Accepted language matches another, does not apply
-		$accepted_language = self::accepted_language();
-		if ( $accepted_language && ! self::is_language_default( $accepted_language ) ) {
-			// This allows localization of the default language
-			// in order to override using the accepted language
-			return false;
+		if ( self::get( 'use_accepted_language' ) ) {
+			$accepted_language = self::accepted_language();
+			if ( $accepted_language && ! self::is_language_default( $accepted_language ) ) {
+				// This allows localization of the default language
+				// in order to override using the accepted language
+				return false;
+			}
 		}
 
 		return true;

@@ -204,12 +204,13 @@ final class Backend extends Handler {
 	 *
 	 * This prevents login issues when accessing /en/wp-admin or similar.
 	 *
+	 * @since 2.9.2 Fix wp_redirect() call, specify redirected-by.
 	 * @since 2.6.0
 	 */
 	public static function fix_localized_admin_url() {
 		if ( ( $the_url = Rewriter::process_url() ) && isset( $the_url->meta['language'] ) ) {
 			if ( $the_url->meta['source'] !== 'query' ) {
-				if ( wp_redirect( $the_url->build(), $status ) ) {
+				if ( wp_redirect( $the_url->build(), 302, 'nLingual' ) ) {
 					exit;
 				}
 			}
@@ -1566,6 +1567,7 @@ final class Backend extends Handler {
 	 *
 	 * Will redirect to the edit screen for the new translation.
 	 *
+	 * @since 2.9.2 Specify redirected-by for wp_redirect().
 	 * @since 2.6.0
 	 *
 	 * @uses Registry::languages() to validate the language requested.
@@ -1641,7 +1643,7 @@ final class Backend extends Handler {
 		$edit_link = get_edit_post_link( $translation->ID, 'raw' );
 
 		// Redirect to the edit screen
-		if ( wp_redirect( $edit_link, 302 ) ) {
+		if ( wp_redirect( $edit_link, 302, 'nLingual' ) ) {
 			exit;
 		}
 	}
