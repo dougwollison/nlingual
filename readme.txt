@@ -80,7 +80,7 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
 
 = 2.9.2 =
-Quality of life improvements, LocalizeThis and Synchronizer fixes, opt-out for accepted language.
+Quality of life improvements, Localizer/Synchronizer/Rewriter fixes, opt-out for accepted language.
 
 = 2.9.1.2 =
 Hotfix: remove syntax error on php < 7.3
