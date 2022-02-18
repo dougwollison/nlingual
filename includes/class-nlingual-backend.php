@@ -1327,7 +1327,7 @@ final class Backend extends Handler {
 	 *
 	 * Will redirect to the edit screen for the new translation.
 	 *
-	 * @since 2.9.2 Specify redirected-by for wp_redirect().
+	 * @since 2.9.2 Add permissions check, redirected-by for wp_redirect().
 	 * @since 2.6.0
 	 *
 	 * @uses Registry::languages() to validate the language requested.
@@ -1346,6 +1346,12 @@ final class Backend extends Handler {
 		$post = get_post( $data['post_id'] );
 		if ( ! $post ) {
 			wp_die( __( 'Error creating translation: specified post not found.', 'nlingual' ) );
+		}
+
+		// Check permissions, must be able to create posts
+		$post_type_obj = get_post_type_object( $post->post_type );
+		if ( current_user_can( $post_type_obj->create_posts ) ) {
+			wp_die( __( 'You are now allowed to create a translation for this post.', 'nlingual' ) );
 		}
 
 		// If post_language is not passed, use what already exists, fail if not found
