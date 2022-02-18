@@ -801,6 +801,8 @@ final class Frontend extends Handler {
 	/**
 	 * Add a Translate This node/menu to the Admin Bar.
 	 *
+	 * @since 2.9.2 Check create_posts rather than edit_post, ensure
+	 *              links are added before registering menu.
 	 * @since 2.6.0
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar The admin bar object.
@@ -814,7 +816,7 @@ final class Frontend extends Handler {
 		&& Registry::is_post_type_supported( $current_object->post_type )
 		&& Translator::get_post_language( $current_object->ID, 'true value' )
 		&& ( $post_type_object = get_post_type_object( $current_object->post_type ) )
-		&& current_user_can( 'edit_post', $current_object->ID )
+		&& current_user_can( $post_type_object->cap->create_posts )
 		&& $post_type_object->show_in_admin_bar ) {
 			// Compile a list of missing language translations
 			$translations = Translator::get_post_translations( $current_object->ID, 'include self' );
@@ -829,20 +831,27 @@ final class Frontend extends Handler {
 				return;
 			}
 
-			// Add the menu item
-			$label = property_exists( $post_type_object->labels, 'translate_item' ) ? $post_type_object->labels->translate_item : __( 'Translate This', 'nlingual' );
-			$wp_admin_bar->add_menu( array(
-				'id' => 'nlingual',
-				'title' => $label,
-			) );
-
 			// Add links for each missing language
+			$has_links = false;
 			foreach ( $missing_translations as $language ) {
-				$wp_admin_bar->add_node( array(
-					'parent' => 'nlingual',
-					'id' => 'nlingual-' . $language->slug,
-					'title' => _f( 'Translate to %s', 'nlingual', $language->system_name ),
-					'href' => get_translate_post_link( $current_object->ID, $language->id ),
+				$translate_link = get_translate_post_link( $current_object->ID, $language->id );
+				if ( $translate_link ) {
+					$has_links = true;
+					$wp_admin_bar->add_node( array(
+						'parent' => 'nlingual',
+						'id' => 'nlingual-' . $language->slug,
+						'title' => _f( 'Translate to %s', 'nlingual', $language->system_name ),
+						'href' => $translate_link,
+					) );
+				}
+			}
+
+			// Add the menu item if we have links
+			if ( $has_links ) {
+				$label = property_exists( $post_type_object->labels, 'translate_item' ) ? $post_type_object->labels->translate_item : __( 'Translate This', 'nlingual' );
+				$wp_admin_bar->add_menu( array(
+					'id' => 'nlingual',
+					'title' => $label,
 				) );
 			}
 		}
