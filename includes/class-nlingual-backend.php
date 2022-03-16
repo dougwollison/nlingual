@@ -854,6 +854,8 @@ final class Backend extends Handler {
 	/**
 	 * Print the content of the language/translations column.
 	 *
+	 * @since 2.9.2 Restructure to list each language rather than each translation,
+	 *              with a create link for missing translations.
 	 * @since 2.1.0 Added bypass of language_is_required.
 	 * @since 2.0.0
 	 *
@@ -901,9 +903,17 @@ final class Backend extends Handler {
 
 			$link = sprintf( '<input type="hidden" class="nl-translation-%d" value="%d" />', $other_language->id, $translation );
 			if ( $translation ) {
-				$link .= sprintf( '<a href="%s" target="_blank">%s</a>', get_edit_post_link( $translation ), get_the_title( $translation ) ?: __( '(no title)' ) );
+				$title = get_the_title( $translation );
+				// Edit or view link depending on permissions
+				if ( $edit_link = get_edit_post_link( $translation ) ) {
+					$link .= sprintf( '<a href="%s" target="_blank">%s</a>', $edit_link, $title ?: __( '(no title)' ) );
+				} else {
+					$link .= sprintf( '<a href="%s" target="_blank">%s</a>', get_permalink( $translation ), $title ?: __( '(no title)' ) );
+				}
+			} elseif ( $translation_link = get_translate_post_link( $post_id, $other_language->id ) ) {
+				$link .= sprintf( '<a href="%s" target="_blank">%s</a>', $translation_link, __( '[Create translation]' ) );
 			} else {
-				$link .= sprintf( '<a href="%s" target="_blank">%s</a>', get_translate_post_link( $post_id, $other_language->id ), __( '[Create translation]' ) );
+				$link .= __( '[No translation]' );
 			}
 
 			/* translators: %1$s = The name of the language, %2$s = The title of the post, wrapped in a link */
@@ -1567,7 +1577,7 @@ final class Backend extends Handler {
 	 *
 	 * Will redirect to the edit screen for the new translation.
 	 *
-	 * @since 2.9.2 Specify redirected-by for wp_redirect().
+	 * @since 2.9.2 Add permissions check, redirected-by for wp_redirect().
 	 * @since 2.6.0
 	 *
 	 * @uses Registry::languages() to validate the language requested.
@@ -1586,6 +1596,12 @@ final class Backend extends Handler {
 		$post = get_post( $data['post_id'] );
 		if ( ! $post ) {
 			wp_die( __( 'Error creating translation: specified post not found.', 'nlingual' ) );
+		}
+
+		// Check permissions, must be able to create posts
+		$post_type_obj = get_post_type_object( $post->post_type );
+		if ( current_user_can( $post_type_obj->create_posts ) ) {
+			wp_die( __( 'You are now allowed to create a translation for this post.', 'nlingual' ) );
 		}
 
 		// If post_language is not passed, use what already exists, fail if not found

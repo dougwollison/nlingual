@@ -459,7 +459,9 @@ final class Rewriter {
 			// Single Term page? Get the term link
 			elseif ( ( is_tax() || is_tag() || is_category() )
 			&& count( $wp_query->tax_query->queries ) == 1
-			&& count( $wp_query->tax_query->queries[0]['terms'] ) == 1 ) {
+			&& count( $wp_query->tax_query->queries[0]['terms'] ) == 1
+			&& is_a( get_queried_object(), 'WP_Term' )
+			&& term_exists( get_queried_object()->term_id, get_queried_object()->taxonomy ) ) {
 				$url = get_term_link( get_queried_object() );
 			}
 			// Posts page? Get link
