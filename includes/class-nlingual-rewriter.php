@@ -549,7 +549,7 @@ final class Rewriter {
 		}
 
 		// Get the translation counterpart
-		$translation_id = self::get_post_translation( $post_id, $language );
+		$translation_id = Translator::get_post_translation( $post_id, $language );
 
 		// Return the translations permalink
 		return get_permalink( $translation_id );
