@@ -171,8 +171,8 @@ final class Translator {
 			// Build the group index
 			$group = array();
 			foreach ( $result as $row ) {
-				$group['language_by_object'][ $row['object_id'] ] = $row['language_id'];
-				$group['object_by_language'][ $row['language_id'] ] = $row['object_id'];
+				$group['language_by_object'][ $row['object_id'] ] = intval( $row['language_id'] );
+				$group['object_by_language'][ $row['language_id'] ] = intval( $row['object_id'] );
 
 				// Cache the group ID for each object
 				wp_cache_set( "{$row['object_type']}/{$row['object_id']}", $group_id, 'nlingual:group_id' );
