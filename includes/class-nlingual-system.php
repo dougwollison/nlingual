@@ -1061,6 +1061,7 @@ final class System extends Handler {
 	 * possible parameter for collection requests.
 	 *
 	 * @since 2.10.0 Add 0 as language option/default if language is not required.
+	 *               Support IDs as strings and integers.
 	 * @since 2.9.0  Whitelist all languages if logged in, cast IDs to string.
 	 * @since 2.6.0
 	 *
@@ -1072,15 +1073,17 @@ final class System extends Handler {
 		$query_var = Registry::get( 'query_var' );
 		$languages = Registry::languages( is_user_logged_in() ? null : 'active' );
 
-		$language_slugs = $language_ids = array();
+		$language_slugs = $language_id_ints = $language_id_strings = array();
 		foreach ( $languages as $language ) {
 			$language_slugs[] = $language->slug;
-			$language_ids[] = $language->id;
+			$language_id_ints[] = (int) $language->id;
+			$language_id_strings[] = (string) $language->id;
 		}
 
 		$defaults = array( Registry::current_language()->slug );
 		if ( ! Registry::get( 'language_is_required' ) ) {
-			$language_ids[] = 0;
+			$language_id_ints[] = 0;
+			$language_id_strings[] = '0';
 			$defaults[] = 0;
 		}
 
@@ -1089,7 +1092,7 @@ final class System extends Handler {
 			'description'       => __( 'Limit result set to posts assigned one or more registered languages.', 'nlingual' ),
 			'type'              => 'array',
 			'items'             => array(
-				'enum'          => array_merge( $language_slugs, $language_ids ),
+				'enum'          => array_merge( $language_slugs, $language_id_ints, $language_id_strings ),
 				'type'          => array( 'string', 'number' ),
 			),
 		);
