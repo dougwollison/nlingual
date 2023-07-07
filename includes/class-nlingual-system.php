@@ -471,6 +471,7 @@ final class System extends Handler {
 	 * Detect the language based on the request or browser info.
 	 *
 	 * @since 2.10.0 Add detection of user language and backend language override.
+	 *               Add handling of queried language being an array.
 	 * @since 2.9.2  Check use_accepted_language before retrieving.
 	 * @since 2.9.0  Drop redirect handling, let Frontend handle it.
 	 * @since 2.7.0  Checked for skip_default_l10n option before getting accepted language.
@@ -489,8 +490,13 @@ final class System extends Handler {
 
 		// First, check if the language was specified by the GET or POST parameters
 		if ( ( $query_var = Registry::get( 'query_var' ) ) && isset( $_REQUEST[ $query_var ] ) ) {
+			$query_value = $_REQUEST[ $query_var ];
+			if ( is_array( $query_value ) ) {
+				$query_value = reset( $query_value );
+			}
+
 			// Even if the language specified is invalid, don't fallback from here.
-			$language = Registry::get_language( $_REQUEST[ $query_var ] );
+			$language = Registry::get_language( $query_value );
 			$source = 'request';
 
 			// If in the backend and nl_switch is set, save it to a cookie
