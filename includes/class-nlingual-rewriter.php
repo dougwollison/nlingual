@@ -374,6 +374,7 @@ final class Rewriter {
 	 * Attempt to localize the current page URL.
 	 *
 	 * @since 2.10.0 Only use post's translation if neither or both are published.
+	 *               Drop search link rebuilding, may cause unintended nice-url redirect.
 	 * @since 2.9.2  Fix handling for paginated posts/pages.
 	 * @since 2.9.0  Add checks for SINGLE term/post_type query.
 	 * @since 2.8.9  Unset s in query string when getting search link.
@@ -487,11 +488,6 @@ final class Rewriter {
 			// Year archive? Get link
 			elseif ( is_year() ) {
 				$url = get_year_link( get_query_var( 'year' ) );
-			}
-			// Search page? Rebuild the link
-			elseif ( is_search() ) {
-				$url = get_search_link( get_query_var( 's' ) );
-				unset( $_GET['s'] );
 			}
 			// Give up and just get the orginally requested URL, relocalized
 			else {
