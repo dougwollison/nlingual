@@ -1228,13 +1228,13 @@ final class System extends Handler {
 		// Assume current language; build the list (1 value; the current language)
 		$value = array( Registry::current_language()->slug );
 
-		// If in the backend and the show_all_languages option is enabled, set filter for all active languages
-		if ( is_backend() && Registry::get( 'show_all_languages' ) ) {
+		// If in the admin and the show_all_languages option is enabled, set filter for all active languages
+		if ( is_admin() && Registry::get( 'show_all_languages' ) ) {
 			$value = Registry::languages( 'active' )->pluck( 'id', false );
 		}
 
-		// If in the backend, or language is not required, or non-supported post types are involved, add 0 to retreive language-less posts too
-		if ( is_backend() || ! Registry::get( 'language_is_required' ) || ! Registry::is_post_type_supported( $query->get( 'post_type' ), 'require all' ) ) {
+		// If in the admin, or language is not required, or non-supported post types are involved, add 0 to retreive language-less posts too
+		if ( is_admin() || ! Registry::get( 'language_is_required' ) || ! Registry::is_post_type_supported( $query->get( 'post_type' ), 'require all' ) ) {
 			$value[] = '0';
 		}
 
