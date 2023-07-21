@@ -1337,6 +1337,7 @@ final class Backend extends Handler {
 	 *
 	 * Will redirect to the edit screen for the new translation.
 	 *
+	 * @since 2.9.3 Fix permission check.
 	 * @since 2.9.2 Add permissions check, redirected-by for wp_redirect().
 	 * @since 2.6.0
 	 *
@@ -1360,7 +1361,7 @@ final class Backend extends Handler {
 
 		// Check permissions, must be able to create posts
 		$post_type_obj = get_post_type_object( $post->post_type );
-		if ( current_user_can( $post_type_obj->create_posts ) ) {
+		if ( ! current_user_can( $post_type_obj->cap->create_posts ) ) {
 			wp_die( __( 'You are now allowed to create a translation for this post.', 'nlingual' ) );
 		}
 
