@@ -68,7 +68,7 @@ final class Languages implements \Iterator {
 	 *
 	 * @since 2.0.0
 	 */
-	public function rewind() {
+	public function rewind(): void {
 		$this->position = 0;
 	}
 
@@ -79,7 +79,7 @@ final class Languages implements \Iterator {
 	 *
 	 * @return mixed The current element.
 	 */
-	public function current() {
+	public function current(): Language {
 		return $this->items[ $this->position ];
 	}
 
@@ -90,7 +90,7 @@ final class Languages implements \Iterator {
 	 *
 	 * @return int|string The current key.
 	 */
-	public function key() {
+	public function key(): int {
 		return $this->position;
 	}
 
@@ -101,7 +101,7 @@ final class Languages implements \Iterator {
 	 *
 	 * @return mixed The next element.
 	 */
-	public function next() {
+	public function next(): void {
 		++$this->position;
 	}
 
@@ -112,7 +112,7 @@ final class Languages implements \Iterator {
 	 *
 	 * @return bool Wether or not the position is valid.
 	 */
-	public function valid() {
+	public function valid(): bool {
 		return isset( $this->items[ $this->position ] );
 	}
 
