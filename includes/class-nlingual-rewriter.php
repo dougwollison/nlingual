@@ -158,7 +158,7 @@ final class Rewriter {
 
 				case 'path':
 					// Get the path of the home URL, with trailing slash
-					$home_path = trailingslashit( parse_url( $home, PHP_URL_PATH ) );
+					$home_path = trailingslashit( parse_url( $home, PHP_URL_PATH ) ?? '' );
 
 					// Subtract the home path from the start of the path provided
 					$path = substr( $the_url->path, strlen( $home_path ) );
@@ -299,7 +299,7 @@ final class Rewriter {
 			// If it's not a wordpress internal URL,
 			// AND skip_defalt_l10n does not apply,
 			// Go ahead and localize the URL
-			if ( ! preg_match( '#^/wp-([\w-]+.php|(admin|content|includes)/)#', $the_url->path )
+			if ( ! preg_match( '#^/wp-([\w-]+.php|(admin|content|includes)/)#', $the_url->path ?? '' )
 			&& ( $force_localize || ! Registry::does_skip_default_l10n_apply( $language ) ) ) {
 				switch ( Registry::get( 'url_rewrite_method' ) ) {
 					case 'domain':
