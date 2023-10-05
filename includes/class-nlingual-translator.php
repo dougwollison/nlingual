@@ -179,8 +179,10 @@ final class Translator {
 			}
 		}
 
-		// Cache the group's data
-		wp_cache_set( $group_id, $group, 'nlingual:group' );
+		if ( $group_id ) {
+			// Cache the group's data
+			wp_cache_set( $group_id, $group, 'nlingual:group' );
+		}
 
 		return $group;
 	}
