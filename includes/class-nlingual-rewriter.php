@@ -309,7 +309,7 @@ final class Rewriter {
 					case 'path':
 						// Add language slug to path (after any home path)
 						$home_path = parse_url( $home, PHP_URL_PATH ) ?: '';
-						$request_path = substr( $the_url->path, strlen( $home_path ) );
+						$request_path = substr( $the_url->path ?? '', strlen( $home_path ) );
 
 						// Trim excess slashes
 						$home_path = rtrim( $home_path, '/' );
