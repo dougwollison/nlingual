@@ -21,7 +21,7 @@ namespace nLingual;
  *
  * @since 2.0.0
  */
-final class Languages implements \Iterator {
+final class Languages implements \Iterator, \Countable {
 	// =========================
 	// ! Properties
 	// =========================
@@ -58,6 +58,21 @@ final class Languages implements \Iterator {
 	 * @var array
 	 */
 	private $items = array();
+
+	// =========================
+	// ! Countable Methods
+	// =========================
+
+	/**
+	 * Get the length of the array.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return int The length of the array.
+	 */
+	public function count(): int {
+		return count( $this->items );
+	}
 
 	// =========================
 	// ! Iterator Methods
@@ -114,17 +129,6 @@ final class Languages implements \Iterator {
 	 */
 	public function valid(): bool {
 		return isset( $this->items[ $this->position ] );
-	}
-
-	/**
-	 * Get the length of the array.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @return int The length of the array.
-	 */
-	public function count() {
-		return count( $this->items );
 	}
 
 	// =========================

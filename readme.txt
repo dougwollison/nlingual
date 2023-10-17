@@ -2,8 +2,8 @@
 Contributors: dougwollison
 Tags: multilingual, language, bilingual, translation
 Requires at least: 4.9
-Tested up to: 5.9.0
-Requires PHP: 7.2.0
+Tested up to: 6.2.2
+Requires PHP: 5.6.20
 Stable tag: 2.10.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -78,6 +78,9 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 == Changelog ==
 
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
+
+= 2.9.3 =
+Permission fixes, type checks, bug fixes.
 
 = 2.9.2 =
 Quality of life improvements, Localizer/Synchronizer/Rewriter fixes, opt-out for accepted language.
