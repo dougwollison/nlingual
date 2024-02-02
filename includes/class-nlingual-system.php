@@ -1073,7 +1073,7 @@ final class System extends Handler {
 		}
 
 		// If a sitemap request, don't set the language
-		if ( get_query_var( 'sitemap' ) || get_query_var( 'sitemap-stylesheet' ) ) {
+		if ( $query->get( 'sitemap' ) || $query->get( 'sitemap-stylesheet' ) ) {
 			return;
 		}
 
