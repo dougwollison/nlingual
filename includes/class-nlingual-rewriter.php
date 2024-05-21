@@ -375,6 +375,7 @@ final class Rewriter {
 	 *
 	 * @since 2.10.0 Only use post's translation if neither or both are published.
 	 *               Drop search link rebuilding, may cause unintended nice-url redirect.
+	 * 				 Fix post type param handling.
 	 * @since 2.9.2  Fix handling for paginated posts/pages.
 	 * @since 2.9.0  Add checks for SINGLE term/post_type query.
 	 * @since 2.8.9  Unset s in query string when getting search link.
@@ -452,9 +453,13 @@ final class Rewriter {
 
 			// Now try various other conditional tags...
 
+			$post_types = $wp_query->query_vars['post_type'] ?? '';
+			if ( is_string( $post_types ) ) {
+				$post_types = explode( ',', $post_types );
+			}
+
 			// Single Post Type archive? Get the archive link
-			if ( is_post_type_archive() && count( (array) $wp_query->query_vars['post_type'] ) == 1 ) {
-				$post_types = (array) $wp_query->query_vars['post_type'];
+			if ( is_post_type_archive() && count( $post_types ) == 1 ) {
 				$url = get_post_type_archive_link( $post_types[0] );
 			}
 			// Single Term page? Get the term link
