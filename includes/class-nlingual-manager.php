@@ -571,12 +571,13 @@ final class Manager extends Handler {
 
 		// Get the original list and convert to appropriate format
 		$sidebars = wp_cache_get( 'wp_registered_sidebars', 'nlingual:vars' );
-		foreach ( $sidebars as &$sidebar ) {
-			$sidebar = $sidebar['name'];
-		}
 
 		// Add if we have any
 		if ( $sidebars ) {
+			foreach ( $sidebars as &$sidebar ) {
+				$sidebar = $sidebar['name'];
+			}
+
 			$fields['sidebar_locations'] = array(
 				'title' => __( 'Sidebar Locations', 'nlingual' ),
 				'help'  => __( 'Should any widget areas have versions for each language?', 'nlingual' ),
