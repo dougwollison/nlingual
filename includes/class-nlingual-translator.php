@@ -418,7 +418,8 @@ final class Translator {
 	/**
 	 * Get all translations for an object.
 	 *
-	 * @since 2.10.0 Update $include_self type doc.
+	 * @since 2.11.0 Handle include_self for empty array.
+	 * @since 2.10.0 Update $include_self type doc
 	 * @since 2.0.0
 	 *
 	 * @uses Translator::get_group() to get the object's translation group.
@@ -435,6 +436,10 @@ final class Translator {
 
 		// If no translation group exists, return empty array
 		if ( ! $group ) {
+			if ( $include_self ) {
+				// Return self with language id as 0
+				return array( 0 => $object_id );
+			}
 			return array();
 		}
 
