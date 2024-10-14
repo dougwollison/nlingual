@@ -1158,6 +1158,7 @@ final class Localizer extends Handler {
 	/**
 	 * Preload the localized values in the current language.
 	 *
+	 * @since 2.9.4 Use wpdb::prepare()
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
@@ -1167,7 +1168,7 @@ final class Localizer extends Handler {
 
 		$language = Registry::current_language();
 
-		$fields = $wpdb->get_results( "SELECT * FROM $wpdb->nl_localizations WHERE language_id = {$language->id}", ARRAY_A );
+		$fields = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->nl_localizations WHERE language_id = %d", $language->id ), ARRAY_A );
 		foreach ( $fields as $field ) {
 			$cache_id = "{$field['field_key']}/{$field['object_id']}/{$field['language_id']}";
 			wp_cache_set( $cache_id, $field['localized_value'], 'nlingual:localized' );

@@ -272,6 +272,7 @@ final class Liaison extends Handler {
 	 *
 	 * Also enable their respective taxonomies if not already.
 	 *
+	 * @since 2.9.4 Proper escaping for mysql.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
@@ -298,15 +299,20 @@ final class Liaison extends Handler {
 
 		// Escape % and _ characters in separator for MySQL use
 		$separator_mysql = str_replace( array( '%', '_' ), array( '\\%', '\\_' ), $separator );
+		$separator_mysql = '%' . $wpdb->esc_like(  $separator_mysql ) . '%';
 
 		// Get all terms that need to be converted
-		$terms = $wpdb->get_results( "
+		$terms = $wpdb->get_results( $wpdb->prepare(
+			"
 			SELECT t.name, x.description, x.term_taxonomy_id, x.term_id, x.taxonomy
 			FROM $wpdb->terms AS t
 				LEFT JOIN $wpdb->term_taxonomy AS x ON (t.term_id = x.term_id)
-			WHERE t.name LIKE '%$separator_mysql%'
-				OR x.description LIKE '%$separator_mysql%'
-		" );
+			WHERE t.name LIKE '%s'
+				OR x.description LIKE '%s'
+			",
+			$separator_mysql,
+			$separator_mysql
+		) );
 
 		// Fail if nothing is found
 		if ( ! $terms ) {

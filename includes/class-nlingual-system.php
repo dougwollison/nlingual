@@ -1200,9 +1200,6 @@ final class System extends Handler {
 		// Get the available languages for valiation purposes
 		$all_languages = Registry::languages();
 
-		// Alias for the translations table
-		$nl = $wpdb->nl_translations;
-
 		// Loop through each language specified and build the subclause
 		$where_clauses = array();
 		foreach ( $requested_languages as $language ) {
@@ -1213,11 +1210,11 @@ final class System extends Handler {
 
 			// Check if the language specified is "None"
 			if ( $language === '0' || $language === 0 ) {
-				$where_clauses[] = "$nl.language_id IS NULL";
+				$where_clauses[] = "$wpdb->nl_translations.language_id IS NULL";
 			}
 			// Otherwise check if the language exists
 			elseif ( $language = $all_languages->get( $language ) ) {
-				$where_clauses[] = $wpdb->prepare( "$nl.language_id = %d", $language->id );
+				$where_clauses[] = $wpdb->prepare( "$wpdb->nl_translations.language_id = %d", $language->id );
 			}
 		}
 
@@ -1230,7 +1227,7 @@ final class System extends Handler {
 			}
 
 			// Also add the join for the translations table
-			$clauses['join'] .= " LEFT JOIN $nl ON ($id_field = $nl.object_id AND $nl.object_type = 'post')";
+			$clauses['join'] .= " LEFT JOIN $wpdb->nl_translations ON ($id_field = $wpdb->nl_translations.object_id AND $wpdb->nl_translations.object_type = 'post')";
 
 			// Add the new clause
 			$clauses['where'] .= " AND (" . implode( ' OR ', $where_clauses ) . ")";

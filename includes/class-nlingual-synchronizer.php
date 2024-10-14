@@ -288,7 +288,8 @@ final class Synchronizer {
 		if ( isset( $rules['post_meta'] ) && $rules['post_meta'] ) {
 			// If TRUE or wildcard exists, get all possible meta_key values from the original
 			if ( $rules['post_meta'] === true || in_array( '*', $rules['post_meta'] ) ) {
-				$rules['post_meta'] = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT meta_key FROM $wpdb->postmeta WHERE post_id = %d AND meta_key NOT LIKE '\_edit\_%%'", $original->ID ) );
+				$edit_like = $wpdb->esc_like( '_edit_' ) . '%';
+				$rules['post_meta'] = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT meta_key FROM $wpdb->postmeta WHERE post_id = %d AND meta_key NOT LIKE %s", $original->ID, $edit_like ) );
 			}
 
 			// Assign all the same meta values
