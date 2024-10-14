@@ -76,7 +76,7 @@ final class Synchronizer {
 	 *
 	 * @return array The prepared rules.
 	 */
-	final private static function prepare_post_rules( array $rules, $context = 'sync' ) {
+	private static function prepare_post_rules( array $rules, $context = 'sync' ) {
 		// Ensure the rule sets are present
 		$rules = wp_parse_args( $rules, array(
 			'post_fields' => array(),
