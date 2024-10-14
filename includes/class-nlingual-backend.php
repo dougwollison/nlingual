@@ -804,11 +804,13 @@ final class Backend extends Handler {
 			$url = add_query_arg( $args, 'edit.php' );
 
 			$label = sprintf(
+				// translators: %s = number of translated items
 				_nx(
 					'Translated <span class="count">(%s)</span>',
 					'Translated <span class="count">(%s)</span>',
 					$translated,
-					'posts'
+					'posts',
+					'nlingual'
 				),
 				number_format_i18n( $translated )
 			);
@@ -832,11 +834,13 @@ final class Backend extends Handler {
 			$url = add_query_arg( $args, 'edit.php' );
 
 			$label = sprintf(
+				// translators: %s = number of translated items
 				_nx(
 					'Untranslated <span class="count">(%s)</span>',
 					'Untranslated <span class="count">(%s)</span>',
 					$untranslated,
-					'posts'
+					'posts',
+					'nlingual'
 				),
 				number_format_i18n( $untranslated )
 			);
