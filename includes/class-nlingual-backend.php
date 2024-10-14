@@ -1272,7 +1272,7 @@ final class Backend extends Handler {
 								</div>
 
 								<div class="nl-translation-actions nl-if-has-translation">
-									<button type="button" class="button button-small button-primary nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php esc_html_e( 'Edit Translation', 'nlingual' ); ?></button>
+									<button type="button" class="button button-small button-primary nl-edit-translation" data-url="<?php echo esc_url( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php esc_html_e( 'Edit Translation', 'nlingual' ); ?></button>
 									<button type="button" class="button button-small nl-drop-translation"><?php esc_html_e( 'Remove Translation', 'nlingual' ); ?></button>
 								</div>
 							</li>
@@ -1558,7 +1558,7 @@ final class Backend extends Handler {
 
 		// Localize the javascript
 		wp_localize_script( 'nlingual-admin-js', 'nlingualL10n', array(
-			'admin_post'                  => admin_url( 'admin-post.php' ),
+			'admin_post'                  => esc_url( admin_url( 'admin-post.php' ) ),
 			'TranslationTitle'            => __( 'Enter the title for this translation.', 'nlingual' ),
 			// translators: %1$s = language name, %2$s = post title
 			'TranslationTitlePlaceholder' => __( '[Needs %1$s Translation]: %2$s', 'nlingual' ),
@@ -1591,7 +1591,7 @@ final class Backend extends Handler {
 		?>
 		<script>
 			if ( typeof admin_url === 'undefined' ) {
-				var admin_url = '<?php echo admin_url(); ?>';
+				var admin_url = '<?php echo esc_js( admin_url() ); ?>';
 			}
 			nLingual.default_language = <?php echo Registry::default_language( 'id' ); ?>;
 			nLingual.Languages.add( <?php echo wp_json_encode( Registry::languages()->dump() ); ?> );

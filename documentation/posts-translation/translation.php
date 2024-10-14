@@ -29,6 +29,6 @@ _ef( 'Currently, only the row for the %1$s being updated will change; you will n
 
 <p><?php
 /* translators: %1$s = The singular name of the post type, %2$s = The URL for the link. Please preserve the HTML as-is. */
-_ef( 'If you make changes to a %1$s from here, certain fields and settings will be copied to it’s sister translations, synchronizing them. The exact fields/settings that will be synchronized is controlled <a href="%2$s" target="_blank">here</a>.', 'nlingual', $singular, admin_url( 'admin.php?page=nlingual-synchronizer' ) ); ?></p>
+_ef( 'If you make changes to a %1$s from here, certain fields and settings will be copied to it’s sister translations, synchronizing them. The exact fields/settings that will be synchronized is controlled <a href="%2$s" target="_blank">here</a>.', 'nlingual', $singular, esc_url( admin_url( 'admin.php?page=nlingual-synchronizer' ) ) ); ?></p>
 
 <?php require NL_PLUGIN_DIR . '/documentation/shared/post-sync-summary.php'; ?>

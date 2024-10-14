@@ -277,7 +277,7 @@ final class Liaison extends Handler {
 
 		$nonce = wp_create_nonce( 'convert-localized-terms' );
 		$link = admin_url( 'admin.php?nlingual-action=convert-terms&_nlnonce=' . $nonce );
-		$message = sprintf( $message, $link );
+		$message = sprintf( $message, esc_url( $link ) );
 		?>
 		<div class="notice notice-info">
 			<p><?php echo $message; ?></p>
