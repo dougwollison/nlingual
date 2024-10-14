@@ -866,6 +866,7 @@ final class Registry {
 	/**
 	 * Handle aliases of existing methods, namely get_rules().
 	 *
+	 * @since 2.9.4 Drop localizing of error message.
 	 * @since 2.0.0
 	 *
 	 * @param string $name The name of the method being called.
@@ -903,7 +904,6 @@ final class Registry {
 		}
 
 		// No match, throw exception
-		/* translators: %s = The full name of the method being called. (Low priority translation) */
-		throw new Exception( _f( 'Call to unrecognized method alias %s', 'nlingual', __CLASS__ . '::' . $name . '()' ), NL_ERR_UNSUPPORTED );
+		throw new Exception( 'Call to unrecognized method alias ' . __CLASS__ . '::' . $name . '()', NL_ERR_UNSUPPORTED );
 	}
 }

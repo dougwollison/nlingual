@@ -244,7 +244,12 @@ final class Rewriter {
 		// Ensure $language is a Language, defaulting to current
 		if ( ! validate_language( $language, 'default current' ) ) {
 			// Throw exception if not found
-			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
+			if ( is_object( $language ) ) {
+				$language = $language->id ?? '[object]';
+			} else if ( ! is_scalar( $language ) ) {
+				$language = '[non-scalar value]';
+			}
+			throw new Exception( 'The language requested does not exist: ' . esc_html( $language ), NL_ERR_NOTFOUND );
 		}
 
 		/**
@@ -403,7 +408,12 @@ final class Rewriter {
 		// Ensure $language is a Language, defaulting to current
 		if ( ! validate_language( $language, 'default current' ) ) {
 			// Throw exception if not found
-			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
+			if ( is_object( $language ) ) {
+				$language = $language->id ?? '[object]';
+			} else if ( ! is_scalar( $language ) ) {
+				$language = '[non-scalar value]';
+			}
+			throw new Exception( 'The language requested does not exist: ' . esc_html( $language ), NL_ERR_NOTFOUND );
 		}
 
 		// Get the queried object for testing

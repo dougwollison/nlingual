@@ -185,8 +185,8 @@ final class Synchronizer {
 
 		// Throw exception if the post types don't match
 		if ( $original->post_type != $target->post_type ) {
-			/* translators: %1$d = The ID number of the original post, %2$d = The ID number of the target post. */
-			throw new Exception( _f( 'The requested posts (%1$d & %2$d) cannot be synchronized because they are of different types.', 'nlingual', $original->ID, $target->ID ), NL_ERR_BADREQUEST );
+			$message = esc_html( sprintf( 'The requested posts (%1$d & %2$d) cannot be synchronized because they are of different types.', $original->ID, $target->ID ) );
+			throw new Exception( $message, NL_ERR_BADREQUEST );
 		}
 
 		// Load general sync rules by default
@@ -379,14 +379,25 @@ final class Synchronizer {
 		if ( ! is_a( $post, 'WP_Post' ) ) {
 			$post = get_post( $post );
 			if ( ! $post ) {
-				throw new Exception( 'The post specified does not exist: ' . func_get_arg( 0 ), NL_ERR_NOTFOUND );
+				$value = func_get_arg( 0 );
+				if ( is_object( $value ) ) {
+					$value = $value->ID ?? '[object]';
+				} else if ( ! is_scalar( $value ) ) {
+					$value = '[non-scalar value]';
+				}
+				throw new Exception( 'The post specified does not exist: ' . esc_html( $value ), NL_ERR_NOTFOUND );
 			}
 		}
 
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			// Throw exception if not found
-			throw new Exception( 'The language specified does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
+			if ( is_object( $language ) ) {
+				$language = $language->id ?? '[object]';
+			} else if ( ! is_scalar( $language ) ) {
+				$language = '[non-scalar value]';
+			}
+			throw new Exception( 'The language specified does not exist: ' . esc_html( $language ), NL_ERR_NOTFOUND );
 		}
 
 		// Since this is a draft, prefix the title with a note about translation being needed

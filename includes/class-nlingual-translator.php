@@ -633,8 +633,7 @@ final class Translator {
 
 			// If the method does not exist, throw exception
 			if ( ! method_exists( __CLASS__, $method ) ) {
-				/* translators: %s = The full name of the method being called. (Low priority translation) */
-				throw new Exception( _f( 'Call to unrecognized method alias %s', 'nlingual', __CLASS__ . '::' . $name . '()' ), NL_ERR_UNSUPPORTED );
+				throw new Exception( 'Call to unrecognized method alias ' . __CLASS__ . '::' . $name . '()', NL_ERR_UNSUPPORTED );
 			}
 
 			// Add the $object_type argument
@@ -664,13 +663,11 @@ final class Translator {
 				}
 				// If this was the set method, throw exception
 				if ( $action == 'set' ) {
-					/* translators: %d = The ID number of the object. */
-					throw new Exception( _f( 'The requested post (ID: %d) does not belong to a supported post type.', 'nlingual', $object_id ), NL_ERR_UNSUPPORTED );
+					throw new Exception( sprintf( 'The requested post (ID: %d) does not belong to a supported post type.', $object_id ), NL_ERR_UNSUPPORTED );
 				}
 				// Otherwise, return false
 				else {
-					/* translators: %d = The ID number of the object. */
-					trigger_error( '[nLingual] ' . _f( 'The requested post (ID: %d) does not belong to a supported post type.', 'nlingual', $object_id ), E_USER_NOTICE );
+					trigger_error( '[nLingual] ' . sprintf( 'The requested post (ID: %d) does not belong to a supported post type.', $object_id ), E_USER_NOTICE );
 					return false;
 				}
 			}
