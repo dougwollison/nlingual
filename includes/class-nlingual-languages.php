@@ -55,7 +55,7 @@ final class Languages implements \Iterator, \Countable {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @var array
+	 * @var Language[]
 	 */
 	private $items = array();
 
@@ -92,7 +92,7 @@ final class Languages implements \Iterator, \Countable {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @return mixed The current element.
+	 * @return Language The current element.
 	 */
 	public function current(): Language {
 		return $this->items[ $this->position ];
@@ -209,7 +209,7 @@ final class Languages implements \Iterator, \Countable {
 	 * @param string $value   Optional. A specific value to filter by (defaults to TRUE).
 	 * @param bool   $inverse Optional. Return instead those that don't match (defaults to FALSE).
 	 *
-	 * @return nLingual\Languages A new collection of languages
+	 * @return Languages A new collection of languages
 	 */
 	public function filter( $filter = null, $value = null, $inverse = false ) {
 		// No filter? Return original
@@ -416,7 +416,7 @@ final class Languages implements \Iterator, \Countable {
 	 *
 	 * @uses Language::dump() on each Language object.
 	 *
-	 * @return array An array of the languages.
+	 * @return array[] An array of the languages.
 	 */
 	public function dump() {
 		$data = array();
