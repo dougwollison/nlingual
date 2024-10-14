@@ -231,6 +231,7 @@ final class Liaison extends Handler {
 	/**
 	 * Print notice offering migration of localizable terms if applicable.
 	 *
+	 * @since 2.9.4 Add translator note to message.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
@@ -253,7 +254,9 @@ final class Liaison extends Handler {
 		}
 
 		// Print the message with the upgrade link
+		// translators: %s = link url, please preserve HTML
 		$message = __( 'It looks like some of your terms use the old language splitting method. <a href="%s">Click here</a> to convert them to the new localized format.', 'nlingual' );
+
 		$nonce = wp_create_nonce( 'convert-localized-terms' );
 		$link = admin_url( 'admin.php?nlingual-action=convert-terms&_nlnonce=' . $nonce );
 		$message = sprintf( $message, $link );

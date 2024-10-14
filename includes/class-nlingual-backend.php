@@ -656,6 +656,7 @@ final class Backend extends Handler {
 	/**
 	 * Print the content of the language/translations column.
 	 *
+	 * @since 2.9.4 Fix "None" string localization, add missing text domain to other strings.
 	 * @since 2.9.2 Restructure to list each language rather than each translation,
 	 *              with a create link for missing translations.
 	 * @since 2.1.0 Added bypass of language_is_required.
@@ -687,7 +688,7 @@ final class Backend extends Handler {
 		$language = Translator::get_post_language( $post_id, 'true_value' );
 		if ( ! $language ) {
 			echo '<input type="hidden" class="nl-language" value="0" />';
-			_e( 'None', 'nlingual', 'no language' );
+			_ex( 'None', 'no language', 'nlingual' );
 			return;
 		}
 
@@ -708,14 +709,14 @@ final class Backend extends Handler {
 				$title = get_the_title( $translation );
 				// Edit or view link depending on permissions
 				if ( $edit_link = get_edit_post_link( $translation ) ) {
-					$link .= sprintf( '<a href="%s" target="_blank">%s</a>', $edit_link, $title ?: __( '(no title)' ) );
+					$link .= sprintf( '<a href="%s" target="_blank">%s</a>', $edit_link, $title ?: __( '(no title)', 'nlingual' ) );
 				} else {
-					$link .= sprintf( '<a href="%s" target="_blank">%s</a>', get_permalink( $translation ), $title ?: __( '(no title)' ) );
+					$link .= sprintf( '<a href="%s" target="_blank">%s</a>', get_permalink( $translation ), $title ?: __( '(no title)', 'nlingual' ) );
 				}
 			} elseif ( $translation_link = get_translate_post_link( $post_id, $other_language->id ) ) {
-				$link .= sprintf( '<a href="%s" target="_blank">%s</a>', $translation_link, __( '[Create translation]' ) );
+				$link .= sprintf( '<a href="%s" target="_blank">%s</a>', $translation_link, __( '[Create translation]', 'nlingual' ) );
 			} else {
-				$link .= __( '[No translation]' );
+				$link .= __( '[No translation]', 'nlingual' );
 			}
 
 			/* translators: %1$s = The name of the language, %2$s = The title of the post, wrapped in a link */
@@ -1233,6 +1234,7 @@ final class Backend extends Handler {
 	/**
 	 * The language links meta box.
 	 *
+	 * @since 2.9.4 Fix esc_attr_e() usage.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::languages() to loop through all active registered languages.
@@ -1265,7 +1267,7 @@ final class Backend extends Handler {
 				</span>
 
 				<span class="add-to-menu">
-					<input type="submit"<?php wp_nav_menu_disabled_check( $nav_menu_selected_id ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( __( 'Add to Menu', 'nlingual' ) ); ?>" name="add-post-type-menu-item" id="submit-nl_language_link" />
+					<input type="submit"<?php wp_nav_menu_disabled_check( $nav_menu_selected_id ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( 'Add to Menu', 'nlingual' ); ?>" name="add-post-type-menu-item" id="submit-nl_language_link" />
 					<span class="spinner"></span>
 				</span>
 			</p>
@@ -1295,11 +1297,13 @@ final class Backend extends Handler {
 		wp_localize_script( 'nlingual-admin-js', 'nlingualL10n', array(
 			'admin_post'                  => admin_url( 'admin-post.php' ),
 			'TranslationTitle'            => __( 'Enter the title for this translation.', 'nlingual' ),
+			// translators: %1$s = language name, %2$s = post title
 			'TranslationTitlePlaceholder' => __( '[Needs %1$s Translation]: %2$s', 'nlingual' ),
 			'NewTranslationError'         => __( 'Error creating translation, please try again later or create one manually.', 'nlingual' ),
 			'NoPostSelected'              => __( 'No post selected to edit.', 'nlingual' ),
 			'NewTranslation'              => __( '[New]', 'nlingual' ),
 			'LocalizeThis'                => __( 'Localize This', 'nlingual' ),
+			// translators: %s = language name
 			'LocalizeFor'                 => __( 'Localize for %s', 'nlingual' ),
 		) );
 	}
