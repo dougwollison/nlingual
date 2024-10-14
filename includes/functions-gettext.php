@@ -1,5 +1,5 @@
 <?php
-// phpcs:ignoreFile WordPress.WP.I18n.NonSingularStringLiteralText,	WordPress.WP.I18n.NonSingularStringLiteralDomain, WordPress.WP.I18n.LowLevelTranslationFunction - proxy functions
+// phpcs:ignoreFile WordPress.WP.I18n
 
 /**
  * nLingual GetText Utilities
