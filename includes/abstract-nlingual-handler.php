@@ -152,15 +152,15 @@ abstract class Handler {
 	/**
 	 * @see Handler::add_hook()
 	 */
-	final public static function add_filter() {
-		call_user_func_array( 'self::add_hook', func_get_args() );
+	final public static function add_filter( $tag, $method, $priority = 10, $accepted_args = 1 ) {
+		self::add_hook( $tag, $method, $priority, $accepted_args );
 	}
 
 	/**
 	 * @see Handler::add_hook()
 	 */
-	final public static function add_action() {
-		call_user_func_array( 'self::add_hook', func_get_args() );
+	final public static function add_action( $tag, $method, $priority = 10, $accepted_args = 1 ) {
+		self::add_hook( $tag, $method, $priority, $accepted_args );
 	}
 
 	/**
@@ -197,15 +197,15 @@ abstract class Handler {
 	/**
 	 * @see Handler::remove_hook()
 	 */
-	final public static function remove_filter() {
-		return call_user_func_array( 'self::remove_hook', func_get_args() );
+	final public static function remove_filter( $tag, $method, $dont_disable = false ) {
+		return self::remove_hook( $tag, $method, $dont_disable );
 	}
 
 	/**
 	 * @see Handler::remove_hook()
 	 */
-	final public static function remove_action() {
-		return call_user_func_array( 'self::remove_hook', func_get_args() );
+	final public static function remove_action( $tag, $method, $dont_disable = false ) {
+		return self::remove_hook( $tag, $method, $dont_disable );
 	}
 
 	/**
@@ -218,8 +218,6 @@ abstract class Handler {
 	 * @param bool $force Wether or not to explicitly disable all hooks.
 	 */
 	public static function remove_all_hooks( $disable = false ) {
-		$class = get_called_class();
-
 		foreach ( static::$implemented_hooks as $hook ) {
 			self::remove_hook( $hook->tag, $hook->method, ! $disable );
 		}
