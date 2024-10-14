@@ -1,10 +1,10 @@
 === nLingual ===
 Contributors: dougwollison
 Tags: multilingual, language, bilingual, translation
-Requires at least: 4.9
-Tested up to: 6.2.2
-Requires PHP: 5.6.20
-Stable tag: 2.9.3
+Requires at least: 6.2.0
+Tested up to: 6.6.2
+Requires PHP: 7.0.0
+Stable tag: 2.9.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,6 +78,9 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 == Changelog ==
 
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
+
+= 2.9.4 =
+WP 6.6 and PHP 7 compatibility and API documentation improvements. Minor type check fixes and output escaping for edge cases.
 
 = 2.9.3 =
 Permission fixes, type checks, bug fixes.
