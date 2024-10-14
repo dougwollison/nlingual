@@ -190,5 +190,6 @@ function is_nlingual_active() {
  * @since 2.0.0
  */
 function cheatin() {
+	// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch - using core string
 	wp_die( __( 'Cheatin&#8217; uh?', 'default' ), 403 );
 }
