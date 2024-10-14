@@ -18,7 +18,7 @@ namespace nLingual;
  *
  * @api
  *
- * @since 2.9.4 Update callStatic alias docs
+ * @since 2.10.0 Update callStatic alias docs
  * @since 2.0.0
  *
  * @method static bool|Language get_post_language( int|\WP_Post $post, bool $true_value = false ) get a post's language.
@@ -376,7 +376,7 @@ final class Translator {
 	/**
 	 * Get a translation for an object.
 	 *
-	 * @since 2.9.4 Update $return_self type doc.
+	 * @since 2.10.0 Update $return_self type doc.
 	 * @since 2.0.0
 	 *
 	 * @uses validate_language() to validate the language and get the Language object.
@@ -412,7 +412,7 @@ final class Translator {
 	/**
 	 * Get all translations for an object.
 	 *
-	 * @since 2.9.4 Update $include_self type doc.
+	 * @since 2.10.0 Update $include_self type doc.
 	 * @since 2.0.0
 	 *
 	 * @uses Translator::get_group() to get the object's translation group.
@@ -450,7 +450,7 @@ final class Translator {
 	 * Will fail if the primary isn't already in the database or if
 	 * any of the languages listed aren't valid.
 	 *
-	 * @since 2.9.4 Fix doucmentation on $translations.
+	 * @since 2.10.0 Fix doucmentation on $translations.
 	 * @since 2.6.0 Now flushes cache for translations as well as target object.
 	 * @since 2.0.0
 	 *

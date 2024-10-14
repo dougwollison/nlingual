@@ -24,7 +24,7 @@ final class Uninstaller {
 	 *
 	 * Will check for Multisite and run uninstall() for each blog.
 	 *
-	 * @since 2.9.4 Escape WP_UNINSTALL_PLUGIN in message.
+	 * @since 2.10.0 Escape WP_UNINSTALL_PLUGIN in message.
 	 * @since 2.3.0
 	 */
 	public static function run() {

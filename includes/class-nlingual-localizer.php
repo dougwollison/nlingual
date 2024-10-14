@@ -962,7 +962,7 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
-	 * @since 2.9.4 Ensure $object_id is integer.
+	 * @since 2.10.0 Ensure $object_id is integer.
 	 * @since 2.0.0
 	 *
 	 * @global field $pagenow The current page slug.
@@ -1050,7 +1050,7 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
-	 * @since 2.9.4 Ensure $object_id is integer.
+	 * @since 2.10.0 Ensure $object_id is integer.
 	 * @since 2.3.1 Added check for NULL screen.
 	 * @since 2.0.0
 	 *
@@ -1111,7 +1111,7 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
-	 * @since 2.9.4 Use wp_json_encode().
+	 * @since 2.10.0 Use wp_json_encode().
 	 * @since 2.0.0
 	 *
 	 * @uses Localizer::$current_fields to get the stored fields.
@@ -1158,7 +1158,7 @@ final class Localizer extends Handler {
 	/**
 	 * Preload the localized values in the current language.
 	 *
-	 * @since 2.9.4 Use wpdb::prepare()
+	 * @since 2.10.0 Use wpdb::prepare()
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.

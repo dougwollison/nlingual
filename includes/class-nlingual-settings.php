@@ -246,7 +246,7 @@ final class Settings {
 	 *
 	 * Also handles <textarea> fields.
 	 *
-	 * @since 2.9.4 Escaping touch-ups.
+	 * @since 2.10.0 Escaping touch-ups.
 	 * @since 2.0.0
 	 *
 	 * @param string $name       The name of the field.
@@ -343,7 +343,7 @@ final class Settings {
 	/**
 	 * Build a list of inputs.
 	 *
-	 * @since 2.9.4 Escaping touch-ups.
+	 * @since 2.10.0 Escaping touch-ups.
 	 * @since 2.0.0
 	 *
 	 * @param string $type    The input type.
@@ -403,7 +403,7 @@ final class Settings {
 	/**
 	 * Build a sync settings interface.
 	 *
-	 * @since 2.9.4 Escaping touch-ups.
+	 * @since 2.10.0 Escaping touch-ups.
 	 * @since 2.9.2 Ensure post_format is included if object type supports it
 	 * @since 2.4.0 Ensure post_fields/terms/meta entries are present.
 	 * @since 2.0.0

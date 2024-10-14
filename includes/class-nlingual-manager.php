@@ -167,7 +167,7 @@ final class Manager extends Handler {
 	/**
 	 * Save languages from the manager.
 	 *
-	 * @since 2.9.4   Ensure _wpnonce is set. Fallback to empty nlingual_languages.
+	 * @since 2.10.0   Ensure _wpnonce is set. Fallback to empty nlingual_languages.
 	 * @since 2.9.1.1 Rewrite field checking, make accept_code optional.
 	 * @since 2.7.0   Added downloading of WordPress language files for each language.
 	 * @since 2.0.0
@@ -296,7 +296,7 @@ final class Manager extends Handler {
 	/**
 	 * Fields for the Translations page.
 	 *
-	 * @since 2.9.4 Use wp_parse_url().
+	 * @since 2.10.0 Use wp_parse_url().
 	 * @since 2.8.0 Add lock_post_language option control.
 	 * @since 2.4.0 Only list active languages as options for Default Language,
 	 *              also deprecate patch_font_stack option.
@@ -662,7 +662,7 @@ final class Manager extends Handler {
 	/**
 	 * Output for the language management page.
 	 *
-	 * @since 2.9.4 Use wp_json_encode().
+	 * @since 2.10.0 Use wp_json_encode().
 	 * @since 2.0.0
 	 *
 	 * @global $plugin_page The slug of the current admin page.

@@ -17,7 +17,7 @@
 /*
  * Localize format string.
  *
- * @since 2.9.4 Rewrite to call translate directly, to avoid gettext extraction issues.
+ * @since 2.10.0 Rewrite to call translate directly, to avoid gettext extraction issues.
  * @since 2.0.0 Reworked to accept separate args or and array of them.
  * @since 1.0.0
  *
@@ -43,7 +43,7 @@ function _f( $text, $domain, $args ) {
 /*
  * Localize format string, with context.
  *
- * @since 2.9.4 Rewrite to call translate_with_gettext_context directly, to avoid gettext extraction issues.
+ * @since 2.10.0 Rewrite to call translate_with_gettext_context directly, to avoid gettext extraction issues.
  * @since 2.0.0 Reworked to accept separate args or and array of them.
  * @since 1.0.0
  *
@@ -101,7 +101,7 @@ function _efx( $text, $context, $domain ) {
 /*
  * Localize an array of strings.
  *
- * @since 2.9.4 Rewrite to call translate directly, to avoid gettext extraction issues.
+ * @since 2.10.0 Rewrite to call translate directly, to avoid gettext extraction issues.
  * @since 1.0.0
  *
  * @uses translate()
@@ -121,7 +121,7 @@ function _a( $array, $domain = 'default' ) {
 /*
  * Localize an array of strings.
  *
- * @since 2.9.4 Rewrite to call translate_with_gettext_context directly, to avoid gettext extraction issues.
+ * @since 2.10.0 Rewrite to call translate_with_gettext_context directly, to avoid gettext extraction issues.
  * @since 1.0.0
  *
  * @uses translate_with_gettext_context()

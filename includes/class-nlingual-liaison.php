@@ -231,7 +231,7 @@ final class Liaison extends Handler {
 	/**
 	 * Print notice offering migration of localizable terms if applicable.
 	 *
-	 * @since 2.9.4 Add translator note to message.
+	 * @since 2.10.0 Add translator note to message.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
@@ -272,7 +272,7 @@ final class Liaison extends Handler {
 	 *
 	 * Also enable their respective taxonomies if not already.
 	 *
-	 * @since 2.9.4 Proper escaping for mysql.
+	 * @since 2.10.0 Proper escaping for mysql.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.

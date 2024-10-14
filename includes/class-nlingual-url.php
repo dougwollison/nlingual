@@ -132,7 +132,7 @@ final class URL extends Model {
 	/**
 	 * Parse the URL (if string) and load it's components.
 	 *
-	 * @since 2.9.4 Use wp_parse_url(). Drop localizing of error message.
+	 * @since 2.10.0 Use wp_parse_url(). Drop localizing of error message.
 	 * @since 2.0.0
 	 *
 	 * @param string|array $url_data The URL to process.

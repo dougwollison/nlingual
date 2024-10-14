@@ -571,7 +571,7 @@ final class Backend extends Handler {
 	/**
 	 * Add <select> for filtering posts by language.
 	 *
-	 * @since 2.9.4 Escaping touch-ups.
+	 * @since 2.10.0 Escaping touch-ups.
 	 * @since 2.6.0 Default post type/status to any.
 	 * @since 2.4.0 Show all languages as filtering options.
 	 * @since 2.2.0 Fixed handling of string vs array for $current.
@@ -668,7 +668,7 @@ final class Backend extends Handler {
 	/**
 	 * Print the content of the language/translations column.
 	 *
-	 * @since 2.9.4 Fix "None" string localization, add missing text domain to other strings.
+	 * @since 2.10.0 Fix "None" string localization, add missing text domain to other strings.
 	 * @since 2.9.2 Restructure to list each language rather than each translation,
 	 *              with a create link for missing translations.
 	 * @since 2.1.0 Added bypass of language_is_required.
@@ -1246,7 +1246,7 @@ final class Backend extends Handler {
 	/**
 	 * The language links meta box.
 	 *
-	 * @since 2.9.4 Fix esc_attr_e() usage.
+	 * @since 2.10.0 Fix esc_attr_e() usage.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::languages() to loop through all active registered languages.
@@ -1294,7 +1294,7 @@ final class Backend extends Handler {
 	/**
 	 * Enqueue necessary styles and scripts.
 	 *
-	 * @since 2.9.4 Add translator notes. Explicitly enqueue in header.
+	 * @since 2.10.0 Add translator notes. Explicitly enqueue in header.
 	 * @sicne 2.8.8 Add admin_post, for nl_new_translation call.
 	 * @since 2.6.0 Updated to use plugin version for CSS/JS files.
 	 * @since 2.0.0
@@ -1328,7 +1328,7 @@ final class Backend extends Handler {
 	/**
 	 * Print relevent variables for JavaScript.
 	 *
-	 * @since 2.9.4 Use wp_json_encode().
+	 * @since 2.10.0 Use wp_json_encode().
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to retrieve the default language.

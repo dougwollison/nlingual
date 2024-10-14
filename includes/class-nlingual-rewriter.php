@@ -94,7 +94,7 @@ final class Rewriter {
 	 *
 	 * @internal
 	 *
-	 * @since 2.9.4 Use wp_parse_url().
+	 * @since 2.10.0 Use wp_parse_url().
 	 * @since 2.9.0 Fixed path suffix handling.
 	 * @since 2.8.2 Fixed path handling to preserve home path.
 	 * @since 2.6.0 Updated to use NL_ORIGINAL_URL.
@@ -215,7 +215,7 @@ final class Rewriter {
 	 *
 	 * This will add the language slug subdomain/subdirecty/query var as needed.
 	 *
-	 * @since 2.9.4 Use wp_parse_url().
+	 * @since 2.10.0 Use wp_parse_url().
 	 * @since 2.9.1 Adjust URL building and trainling slash handling.
 	 * @since 2.9.0 Use does_skip_default_l10n_apply() to handle default URL localization logic,
 	 *              Added $force_localize to allow overriding skip_default_l10n even if it applies.

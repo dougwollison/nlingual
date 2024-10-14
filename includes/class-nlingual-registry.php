@@ -17,7 +17,7 @@ namespace nLingual;
  *
  * @api
  *
- * @since 2.9.4 Update callStatic alias docs
+ * @since 2.10.0 Update callStatic alias docs
  * @since 2.0.0
  *
  * @method static array get_sync_rules( $object_type, string ...$map )  Get the sync rules.
@@ -372,7 +372,7 @@ final class Registry {
 	/**
 	 * Get the sync or cloning rules for a specific object.
 	 *
-	 * @since 2.9.4 Use rest arguments format, rename $sections to $map.
+	 * @since 2.10.0 Use rest arguments format, rename $sections to $map.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to retrive the appropriate rules array.
@@ -864,7 +864,7 @@ final class Registry {
 	/**
 	 * Handle aliases of existing methods, namely get_rules().
 	 *
-	 * @since 2.9.4 Drop localizing of error message.
+	 * @since 2.10.0 Drop localizing of error message.
 	 * @since 2.0.0
 	 *
 	 * @param string $name The name of the method being called.

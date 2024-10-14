@@ -525,7 +525,7 @@ final class Frontend extends Handler {
 	/**
 	 * Localizes the date_format option.
 	 *
-	 * @since 2.9.4 Use translate to avoid gettext extraction issues.
+	 * @since 2.10.0 Use translate to avoid gettext extraction issues.
 	 * @since 2.0.0
 	 *
 	 * @param string $format The date format string to filter.
