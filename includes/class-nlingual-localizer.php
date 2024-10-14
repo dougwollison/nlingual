@@ -962,6 +962,7 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
+	 * @since 2.9.4 Ensure $object_id is integer.
 	 * @since 2.0.0
 	 *
 	 * @global field $pagenow The current page slug.
@@ -998,7 +999,7 @@ final class Localizer extends Handler {
 				return;
 			}
 
-			$object_id = $_REQUEST[ $object_id_key ];
+			$object_id = intval( $_REQUEST[ $object_id_key ] );
 		}
 
 		// Get the fields and nonces
@@ -1049,6 +1050,7 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
+	 * @since 2.9.4 Ensure $object_id is integer.
 	 * @since 2.3.1 Added check for NULL screen.
 	 * @since 2.0.0
 	 *
@@ -1085,7 +1087,7 @@ final class Localizer extends Handler {
 				return;
 			}
 
-			$object_id = $_REQUEST[ $object_id_key ];
+			$object_id = intval( $_REQUEST[ $object_id_key ] );
 		}
 
 		// Now get the fields registered to this screen (by id or base)
