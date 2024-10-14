@@ -198,3 +198,21 @@ function is_nlingual_active() {
 function cheatin() {
 	wp_die( 'Cheatin&#8217; uh?', 403 );
 }
+
+/**
+ * Sanitize value for error message.
+ *
+ * @param mixed  $value    The value to sanitize.
+ * @param string $property Optional. Property to use if an object.
+ */
+function escape_error_value( $value, $property = 'id' ) {
+	if ( is_object( $value ) ) {
+		$value = $value->{ $property } ?? '[object]';
+	} else if ( is_array( $value ) ) {
+		$value = $value[ $property ] ?? '[array]';
+	} else if ( ! is_scalar( $value ) ) {
+		$value = '[non-scalar value]';
+	}
+
+	return esc_html( $value );
+}

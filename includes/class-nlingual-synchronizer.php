@@ -401,24 +401,14 @@ final class Synchronizer {
 			$requested_post = $post;
 			$post = get_post( $post );
 			if ( ! $post ) {
-				if ( is_object( $requested_post ) ) {
-					$requested_post = $requested_post->ID ?? '[object]';
-				} else if ( ! is_scalar( $requested_post ) ) {
-					$requested_post = '[non-scalar value]';
-				}
-				throw new Exception( 'The post specified does not exist: ' . esc_html( $requested_post ), NL_ERR_NOTFOUND );
+				throw new Exception( 'The post specified does not exist: ' . escape_error_value( $requested_post, 'ID' ), NL_ERR_NOTFOUND );
 			}
 		}
 
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			// Throw exception if not found
-			if ( is_object( $language ) ) {
-				$language = $language->id ?? '[object]';
-			} else if ( ! is_scalar( $language ) ) {
-				$language = '[non-scalar value]';
-			}
-			throw new Exception( 'The language specified does not exist: ' . esc_html( $language ), NL_ERR_NOTFOUND );
+			throw new Exception( 'The language specified does not exist: ' . escape_error_value( $language ), NL_ERR_NOTFOUND );
 		}
 
 		// Since this is a draft, prefix the title with a note about translation being needed

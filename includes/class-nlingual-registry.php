@@ -460,7 +460,7 @@ final class Registry {
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			// Throw exception if not found
-			throw new Exception( 'The language specified does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
+			throw new Exception( 'The language specified does not exist: ' . escape_error_value( $language ), NL_ERR_NOTFOUND );
 		}
 
 		// If locked, fail

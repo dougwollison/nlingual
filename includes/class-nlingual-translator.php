@@ -272,7 +272,7 @@ final class Translator {
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			// Throw exception if not found
-			throw new Exception( 'The language specified does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
+			throw new Exception( 'The language specified does not exist: ' . escape_error_value( $language ), NL_ERR_NOTFOUND );
 		}
 
 		// Check the old language (bypass language_is_required fallback)
@@ -364,7 +364,7 @@ final class Translator {
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			// Throw exception if not found
-			throw new Exception( 'The language specified does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
+			throw new Exception( 'The language specified does not exist: ' . escape_error_value( $language ), NL_ERR_NOTFOUND );
 		}
 
 		$wpdb->delete(
@@ -399,7 +399,7 @@ final class Translator {
 		// Ensure $language is a Language, defaulting to current
 		if ( ! validate_language( $language, 'default current' ) ) {
 			// Trigger warning error if not found, return false
-			trigger_error( '[nLingual] Language does not exist: ' . maybe_serialize( $language ) . '; cannot get translation.', E_USER_WARNING );
+			trigger_error( '[nLingual] Language does not exist: ' . escape_error_value( $language ) . '; cannot get translation.', E_USER_WARNING );
 			return false;
 		}
 
@@ -498,7 +498,7 @@ final class Translator {
 			// Ensure $language is a Language
 			if ( ! validate_language( $language ) ) {
 				// Throw exception if not found
-				throw new Exception( 'The language specified does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
+				throw new Exception( 'The language specified does not exist: ' . escape_error_value( $language ), NL_ERR_NOTFOUND );
 			}
 
 			// Skip if we're trying assign a translation for the object's language
@@ -554,7 +554,7 @@ final class Translator {
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			// Throw exception if not found
-			throw new Exception( 'The language specified does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
+			throw new Exception( 'The language specified does not exist: ' . escape_error_value( $language ), NL_ERR_NOTFOUND );
 		}
 
 		// Alias to set_object_translations method
@@ -589,7 +589,7 @@ final class Translator {
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			// Throw exception if not found
-			throw new Exception( 'The language specified does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
+			throw new Exception( 'The language specified does not exist: ' . escape_error_value( $language ), NL_ERR_NOTFOUND );
 		}
 
 		// Get the group ID for this object
