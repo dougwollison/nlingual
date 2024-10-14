@@ -523,6 +523,7 @@ final class Frontend extends Handler {
 	/**
 	 * Localizes the date_format option.
 	 *
+	 * @since 2.10.0 Use translate to avoid gettext extraction issues.
 	 * @since 2.0.0
 	 *
 	 * @param string $format The date format string to filter.
@@ -536,7 +537,10 @@ final class Frontend extends Handler {
 		}
 
 		$domain = wp_get_theme()->get( 'TextDomain' );
-		$format = __( $format, $domain );
+
+		// phpcs:ignore WordPress.WP.I18n
+		$format = translate( $format, $domain );
+
 		return $format;
 	}
 
@@ -676,7 +680,7 @@ final class Frontend extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global WP_Locale $wp_locale The original Date/Time Locale object.
+	 * @global \WP_Locale $wp_locale The original Date/Time Locale object.
 	 *
 	 * @uses Registry::get() to check for the patch_wp_locale option.
 	 */
@@ -785,7 +789,7 @@ final class Frontend extends Handler {
 	 *               links are added before registering menu.
 	 * @since 2.6.0
 	 *
-	 * @param WP_Admin_Bar $wp_admin_bar The admin bar object.
+	 * @param \WP_Admin_Bar $wp_admin_bar The admin bar object.
 	 */
 	public static function add_translate_menu( \WP_Admin_Bar $wp_admin_bar ) {
 		global $wp_the_query;

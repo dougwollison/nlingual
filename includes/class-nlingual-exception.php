@@ -15,7 +15,7 @@ namespace nLingual;
  *
  * @since 2.0.0
  *
- * @var string
+ * @var int
  */
 define( 'NL_ERR_BADREQUEST', 400 );
 
@@ -24,7 +24,7 @@ define( 'NL_ERR_BADREQUEST', 400 );
  *
  * @since 2.0.0
  *
- * @var string
+ * @var int
  */
 define( 'NL_ERR_FORBIDDEN', 403 );
 
@@ -33,7 +33,7 @@ define( 'NL_ERR_FORBIDDEN', 403 );
  *
  * @since 2.0.0
  *
- * @var string
+ * @var int
  */
 define( 'NL_ERR_NOTFOUND', 404 );
 
@@ -42,7 +42,7 @@ define( 'NL_ERR_NOTFOUND', 404 );
  *
  * @since 2.0.0
  *
- * @var string
+ * @var int
  */
 define( 'NL_ERR_UNSUPPORTED', 405 );
 
@@ -66,7 +66,7 @@ final class Exception extends \Exception {
 	 * @param int        $code     Optional The error code.
 	 * @param \Exception $previous Optional The previous exception in the chain.
 	 */
-	public function __construct( $message, $code = 0, Exception $previous = null ) {
+	public function __construct( $message, $code = 0, $previous = null ) {
         parent::__construct( $message, $code, $previous );
     }
 

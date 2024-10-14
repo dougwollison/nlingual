@@ -18,16 +18,27 @@ namespace nLingual;
  *
  * @api
  *
+ * @since 2.10.0 Update callStatic alias docs
  * @since 2.0.0
  *
- * @method Language|false get_*_language() get an object's language.
- * @method bool           set_*_language() set an object's language.
- * @method bool           delete_*_language() delete an object's language.
- * @method int|false      get_*_translation() get an object's translation.
- * @method bool           set_*_translation() set an object's translation.
- * @method bool           delete_*_translation() delete an object's translation.
- * @method array          get_*_translations() get an object's translations.
- * @method bool           set_*_translations() set an object's translations.
+ * @method static Language|false get_post_language( int|\WP_Post $post, bool $true_value = false ) get a post's language.
+ * @method static Language|false get_term_language( int|\WP_Term $term, bool $true_value = false ) get a term's language.
+ * @method static bool           set_post_language( int|\WP_Post $post, mixed $langauge )          set a post's language.
+ * @method static bool           set_term_language( int|\WP_Term $term, mixed $langauge )          set a term's language.
+ * @method static bool           delete_post_language( int|\WP_Post $post )                        delete a post's language.
+ * @method static bool           delete_term_language( int|\WP_Term $term )                        delete a term's language.
+ *
+ * @method static bool|int get_post_translation( int|\WP_Post $post, mixed $language = null, bool|string $return_self = false ) get a translation for a post.
+ * @method static bool|int get_term_translation( int|\WP_Term $term, mixed $language = null, bool|string $return_self = false ) get a translation for a term.
+ * @method static bool     set_post_translation( int|\WP_Post $post, mixed $language, int $target_id )                          assign a post translation.
+ * @method static bool     set_term_translation( int|\WP_Term $term, mixed $language, int $target_id )                          assign a term translation.
+ * @method static bool     delete_post_translation( int|\WP_Post $post, mixed $language )                                       delete a post translation.
+ * @method static bool     delete_term_translation( int|\WP_Term $term, mixed $language )                                       delete a term translation.
+ *
+ * @method static bool|array<int, int> get_post_translations( int|\WP_Post $post, bool|string $include_self = false ) get all translations for a post.
+ * @method static bool|array<int, int> get_term_translations( int|\WP_Term $term, bool|string $include_self = false ) get all translations for a term.
+ * @method static bool                 set_post_translations( int|\WP_Post $post, array<int, int> $translations )     set multiple translations for a post.
+ * @method static bool                 set_term_translations( int|\WP_Term $term, array<int, int> $translations )     set multiple translations for a term.
  */
 final class Translator {
 	// =========================
@@ -371,15 +382,16 @@ final class Translator {
 	/**
 	 * Get a translation for an object.
 	 *
+	 * @since 2.10.0 Update $return_self type doc.
 	 * @since 2.0.0
 	 *
 	 * @uses validate_language() to validate the language and get the Language object.
 	 * @uses Translator::get_group() to get the object's translation group.
 	 *
-	 * @param string $object_type The type of object.
-	 * @param int    $object_id   The ID of the object.
-	 * @param mixed  $language    Optional. The language to retrieve for (defaults to current).
-	 * @param bool   $return_self Optional. Return $object_id if nothing is found (default false).
+	 * @param string      $object_type The type of object.
+	 * @param int         $object_id   The ID of the object.
+	 * @param mixed       $language    Optional. The language to retrieve for (defaults to current).
+	 * @param bool|string $return_self Optional. Return $object_id if nothing is found (default false).
 	 *
 	 * @return int|false The id of the translation, false if not found or language is invalid (latter will log warning).
 	 */
@@ -406,15 +418,16 @@ final class Translator {
 	/**
 	 * Get all translations for an object.
 	 *
+	 * @since 2.10.0 Update $include_self type doc.
 	 * @since 2.0.0
 	 *
 	 * @uses Translator::get_group() to get the object's translation group.
 	 *
-	 * @param string $object_type  The type of object.
-	 * @param int    $object_id    The ID of the object.
-	 * @param bool   $include_self Optional. Include this object in the list (default false).
+	 * @param string      $object_type  The type of object.
+	 * @param int         $object_id    The ID of the object.
+	 * @param bool|string $include_self Optional. Include this object in the list (default false).
 	 *
-	 * @return array An associative array of objects in language_id => object_id format.
+	 * @return array<int, int> An associative array of objects in language_id => object_id format.
 	 */
 	public static function get_object_translations( $object_type, $object_id, $include_self = false ) {
 		// Get the translation group for the object
@@ -443,6 +456,7 @@ final class Translator {
 	 * Will fail if the primary isn't already in the database or if
 	 * any of the languages listed aren't valid.
 	 *
+	 * @since 2.10.0 Fix doucmentation on $translations.
 	 * @since 2.6.0 Now flushes cache for translations as well as target object.
 	 * @since 2.0.0
 	 *
@@ -453,9 +467,9 @@ final class Translator {
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
-	 * @param string $object_type The type of the objects.
-	 * @param int    $object_id   The ID of the primary object.
-	 * @param array  $objects     A list of objects to associate (id => language_id format).
+	 * @param string          $object_type  The type of the objects.
+	 * @param int             $object_id    The ID of the primary object.
+	 * @param array<int, int> $translations A list of objects to associate (language_id => id format).
 	 *
 	 * @throws Exception If the language specified does not exist.
 	 *
@@ -530,13 +544,13 @@ final class Translator {
 	 * @param string $object_type The type of the objects.
 	 * @param int    $object_id   The ID of the primary object.
 	 * @param mixed  $language    The language to add a translation for.
-	 * @param int    $object      The object to add as the translation.
+	 * @param int    $target_id   The ID of the target to add as the translation.
 	 *
 	 * @throws Exception If the language specified does not exist.
 	 *
 	 * @param bool Wether or not the association could be done.
 	 */
-	public static function set_object_translation( $object_type, $object_id, $language, $object ) {
+	public static function set_object_translation( $object_type, $object_id, $language, $target_id ) {
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			// Throw exception if not found
@@ -544,7 +558,7 @@ final class Translator {
 		}
 
 		// Alias to set_object_translations method
-		return self::set_object_translations( $object_type, $object_id, array( $language->id => $object ) );
+		return self::set_object_translations( $object_type, $object_id, array( $language->id => $target_id ) );
 	}
 
 	/**
@@ -639,8 +653,7 @@ final class Translator {
 
 			// If the method does not exist, throw exception
 			if ( ! method_exists( __CLASS__, $method ) ) {
-				/* translators: %s = The full name of the method being called. (Low priority translation) */
-				throw new Exception( _f( 'Call to unrecognized method alias %s', 'nlingual', __CLASS__ . '::' . $name . '()' ), NL_ERR_UNSUPPORTED );
+				throw new Exception( 'Call to unrecognized method alias ' . __CLASS__ . '::' . $name . '()', NL_ERR_UNSUPPORTED );
 			}
 
 			// Add the $object_type argument
@@ -670,13 +683,11 @@ final class Translator {
 				}
 				// If this was the set method, throw exception
 				if ( $action == 'set' ) {
-					/* translators: %d = The ID number of the object. */
-					throw new Exception( _f( 'The requested post (ID: %d) does not belong to a supported post type.', 'nlingual', $object_id ), NL_ERR_UNSUPPORTED );
+					throw new Exception( sprintf( 'The requested post (ID: %d) does not belong to a supported post type.', $object_id ), NL_ERR_UNSUPPORTED );
 				}
 				// Otherwise, return false
 				else {
-					/* translators: %d = The ID number of the object. */
-					trigger_error( '[nLingual] ' . _f( 'The requested post (ID: %d) does not belong to a supported post type.', 'nlingual', $object_id ), E_USER_NOTICE );
+					trigger_error( '[nLingual] ' . sprintf( 'The requested post (ID: %d) does not belong to a supported post type.', $object_id ), E_USER_NOTICE );
 					return false;
 				}
 			}

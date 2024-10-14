@@ -246,6 +246,7 @@ final class Settings {
 	 *
 	 * Also handles <textarea> fields.
 	 *
+	 * @since 2.10.0 Escaping touch-ups.
 	 * @since 2.0.0
 	 *
 	 * @param string $name       The name of the field.
@@ -264,7 +265,7 @@ final class Settings {
 
 		// If a checkbox, include a default=0 dummy field
 		if ( $type == 'checkbox' ) {
-			$html .= sprintf( '<input type="hidden" name="%s" value="0" />', $name );
+			$html .= sprintf( '<input type="hidden" name="%s" value="0" />', esc_attr( $name ) );
 
 			// Also add the checked attribute if $value is true-ish
 			if ( $value ) {
@@ -278,6 +279,8 @@ final class Settings {
 		// Build the $attributes list if needed
 		$atts = '';
 		foreach ( $attributes as $key => $val ) {
+			$key = esc_attr( $key );
+			$val = esc_attr( $val );
 			if ( is_bool( $val ) ) {
 				$atts .= $val ? " {$key}" : '';
 			} else {
@@ -288,10 +291,23 @@ final class Settings {
 		// Build the input
 		if ( $type == 'textarea' ) {
 			// or <textarea> as the case may be.
-			$html .= sprintf( '<textarea name="%s" id="%s"%s>%s</textarea>', $name, $id, $atts, $value );
+			$html .= sprintf(
+				'<textarea name="%s" id="%s"%s>%s</textarea>',
+				esc_attr( $name ),
+				esc_attr( $id ),
+				esc_html( $atts ),
+				esc_textarea( $value )
+			);
 		} else {
 			$value = esc_attr( $value );
-			$html .= sprintf( '<input type="%s" name="%s" id="%s" value="%s"%s />', $type, $name, $id, $value, $atts );
+			$html .= sprintf(
+				'<input type="%s" name="%s" id="%s" value="%s"%s />',
+				esc_attr( $type ),
+				esc_attr( $name ),
+				esc_attr( $id ),
+				esc_attr( $value ),
+				esc_html( $atts )
+			);
 		}
 
 		return $html;
@@ -312,8 +328,12 @@ final class Settings {
 
 		$html .= sprintf( '<select name="%s" id="%s">', $name, $id );
 		foreach ( $options as $val => $label ) {
-			$selected = $val == $value ? ' selected' : '';
-			$html .= sprintf( '<option value="%s"%s>%s</option>', $val, $selected, $label );
+			$html .= sprintf(
+				'<option value="%s"%s>%s</option>',
+				esc_attr( $val ),
+				selected( $val, $value, false ),
+				$label
+			);
 		}
 		$html .= '</select>';
 
@@ -323,6 +343,7 @@ final class Settings {
 	/**
 	 * Build a list of inputs.
 	 *
+	 * @since 2.10.0 Escaping touch-ups.
 	 * @since 2.0.0
 	 *
 	 * @param string $type    The input type.
@@ -342,13 +363,19 @@ final class Settings {
 
 		$inputs = array();
 		foreach ( $options as $val => $label ) {
-			$checked = in_array( $val, $value ) ? ' checked' : '';
-			$inputs[] = sprintf( '<label><input type="%s" name="%s" value="%s"%s /> %s</label>', $type, $field_name, $val, $checked, $label );
+			$inputs[] = sprintf(
+				'<label><input type="%s" name="%s" value="%s"%s /> %s</label>',
+				esc_attr( $type ),
+				esc_attr( $field_name ),
+				esc_attr( $val ),
+				checked( in_array( $val, $value ), true, false ),
+				$label
+			);
 		}
 
 		// Build the list, including a fallback "none" input
 		$html = '<fieldset class="nl-inputlist">' .
-			sprintf( '<input type="hidden" name="%s" value="" />', $name ) .
+			sprintf( '<input type="hidden" name="%s" value="" />', esc_attr( $name ) ) .
 			implode( '<br /> ', $inputs ) .
 		'</fieldset>';
 
@@ -376,6 +403,7 @@ final class Settings {
 	/**
 	 * Build a sync settings interface.
 	 *
+	 * @since 2.10.0 Escaping touch-ups.
 	 * @since 2.9.2 Ensure post_format is included if object type supports it
 	 * @since 2.4.0 Ensure post_fields/terms/meta entries are present.
 	 * @since 2.0.0
@@ -428,38 +456,38 @@ final class Settings {
 			$value['post_terms'] = array_keys( $post_taxs );
 		}
 		if ( $value['post_meta'] === true ) {
-			$value['post_meta'] = '*';
+			$value['post_meta'] = array( '*' );
 		}
 		?>
 		<div class="nl-field-section">
-			<button type="button" class="button nl-section-toggle hide-if-no-js" data-alt="<?php _e( 'Close Settings', 'nlingual' ); ?>"><?php _e( 'Open Settings', 'nlingual' ); ?></button>
+			<button type="button" class="button nl-section-toggle hide-if-no-js" data-alt="<?php esc_attr_e( 'Close Settings', 'nlingual' ); ?>"><?php esc_html_e( 'Open Settings', 'nlingual' ); ?></button>
 			<div class="nl-section-content">
-				<h4><label  title="<?php _e( 'Check All/None', 'nlingual' ); ?>">
-					<?php _e( 'Post Data', 'nlingual' ); ?>
-					<input type="checkbox" class="nl-checkall" data-name="<?php echo "{$name}[post_fields]"; ?>" />
+				<h4><label title="<?php esc_attr_e( 'Check All/None', 'nlingual' ); ?>">
+					<?php esc_html_e( 'Post Data', 'nlingual' ); ?>
+					<input type="checkbox" class="nl-checkall" data-name="<?php echo esc_attr( "{$name}[post_fields]" ); ?>" />
 				</label></h4>
 				<?php echo self::build_checklist_field( "{$name}[post_fields]", $value['post_fields'], $post_fields ); ?>
-				<p class="description"><?php _e( 'What post information should be copied?', 'nlingual' ); ?></p>
+				<p class="description"><?php esc_html_e( 'What post information should be copied?', 'nlingual' ); ?></p>
 
 				<?php if ( $post_taxs ) : ?>
-					<h4><label title="<?php _e( 'Check All/None', 'nlingual' ); ?>">
-						<?php _e( 'Taxonomies', 'nlingual' ); ?>
-						<input type="checkbox" class="nl-checkall" data-name="<?php echo "{$name}[post_terms]"; ?>" />
+					<h4><label title="<?php esc_attr_e( 'Check All/None', 'nlingual' ); ?>">
+						<?php esc_html_e( 'Taxonomies', 'nlingual' ); ?>
+						<input type="checkbox" class="nl-checkall" data-name="<?php echo esc_attr( "{$name}[post_terms]" ); ?>" />
 					</label></h4>
 					<?php echo self::build_checklist_field( "{$name}[post_terms]", $value['post_terms'], $post_taxs ); ?>
-					<p class="description"><?php _e( 'What terms should be copied?', 'nlingual' ); ?></p>
+					<p class="description"><?php esc_html_e( 'What terms should be copied?', 'nlingual' ); ?></p>
 				<?php endif; ?>
 
-				<h4><label  title="<?php _e( 'Match All/None', 'nlingual' ); ?>">
-					<?php _e( 'Meta Data', 'nlingual' ); ?>
-					<input type="checkbox" class="nl-matchall" data-name="<?php echo "{$name}[post_meta]"; ?>" />
+				<h4><label title="<?php esc_attr_e( 'Match All/None', 'nlingual' ); ?>">
+					<?php esc_html_e( 'Meta Data', 'nlingual' ); ?>
+					<input type="checkbox" class="nl-matchall" data-name="<?php echo esc_attr( "{$name}[post_meta]" ); ?>" />
 				</label></h4>
-				<?php echo self::build_input_field( "{$name}[post_meta]", "{$name}_post_meta", implode( "\n", (array) $value['post_meta'] ), 'textarea', array(
+				<?php echo self::build_input_field( "{$name}[post_meta]", "{$name}_post_meta", implode( "\n", $value['post_meta'] ), 'textarea', array(
 					'class' => 'widefat',
 					'rows' => 5,
 				) ); ?>
-				<p class="description"><?php _e( 'Which custom fields should be copied?', 'nlingual' ); ?> <br />
-					<small><?php _e( 'One per line. Enter an asterisk (*) to match all fields.', 'nlingual' ); ?></small></p>
+				<p class="description"><?php esc_html_e( 'Which custom fields should be copied?', 'nlingual' ); ?> <br />
+					<small><?php esc_html_e( 'One per line. Enter an asterisk (*) to match all fields.', 'nlingual' ); ?></small></p>
 			</div>
 		</div>
 		<?php

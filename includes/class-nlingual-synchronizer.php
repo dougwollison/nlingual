@@ -154,13 +154,13 @@ final class Synchronizer {
 	 * @uses Translator::get_object_language() to get the target's language.
 	 * @uses Translator::get_object_translation() to get the original's parent's translation.
 	 *
-	 * @param int|WP_Post $original The original post ID/object.
-	 * @param int|WP_Post $target   The target post ID/object.
-	 * @param array       $rules    Optional. The rules to use for syncing.
+	 * @param int|\WP_Post $original The original post ID/object.
+	 * @param int|\WP_Post $target   The target post ID/object.
+	 * @param array        $rules    Optional. The rules to use for syncing.
 	 *     @option array      "post_fields" A whitelist of fields to copy over.
 	 *     @option bool|array "post_meta"   A whitelist of meta fields (TRUE for all).
 	 *     @option bool|array "post_terms"  A whitelist of taxonomies (TRUE for all).
-	 * @param string      $context  Optional. The context for preparing the rules ("sync" or "clone"),
+	 * @param string       $context  Optional. The context for preparing the rules ("sync" or "clone"),
 	 *                              also dictates what rules are fetched if they aren't provided.
 	 *
 	 * @throws Exception If the requested posts aren't of the same type.
@@ -185,8 +185,8 @@ final class Synchronizer {
 
 		// Throw exception if the post types don't match
 		if ( $original->post_type != $target->post_type ) {
-			/* translators: %1$d = The ID number of the original post, %2$d = The ID number of the target post. */
-			throw new Exception( _f( 'The requested posts (%1$d & %2$d) cannot be synchronized because they are of different types.', 'nlingual', $original->ID, $target->ID ), NL_ERR_BADREQUEST );
+			$message = esc_html( sprintf( 'The requested posts (%1$d & %2$d) cannot be synchronized because they are of different types.', $original->ID, $target->ID ) );
+			throw new Exception( $message, NL_ERR_BADREQUEST );
 		}
 
 		// Load general sync rules by default
@@ -288,7 +288,8 @@ final class Synchronizer {
 		if ( isset( $rules['post_meta'] ) && $rules['post_meta'] ) {
 			// If TRUE or wildcard exists, get all possible meta_key values from the original
 			if ( $rules['post_meta'] === true || in_array( '*', $rules['post_meta'] ) ) {
-				$rules['post_meta'] = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT meta_key FROM $wpdb->postmeta WHERE post_id = %d AND meta_key NOT LIKE '\_edit\_%%'", $original->ID ) );
+				$edit_like = $wpdb->esc_like( '_edit_' ) . '%';
+				$rules['post_meta'] = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT meta_key FROM $wpdb->postmeta WHERE post_id = %d AND meta_key NOT LIKE %s", $original->ID, $edit_like ) );
 			}
 
 			// Assign all the same meta values
@@ -386,27 +387,38 @@ final class Synchronizer {
 	 * @uses Translator::set_post_language() to assign the language to the clone.
 	 * @uses Translator::set_post_translation() to link the clone to the original.
 	 *
-	 * @param int|WP_Post  $post     The ID/object of the post to clone.
-	 * @param int|Language $language The language to assign the clone to.
+	 * @param int|\WP_Post  $post     The ID/object of the post to clone.
+	 * @param int|Language  $language The language to assign the clone to.
 	 *
 	 * @throws Exception If the post specified does not exist.
 	 * @throws Exception If the language specified does not exist.
 	 *
-	 * @return WP_Post|WP_Error The cloned post or WP_Error on failure.
+	 * @return \WP_Post|\WP_Error The cloned post or WP_Error on failure.
 	 */
 	public static function clone_post( $post, $language ) {
 		// Validate $post if an ID
 		if ( ! is_a( $post, 'WP_Post' ) ) {
+			$requested_post = $post;
 			$post = get_post( $post );
 			if ( ! $post ) {
-				throw new Exception( 'The post specified does not exist: ' . func_get_arg( 0 ), NL_ERR_NOTFOUND );
+				if ( is_object( $requested_post ) ) {
+					$requested_post = $requested_post->ID ?? '[object]';
+				} else if ( ! is_scalar( $requested_post ) ) {
+					$requested_post = '[non-scalar value]';
+				}
+				throw new Exception( 'The post specified does not exist: ' . esc_html( $requested_post ), NL_ERR_NOTFOUND );
 			}
 		}
 
 		// Ensure $language is a Language
 		if ( ! validate_language( $language ) ) {
 			// Throw exception if not found
-			throw new Exception( 'The language specified does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
+			if ( is_object( $language ) ) {
+				$language = $language->id ?? '[object]';
+			} else if ( ! is_scalar( $language ) ) {
+				$language = '[non-scalar value]';
+			}
+			throw new Exception( 'The language specified does not exist: ' . esc_html( $language ), NL_ERR_NOTFOUND );
 		}
 
 		// Since this is a draft, prefix the title with a note about translation being needed

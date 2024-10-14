@@ -376,8 +376,7 @@ final class Backend extends Handler {
 	 * @param string $global The global variable name to be edited.
 	 */
 	private static function register_localized_locations( $type, $global ) {
-		global $$global;
-		$list =& $$global;
+		$list = $GLOBALS[ $global ];
 
 		// Cache the old version of the menus for reference
 		wp_cache_set( $global, $list, 'nlingual:vars' );
@@ -415,7 +414,7 @@ final class Backend extends Handler {
 		}
 
 		// Replace the registered nav menu array with the new one
-		$list = $localized_locations;
+		$GLOBALS[ $global ] = $localized_locations;
 	}
 
 	/**
@@ -589,8 +588,8 @@ final class Backend extends Handler {
 	 * @since 2.1.0 Bypass language_is_required option; make sure post has a language.
 	 * @since 2.0.0
 	 *
-	 * @param array   $post_states The list of post states for the post.
-	 * @param WP_Post $post        The post in question.
+	 * @param array    $post_states The list of post states for the post.
+	 * @param \WP_Post $post        The post in question.
 	 *
 	 * @return array The filtered post states list.
 	 */
@@ -624,9 +623,10 @@ final class Backend extends Handler {
 	 *
 	 * @since 2.11.0 Support both custom and default query var.
 	 *               Add [default lanuage] + no language option if !language_is_required.
-	 * @since 2.6.0  Default post type/status to any.
-	 * @since 2.4.0  Show all languages as filtering options.
-	 * @since 2.2.0  Fixed handling of string vs array for $current.
+	 * @since 2.10.0 Escaping touch-ups.
+	 * @since 2.6.0 Default post type/status to any.
+	 * @since 2.4.0 Show all languages as filtering options.
+	 * @since 2.2.0 Fixed handling of string vs array for $current.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::is_post_type_supported() to check for support.
@@ -655,25 +655,41 @@ final class Backend extends Handler {
 			$current = implode( '|', $current );
 		}
 		?>
-		<select name="nl_language" class="postform">
-			<option value="-1"><?php _e( 'All Languages', 'nlingual' ); ?></option>
+		<select name="<?php echo esc_attr( $query_var ); ?>" class="postform">
+			<option value="-1"><?php esc_html_e( 'All Languages', 'nlingual' ); ?></option>
 			<?php
 			$count = Backend::language_posts_count( 0, $post_type, $post_status );
 
 			if ( ! Registry::get( 'language_is_required' ) ) {
 				$default_language = Registry::default_language();
 				$value = "{$default_language->slug}|0";
-				$selected = $current == $value;
 
-				printf( '<option value="%s" %s>%s/%s</option>', $value, $selected ? 'selected' : '', $default_language->system_name, __( 'No Language', 'nlingual' ) );
+				printf(
+					'<option value="%s" %s>%s/%s</option>',
+					esc_attr( $value ),
+					selected( $current, $value, false ),
+					esc_html( $default_language->system_name ),
+					esc_html__( 'No Language', 'nlingual' )
+				);
 			}
 
-			printf( '<option value="%s" %s>%s (%s)</option>', 0, $current == '0' ? 'selected' : '', __( 'No Language', 'nlingual' ), $count );
+			printf(
+				'<option value="%s" %s>%s (%s)</option>',
+				0,
+				selected( $current, '0', false ),
+				esc_html__( 'No Language', 'nlingual' ),
+				$count
+			);
 
 			foreach ( Registry::languages() as $language ) {
-				$selected = $current == $language->slug;
 				$count = Backend::language_posts_count( $language->id, $post_type, $post_status );
-				printf( '<option value="%s" %s>%s (%d)</option>', $language->slug, $selected ? 'selected' : '', $language->system_name, $count );
+				printf(
+					'<option value="%s" %s>%s (%d)</option>',
+					esc_attr( $language->slug ),
+					selected( $current, $language->slug, false ),
+					esc_html( $language->system_name ),
+					$count
+				);
 			}
 			?>
 		</select>
@@ -710,8 +726,8 @@ final class Backend extends Handler {
 	 * @since 2.11.0 Use default query var, not custom.
 	 * @since 2.8.0
 	 *
-	 * @param array   $args The WP_Query arguments to filter.
-	 * @param WP_Post $post The post for context.
+	 * @param array    $args The WP_Query arguments to filter.
+	 * @param \WP_Post $post The post for context.
 	 *
 	 * @return array The filtered query args.
 	 */
@@ -858,6 +874,7 @@ final class Backend extends Handler {
 	/**
 	 * Print the content of the language/translations column.
 	 *
+	 * @since 2.10.0 Fix "None" string localization, add missing text domain to other strings.
 	 * @since 2.9.2 Restructure to list each language rather than each translation,
 	 *              with a create link for missing translations.
 	 * @since 2.1.0 Added bypass of language_is_required.
@@ -883,18 +900,18 @@ final class Backend extends Handler {
 		}
 
 		// Add a dead nonce field for use by the inlineEdit hook
-		printf( '<input type="hidden" class="nl-nonce" value="%s" />', wp_create_nonce( 'update-post_' . $post_id ) );
+		printf( '<input type="hidden" class="nl-nonce" value="%s" />', esc_attr( wp_create_nonce( 'update-post_' . $post_id ) ) );
 
 		// Start by printing out the language
 		$language = Translator::get_post_language( $post_id, 'true_value' );
 		if ( ! $language ) {
 			echo '<input type="hidden" class="nl-language" value="0" />';
-			_e( 'None', 'nlingual', 'no language' );
+			echo esc_html_x( 'None', 'no language', 'nlingual' );
 			return;
 		}
 
 		printf( '<input type="hidden" class="nl-language" value="%d" />', $language->id );
-		printf( '<strong>%s</strong>', $language->system_name );
+		printf( '<strong>%s</strong>', esc_html( $language->system_name ) );
 
 		// Print links to either existing translations or Translate This actions.
 		$links = array();
@@ -910,18 +927,18 @@ final class Backend extends Handler {
 				$title = get_the_title( $translation );
 				// Edit or view link depending on permissions
 				if ( $edit_link = get_edit_post_link( $translation ) ) {
-					$link .= sprintf( '<a href="%s" target="_blank">%s</a>', $edit_link, $title ?: __( '(no title)' ) );
+					$link .= sprintf( '<a href="%s" target="_blank">%s</a>', esc_url( $edit_link ), esc_html( $title ?: __( '(no title)', 'nlingual' ) ) );
 				} else {
-					$link .= sprintf( '<a href="%s" target="_blank">%s</a>', get_permalink( $translation ), $title ?: __( '(no title)' ) );
+					$link .= sprintf( '<a href="%s" target="_blank">%s</a>', get_permalink( $translation ), esc_html( $title ?: __( '(no title)', 'nlingual' ) ) );
 				}
 			} elseif ( $translation_link = get_translate_post_link( $post_id, $other_language->id ) ) {
-				$link .= sprintf( '<a href="%s" target="_blank">%s</a>', $translation_link, __( '[Create translation]' ) );
+				$link .= sprintf( '<a href="%s" target="_blank">%s</a>', esc_url( $translation_link ), esc_html__( '[Create translation]', 'nlingual' ) );
 			} else {
-				$link .= __( '[No translation]' );
+				$link .= esc_html__( '[No translation]', 'nlingual' );
 			}
 
 			/* translators: %1$s = The name of the language, %2$s = The title of the post, wrapped in a link */
-			$links[] = _fx( '%1$s: %2$s', 'language: title', 'nlingual', $other_language->system_name, $link );
+			$links[] = esc_html( _fx( '%1$s: %2$s', 'language: title', 'nlingual', $other_language->system_name, $link ) );
 		}
 		if ( $links ) {
 			echo '<ul><li>' . implode( '</li><li>', $links ) . '</li></ul>';
@@ -966,7 +983,7 @@ final class Backend extends Handler {
 				<?php if ( ! Registry::get( 'lock_post_language' ) ) : ?>
 					<div class="inline-edit-col nl-manage-language">
 						<label>
-							<span class="title"><?php _e( 'Language', 'nlingual' ); ?></span>
+							<span class="title"><?php esc_html_e( 'Language', 'nlingual' ); ?></span>
 							<select name="nlingual_language" class="nl-input nl-language-input">
 								<?php if ( ! Registry::get( 'language_is_required' ) ) : ?>
 									<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
@@ -1049,7 +1066,7 @@ final class Backend extends Handler {
 			<fieldset class="nl-fieldset">
 				<div class="inline-edit-col">
 					<label>
-						<span class="title"><?php _e( 'Language', 'nlingual' ); ?></span>
+						<span class="title"><?php esc_html_e( 'Language', 'nlingual' ); ?></span>
 						<select name="nlingual_bulk_language" id="nl_language">
 							<option value="">&mdash; <?php _e( 'No Change', 'nlingual' ); ?> &mdash;</option>
 							<?php if ( ! Registry::get( 'language_is_required' ) ) : ?>
@@ -1125,7 +1142,7 @@ final class Backend extends Handler {
 	 * @uses Translator::get_post_translations() to get the post's translations.
 	 * @uses Registry::get() to get the language_is_required; need for "None" option.
 	 *
-	 * @param WP_Post $post The post being edited.
+	 * @param \WP_Post $post The post being edited.
 	 */
 	public static function post_meta_box( $post ) {
 		global $wpdb;
@@ -1175,11 +1192,11 @@ final class Backend extends Handler {
 		<div class="nl-translation-manager">
 			<?php if ( $lock_post_language ) : ?>
 				<input type="hidden" name="nlingual_language" id="nl_language" class="nl-input nl-language-input" value="<?php echo $post_language->id; ?>">
-				<strong><?php _e( 'Assigned Language:', 'nlingual' ); ?></strong>
+				<strong><?php esc_html_e( 'Language:', 'nlingual' ); ?></strong>
 				<em><?php echo $post_language->system_name; ?></em>
 			<?php else: ?>
 				<div class="nl-field nl-manage-language">
-					<label for="nl_language" class="nl-field-heading"><?php _e( 'Assign Language', 'nlingual' ); ?></label>
+					<label for="nl_language" class="screen-reader-text"><?php esc_html_e( 'Language', 'nlingual' ); ?></label>
 					<select name="nlingual_language" id="nl_language" class="nl-input nl-language-input">
 						<?php if ( ! $language_is_required ) : ?>
 							<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
@@ -1474,6 +1491,7 @@ final class Backend extends Handler {
 	/**
 	 * The language links meta box.
 	 *
+	 * @since 2.10.0 Fix esc_attr_e() usage.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::languages() to loop through all active registered languages.
@@ -1482,7 +1500,7 @@ final class Backend extends Handler {
 		global $nav_menu_selected_id;
 		?>
 		<div class="posttypediv" id="nl_language_link">
-			<p><?php _e( 'These links will go to the respective language versions of the current URL.', 'nlingual' ); ?></p>
+			<p><?php esc_html_e( 'These links will go to the respective language versions of the current URL.', 'nlingual' ); ?></p>
 			<div id="tabs-panel-nl_language_link-all" class="tabs-panel tabs-panel-active">
 				<ul id="pagechecklist-most-recent" class="categorychecklist form-no-clear">
 				<?php $i = -1; foreach ( Registry::languages() as $language ) : ?>
@@ -1493,8 +1511,8 @@ final class Backend extends Handler {
 							<?php if ( ! $language->active ) _ex( '[Inactive]', 'language inactive', 'nlingual' ); ?>
 						</label>
 						<input type="hidden" class="menu-item-type" name="menu-item[<?php echo $i; ?>][menu-item-type]" value="nl_language_link">
-						<input type="hidden" class="menu-item-title" name="menu-item[<?php echo $i; ?>][menu-item-title]" value="<?php echo $language->native_name; ?>">
-						<input type="hidden" class="menu-item-url" name="menu-item[<?php echo $i; ?>][menu-item-object]" value="<?php echo $language->slug; ?>">
+						<input type="hidden" class="menu-item-title" name="menu-item[<?php echo $i; ?>][menu-item-title]" value="<?php echo esc_attr( $language->native_name ); ?>">
+						<input type="hidden" class="menu-item-url" name="menu-item[<?php echo $i; ?>][menu-item-object]" value="<?php echo esc_attr( $language->slug ); ?>">
 					</li>
 				<?php $i--; endforeach; ?>
 				</ul>
@@ -1506,7 +1524,7 @@ final class Backend extends Handler {
 				</span>
 
 				<span class="add-to-menu">
-					<input type="submit"<?php wp_nav_menu_disabled_check( $nav_menu_selected_id ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( __( 'Add to Menu', 'nlingual' ) ); ?>" name="add-post-type-menu-item" id="submit-nl_language_link" />
+					<input type="submit"<?php wp_nav_menu_disabled_check( $nav_menu_selected_id ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( 'Add to Menu', 'nlingual' ); ?>" name="add-post-type-menu-item" id="submit-nl_language_link" />
 					<span class="spinner"></span>
 				</span>
 			</p>
@@ -1521,6 +1539,7 @@ final class Backend extends Handler {
 	/**
 	 * Enqueue necessary styles and scripts.
 	 *
+	 * @since 2.10.0 Add translator notes. Explicitly enqueue in header.
 	 * @sicne 2.8.8 Add admin_post, for nl_new_translation call.
 	 * @since 2.6.0 Updated to use plugin version for CSS/JS files.
 	 * @since 2.0.0
@@ -1530,12 +1549,13 @@ final class Backend extends Handler {
 		wp_enqueue_style( 'nlingual-admin', plugins_url( 'css/admin.css', NL_PLUGIN_FILE ), array(), NL_PLUGIN_VERSION, 'screen' );
 
 		// Admin javascript
-		wp_enqueue_script( 'nlingual-admin-js', plugins_url( 'js/admin.min.js', NL_PLUGIN_FILE ), array( 'backbone', 'jquery-ui-sortable' ), NL_PLUGIN_VERSION );
+		wp_enqueue_script( 'nlingual-admin-js', plugins_url( 'js/admin.min.js', NL_PLUGIN_FILE ), array( 'backbone', 'jquery-ui-sortable' ), NL_PLUGIN_VERSION, false );
 
 		// Localize the javascript
 		wp_localize_script( 'nlingual-admin-js', 'nlingualL10n', array(
 			'admin_post'                  => admin_url( 'admin-post.php' ),
 			'TranslationTitle'            => __( 'Enter the title for this translation.', 'nlingual' ),
+			// translators: %1$s = language name, %2$s = post title
 			'TranslationTitlePlaceholder' => __( '[Needs %1$s Translation]: %2$s', 'nlingual' ),
 			'NewTranslationError'         => __( 'Error creating translation, please try again later or create one manually.', 'nlingual' ),
 			'NoPostSelected'              => __( 'No post selected to edit.', 'nlingual' ),
@@ -1544,6 +1564,7 @@ final class Backend extends Handler {
 			'RemoveTranslationConfirm'    => __( 'Are you sure you want to unlink this translation?', 'nlingual' ),
 			'RemoveTranslationError'      => __( 'Error removing translation, please try again later.', 'nlingual' ),
 			'LocalizeThis'                => __( 'Localize This', 'nlingual' ),
+			// translators: %s = language name
 			'LocalizeFor'                 => __( 'Localize for %s', 'nlingual' ),
 		) );
 	}
@@ -1555,6 +1576,7 @@ final class Backend extends Handler {
 	/**
 	 * Print relevent variables for JavaScript.
 	 *
+	 * @since 2.10.0 Use wp_json_encode().
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to retrieve the default language.
@@ -1567,7 +1589,7 @@ final class Backend extends Handler {
 				var admin_url = '<?php echo admin_url(); ?>';
 			}
 			nLingual.default_language = <?php echo Registry::default_language( 'id' ); ?>;
-			nLingual.Languages.add( <?php echo json_encode( Registry::languages()->dump() ); ?> );
+			nLingual.Languages.add( <?php echo wp_json_encode( Registry::languages()->dump() ); ?> );
 		</script>
 		<?php
 	}
@@ -1654,8 +1676,8 @@ final class Backend extends Handler {
 		 *
 		 * @since 2.2.0
 		 *
-		 * @param WP_Post  $translation          The translation clone of the post.
-		 * @param WP_Post  $post                 The original post.
+		 * @param \WP_Post $translation          The translation clone of the post.
+		 * @param \WP_Post $post                 The original post.
 		 * @param Language $translation_language The language the clone is for.
 		 */
 		do_action( 'nlingual_new_translation', $translation, $post, $translation_language );

@@ -249,6 +249,7 @@ final class Liaison extends Handler {
 	/**
 	 * Print notice offering migration of localizable terms if applicable.
 	 *
+	 * @since 2.10.0 Add translator note to message.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
@@ -271,7 +272,9 @@ final class Liaison extends Handler {
 		}
 
 		// Print the message with the upgrade link
+		// translators: %s = link url, please preserve HTML
 		$message = __( 'It looks like some of your terms use the old language splitting method. <a href="%s">Click here</a> to convert them to the new localized format.', 'nlingual' );
+
 		$nonce = wp_create_nonce( 'convert-localized-terms' );
 		$link = admin_url( 'admin.php?nlingual-action=convert-terms&_nlnonce=' . $nonce );
 		$message = sprintf( $message, $link );
@@ -287,6 +290,7 @@ final class Liaison extends Handler {
 	 *
 	 * Also enable their respective taxonomies if not already.
 	 *
+	 * @since 2.10.0 Proper escaping for mysql.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
@@ -302,8 +306,8 @@ final class Liaison extends Handler {
 		}
 
 		// Fail if nonce does
-		if ( ! wp_verify_nonce( $_GET['_nlnonce'], 'convert-localized-terms' ) ) {
-			nLingual\cheatin();
+		if ( empty( $_GET['_nlnonce'] ) || ! wp_verify_nonce( $_GET['_nlnonce'], 'convert-localized-terms' ) ) {
+			cheatin();
 		}
 
 		// Get the old separator, abort if not found
@@ -313,19 +317,24 @@ final class Liaison extends Handler {
 
 		// Escape % and _ characters in separator for MySQL use
 		$separator_mysql = str_replace( array( '%', '_' ), array( '\\%', '\\_' ), $separator );
+		$separator_mysql = '%' . $wpdb->esc_like(  $separator_mysql ) . '%';
 
 		// Get all terms that need to be converted
-		$terms = $wpdb->get_results( "
+		$terms = $wpdb->get_results( $wpdb->prepare(
+			"
 			SELECT t.name, x.description, x.term_taxonomy_id, x.term_id, x.taxonomy
 			FROM $wpdb->terms AS t
 				LEFT JOIN $wpdb->term_taxonomy AS x ON (t.term_id = x.term_id)
-			WHERE t.name LIKE '%$separator_mysql%'
-				OR x.description LIKE '%$separator_mysql%'
-		" );
+			WHERE t.name LIKE '%s'
+				OR x.description LIKE '%s'
+			",
+			$separator_mysql,
+			$separator_mysql
+		) );
 
 		// Fail if nothing is found
 		if ( ! $terms ) {
-			wp_die( _e( 'No terms found needing conversion.', 'nlingual' ) );
+			wp_die( esc_html_e( 'No terms found needing conversion.', 'nlingual' ) );
 		}
 
 		// Start a list of taxonomies that needed localization
@@ -375,7 +384,7 @@ final class Liaison extends Handler {
 
 		?>
 		<div class="updated">
-			<p><?php _e( 'All terms found have been successfully converted, and their taxonomies have been enabled for localization.', 'nlingual' ); ?></p>
+			<p><?php esc_html_e( 'All terms found have been successfully converted, and their taxonomies have been enabled for localization.', 'nlingual' ); ?></p>
 		</div>
 		<?php
 	}
@@ -426,8 +435,8 @@ final class Liaison extends Handler {
 	 * @uses Registry::get_rules() to check for menu_order synchronizing.
 	 * @uses Registry::default_language() to get the default language slug.
 	 *
-	 * @param mixed    $pre_value The value to use instead of the determined one.
-	 * @param WP_Query $query     The query being modified.
+	 * @param mixed     $pre_value The value to use instead of the determined one.
+	 * @param \WP_Query $query     The query being modified.
 	 *
 	 * @return mixed The default language ot use.
 	 */
@@ -506,8 +515,8 @@ final class Liaison extends Handler {
 	 * @since 2.6.0 Add check to make sure post's type is supported.
 	 * @since 2.0.0
 	 *
-	 * @param array   $post_states The list of post states for the post.
-	 * @param WP_Post $post        The post in question.
+	 * @param array    $post_states The list of post states for the post.
+	 * @param \WP_Post $post        The post in question.
 	 *
 	 * @return array The filtered post states list.
 	 */
@@ -561,7 +570,7 @@ final class Liaison extends Handler {
 	 * @since 2.1.1 Fixed namespace scope typo accessing IndexPages\Registry.
 	 * @since 2.0.0
 	 *
-	 * @param WP_Post $post The post in question.
+	 * @param \WP_Post $post The post in question.
 	 */
 	public static function indexpages_translation_notice( \WP_Post $post ) {
 		// Abort if not a page or not a localizable post type
@@ -588,15 +597,16 @@ final class Liaison extends Handler {
 
 		// Default notice type/message
 		$notice_type = 'info';
-		$notice_text = _fx( 'You are currently editing a translation of the page that shows your latest %s.', 'index page translation', 'nlingual', $label );
+		$notice_text = esc_html( _fx( 'You are currently editing a translation of the page that shows your latest %s.', 'index page translation', 'nlingual', $label ) );
 
 		// If the post type doesn't explicitly support index-pages, mention content may not be displayed.
 		if ( ! post_type_supports( $post_type, 'index-page' ) ) {
 			$notice_type = 'warning';
-			$notice_text .= ' <em>' . __( 'Your current theme may not display the content you write here.', 'index-pages' ) . '</em>';
+			// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
+			$notice_text .= ' <em>' . esc_html__( 'Your current theme may not display the content you write here.', 'index-pages' ) . '</em>';
 		}
 
-		printf( '<div class="notice notice-%s inline"><p>%s</p></div>', $notice_type, $notice_text );
+		printf( '<div class="notice notice-%s inline"><p>%s</p></div>', esc_attr( $notice_type ), $notice_text );
 	}
 
 	/**
@@ -662,7 +672,7 @@ final class Liaison extends Handler {
 	 *
 	 * @since 2.5.0
 	 *
-	 * @global WP $wp The WordPress environment object.
+	 * @global \WP $wp The WordPress environment object.
 	 *
 	 * @param string $url The new URL.
 	 */
@@ -670,7 +680,7 @@ final class Liaison extends Handler {
 		global $wp;
 
 		// Get the available endpoints
-		$wc_endpoints = WC()->query->get_query_vars();
+		$wc_endpoints = \WC()->query->get_query_vars();
 
 		foreach ( $wc_endpoints as $query_var => $endpoint ) {
 			if ( isset( $wp->query_vars[ $query_var ] ) ) {

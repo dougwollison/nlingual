@@ -1,16 +1,16 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: nLingual\n"
-"POT-Creation-Date: 2020-08-30 17:09-0400\n"
+"POT-Creation-Date: 2024-10-14 16:26-0400\n"
 "PO-Revision-Date: 2018-10-20 10:47-0400\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.1\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"X-Generator: Poedit 3.5\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
 "X-Poedit-WPHeader: nlingual.php\n"
@@ -160,7 +160,7 @@ msgid "Sidebars"
 msgstr ""
 
 #: documentation/localizer/localize-this.php:1
-#: includes/class-nlingual-backend.php:1523
+#: includes/class-nlingual-backend.php:1566
 msgid "Localize This"
 msgstr ""
 
@@ -172,7 +172,7 @@ msgid ""
 "the associated field."
 msgstr ""
 
-#: documentation/localizer/localize-this.php:8
+#: documentation/localizer/localize-this.php:9
 msgid ""
 "When the site is viewed in a particular language and the data controlled by "
 "these fields is displayed, the version for that language will be used "
@@ -181,7 +181,7 @@ msgid ""
 msgstr ""
 
 #: documentation/options/management.php:1
-#: includes/class-nlingual-manager.php:387
+#: includes/class-nlingual-manager.php:391
 msgid "Translated Content Management"
 msgstr ""
 
@@ -261,7 +261,7 @@ msgid ""
 "the newer code."
 msgstr ""
 
-#: documentation/options/requests.php:1 includes/class-nlingual-manager.php:481
+#: documentation/options/requests.php:1 includes/class-nlingual-manager.php:490
 msgid "Request and Redirection Handling"
 msgstr ""
 
@@ -337,13 +337,13 @@ msgstr ""
 msgid "What data should be synced between translations."
 msgstr ""
 
-#: documentation/post-translation/translation.php:7
-#: documentation/posts-translation/translation.php:7
+#: documentation/post-translation/translation.php:10
+#: documentation/posts-translation/translation.php:10
 msgid "Languages & Translations"
 msgstr ""
 
 #. translators: %1$s = The singular name of the post type
-#: documentation/post-translation/translation.php:12
+#: documentation/post-translation/translation.php:15
 #, php-format
 msgid ""
 "The <strong>Languages & Translations</strong> box allows you to create/"
@@ -351,7 +351,7 @@ msgid ""
 msgstr ""
 
 #. translators: %1$s = The singular name of the post type, %2$s = The URL for the link. Please preserve the HTML as-is.
-#: documentation/post-translation/translation.php:16
+#: documentation/post-translation/translation.php:19
 #, php-format
 msgid ""
 "The <strong>Languages & Translations</strong> box allows you to assign a "
@@ -360,7 +360,7 @@ msgid ""
 "assigned, you can create/access translated versions for the other languages."
 msgstr ""
 
-#: documentation/post-translation/translation.php:19
+#: documentation/post-translation/translation.php:22
 msgid ""
 "If a translation does not yet exist, you can click the Create button, a "
 "clone of the current post will be created in draft form, and opened in a new "
@@ -368,7 +368,7 @@ msgid ""
 msgstr ""
 
 #. translators: %s = The URL for the link. Please preserve the HTML as-is.
-#: documentation/post-translation/translation.php:23
+#: documentation/post-translation/translation.php:26
 #, php-format
 msgid ""
 "When you save your changes, certain fields and settings will be copied to "
@@ -377,7 +377,7 @@ msgid ""
 msgstr ""
 
 #. translators: %s = The singular name of the post type.
-#: documentation/posts-translation/translation.php:11
+#: documentation/posts-translation/translation.php:14
 #, php-format
 msgid ""
 "On this screen you can view at a glance what language every post is in, as "
@@ -386,7 +386,7 @@ msgid ""
 msgstr ""
 
 #. translators: %1$s = The singular name of the post type.
-#: documentation/posts-translation/translation.php:16
+#: documentation/posts-translation/translation.php:19
 #, php-format
 msgid ""
 "The <strong>Quick Edit</strong> option will allow you to quickly select/"
@@ -394,7 +394,7 @@ msgid ""
 msgstr ""
 
 #. translators: %1$s = The singular name of the post type, %2$s = The plural name of the post type.
-#: documentation/posts-translation/translation.php:20
+#: documentation/posts-translation/translation.php:23
 #, php-format
 msgid ""
 "The <strong>Quick Edit</strong> option will allow you to quickly select/"
@@ -403,7 +403,7 @@ msgid ""
 msgstr ""
 
 #. translators: %1$s = The singular name of the post type.
-#: documentation/posts-translation/translation.php:25
+#: documentation/posts-translation/translation.php:28
 #, php-format
 msgid ""
 "Currently, only the row for the %1$s being updated will change; you will "
@@ -411,13 +411,13 @@ msgid ""
 msgstr ""
 
 #. translators: %1$s = The singular name of the post type, %2$s = The URL for the link. Please preserve the HTML as-is.
-#: documentation/posts-translation/translation.php:29
+#: documentation/posts-translation/translation.php:32
 #, php-format
 msgid ""
 "If you make changes to a %1$s from here, certain fields and settings will be "
 "copied to it’s sister translations, synchronizing them. The exact fields/"
-"settings that will be synchronized is controlled <a href=\"%2$s\" target="
-"\"_blank\">here</a>."
+"settings that will be synchronized is controlled <a href=\"%2$s\" "
+"target=\"_blank\">here</a>."
 msgstr ""
 
 #. translators: %s = The plural name of the post type.
@@ -427,18 +427,18 @@ msgid "The following details will be synchronized between sister %s:"
 msgstr ""
 
 #: documentation/shared/post-sync-summary.php:8
-#: includes/class-nlingual-settings.php:433
+#: includes/class-nlingual-settings.php:466
 msgid "Post Data"
 msgstr ""
 
 #: documentation/shared/post-sync-summary.php:22
-#: includes/class-nlingual-manager.php:537
-#: includes/class-nlingual-settings.php:441
+#: includes/class-nlingual-manager.php:546
+#: includes/class-nlingual-settings.php:474
 msgid "Taxonomies"
 msgstr ""
 
 #: documentation/shared/post-sync-summary.php:33
-#: includes/class-nlingual-settings.php:449
+#: includes/class-nlingual-settings.php:482
 msgid "Meta Data"
 msgstr ""
 
@@ -446,7 +446,7 @@ msgstr ""
 msgid "All custom fields found."
 msgstr ""
 
-#: documentation/shared/post-sync-summary.php:56
+#: documentation/shared/post-sync-summary.php:60
 msgid "Additional Details"
 msgstr ""
 
@@ -500,16 +500,16 @@ msgctxt "front page translation"
 msgid "%s Posts Page"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:658
+#: includes/class-nlingual-backend.php:659
 msgid "All Languages"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:667
-#: includes/class-nlingual-backend.php:670
+#: includes/class-nlingual-backend.php:672
+#: includes/class-nlingual-backend.php:680
 msgid "No Language"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:785
+#: includes/class-nlingual-backend.php:808
 #, php-format
 msgctxt "posts"
 msgid "Translated <span class=\"count\">(%s)</span>"
@@ -517,7 +517,7 @@ msgid_plural "Translated <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-nlingual-backend.php:813
+#: includes/class-nlingual-backend.php:836
 #, php-format
 msgctxt "posts"
 msgid "Untranslated <span class=\"count\">(%s)</span>"
@@ -525,223 +525,232 @@ msgid_plural "Untranslated <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-nlingual-backend.php:847
-#: includes/class-nlingual-backend.php:946
-#: includes/class-nlingual-backend.php:1029
+#: includes/class-nlingual-backend.php:870
+#: includes/class-nlingual-backend.php:986
+#: includes/class-nlingual-backend.php:1069
+#: includes/class-nlingual-backend.php:1199
 msgid "Language"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:883
+#: includes/class-nlingual-backend.php:909
+#: includes/class-nlingual-backend.php:989
+#: includes/class-nlingual-backend.php:1073
+#: includes/class-nlingual-backend.php:1202
+msgctxt "no language"
 msgid "None"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:898
+#: includes/class-nlingual-backend.php:930
+#: includes/class-nlingual-backend.php:932
 msgid "(no title)"
 msgstr ""
 
+#: includes/class-nlingual-backend.php:935
+msgid "[Create translation]"
+msgstr ""
+
+#: includes/class-nlingual-backend.php:937
+msgid "[No translation]"
+msgstr ""
+
 #. translators: %1$s = The name of the language, %2$s = The title of the post, wrapped in a link
-#: includes/class-nlingual-backend.php:900
+#: includes/class-nlingual-backend.php:941
 #, php-format
 msgctxt "language: title"
 msgid "%1$s: %2$s"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:949
-#: includes/class-nlingual-backend.php:1033
-#: includes/class-nlingual-backend.php:1162
-msgctxt "no language"
-msgid "None"
-msgstr ""
-
 #. translators: %s = The name of the language
-#: includes/class-nlingual-backend.php:965
+#: includes/class-nlingual-backend.php:1005
 #, php-format
 msgid "Assign %s Translation"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:968
-#: includes/class-nlingual-backend.php:1218
+#: includes/class-nlingual-backend.php:1008
+#: includes/class-nlingual-backend.php:1258
 msgctxt "no translation"
 msgid "None"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1031
+#: includes/class-nlingual-backend.php:1071
 msgid "No Change"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1078
+#: includes/class-nlingual-backend.php:1118
 msgid "Language & Translations"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1155
-msgid "Assigned Language:"
+#: includes/class-nlingual-backend.php:1195
+msgid "Language:"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1159
-msgid "Assign Language"
-msgstr ""
-
-#: includes/class-nlingual-backend.php:1177
+#: includes/class-nlingual-backend.php:1217
 msgid "Manage Translations"
 msgstr ""
 
 #. translators: %s = language name
-#: includes/class-nlingual-backend.php:1187
+#: includes/class-nlingual-backend.php:1227
 #, php-format
 msgid "%s:"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1190
-#: includes/class-nlingual-backend.php:1520
+#: includes/class-nlingual-backend.php:1230
+#: includes/class-nlingual-backend.php:1563
 msgid "[None]"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1214
+#: includes/class-nlingual-backend.php:1254
 msgid "Create New"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1216
+#: includes/class-nlingual-backend.php:1256
 msgid "Select Existing"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1230
+#: includes/class-nlingual-backend.php:1270
 msgid "Edit Translation"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1231
+#: includes/class-nlingual-backend.php:1271
 msgid "Remove Translation"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1277
-#: includes/class-nlingual-backend.php:1340
+#: includes/class-nlingual-backend.php:1317
+#: includes/class-nlingual-backend.php:1380
 msgid "Error assigning language: the selected language does not exist."
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1311
+#: includes/class-nlingual-backend.php:1351
 msgid "Error assigning translations: one or more languages do not exist."
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1358
+#: includes/class-nlingual-backend.php:1398
 msgid "The translations of this page have been updated accordingly."
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1360
+#: includes/class-nlingual-backend.php:1400
 msgid "The translations of this post have been updated accordingly."
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1402
+#: includes/class-nlingual-backend.php:1442
 msgid "Any associated translations have been synchronized accordingly."
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1403
+#: includes/class-nlingual-backend.php:1443
 msgid "Any associated translations have also been deleted."
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1404
+#: includes/class-nlingual-backend.php:1444
 msgid "Any associated translations have also been moved."
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1405
+#: includes/class-nlingual-backend.php:1445
 msgid "Any associated translations have also been restored."
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1444
+#: includes/class-nlingual-backend.php:1484
 msgid "Language Links"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1462
+#: includes/class-nlingual-backend.php:1503
 msgid ""
 "These links will go to the respective language versions of the current URL."
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1470
+#: includes/class-nlingual-backend.php:1511
 msgctxt "language inactive"
 msgid "[Inactive]"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1486
+#: includes/class-nlingual-backend.php:1527
 msgid "Add to Menu"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1515
+#: includes/class-nlingual-backend.php:1557
 msgid "Enter the title for this translation."
 msgstr ""
 
+#. translators: %1$s = language name, %2$s = post title
 #. translators: %1$s = The name of the language, %2$s = The post title
-#: includes/class-nlingual-backend.php:1516
-#: includes/class-nlingual-synchronizer.php:408
+#: includes/class-nlingual-backend.php:1559
+#: includes/class-nlingual-synchronizer.php:427
 #, php-format
 msgid "[Needs %1$s Translation]: %2$s"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1517
+#: includes/class-nlingual-backend.php:1560
 msgid ""
 "Error creating translation, please try again later or create one manually."
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1518
+#: includes/class-nlingual-backend.php:1561
 msgid "No post selected to edit."
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1519
+#: includes/class-nlingual-backend.php:1562
 msgid "[New]"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1521
+#: includes/class-nlingual-backend.php:1564
 msgid "Are you sure you want to unlink this translation?"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1522
+#: includes/class-nlingual-backend.php:1565
 msgid "Error removing translation, please try again later."
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1524
+#. translators: %s = language name
+#: includes/class-nlingual-backend.php:1568
 #, php-format
 msgid "Localize for %s"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1572
+#: includes/class-nlingual-backend.php:1619
 msgid "Error creating translation: post and or language ID not specified."
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1578
+#: includes/class-nlingual-backend.php:1625
 msgid "Error creating translation: specified post not found."
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1593
+#: includes/class-nlingual-backend.php:1631
+msgid "You are now allowed to create a translation for this post."
+msgstr ""
+
+#: includes/class-nlingual-backend.php:1646
 msgid "Error creating translation: original language not found."
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1599
+#: includes/class-nlingual-backend.php:1652
 msgid "Error creating translation: requested language does not exist."
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1604
+#: includes/class-nlingual-backend.php:1657
 msgid "Error creating translation: Translation already exists."
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1612
-msgid "Error creating translation: unable to create clone."
+#: includes/class-nlingual-backend.php:1668
+msgid "Error creating translation:"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1658
+#: includes/class-nlingual-backend.php:1721
 msgid "Switch to another language"
 msgstr ""
 
-#: includes/class-nlingual-backend.php:1677
+#: includes/class-nlingual-backend.php:1740
 #, php-format
 msgid "Switch to %s"
 msgstr ""
 
 #. translators: %s = The name of the language
-#: includes/class-nlingual-backend.php:1691
+#: includes/class-nlingual-backend.php:1754
 #, php-format
 msgid "Edit %s version"
 msgstr ""
 
 #. translators: %s = The name of the language
-#: includes/class-nlingual-backend.php:1695
-#: includes/class-nlingual-frontend.php:798
+#: includes/class-nlingual-backend.php:1758
+#: includes/class-nlingual-frontend.php:827
 #, php-format
 msgid "Translate to %s"
 msgstr ""
@@ -786,35 +795,36 @@ msgctxt "post field"
 msgid "Comment Status"
 msgstr ""
 
-#: includes/class-nlingual-frontend.php:787
+#: includes/class-nlingual-frontend.php:835
 msgid "Translate This"
 msgstr ""
 
-#: includes/class-nlingual-liaison.php:271
+#. translators: %s = link url, please preserve HTML
+#: includes/class-nlingual-liaison.php:276
 #, php-format
 msgid ""
 "It looks like some of your terms use the old language splitting method. <a "
 "href=\"%s\">Click here</a> to convert them to the new localized format."
 msgstr ""
 
-#: includes/class-nlingual-liaison.php:325
+#: includes/class-nlingual-liaison.php:337
 msgid "No terms found needing conversion."
 msgstr ""
 
-#: includes/class-nlingual-liaison.php:375
+#: includes/class-nlingual-liaison.php:387
 msgid ""
 "All terms found have been successfully converted, and their taxonomies have "
 "been enabled for localization."
 msgstr ""
 
 #. translators: %1$s = The name of the language, %2$s = The (likely plural) name of the post type.
-#: includes/class-nlingual-liaison.php:542
+#: includes/class-nlingual-liaison.php:554
 #, php-format
 msgctxt "index page translation"
 msgid "%1$s %2$s Page"
 msgstr ""
 
-#: includes/class-nlingual-liaison.php:588
+#: includes/class-nlingual-liaison.php:600
 #, php-format
 msgctxt "index page translation"
 msgid ""
@@ -822,11 +832,11 @@ msgid ""
 "%s."
 msgstr ""
 
-#: includes/class-nlingual-liaison.php:593
+#: includes/class-nlingual-liaison.php:606
 msgid "Your current theme may not display the content you write here."
 msgstr ""
 
-#: includes/class-nlingual-localizer.php:1031
+#: includes/class-nlingual-localizer.php:1032
 msgid "That language does not exist."
 msgstr ""
 
@@ -864,381 +874,359 @@ msgstr ""
 msgid "Synchronizer"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:220
+#: includes/class-nlingual-manager.php:224
 msgid "One or more languages were incomplete and were not saved."
 msgstr ""
 
 #. translators: %1$s = The locale code, %2$s = The language name.
-#: includes/class-nlingual-manager.php:267
+#: includes/class-nlingual-manager.php:270
 msgid ""
 "Unable to download the WordPress language file \"%1$s\" for the language \"%"
 "$2s\".  Please install it manually."
 msgstr ""
 
-#: includes/class-nlingual-manager.php:279
+#: includes/class-nlingual-manager.php:282
 msgid "Languages saved."
 msgstr ""
 
-#: includes/class-nlingual-manager.php:316
+#: includes/class-nlingual-manager.php:320
 msgid "Default Language"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:322
+#: includes/class-nlingual-manager.php:326
 msgid "Localize date format?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:323
+#: includes/class-nlingual-manager.php:327
 msgid ""
 "Run localization on the date format defined under General Settings. Useful "
 "if any languages you use require custom date formats."
 msgstr ""
 
-#: includes/class-nlingual-manager.php:327
+#: includes/class-nlingual-manager.php:331
 msgid "Patch <code>WP_Locale</code>?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:328
+#: includes/class-nlingual-manager.php:332
 msgid ""
 "Replaced the Date/Time localization system with one using your Theme’s "
 "translation files instead (front-end only)."
 msgstr ""
 
-#: includes/class-nlingual-manager.php:336
+#: includes/class-nlingual-manager.php:340
 msgid "Backwards Compatibility"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:337
+#: includes/class-nlingual-manager.php:341
 msgid ""
 "Include support for old template functions, and features like language "
 "splitting."
 msgstr ""
 
-#: includes/class-nlingual-manager.php:351
+#: includes/class-nlingual-manager.php:355
 msgid "Show All Languages?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:352
+#: includes/class-nlingual-manager.php:356
 msgid "Should objects of all languages be listed by default in the admin?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:356
+#: includes/class-nlingual-manager.php:360
 msgid "Trash Sister Translations?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:357
+#: includes/class-nlingual-manager.php:361
 msgid ""
 "When trashing or restoring an object, should its translations be trashed/"
 "restored as well?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:361
+#: includes/class-nlingual-manager.php:365
 msgid "Delete Sister Translations?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:362
+#: includes/class-nlingual-manager.php:366
 msgid ""
 "When deleting an object (that’s in the Trash), should its translations be "
 "deleted as well?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:366
+#: includes/class-nlingual-manager.php:370
 msgid "Default to No Language?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:367
+#: includes/class-nlingual-manager.php:371
 msgid ""
 "Should new posts default to have no language (except when creating "
 "translations)?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:371
+#: includes/class-nlingual-manager.php:375
 msgid "Lock Post Language?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:372
+#: includes/class-nlingual-manager.php:376
 msgid ""
 "Should new posts always be in the default language (except when creating a "
 "translation), and all posts locked to the language they were created for?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:380
+#: includes/class-nlingual-manager.php:384
 msgid "Patch Admin Font?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:381
+#: includes/class-nlingual-manager.php:385
 msgid ""
 "Replace the font used in the WordPress admin to better display characters "
 "like Arabic and Chinese."
 msgstr ""
 
-#: includes/class-nlingual-manager.php:429
+#: includes/class-nlingual-manager.php:433
 msgid "Query Variable"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:430
+#: includes/class-nlingual-manager.php:434
 msgid ""
 "The variable name for <code>WP_Query</code> to use when filtering by "
 "language."
 msgstr ""
 
-#: includes/class-nlingual-manager.php:434
-#: includes/class-nlingual-manager.php:473
+#: includes/class-nlingual-manager.php:438
+#: includes/class-nlingual-manager.php:482
 msgid "URL Scheme"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:435
+#: includes/class-nlingual-manager.php:439
 msgid "What style should be used for the translated URLs?"
 msgstr ""
 
 #. translators: %s = The HTML code to be appended
-#: includes/class-nlingual-manager.php:437
-#: includes/class-nlingual-manager.php:476
+#: includes/class-nlingual-manager.php:441
+#: includes/class-nlingual-manager.php:485
 #, php-format
 msgid "Preview: %s"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:440
+#: includes/class-nlingual-manager.php:444
 msgid "Path prefix"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:441
+#: includes/class-nlingual-manager.php:445
 msgid "Subdomain"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:445
+#: includes/class-nlingual-manager.php:449
+msgid "Use visitor’s browser language?"
+msgstr ""
+
+#: includes/class-nlingual-manager.php:450
+msgid ""
+"Unless requesting the page in another language, visitors will be redirected "
+"to the language their browser uses, if available."
+msgstr ""
+
+#: includes/class-nlingual-manager.php:454
 msgid "Skip Localization for Default Language?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:446
+#: includes/class-nlingual-manager.php:455
 msgid "URLs for the default language will be unmodified."
 msgstr ""
 
 #. translators: %s = The HTML code to be appended
-#: includes/class-nlingual-manager.php:448
-#: includes/class-nlingual-manager.php:455
+#: includes/class-nlingual-manager.php:457
+#: includes/class-nlingual-manager.php:464
 #, php-format
 msgid "Example: %s"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:452
+#: includes/class-nlingual-manager.php:461
 msgid "Post Language Override"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:453
+#: includes/class-nlingual-manager.php:462
 msgid ""
 "Should the language of the requested post take precedence in the event of a "
 "language mismatch?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:459
+#: includes/class-nlingual-manager.php:468
 msgid "Language is Required"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:460
+#: includes/class-nlingual-manager.php:469
 msgid "Should all supported objects have a language? (Default will be assumed)"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:464
+#: includes/class-nlingual-manager.php:473
 msgid "Permanently Redirect URLs?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:465
+#: includes/class-nlingual-manager.php:474
 msgid ""
 "Use \"permanent\" (HTTP 301) instead of \"temporary\" (HTTP 302) redirects?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:475
+#: includes/class-nlingual-manager.php:484
 msgid ""
 "You have permalinks disabled; translated URLs will use the HTTP query "
 "method, using the <strong>query variable</strong> set above."
 msgstr ""
 
-#: includes/class-nlingual-manager.php:515
+#: includes/class-nlingual-manager.php:524
 msgid "Post Types"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:516
+#: includes/class-nlingual-manager.php:525
 msgid "What post types should support language and translations?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:538
+#: includes/class-nlingual-manager.php:547
 msgid "What taxonomies should support name and description localization?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:554
+#: includes/class-nlingual-manager.php:563
 msgid "Menu Locations"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:555
+#: includes/class-nlingual-manager.php:564
 msgid "Should any navigation menus have versions for each language?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:574
+#: includes/class-nlingual-manager.php:584
 msgid "Sidebar Locations"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:575
+#: includes/class-nlingual-manager.php:585
 msgid "Should any widget areas have versions for each language?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:629
+#: includes/class-nlingual-manager.php:639
 msgid "New Translations"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:678
+#: includes/class-nlingual-manager.php:689
 msgid "&mdash; Custom Language &mdash;"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:680
+#: includes/class-nlingual-manager.php:691
 msgid "Add Language"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:685
+#: includes/class-nlingual-manager.php:696
 msgid "List Order"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:686
+#: includes/class-nlingual-manager.php:697
 msgid "System Name"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:687
+#: includes/class-nlingual-manager.php:698
 msgid "Native Name"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:688
+#: includes/class-nlingual-manager.php:699
 msgid "Short Name"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:689
+#: includes/class-nlingual-manager.php:700
 msgid "Locale"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:690
+#: includes/class-nlingual-manager.php:701
 msgid "Code(s)"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:691
+#: includes/class-nlingual-manager.php:702
 msgid "ISO"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:692
+#: includes/class-nlingual-manager.php:703
 msgid "Slug"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:693
+#: includes/class-nlingual-manager.php:704
 msgid "Text Direction"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:694
+#: includes/class-nlingual-manager.php:705
 msgid "Active?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:695
+#: includes/class-nlingual-manager.php:706
 msgid "Delete?"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:728
+#: includes/class-nlingual-manager.php:739
 msgid "Left to Right"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:729
+#: includes/class-nlingual-manager.php:740
 msgid "Right to Left"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:766
+#: includes/class-nlingual-manager.php:777
 msgid ""
 "includes creation/publication date, modified date, and their GMT versions"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:767
+#: includes/class-nlingual-manager.php:778
 msgid "will NOT apply to trashing or untrashing via normal means"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:768
+#: includes/class-nlingual-manager.php:779
 msgid "will use counterpart translation if found"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:769
+#: includes/class-nlingual-manager.php:780
 msgid "includes pingback status"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:770
+#: includes/class-nlingual-manager.php:781
 msgid "includes excerpt and filtered content data"
 msgstr ""
 
-#: includes/class-nlingual-manager.php:785
+#: includes/class-nlingual-manager.php:796
 msgid ""
 "When creating a new translation of an existing post (i.e. a clone), what "
 "details should be cloned?"
 msgstr ""
 
-#. translators: %s = The full name of the method being called. (Low priority translation)
-#: includes/class-nlingual-registry.php:926
-#: includes/class-nlingual-translator.php:635
-#, php-format
-msgid "Call to unrecognized method alias %s"
-msgstr ""
-
-#: includes/class-nlingual-settings.php:430
+#: includes/class-nlingual-settings.php:463
 msgid "Close Settings"
 msgstr ""
 
-#: includes/class-nlingual-settings.php:430
+#: includes/class-nlingual-settings.php:463
 msgid "Open Settings"
 msgstr ""
 
-#: includes/class-nlingual-settings.php:432
-#: includes/class-nlingual-settings.php:440
+#: includes/class-nlingual-settings.php:465
+#: includes/class-nlingual-settings.php:473
 msgid "Check All/None"
 msgstr ""
 
-#: includes/class-nlingual-settings.php:437
+#: includes/class-nlingual-settings.php:470
 msgid "What post information should be copied?"
 msgstr ""
 
-#: includes/class-nlingual-settings.php:445
+#: includes/class-nlingual-settings.php:478
 msgid "What terms should be copied?"
 msgstr ""
 
-#: includes/class-nlingual-settings.php:448
+#: includes/class-nlingual-settings.php:481
 msgid "Match All/None"
 msgstr ""
 
-#: includes/class-nlingual-settings.php:456
+#: includes/class-nlingual-settings.php:489
 msgid "Which custom fields should be copied?"
 msgstr ""
 
-#: includes/class-nlingual-settings.php:457
+#: includes/class-nlingual-settings.php:490
 msgid "One per line. Enter an asterisk (*) to match all fields."
 msgstr ""
 
-#. translators: %1$d = The ID number of the original post, %2$d = The ID number of the target post.
-#: includes/class-nlingual-synchronizer.php:188
-#, php-format
-msgid ""
-"The requested posts (%1$d & %2$d) cannot be synchronized because they are of "
-"different types."
-msgstr ""
-
-#: includes/class-nlingual-system.php:1086
+#: includes/class-nlingual-system.php:1092
 msgid "Limit result set to posts assigned one or more registered languages."
-msgstr ""
-
-#. translators: %d = The ID number of the object.
-#: includes/class-nlingual-translator.php:666
-#: includes/class-nlingual-translator.php:671
-#, php-format
-msgid "The requested post (ID: %d) does not belong to a supported post type."
-msgstr ""
-
-#. translators: %1$s = The class name, %2$s = The type used.
-#: includes/class-nlingual-url.php:150
-#, php-format
-msgid "%1$s expects a string or array, %2$s given"
-msgstr ""
-
-#: includes/functions-nlingual.php:184
-msgid "Cheatin&#8217; uh?"
 msgstr ""
 
 #: includes/presets-languages.php:16

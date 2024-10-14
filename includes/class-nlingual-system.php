@@ -625,9 +625,9 @@ final class System extends Handler {
 	 *
 	 * @uses Synchronizer::sync_post_with_sister() to handle post synchronizing.
 	 *
-	 * @param int     $post_id The ID of the post being updated.
-	 * @param WP_Post $post    The post being updated.
-	 * @param bool    $update  Whether this is an existing post being updated or not.
+	 * @param int      $post_id The ID of the post being updated.
+	 * @param \WP_Post $post    The post being updated.
+	 * @param bool     $update  Whether this is an existing post being updated or not.
 	 */
 	public static function synchronize_posts( $post_id, $post, $update ) {
 		// Abort if doing auto save, a revision, or not an update
@@ -929,9 +929,9 @@ final class System extends Handler {
 	 * @uses Translator::get_post_translation() to get the post for that language.
 	 * @uses Rewriter::localize_url() to localize the URL into the post's language.
 	 *
-	 * @param string      $permalink The permalink of the post.
-	 * @param int|WP_Post $post      The post ID or object.
-	 * @param bool        $sample    Is this a sample permalink? (Defaults to FALSE).
+	 * @param string       $permalink The permalink of the post.
+	 * @param int|\WP_Post $post      The post ID or object.
+	 * @param bool         $sample    Is this a sample permalink? (Defaults to FALSE).
 	 *
 	 * @return string The localized permalink.
 	 */
@@ -1106,7 +1106,7 @@ final class System extends Handler {
 	 * @since 2.6.0
 	 *
 	 * @param array           $args    Key value array of query var to query value.
-	 * @param WP_REST_Request $request The request used.
+	 * @param \WP_REST_Request $request The request used.
 	 *
 	 * @return array The filtered args.
 	 */
@@ -1193,7 +1193,7 @@ final class System extends Handler {
 		}
 
 		// If a sitemap request, don't set the language
-		if ( get_query_var( 'sitemap' ) || get_query_var( 'sitemap-stylesheet' ) ) {
+		if ( $query->get( 'sitemap' ) || $query->get( 'sitemap-stylesheet' ) ) {
 			return;
 		}
 
@@ -1334,9 +1334,6 @@ final class System extends Handler {
 		// Get the available languages for valiation purposes
 		$all_languages = Registry::languages();
 
-		// Alias for the translations table
-		$nl = $wpdb->nl_translations;
-
 		// Loop through each language specified and build the subclause
 		$where_clauses = array();
 		foreach ( $requested_languages as $language ) {
@@ -1347,11 +1344,11 @@ final class System extends Handler {
 
 			// Check if the language specified is "None"
 			if ( $language === '0' || $language === 0 ) {
-				$where_clauses[] = "$nl.language_id IS NULL";
+				$where_clauses[] = "$wpdb->nl_translations.language_id IS NULL";
 			}
 			// Otherwise check if the language exists
 			elseif ( $language = $all_languages->get( $language ) ) {
-				$where_clauses[] = $wpdb->prepare( "$nl.language_id = %d", $language->id );
+				$where_clauses[] = $wpdb->prepare( "$wpdb->nl_translations.language_id = %d", $language->id );
 			}
 		}
 
@@ -1364,7 +1361,7 @@ final class System extends Handler {
 			}
 
 			// Also add the join for the translations table
-			$clauses['join'] .= " LEFT JOIN $nl ON ($id_field = $nl.object_id AND $nl.object_type = 'post')";
+			$clauses['join'] .= " LEFT JOIN $wpdb->nl_translations ON ($id_field = $wpdb->nl_translations.object_id AND $wpdb->nl_translations.object_type = 'post')";
 
 			// Add the new clause
 			$clauses['where'] .= " AND (" . implode( ' OR ', $where_clauses ) . ")";

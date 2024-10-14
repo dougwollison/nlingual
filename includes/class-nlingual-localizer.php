@@ -192,7 +192,7 @@ final class Localizer extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param WP_Screen $screen Optional. The screen to get fields for.
+	 * @param \WP_Screen $screen Optional. The screen to get fields for.
 	 *
 	 * @return array The fields found for the screen provided.
 	 */
@@ -701,7 +701,7 @@ final class Localizer extends Handler {
 	 * @uses Localizer::$localizable_post_fields for the whitelist of post fields.
 	 * @uses Localizer::get_field_value() to retrieve the localized value.
 	 *
-	 * @param WP_Post $post The post object to filter.
+	 * @param \WP_Post $post The post object to filter.
 	 */
 	public static function handle_localized_post_fields( $post ) {
 		// Abort if no post is specified
@@ -734,8 +734,8 @@ final class Localizer extends Handler {
 	 * @uses Localizer::$localizable_post_fields for the whitelist of post fields.
 	 * @uses Localizer::save_field_value() to save the unlocalized value.
 	 *
-	 * @param int $post_id The ID of the post being updated.
-	 * @param WP_Post $post The updated post object.
+	 * @param int      $post_id The ID of the post being updated.
+	 * @param \WP_Post $post    The updated post object.
 	 */
 	public static function update_unlocalized_post_fields( $post_id, $post ) {
 		// Abort if no post is specified
@@ -874,7 +874,7 @@ final class Localizer extends Handler {
 	 *
 	 * @since 2.6.0
 	 *
-	 * @param WP_Term_Query $query The term query.
+	 * @param \WP_Term_Query $query The term query.
 	 */
 	public static function maybe_modify_term_query( $query ) {
 		$args = &$query->query_vars;
@@ -963,6 +963,7 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
+	 * @since 2.10.0 Ensure $object_id is integer.
 	 * @since 2.0.0
 	 *
 	 * @global field $pagenow The current page slug.
@@ -999,7 +1000,7 @@ final class Localizer extends Handler {
 				return;
 			}
 
-			$object_id = $_REQUEST[ $object_id_key ];
+			$object_id = intval( $_REQUEST[ $object_id_key ] );
 		}
 
 		// Get the fields and nonces
@@ -1050,6 +1051,7 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
+	 * @since 2.10.0 Ensure $object_id is integer.
 	 * @since 2.3.1 Added check for NULL screen.
 	 * @since 2.0.0
 	 *
@@ -1086,7 +1088,7 @@ final class Localizer extends Handler {
 				return;
 			}
 
-			$object_id = $_REQUEST[ $object_id_key ];
+			$object_id = intval( $_REQUEST[ $object_id_key ] );
 		}
 
 		// Now get the fields registered to this screen (by id or base)
@@ -1110,6 +1112,7 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
+	 * @since 2.10.0 Use wp_json_encode().
 	 * @since 2.0.0
 	 *
 	 * @uses Localizer::$current_fields to get the stored fields.
@@ -1144,7 +1147,7 @@ final class Localizer extends Handler {
 
 		?>
 		<script>
-		nLingual.LocalizableFields.add( <?php echo json_encode( $data ); ?> );
+		nLingual.LocalizableFields.add( <?php echo wp_json_encode( $data ); ?> );
 		</script>
 		<?php
 	}
@@ -1156,6 +1159,7 @@ final class Localizer extends Handler {
 	/**
 	 * Preload the localized values in the current language.
 	 *
+	 * @since 2.10.0 Use wpdb::prepare()
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
@@ -1165,7 +1169,7 @@ final class Localizer extends Handler {
 
 		$language = Registry::current_language();
 
-		$fields = $wpdb->get_results( "SELECT * FROM $wpdb->nl_localizations WHERE language_id = {$language->id}", ARRAY_A );
+		$fields = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->nl_localizations WHERE language_id = %d", $language->id ), ARRAY_A );
 		foreach ( $fields as $field ) {
 			$cache_id = "{$field['field_key']}/{$field['object_id']}/{$field['language_id']}";
 			wp_cache_set( $cache_id, $field['localized_value'], 'nlingual:localized' );

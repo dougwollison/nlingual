@@ -74,8 +74,8 @@ function is_patch_font_stack_needed() {
  *
  * @uses Registry::languages() to validate and retrieve the passed language.
  *
- * @param mixed &$language        The language to be converted.
- * @param bool   $default_current Optional. Default to the current language if null.
+ * @param Language &$language        The language to be converted.
+ * @param bool     $default_current Optional. Default to the current language if null.
  *
  * @return bool If the language was successfully converted.
  */
@@ -196,5 +196,5 @@ function is_nlingual_active() {
  * @since 2.0.0
  */
 function cheatin() {
-	wp_die( __( 'Cheatin&#8217; uh?' ), 403 );
+	wp_die( 'Cheatin&#8217; uh?', 403 );
 }

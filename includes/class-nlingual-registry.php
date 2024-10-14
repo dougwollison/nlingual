@@ -17,14 +17,15 @@ namespace nLingual;
  *
  * @api
  *
+ * @since 2.10.0 Update callStatic alias docs
  * @since 2.0.0
  *
- * @method array get_sync_rules()       Get the sync rules.
- * @method array get_clone_rules()      Get the clone rules.
- * @method array get_post_sync_rules()  Get the sync rules for a post type.
- * @method array get_post_clone_rules() Get the clone rules for a post type.
- * @method array get_term_sync_rules()  Get the sync rules for a taxonomy.
- * @method array get_term_clone_rules() Get the clone rules for a taxonomy.
+ * @method static array get_sync_rules( $object_type, string ...$map )  Get the sync rules.
+ * @method static array get_clone_rules( $object_type, string ...$map ) Get the clone rules.
+ * @method static array get_post_sync_rules( string ...$map )           Get the sync rules for a post type.
+ * @method static array get_post_clone_rules( string ...$map )          Get the clone rules for a post type.
+ * @method static array get_term_sync_rules( string ...$map )           Get the sync rules for a taxonomy.
+ * @method static array get_term_clone_rules( string ...$map )          Get the clone rules for a taxonomy.
  */
 final class Registry {
 	// =========================
@@ -375,16 +376,17 @@ final class Registry {
 	/**
 	 * Get the sync or cloning rules for a specific object.
 	 *
+	 * @since 2.10.0 Use rest arguments format, rename $sections to $map.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to retrive the appropriate rules array.
 	 *
 	 * @param string $rule_type   The type of rules to retrieve ('sync' or 'clone').
-	 * @param string $sections... Optional A list of indexes drilling down into the array.
+	 * @param string[] $map... Optional A list of indexes drilling down into the array.
 	 *
 	 * @return array The array of rules, empty if not found.
 	 */
-	public static function get_rules( $rule_type ) {
+	public static function get_rules( $rule_type, ...$map ) {
 		// Get the rules
 		$rules = Registry::get( $rule_type . '_rules' );
 
@@ -393,20 +395,16 @@ final class Registry {
 			return array();
 		}
 
-		// Get the args as the sections map
-		$sections = func_get_args();
-		array_shift( $sections ); // Skip the first argment (list type)
-
 		// If no section list is present, return the rules
-		if ( ! $sections ) {
+		if ( ! $map ) {
 			return $rules;
 		}
 
-		// Loop through the sections list
-		foreach ( $sections as $section ) {
+		// Loop through the map list
+		foreach ( $map as $key ) {
 			// Drill down if an array is found
-			if ( isset( $rules[ $section ] ) && is_array( $rules[ $section ] ) ) {
-				$rules = $rules[ $section ];
+			if ( isset( $rules[ $key ] ) && is_array( $rules[ $key ] ) ) {
+				$rules = $rules[ $key ];
 			} else {
 				// Abort and return empty array
 				return array();
@@ -889,6 +887,7 @@ final class Registry {
 	/**
 	 * Handle aliases of existing methods, namely get_rules().
 	 *
+	 * @since 2.10.0 Drop localizing of error message.
 	 * @since 2.0.0
 	 *
 	 * @param string $name The name of the method being called.
@@ -926,7 +925,6 @@ final class Registry {
 		}
 
 		// No match, throw exception
-		/* translators: %s = The full name of the method being called. (Low priority translation) */
-		throw new Exception( _f( 'Call to unrecognized method alias %s', 'nlingual', __CLASS__ . '::' . $name . '()' ), NL_ERR_UNSUPPORTED );
+		throw new Exception( 'Call to unrecognized method alias ' . __CLASS__ . '::' . $name . '()', NL_ERR_UNSUPPORTED );
 	}
 }

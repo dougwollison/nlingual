@@ -1,4 +1,5 @@
 <?php
+// phpcs:ignoreFile WordPress.WP.I18n.NonSingularStringLiteralDomain
 /**
  * nLingual Theme Locale Patch
  *
@@ -20,7 +21,7 @@ namespace nLingual;
  */
 final class Locale extends \WP_Locale {
 	/**
-	 * @see WP_Locale::init()
+	 * @see \WP_Locale::init()
 	 */
 	public function init() {
 		// Get the theme's text domain

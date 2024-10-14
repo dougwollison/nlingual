@@ -94,6 +94,7 @@ final class Rewriter {
 	 *
 	 * @internal
 	 *
+	 * @since 2.10.0 Use wp_parse_url().
 	 * @since 2.9.0 Fixed path suffix handling.
 	 * @since 2.8.2 Fixed path handling to preserve home path.
 	 * @since 2.6.0 Updated to use NL_ORIGINAL_URL.
@@ -158,7 +159,7 @@ final class Rewriter {
 
 				case 'path':
 					// Get the path of the home URL, with trailing slash
-					$home_path = trailingslashit( parse_url( $home, PHP_URL_PATH ) ?? '' );
+					$home_path = trailingslashit( wp_parse_url( $home, PHP_URL_PATH ) ?? '' );
 
 					// Subtract the home path from the start of the path provided
 					$path = substr( $the_url->path, strlen( $home_path ) );
@@ -214,6 +215,7 @@ final class Rewriter {
 	 *
 	 * This will add the language slug subdomain/subdirecty/query var as needed.
 	 *
+	 * @since 2.10.0 Use wp_parse_url().
 	 * @since 2.9.1 Adjust URL building and trainling slash handling.
 	 * @since 2.9.0 Use does_skip_default_l10n_apply() to handle default URL localization logic,
 	 *              Added $force_localize to allow overriding skip_default_l10n even if it applies.
@@ -244,7 +246,12 @@ final class Rewriter {
 		// Ensure $language is a Language, defaulting to current
 		if ( ! validate_language( $language, 'default current' ) ) {
 			// Throw exception if not found
-			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
+			if ( is_object( $language ) ) {
+				$language = $language->id ?? '[object]';
+			} else if ( ! is_scalar( $language ) ) {
+				$language = '[non-scalar value]';
+			}
+			throw new Exception( 'The language requested does not exist: ' . esc_html( $language ), NL_ERR_NOTFOUND );
 		}
 
 		/**
@@ -271,7 +278,7 @@ final class Rewriter {
 
 		// Check if it's just a URI,
 		// prefix with domain of home URL if so
-		if ( ! parse_url( $url, PHP_URL_HOST ) ) {
+		if ( ! wp_parse_url( $url, PHP_URL_HOST ) ) {
 			$url = $home . $url;
 		}
 
@@ -308,7 +315,7 @@ final class Rewriter {
 						break;
 					case 'path':
 						// Add language slug to path (after any home path)
-						$home_path = parse_url( $home, PHP_URL_PATH ) ?: '';
+						$home_path = wp_parse_url( $home, PHP_URL_PATH ) ?: '';
 						$request_path = substr( $the_url->path ?? '', strlen( $home_path ) );
 
 						// Trim excess slashes
@@ -384,7 +391,7 @@ final class Rewriter {
 	 * @since 2.2.0  Now uses get_search_link() to create the search URL.
 	 * @since 2.0.0
 
-	 * @global WP_Query $wp_query The main query object.
+	 * @global \WP_Query $wp_query The main query object.
 	 *
 	 * @uses Registry::get() to check for backwards compatibility.
 	 * @uses Registry::current_language() to get the current Language object.
@@ -406,7 +413,12 @@ final class Rewriter {
 		// Ensure $language is a Language, defaulting to current
 		if ( ! validate_language( $language, 'default current' ) ) {
 			// Throw exception if not found
-			throw new Exception( 'The language requested does not exist: ' . maybe_serialize( $language ), NL_ERR_NOTFOUND );
+			if ( is_object( $language ) ) {
+				$language = $language->id ?? '[object]';
+			} else if ( ! is_scalar( $language ) ) {
+				$language = '[non-scalar value]';
+			}
+			throw new Exception( 'The language requested does not exist: ' . esc_html( $language ), NL_ERR_NOTFOUND );
 		}
 
 		// Get the queried object for testing

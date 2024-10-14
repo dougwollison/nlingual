@@ -7,7 +7,7 @@ if ( ! $post_type ) {
 $singular = strtolower( get_post_type_object( $post_type )->labels->singular_name );
 $plural = strtolower( get_post_type_object( $post_type )->labels->name );
 ?>
-<title><?php _e( 'Languages & Translations', 'nlingual' ); ?></title>
+<title><?php esc_html_e( 'Languages & Translations', 'nlingual' ); ?></title>
 
 <p><?php
 /* translators: %s = The singular name of the post type. */
