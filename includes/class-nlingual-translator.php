@@ -90,7 +90,7 @@ final class Translator {
 	 *
 	 * @internal
 	 *
-	 * @since 2.10.0 Ensure $group_id is an integer.
+	 * @since 2.11.0 Ensure $group_id is an integer.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
@@ -128,7 +128,7 @@ final class Translator {
 	 *
 	 * @internal
 	 *
-	 * @since 2.10.0 Ensure *_id values are integers.
+	 * @since 2.11.0 Ensure *_id values are integers.
 	 * @since 2.0.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.

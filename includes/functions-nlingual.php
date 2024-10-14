@@ -21,7 +21,7 @@ namespace nLingual;
  *
  * @internal
  *
- * @since 2.10.0 Added consideration for REST requests.
+ * @since 2.11.0 Added consideration for REST requests.
  * @since 2.6.0  Added consideration of WP_INSTALLING.
  * @since 2.0.0
  *

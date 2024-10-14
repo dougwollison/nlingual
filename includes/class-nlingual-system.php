@@ -312,7 +312,7 @@ final class System extends Handler {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 2.10.0 Added nl_is_translated query handling, enqueue_assets,
+	 * @since 2.11.0 Added nl_is_translated query handling, enqueue_assets,
 	 *               unique post slug and posts result filters.
 	 * @since 2.8.0  Moved rewrite_locale to Frontend.
 	 * @since 2.6.0  Added transition (un)flagging.
@@ -470,7 +470,7 @@ final class System extends Handler {
 	/**
 	 * Detect the language based on the request or browser info.
 	 *
-	 * @since 2.10.0 Add detection of user language and backend language override.
+	 * @since 2.11.0 Add detection of user language and backend language override.
 	 *               Add handling of queried language being an array.
 	 * @since 2.9.2  Check use_accepted_language before retrieving.
 	 * @since 2.9.0  Drop redirect handling, let Frontend handle it.
@@ -828,7 +828,7 @@ final class System extends Handler {
 	/**
 	 * Filter the slug to use the original if unique for that language.
 	 *
-	 * @since 2.10.0
+	 * @since 2.11.0
 	 *
 	 * @uses Registry::is_post_type_supported() To check if the post uses translations.
 	 * @uses Translator::get_post_language() To get the language of a post.
@@ -918,7 +918,7 @@ final class System extends Handler {
 	 * Namely, localize it for it's assigned language.
 	 * Also checks for localizing a home page translation.
 	 *
-	 * @since 2.10.0 Use current language unless post's language overrides.
+	 * @since 2.11.0 Use current language unless post's language overrides.
 	 * @since 2.9.0  Dropped outdated $relocalize use in Rewriter::localize_url().
 	 * @since 2.2.0  Modified to explicitly handle post object vs ID.
 	 *               Will no longer localize for draft/pending posts.
@@ -984,7 +984,7 @@ final class System extends Handler {
 	/**
 	 * Relocalize URL to current language before resolving for Post ID.
 	 *
-	 * @since 2.10.0
+	 * @since 2.11.0
 	 *
 	 * @param string $url The URL being resolved.
 	 *
@@ -1060,7 +1060,7 @@ final class System extends Handler {
 	 * Filter the query params to add the query_var option as a
 	 * possible parameter for collection requests.
 	 *
-	 * @since 2.10.0 Add 0 as language option/default if language is not required.
+	 * @since 2.11.0 Add 0 as language option/default if language is not required.
 	 *               Support IDs as strings and integers.
 	 * @since 2.9.0  Whitelist all languages if logged in, cast IDs to string.
 	 * @since 2.6.0
@@ -1127,7 +1127,7 @@ final class System extends Handler {
 	/**
 	 * Set the queried language to the current one if applicable
 	 *
-	 * @since 2.10.0 Don't blindly set when in the admin,
+	 * @since 2.11.0 Don't blindly set when in the admin,
 	 *               Check for both default and custom query_var,
 	 *               Skip when viewing trash, rewrite post type checking
 	 *               to handle search and mixed types.
@@ -1245,7 +1245,7 @@ final class System extends Handler {
 	/**
 	 * Translated the post__not_in IDs to those for the queried language(s) if needed.
 	 *
-	 * @since 2.10.0 Use WP_Query::get() and set(), check for default query var.
+	 * @since 2.11.0 Use WP_Query::get() and set(), check for default query var.
 	 * @since 2.6.0  Added check to see if current query is for an unsupported post type.
 	 * @since 2.0.0
 	 *
@@ -1300,7 +1300,7 @@ final class System extends Handler {
 	/**
 	 * Add the translations join clause and language where clause for a query.
 	 *
-	 * @since 2.10.0 Use WP_Query::get(), accept default query var.
+	 * @since 2.11.0 Use WP_Query::get(), accept default query var.
 	 * @since 2.6.0  Fixed handling of 0 value for filtering by no language.
 	 * @since 2.0.0
 	 *
@@ -1379,7 +1379,7 @@ final class System extends Handler {
 	 * Will join the translations table twice to look for posts that have
 	 * belong to groups of more than 1 or only 1 depending on value.
 	 *
-	 * @since 2.10.0
+	 * @since 2.11.0
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
@@ -1486,7 +1486,7 @@ final class System extends Handler {
 	 * In cases where a page's translation for the current language
 	 * has the same slug, replace the queried object with the translation.
 	 *
-	 * @since 2.10.0
+	 * @since 2.11.0
 	 *
 	 * @uses Registry::is_post_type_supported() to check for support of the requested post type.
 	 * @uses Registry::current_language() as the language to filter by.
@@ -1538,7 +1538,7 @@ final class System extends Handler {
 	 * In cases where multiple posts are matched for a slug,
 	 * find the one for the current language.
 	 *
-	 * @since 2.10.0
+	 * @since 2.11.0
 	 *
 	 * @uses Registry::is_post_type_supported() to check for support of the requested post type.
 	 * @uses Registry::current_language() as the language to filter by.
@@ -1608,7 +1608,7 @@ final class System extends Handler {
 	/**
 	 * Enqueue necessary styles and scripts.
 	 *
-	 * @since 2.10.0 Moved from Frontend to System.
+	 * @since 2.11.0 Moved from Frontend to System.
 	 * @since 2.6.0
 	 */
 	public static function enqueue_assets() {

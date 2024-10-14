@@ -326,7 +326,7 @@ final class Synchronizer {
 		 * The dynamic portion of the hook name, `$context`, refers to
 		 * wether the action was a sync or a clone.
 		 *
-		 * @since 2.10.0
+		 * @since 2.11.0
 		 *
 		 * @param WP_Post. $original The post being synced from.
 		 * @param WP_Post  $target   The post being synced to.
@@ -372,7 +372,7 @@ final class Synchronizer {
 	 *
 	 * All fields, meta data and terms are copied.
 	 *
-	 * @since 2.10.0 Exit with error if insert fails, drop post_name suffixing,
+	 * @since 2.11.0 Exit with error if insert fails, drop post_name suffixing,
 	 *               use original's post status unless published.
 	 * @since 2.9.2  Need to slash data for cloning; blocks break otherwise.
 	 * @since 2.9.0  Drop custom title support.

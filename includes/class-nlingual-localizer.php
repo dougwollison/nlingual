@@ -383,7 +383,7 @@ final class Localizer extends Handler {
 	 * This will guess the screen base based on $meta_type
 	 * if not provided.
 	 *
-	 * @since 2.10.0 Fix screen registration for term meta fields.
+	 * @since 2.11.0 Fix screen registration for term meta fields.
 	 * @since 2.8.0  Fixed ID creation when a subtype is specified.
 	 * @since 2.6.0  ID now includes subtype (post_type/taxonomy) if provided.
 	 * @since 2.0.0

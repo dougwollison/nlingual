@@ -373,7 +373,7 @@ final class Rewriter {
 	/**
 	 * Attempt to localize the current page URL.
 	 *
-	 * @since 2.10.0 Only use post's translation if neither or both are published.
+	 * @since 2.11.0 Only use post's translation if neither or both are published.
 	 *               Drop search link rebuilding, may cause unintended nice-url redirect.
 	 * 				 Fix post type param handling.
 	 * @since 2.9.2  Fix handling for paginated posts/pages.

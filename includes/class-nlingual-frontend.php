@@ -45,7 +45,7 @@ final class Frontend extends Handler {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 2.10.0 Move enqueue_assets to System.
+	 * @since 2.11.0 Move enqueue_assets to System.
 	 * @since 2.8.0  Added rewrite_locale from System.
 	 * @since 2.0.0
 	 */
@@ -780,7 +780,7 @@ final class Frontend extends Handler {
 	/**
 	 * Add a Translate This node/menu to the Admin Bar.
 	 *
-	 * @since 2.10.0 Updated menu title format; icon+label.
+	 * @since 2.11.0 Updated menu title format; icon+label.
 	 * @since 2.9.2  Check create_posts rather than edit_post, ensure
 	 *               links are added before registering menu.
 	 * @since 2.6.0

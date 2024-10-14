@@ -46,7 +46,7 @@
 		 * The dynamic portion of the hook name, `$post_type`,
 		 * refers to the current screen's post type.
 		 *
-		 * @since 2.10.0
+		 * @since 2.11.0
 		 *
 		 * @param array $additional A list of items not covered by the sync rules.
 		 */

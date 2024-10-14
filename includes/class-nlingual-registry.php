@@ -82,7 +82,7 @@ final class Registry {
 	 *
 	 * @internal
 	 *
-	 * @since 2.10.0 Add default_no_language option.
+	 * @since 2.11.0 Add default_no_language option.
 	 * @since 2.8.0  Add lock_post_language option.
 	 * @since 2.0.0
 	 *
@@ -524,7 +524,7 @@ final class Registry {
 	/**
 	 * Check the accept-language header for a matching supported language.
 	 *
-	 * @since 2.10.0 Renamed and moved to Registry for global use.
+	 * @since 2.11.0 Renamed and moved to Registry for global use.
 	 * @since 2.0.0
 	 *
 	 * @return Language|false The accepted language, false if no match.
@@ -669,7 +669,7 @@ final class Registry {
 	 *
 	 * @internal
 	 *
-	 * @since 2.10.0 Added "any" $post_types value support.
+	 * @since 2.11.0 Added "any" $post_types value support.
 	 * @since 2.8.0  Added $require_all option.
 	 * @since 2.0.0
 	 *
@@ -699,7 +699,7 @@ final class Registry {
 		/**
 		 * Filter the result.
 		 *
-		 * @since 2.10.0 Added $require_all argument.
+		 * @since 2.11.0 Added $require_all argument.
 		 * @since 2.0.0
 		 *
 		 * @param bool         $result      The result of the test.
@@ -813,7 +813,7 @@ final class Registry {
 	/**
 	 * Load the relevant options.
 	 *
-	 * @since 2.10.0 Add smart default handling for new options.
+	 * @since 2.11.0 Add smart default handling for new options.
 	 * @since 2.0.0
 	 *
 	 * @see Registry::$__loaded to prevent unnecessary reloading.
