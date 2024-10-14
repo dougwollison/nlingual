@@ -525,6 +525,7 @@ final class Frontend extends Handler {
 	/**
 	 * Localizes the date_format option.
 	 *
+	 * @since 2.9.4 Use translate to avoid gettext extraction issues.
 	 * @since 2.0.0
 	 *
 	 * @param string $format The date format string to filter.
@@ -538,7 +539,10 @@ final class Frontend extends Handler {
 		}
 
 		$domain = wp_get_theme()->get( 'TextDomain' );
-		$format = __( $format, $domain );
+
+		// phpcs:ignore WordPress.WP.I18n
+		$format = translate( $format, $domain );
+
 		return $format;
 	}
 

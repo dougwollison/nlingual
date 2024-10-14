@@ -1,4 +1,5 @@
 <?php
+// phpcs:ignoreFile WordPress.WP.I18n.NonSingularStringLiteralDomain
 /**
  * nLingual Theme Locale Patch
  *
