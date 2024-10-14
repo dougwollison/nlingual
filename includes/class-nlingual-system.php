@@ -598,9 +598,9 @@ final class System extends Handler {
 	 *
 	 * @uses Synchronizer::sync_post_with_sister() to handle post synchronizing.
 	 *
-	 * @param int     $post_id The ID of the post being updated.
-	 * @param WP_Post $post    The post being updated.
-	 * @param bool    $update  Whether this is an existing post being updated or not.
+	 * @param int      $post_id The ID of the post being updated.
+	 * @param \WP_Post $post    The post being updated.
+	 * @param bool     $update  Whether this is an existing post being updated or not.
 	 */
 	public static function synchronize_posts( $post_id, $post, $update ) {
 		// Abort if doing auto save, a revision, or not an update
@@ -858,9 +858,9 @@ final class System extends Handler {
 	 * @uses Translator::get_post_translation() to get the post for that language.
 	 * @uses Rewriter::localize_url() to localize the URL into the post's language.
 	 *
-	 * @param string      $permalink The permalink of the post.
-	 * @param int|WP_Post $post      The post ID or object.
-	 * @param bool        $sample    Is this a sample permalink? (Defaults to FALSE).
+	 * @param string       $permalink The permalink of the post.
+	 * @param int|\WP_Post $post      The post ID or object.
+	 * @param bool         $sample    Is this a sample permalink? (Defaults to FALSE).
 	 *
 	 * @return string The localized permalink.
 	 */
@@ -1008,7 +1008,7 @@ final class System extends Handler {
 	 * @since 2.6.0
 	 *
 	 * @param array           $args    Key value array of query var to query value.
-	 * @param WP_REST_Request $request The request used.
+	 * @param \WP_REST_Request $request The request used.
 	 *
 	 * @return array The filtered args.
 	 */

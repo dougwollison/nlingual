@@ -411,8 +411,8 @@ final class Liaison extends Handler {
 	 * @uses Registry::get_rules() to check for menu_order synchronizing.
 	 * @uses Registry::default_language() to get the default language slug.
 	 *
-	 * @param mixed    $pre_value The value to use instead of the determined one.
-	 * @param WP_Query $query     The query being modified.
+	 * @param mixed     $pre_value The value to use instead of the determined one.
+	 * @param \WP_Query $query     The query being modified.
 	 *
 	 * @return mixed The default language ot use.
 	 */
@@ -491,8 +491,8 @@ final class Liaison extends Handler {
 	 * @since 2.6.0 Add check to make sure post's type is supported.
 	 * @since 2.0.0
 	 *
-	 * @param array   $post_states The list of post states for the post.
-	 * @param WP_Post $post        The post in question.
+	 * @param array    $post_states The list of post states for the post.
+	 * @param \WP_Post $post        The post in question.
 	 *
 	 * @return array The filtered post states list.
 	 */
@@ -546,7 +546,7 @@ final class Liaison extends Handler {
 	 * @since 2.1.1 Fixed namespace scope typo accessing IndexPages\Registry.
 	 * @since 2.0.0
 	 *
-	 * @param WP_Post $post The post in question.
+	 * @param \WP_Post $post The post in question.
 	 */
 	public static function indexpages_translation_notice( \WP_Post $post ) {
 		// Abort if not a page or not a localizable post type
@@ -647,7 +647,7 @@ final class Liaison extends Handler {
 	 *
 	 * @since 2.5.0
 	 *
-	 * @global WP $wp The WordPress environment object.
+	 * @global \WP $wp The WordPress environment object.
 	 *
 	 * @param string $url The new URL.
 	 */
@@ -655,7 +655,7 @@ final class Liaison extends Handler {
 		global $wp;
 
 		// Get the available endpoints
-		$wc_endpoints = WC()->query->get_query_vars();
+		$wc_endpoints = \WC()->query->get_query_vars();
 
 		foreach ( $wc_endpoints as $query_var => $endpoint ) {
 			if ( isset( $wp->query_vars[ $query_var ] ) ) {

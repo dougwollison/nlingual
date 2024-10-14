@@ -539,8 +539,8 @@ final class Backend extends Handler {
 	 * @since 2.1.0 Bypass language_is_required option; make sure post has a language.
 	 * @since 2.0.0
 	 *
-	 * @param array   $post_states The list of post states for the post.
-	 * @param WP_Post $post        The post in question.
+	 * @param array    $post_states The list of post states for the post.
+	 * @param \WP_Post $post        The post in question.
 	 *
 	 * @return array The filtered post states list.
 	 */
@@ -623,8 +623,8 @@ final class Backend extends Handler {
 	 *
 	 * @since 2.8.0
 	 *
-	 * @param array   $args The WP_Query arguments to filter.
-	 * @param WP_Post $post The post for context.
+	 * @param array    $args The WP_Query arguments to filter.
+	 * @param \WP_Post $post The post for context.
 	 *
 	 * @return array The filtered query args.
 	 */
@@ -926,7 +926,7 @@ final class Backend extends Handler {
 	 * @uses Translator::get_post_translations() to get the post's translations.
 	 * @uses Registry::get() to get the language_is_required; need for "None" option.
 	 *
-	 * @param WP_Post $post The post being edited.
+	 * @param \WP_Post $post The post being edited.
 	 */
 	public static function post_meta_box( $post ) {
 		global $wpdb;
@@ -1408,8 +1408,8 @@ final class Backend extends Handler {
 		 *
 		 * @since 2.2.0
 		 *
-		 * @param WP_Post  $translation          The translation clone of the post.
-		 * @param WP_Post  $post                 The original post.
+		 * @param \WP_Post $translation          The translation clone of the post.
+		 * @param \WP_Post $post                 The original post.
 		 * @param Language $translation_language The language the clone is for.
 		 */
 		do_action( 'nlingual_new_translation', $translation, $post, $translation_language );

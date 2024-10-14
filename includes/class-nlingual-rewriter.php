@@ -381,7 +381,7 @@ final class Rewriter {
 	 * @since 2.2.0 Now uses get_search_link() to create the search URL.
 	 * @since 2.0.0
 
-	 * @global WP_Query $wp_query The main query object.
+	 * @global \WP_Query $wp_query The main query object.
 	 *
 	 * @uses Registry::get() to check for backwards compatibility.
 	 * @uses Registry::current_language() to get the current Language object.

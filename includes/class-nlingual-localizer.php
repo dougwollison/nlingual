@@ -192,7 +192,7 @@ final class Localizer extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param WP_Screen $screen Optional. The screen to get fields for.
+	 * @param \WP_Screen $screen Optional. The screen to get fields for.
 	 *
 	 * @return array The fields found for the screen provided.
 	 */
@@ -700,7 +700,7 @@ final class Localizer extends Handler {
 	 * @uses Localizer::$localizable_post_fields for the whitelist of post fields.
 	 * @uses Localizer::get_field_value() to retrieve the localized value.
 	 *
-	 * @param WP_Post $post The post object to filter.
+	 * @param \WP_Post $post The post object to filter.
 	 */
 	public static function handle_localized_post_fields( $post ) {
 		// Abort if no post is specified
@@ -733,8 +733,8 @@ final class Localizer extends Handler {
 	 * @uses Localizer::$localizable_post_fields for the whitelist of post fields.
 	 * @uses Localizer::save_field_value() to save the unlocalized value.
 	 *
-	 * @param int $post_id The ID of the post being updated.
-	 * @param WP_Post $post The updated post object.
+	 * @param int      $post_id The ID of the post being updated.
+	 * @param \WP_Post $post    The updated post object.
 	 */
 	public static function update_unlocalized_post_fields( $post_id, $post ) {
 		// Abort if no post is specified
@@ -873,7 +873,7 @@ final class Localizer extends Handler {
 	 *
 	 * @since 2.6.0
 	 *
-	 * @param WP_Term_Query $query The term query.
+	 * @param \WP_Term_Query $query The term query.
 	 */
 	public static function maybe_modify_term_query( $query ) {
 		$args = &$query->query_vars;

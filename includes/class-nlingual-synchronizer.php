@@ -154,13 +154,13 @@ final class Synchronizer {
 	 * @uses Translator::get_object_language() to get the target's language.
 	 * @uses Translator::get_object_translation() to get the original's parent's translation.
 	 *
-	 * @param int|WP_Post $original The original post ID/object.
-	 * @param int|WP_Post $target   The target post ID/object.
-	 * @param array       $rules    Optional. The rules to use for syncing.
+	 * @param int|\WP_Post $original The original post ID/object.
+	 * @param int|\WP_Post $target   The target post ID/object.
+	 * @param array        $rules    Optional. The rules to use for syncing.
 	 *     @option array      "post_fields" A whitelist of fields to copy over.
 	 *     @option bool|array "post_meta"   A whitelist of meta fields (TRUE for all).
 	 *     @option bool|array "post_terms"  A whitelist of taxonomies (TRUE for all).
-	 * @param string      $context  Optional. The context for preparing the rules ("sync" or "clone"),
+	 * @param string       $context  Optional. The context for preparing the rules ("sync" or "clone"),
 	 *                              also dictates what rules are fetched if they aren't provided.
 	 *
 	 * @throws Exception If the requested posts aren't of the same type.
@@ -366,13 +366,13 @@ final class Synchronizer {
 	 * @uses Translator::set_post_language() to assign the language to the clone.
 	 * @uses Translator::set_post_translation() to link the clone to the original.
 	 *
-	 * @param int|WP_Post  $post     The ID/object of the post to clone.
-	 * @param int|Language $language The language to assign the clone to.
+	 * @param int|\WP_Post  $post     The ID/object of the post to clone.
+	 * @param int|Language  $language The language to assign the clone to.
 	 *
 	 * @throws Exception If the post specified does not exist.
 	 * @throws Exception If the language specified does not exist.
 	 *
-	 * @return WP_Post|false The cloned post or false on failure.
+	 * @return \WP_Post|false The cloned post or false on failure.
 	 */
 	public static function clone_post( $post, $language ) {
 		// Validate $post if an ID

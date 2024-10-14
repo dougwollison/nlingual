@@ -112,7 +112,7 @@ abstract class Handler {
 	 * @param string $tag    The name of the filter the hook was applied to.
 	 * @param string $method The name of the method that was applied.
 	 *
-	 * @return array|FALSE The hook details, FALSE if not found.
+	 * @return Hook|FALSE The hook details, FALSE if not found.
 	 */
 	final public static function get_hook( $tag, $method ) {
 		if ( isset( static::$implemented_hooks[ "$tag/$method" ] ) ) {

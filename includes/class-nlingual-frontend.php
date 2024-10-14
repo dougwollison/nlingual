@@ -682,7 +682,7 @@ final class Frontend extends Handler {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @global WP_Locale $wp_locale The original Date/Time Locale object.
+	 * @global \WP_Locale $wp_locale The original Date/Time Locale object.
 	 *
 	 * @uses Registry::get() to check for the patch_wp_locale option.
 	 */
@@ -809,7 +809,7 @@ final class Frontend extends Handler {
 	 *              links are added before registering menu.
 	 * @since 2.6.0
 	 *
-	 * @param WP_Admin_Bar $wp_admin_bar The admin bar object.
+	 * @param \WP_Admin_Bar $wp_admin_bar The admin bar object.
 	 */
 	public static function add_translate_menu( \WP_Admin_Bar $wp_admin_bar ) {
 		global $wp_the_query;
