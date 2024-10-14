@@ -287,8 +287,8 @@ final class Liaison extends Handler {
 		}
 
 		// Fail if nonce does
-		if ( ! wp_verify_nonce( $_GET['_nlnonce'], 'convert-localized-terms' ) ) {
-			nLingual\cheatin();
+		if ( empty( $_GET['_nlnonce'] ) || ! wp_verify_nonce( $_GET['_nlnonce'], 'convert-localized-terms' ) ) {
+			cheatin();
 		}
 
 		// Get the old separator, abort if not found

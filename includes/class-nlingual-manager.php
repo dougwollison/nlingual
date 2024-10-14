@@ -167,6 +167,7 @@ final class Manager extends Handler {
 	/**
 	 * Save languages from the manager.
 	 *
+	 * @since 2.9.4   Ensure _wpnonce is set. Fallback to empty nlingual_languages.
 	 * @since 2.9.1.1 Rewrite field checking, make accept_code optional.
 	 * @since 2.7.0   Added downloading of WordPress language files for each language.
 	 * @since 2.0.0
@@ -183,12 +184,12 @@ final class Manager extends Handler {
 
 		// Fail if nonce does
 		check_admin_referer( 'nlingual-languages-options' );
-		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'nlingual-languages-options' ) ) {
+		if ( empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'nlingual-languages-options' ) ) {
 			cheatin();
 		}
 
 		// Get the languages
-		$languages = $_POST['nlingual_languages'];
+		$languages = $_POST['nlingual_languages'] ?? array();
 
 		// The fields whitelist + required status
 		$fields = array(
