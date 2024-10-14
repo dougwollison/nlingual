@@ -68,8 +68,8 @@ function is_patch_font_stack_needed() {
  *
  * @uses Registry::languages() to validate and retrieve the passed language.
  *
- * @param mixed &$language        The language to be converted.
- * @param bool   $default_current Optional. Default to the current language if null.
+ * @param Language &$language        The language to be converted.
+ * @param bool     $default_current Optional. Default to the current language if null.
  *
  * @return bool If the language was successfully converted.
  */
