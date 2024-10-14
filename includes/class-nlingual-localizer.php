@@ -1109,6 +1109,7 @@ final class Localizer extends Handler {
 	 *
 	 * @internal
 	 *
+	 * @since 2.9.4 Use wp_json_encode().
 	 * @since 2.0.0
 	 *
 	 * @uses Localizer::$current_fields to get the stored fields.
@@ -1143,7 +1144,7 @@ final class Localizer extends Handler {
 
 		?>
 		<script>
-		nLingual.LocalizableFields.add( <?php echo json_encode( $data ); ?> );
+		nLingual.LocalizableFields.add( <?php echo wp_json_encode( $data ); ?> );
 		</script>
 		<?php
 	}

@@ -132,7 +132,8 @@ final class URL extends Model {
 	/**
 	 * Parse the URL (if string) and load it's components.
 	 *
-	 * since 2.0.0
+	 * @since 2.9.4 Use wp_parse_url(). Drop localizing of error message.
+	 * @since 2.0.0
 	 *
 	 * @param string|array $url_data The URL to process.
 	 * @param array        $defaults Optional. The default property values.
@@ -142,7 +143,7 @@ final class URL extends Model {
 	public function parse( $url_data, $defaults = array() ) {
 		// If it's a string, parse it
 		if ( is_string( $url_data ) ) {
-			$url_data = parse_url( $url_data );
+			$url_data = wp_parse_url( $url_data );
 		}
 		// If not an array, throw an exception
 		elseif ( ! is_array( $url_data ) ) {

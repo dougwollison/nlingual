@@ -1316,6 +1316,7 @@ final class Backend extends Handler {
 	/**
 	 * Print relevent variables for JavaScript.
 	 *
+	 * @since 2.9.4 Use wp_json_encode().
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to retrieve the default language.
@@ -1328,7 +1329,7 @@ final class Backend extends Handler {
 				var admin_url = '<?php echo admin_url(); ?>';
 			}
 			nLingual.default_language = <?php echo Registry::default_language( 'id' ); ?>;
-			nLingual.Languages.add( <?php echo json_encode( Registry::languages()->dump() ); ?> );
+			nLingual.Languages.add( <?php echo wp_json_encode( Registry::languages()->dump() ); ?> );
 		</script>
 		<?php
 	}

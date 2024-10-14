@@ -295,6 +295,7 @@ final class Manager extends Handler {
 	/**
 	 * Fields for the Translations page.
 	 *
+	 * @since 2.9.4 Use wp_parse_url().
 	 * @since 2.8.0 Add lock_post_language option control.
 	 * @since 2.4.0 Only list active languages as options for Default Language,
 	 *              also deprecate patch_font_stack option.
@@ -388,7 +389,7 @@ final class Manager extends Handler {
 		 */
 
 		// Build the previews for the URLs
-		$domain = parse_url( home_url(), PHP_URL_HOST );
+		$domain = wp_parse_url( home_url(), PHP_URL_HOST );
 
 		// The default language URL samples
 		$url_format = '<span class="nl-preview nl-url-preview nl-redirect-%s" data-included="%s" data-excluded="%s"></span>';
@@ -660,6 +661,7 @@ final class Manager extends Handler {
 	/**
 	 * Output for the language management page.
 	 *
+	 * @since 2.9.4 Use wp_json_encode().
 	 * @since 2.0.0
 	 *
 	 * @global $plugin_page The slug of the current admin page.
@@ -739,7 +741,7 @@ final class Manager extends Handler {
 				</script>
 				<script>
 					<?php $presets = require NL_PLUGIN_DIR . '/includes/presets-languages.php'; ?>
-					nLingual.presets = <?php echo json_encode( $presets ); ?>
+					nLingual.presets = <?php echo wp_json_encode( $presets ); ?>
 				</script>
 				<?php submit_button(); ?>
 			</form>
