@@ -716,7 +716,7 @@ final class Backend extends Handler {
 		$is_translated = $wp_query->get( 'nl_is_translated', '' );
 
 		if ( $is_translated !== '' ) {
-			printf( '<input type="hidden" name="nl_is_translated" value="%s" />', $is_translated );
+			printf( '<input type="hidden" name="nl_is_translated" value="%s" />', esc_attr( $is_translated ) );
 		}
 	}
 
@@ -1198,7 +1198,7 @@ final class Backend extends Handler {
 			<?php if ( $lock_post_language ) : ?>
 				<input type="hidden" name="nlingual_language" id="nl_language" class="nl-input nl-language-input" value="<?php echo $post_language->id; ?>">
 				<strong><?php esc_html_e( 'Language:', 'nlingual' ); ?></strong>
-				<em><?php echo $post_language->system_name; ?></em>
+				<em><?php echo esc_html( $post_language->system_name ); ?></em>
 			<?php else: ?>
 				<div class="nl-field nl-manage-language">
 					<label for="nl_language" class="screen-reader-text"><?php esc_html_e( 'Language', 'nlingual' ); ?></label>
