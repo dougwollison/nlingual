@@ -990,12 +990,12 @@ final class Backend extends Handler {
 							<span class="title"><?php esc_html_e( 'Language', 'nlingual' ); ?></span>
 							<select name="nlingual_language" class="nl-input nl-language-input">
 								<?php if ( ! Registry::get( 'language_is_required' ) ) : ?>
-									<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
+									<option value="0">&mdash; <?php echo esc_html( _x( 'None', 'no language', 'nlingual' ) ); ?> &mdash;</option>
 								<?php endif; ?>
 								<?php
 								// Print the options
 								foreach ( $languages as $language ) {
-									printf( '<option value="%s">%s</option>', $language->id, $language->system_name );
+									printf( '<option value="%s">%s</option>', $language->id, esc_html( $language->system_name ) );
 								}
 								?>
 							</select>
@@ -1006,10 +1006,11 @@ final class Backend extends Handler {
 					<?php foreach ( $languages as $language ) : ?>
 						<label class="nl-translation-field nl-translation-<?php echo $language->id; ?>" title="<?php
 							/* translators: %s = The name of the language */
-							_ef( 'Assign %s Translation', 'nlingual', $language->system_name ); ?>" data-nl_language="<?php echo $language->id; ?>">
-							<span class="title"><?php echo $language->system_name; ?></span>
+							esc_attr( _f( 'Assign %s Translation', 'nlingual', $language->system_name ) );
+							?>" data-nl_language="<?php echo $language->id; ?>">
+							<span class="title"><?php echo esc_attr( $language->system_name ); ?></span>
 							<select name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input">
-								<option value="0">&mdash; <?php _ex( 'None', 'no translation', 'nlingual' ); ?> &mdash;</option>
+								<option value="0">&mdash; <?php echo esc_html( _x( 'None', 'no translation', 'nlingual' ) ); ?> &mdash;</option>
 								<?php
 								$available_translations = get_posts( array(
 									'suppress_filters' => false,
@@ -1022,7 +1023,7 @@ final class Backend extends Handler {
 
 								// Print the options
 								foreach ( $available_translations as $option ) {
-									printf( '<option value="%s">%s</option>', $option->ID, $option->post_title );
+									printf( '<option value="%s">%s</option>', $option->ID, esc_html( $option->post_title ) );
 								}
 								?>
 							</select>
@@ -1072,14 +1073,14 @@ final class Backend extends Handler {
 					<label>
 						<span class="title"><?php esc_html_e( 'Language', 'nlingual' ); ?></span>
 						<select name="nlingual_bulk_language" id="nl_language">
-							<option value="">&mdash; <?php _e( 'No Change', 'nlingual' ); ?> &mdash;</option>
+							<option value="">&mdash; <?php esc_html_e( 'No Change', 'nlingual' ); ?> &mdash;</option>
 							<?php if ( ! Registry::get( 'language_is_required' ) ) : ?>
-								<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
+								<option value="0">&mdash; <?php echo esc_html( _x( 'None', 'no language', 'nlingual' ) ); ?> &mdash;</option>
 							<?php endif; ?>
 							<?php
 							// Print the options
 							foreach ( $languages as $language ) {
-								printf( '<option value="%s">%s</option>', $language->id, $language->system_name );
+								printf( '<option value="%s">%s</option>', $language->id, esc_html( $language->system_name ) );
 							}
 							?>
 						</select>
@@ -1203,7 +1204,7 @@ final class Backend extends Handler {
 					<label for="nl_language" class="screen-reader-text"><?php esc_html_e( 'Language', 'nlingual' ); ?></label>
 					<select name="nlingual_language" id="nl_language" class="nl-input nl-language-input">
 						<?php if ( ! $language_is_required ) : ?>
-							<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
+							<option value="0">&mdash; <?php echo esc_html( _x( 'None', 'no language', 'nlingual' ) ); ?> &mdash;</option>
 						<?php endif; ?>
 						<?php
 						// Print the options
@@ -1218,7 +1219,7 @@ final class Backend extends Handler {
 
 			<div class="nl-manage-translations">
 				<?php if ( $languages->count() > 1 ) : ?>
-					<h4 class="nl-field-heading"><?php _e( 'Manage Translations', 'nlingual' ); ?></h4>
+					<h4 class="nl-field-heading"><?php esc_html_e( 'Manage Translations', 'nlingual' ); ?></h4>
 
 					<ul class="nl-translation-list">
 						<?php foreach ( $languages as $language ) : ?>
@@ -1255,11 +1256,11 @@ final class Backend extends Handler {
 								</p>
 
 								<div class="nl-translation-actions nl-if-no-translation">
-									<button type="button" class="button button-small button-primary nl-add-translation"><?php _e( 'Create New', 'nlingual' ); ?></button>
+									<button type="button" class="button button-small button-primary nl-add-translation"><?php esc_html_e( 'Create New', 'nlingual' ); ?></button>
 									<?php if ( $available_translations ) : ?>
-										<button type="button" class="button button-small nl-find-translation"><?php _e( 'Select Existing', 'nlingual' ); ?></button>
+										<button type="button" class="button button-small nl-find-translation"><?php esc_html_e( 'Select Existing', 'nlingual' ); ?></button>
 										<select class="nl-input nl-translation-select" input>
-											<option value="0">&mdash; <?php _ex( 'None', 'no translation', 'nlingual' ); ?> &mdash;</option>
+											<option value="0">&mdash; <?php echo esc_html( _x( 'None', 'no translation', 'nlingual' ) ); ?> &mdash;</option>
 											<?php
 											// Print the options
 											foreach ( $available_translations as $option ) {
@@ -1271,8 +1272,8 @@ final class Backend extends Handler {
 								</div>
 
 								<div class="nl-translation-actions nl-if-has-translation">
-									<button type="button" class="button button-small button-primary nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php _e( 'Edit Translation', 'nlingual' ); ?></button>
-									<button type="button" class="button button-small nl-drop-translation"><?php _e( 'Remove Translation', 'nlingual' ); ?></button>
+									<button type="button" class="button button-small button-primary nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php esc_html_e( 'Edit Translation', 'nlingual' ); ?></button>
+									<button type="button" class="button button-small nl-drop-translation"><?php esc_html_e( 'Remove Translation', 'nlingual' ); ?></button>
 								</div>
 							</li>
 						<?php endforeach; ?>
@@ -1512,7 +1513,7 @@ final class Backend extends Handler {
 						<label class="menu-item-title">
 							<input type="checkbox" class="menu-item-checkbox" name="menu-item[<?php echo $i; ?>][menu-item-object-id]" value="-1">
 							<?php echo $language->system_name; ?>
-							<?php if ( ! $language->active ) _ex( '[Inactive]', 'language inactive', 'nlingual' ); ?>
+							<?php if ( ! $language->active ) echo esc_html( _x( '[Inactive]', 'language inactive', 'nlingual' ) ); ?>
 						</label>
 						<input type="hidden" class="menu-item-type" name="menu-item[<?php echo $i; ?>][menu-item-type]" value="nl_language_link">
 						<input type="hidden" class="menu-item-title" name="menu-item[<?php echo $i; ?>][menu-item-title]" value="<?php echo esc_attr( $language->native_name ); ?>">
