@@ -405,7 +405,7 @@ final class Rewriter {
 	 * @return string The localized URL.
 	 */
 	public static function localize_here( $language = null ) {
-		global $wp_query, $wp_rewrite;
+		global $wp_query;
 
 		// Ensure $language is a Language, defaulting to current
 		if ( ! validate_language( $language, 'default current' ) ) {
