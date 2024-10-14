@@ -378,15 +378,15 @@ final class Synchronizer {
 	public static function clone_post( $post, $language ) {
 		// Validate $post if an ID
 		if ( ! is_a( $post, 'WP_Post' ) ) {
+			$requested_post = $post;
 			$post = get_post( $post );
 			if ( ! $post ) {
-				$value = func_get_arg( 0 );
-				if ( is_object( $value ) ) {
-					$value = $value->ID ?? '[object]';
-				} else if ( ! is_scalar( $value ) ) {
-					$value = '[non-scalar value]';
+				if ( is_object( $requested_post ) ) {
+					$requested_post = $requested_post->ID ?? '[object]';
+				} else if ( ! is_scalar( $requested_post ) ) {
+					$requested_post = '[non-scalar value]';
 				}
-				throw new Exception( 'The post specified does not exist: ' . esc_html( $value ), NL_ERR_NOTFOUND );
+				throw new Exception( 'The post specified does not exist: ' . esc_html( $requested_post ), NL_ERR_NOTFOUND );
 			}
 		}
 
