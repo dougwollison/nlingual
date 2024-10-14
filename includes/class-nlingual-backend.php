@@ -1319,7 +1319,7 @@ final class Backend extends Handler {
 		try {
 			Translator::set_post_language( $post_id, $_POST['nlingual_language'] );
 		} catch ( Exception $e ) {
-			wp_die( __( 'Error assigning language: the selected language does not exist.', 'nlingual' ) );
+			wp_die( esc_html__( 'Error assigning language: the selected language does not exist.', 'nlingual' ) );
 		}
 	}
 
@@ -1353,7 +1353,7 @@ final class Backend extends Handler {
 		try {
 			Translator::set_post_translations( $post_id, $_POST['nlingual_translation'] );
 		} catch ( Exception $e ) {
-			wp_die( __( 'Error assigning translations: one or more languages do not exist.', 'nlingual' ) );
+			wp_die( esc_html__( 'Error assigning translations: one or more languages do not exist.', 'nlingual' ) );
 		}
 	}
 
@@ -1382,7 +1382,7 @@ final class Backend extends Handler {
 		try {
 			Translator::set_post_language( $post_id, $_REQUEST['nlingual_bulk_language'] );
 		} catch ( Exception $e ) {
-			wp_die( __( 'Error assigning language: the selected language does not exist.', 'nlingual' ) );
+			wp_die( esc_html__( 'Error assigning language: the selected language does not exist.', 'nlingual' ) );
 		}
 	}
 
@@ -1512,7 +1512,7 @@ final class Backend extends Handler {
 					<li>
 						<label class="menu-item-title">
 							<input type="checkbox" class="menu-item-checkbox" name="menu-item[<?php echo $i; ?>][menu-item-object-id]" value="-1">
-							<?php echo $language->system_name; ?>
+							<?php echo esc_html( $language->system_name ); ?>
 							<?php if ( ! $language->active ) echo esc_html( _x( '[Inactive]', 'language inactive', 'nlingual' ) ); ?>
 						</label>
 						<input type="hidden" class="menu-item-type" name="menu-item[<?php echo $i; ?>][menu-item-type]" value="nl_language_link">
@@ -1593,7 +1593,7 @@ final class Backend extends Handler {
 			if ( typeof admin_url === 'undefined' ) {
 				var admin_url = '<?php echo esc_js( admin_url() ); ?>';
 			}
-			nLingual.default_language = <?php echo Registry::default_language( 'id' ); ?>;
+			nLingual.default_language = <?php echo intval( Registry::default_language( 'id' ) ); ?>;
 			nLingual.Languages.add( <?php echo wp_json_encode( Registry::languages()->dump() ); ?> );
 		</script>
 		<?php
@@ -1621,19 +1621,19 @@ final class Backend extends Handler {
 		// Fail if no post/language id is passed
 		if ( ! isset( $data['post_id'] )
 		|| ! isset( $data['translation_language_id'] ) ) {
-			wp_die( __( 'Error creating translation: post and or language ID not specified.', 'nlingual' ) );
+			wp_die( esc_html__( 'Error creating translation: post and or language ID not specified.', 'nlingual' ) );
 		}
 
 		// Fail if post does not exist
 		$post = get_post( $data['post_id'] );
 		if ( ! $post ) {
-			wp_die( __( 'Error creating translation: specified post not found.', 'nlingual' ) );
+			wp_die( esc_html__( 'Error creating translation: specified post not found.', 'nlingual' ) );
 		}
 
 		// Check permissions, must be able to create posts
 		$post_type_obj = get_post_type_object( $post->post_type );
 		if ( ! current_user_can( $post_type_obj->cap->create_posts ) ) {
-			wp_die( __( 'You are now allowed to create a translation for this post.', 'nlingual' ) );
+			wp_die( esc_html__( 'You are now allowed to create a translation for this post.', 'nlingual' ) );
 		}
 
 		// If post_language is not passed, use what already exists, fail if not found
@@ -1648,18 +1648,18 @@ final class Backend extends Handler {
 
 		// Fail if post language does not exist
 		if ( ! $post_language ) {
-			wp_die( __( 'Error creating translation: original language not found.', 'nlingual' ) );
+			wp_die( esc_html__( 'Error creating translation: original language not found.', 'nlingual' ) );
 		}
 
 		// Fail if translation language does not exist
 		$translation_language = Registry::get_language( $data['translation_language_id'] );
 		if ( ! $translation_language ) {
-			wp_die( __( 'Error creating translation: requested language does not exist.', 'nlingual' ) );
+			wp_die( esc_html__( 'Error creating translation: requested language does not exist.', 'nlingual' ) );
 		}
 
 		// Fail if the post already has a translation
 		if ( Translator::get_post_translation( $post, $translation_language ) ) {
-			wp_die( __( 'Error creating translation: Translation already exists.', 'nlingual' ) );
+			wp_die( esc_html__( 'Error creating translation: Translation already exists.', 'nlingual' ) );
 		}
 
 		// Create the translated clone
@@ -1670,7 +1670,7 @@ final class Backend extends Handler {
 			$errors = $translation->get_error_messages();
 
 			wp_die(
-				__( 'Error creating translation:', 'nlingual' )
+				esc_html__( 'Error creating translation:', 'nlingual' )
 				. '<br />'
 				. implode( '<br />', $errors )
 			);
