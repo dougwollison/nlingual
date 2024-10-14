@@ -722,9 +722,9 @@ final class Liaison extends Handler {
 	 *
 	 * @since 2.11.0
 	 *
-	 * @param WP_Query $query The WP_Query instance Relevanssi is using.
+	 * @param \WP_Query $query The WP_Query instance Relevanssi is using.
 	 *
-	 * @return WP_Query The passed instances.
+	 * @return \WP_Query The passed instances.
 	 */
 	public static function relevanssi_query( $query ) {
 		static::$cache['relevanssi_query'] = $query;

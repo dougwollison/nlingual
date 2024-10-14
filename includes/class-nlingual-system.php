@@ -1489,8 +1489,7 @@ final class System extends Handler {
 	 * @uses Registry::current_language() as the language to filter by.
 	 * @uses Translator::get_post_language() to find the appropriate translation to use.
 	 *
-	 * @param array    $posts The fetched posts to be filtered.
-	 * @param WP_Query $query The Query the results are for.
+	 * @param \WP_Query $query The Query the results are for.
 	 *
 	 * @return array The filtered list of posts.
 	 */

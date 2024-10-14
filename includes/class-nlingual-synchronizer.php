@@ -329,8 +329,8 @@ final class Synchronizer {
 		 *
 		 * @since 2.11.0
 		 *
-		 * @param WP_Post. $original The post being synced from.
-		 * @param WP_Post  $target   The post being synced to.
+		 * @param \WP_Post. $original The post being synced from.
+		 * @param \WP_Post  $target   The post being synced to.
 		 * @param array    $rules    The rules to use for syncing.
 		 *		@option array      "post_fields" A whitelist of fields to copy over.
 		 *		@option array|true "post_meta"   A whitelist of meta fields (TRUE for all).

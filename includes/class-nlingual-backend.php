@@ -1700,7 +1700,7 @@ final class Backend extends Handler {
 	 *
 	 * @since 2.11.0
 	 *
-	 * @param WP_Admin_Bar $wp_admin_bar The admin bar object.
+	 * @param \WP_Admin_Bar $wp_admin_bar The admin bar object.
 	 */
 	public static function add_switcher_menu( \WP_Admin_Bar $wp_admin_bar ) {
 		if ( ! function_exists( 'get_current_screen' ) ) {
