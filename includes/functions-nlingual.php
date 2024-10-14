@@ -190,5 +190,5 @@ function is_nlingual_active() {
  * @since 2.0.0
  */
 function cheatin() {
-	wp_die( __( 'Cheatin&#8217; uh?' ), 403 );
+	wp_die( __( 'Cheatin&#8217; uh?', 'default' ), 403 );
 }
