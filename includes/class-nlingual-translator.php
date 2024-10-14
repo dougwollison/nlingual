@@ -18,16 +18,27 @@ namespace nLingual;
  *
  * @api
  *
+ * @since 2.9.4 Update callStatic alias docs
  * @since 2.0.0
  *
- * @method bool|Language get_*_language() get an object's language.
- * @method bool          set_*_language() set an object's language.
- * @method bool          delete_*_language() delete an object's language.
- * @method bool|int      get_*_translation() get an object's translation.
- * @method bool          set_*_translation() set an object's translation.
- * @method bool          delete_*_translation() delete an object's translation.
- * @method bool|array    get_*_translations() get an object's translations.
- * @method bool          set_*_translations() set an object's translations.
+ * @method static bool|Language get_post_language( int|\WP_Post $post, bool $true_value = false ) get a post's language.
+ * @method static bool|Language get_term_language( int|\WP_Term $term, bool $true_value = false ) get a term's language.
+ * @method static bool          set_post_language( int|\WP_Post $post, mixed $langauge )          set a post's language.
+ * @method static bool          set_term_language( int|\WP_Term $term, mixed $langauge )          set a term's language.
+ * @method static bool          delete_post_language( int|\WP_Post $post )                        delete a post's language.
+ * @method static bool          delete_term_language( int|\WP_Term $term )                        delete a term's language.
+ *
+ * @method static bool|int get_post_translation( int|\WP_Post $post, mixed $language = null, bool|string $return_self = false ) get a translation for a post.
+ * @method static bool|int get_term_translation( int|\WP_Term $term, mixed $language = null, bool|string $return_self = false ) get a translation for a term.
+ * @method static bool     set_post_translation( int|\WP_Post $post, mixed $language, int $target_id )                          assign a post translation.
+ * @method static bool     set_term_translation( int|\WP_Term $term, mixed $language, int $target_id )                          assign a term translation.
+ * @method static bool     delete_post_translation( int|\WP_Post $post, mixed $language )                                       delete a post translation.
+ * @method static bool     delete_term_translation( int|\WP_Term $term, mixed $language )                                       delete a term translation.
+ *
+ * @method static bool|array<int, int> get_post_translations( int|\WP_Post $post, bool|string $include_self = false ) get all translations for a post.
+ * @method static bool|array<int, int> get_term_translations( int|\WP_Term $term, bool|string $include_self = false ) get all translations for a term.
+ * @method static bool                 set_post_translations( int|\WP_Post $post, array<int, int> $translations )     set multiple translations for a post.
+ * @method static bool                 set_term_translations( int|\WP_Term $term, array<int, int> $translations )     set multiple translations for a term.
  */
 final class Translator {
 	// =========================
