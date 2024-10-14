@@ -1024,7 +1024,7 @@ final class Backend extends Handler {
 								_ef( '%s Translation:', 'nlingual', $language->system_name );
 								 ?>
 								<button type="button" class="button button-small button-primary nl-add-translation"><?php esc_html_e( 'Create', 'nlingual' ); ?></button>
-								<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php esc_html_e( 'Edit', 'nlingual' ); ?></button>
+								<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo esc_url( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php esc_html_e( 'Edit', 'nlingual' ); ?></button>
 							</label>
 						</div>
 					<?php endforeach; ?>
