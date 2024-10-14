@@ -1667,7 +1667,7 @@ final class Backend extends Handler {
 
 		// Display error(s) if creation of clone failed
 		if ( is_wp_error( $translation ) ) {
-			$errors = $translation->get_error_message();
+			$errors = $translation->get_error_messages();
 
 			wp_die(
 				__( 'Error creating translation:', 'nlingual' )
