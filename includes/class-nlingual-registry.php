@@ -17,14 +17,15 @@ namespace nLingual;
  *
  * @api
  *
+ * @since 2.9.4 Update callStatic alias docs
  * @since 2.0.0
  *
- * @method array get_sync_rules()       Get the sync rules.
- * @method array get_clone_rules()      Get the clone rules.
- * @method array get_post_sync_rules()  Get the sync rules for a post type.
- * @method array get_post_clone_rules() Get the clone rules for a post type.
- * @method array get_term_sync_rules()  Get the sync rules for a taxonomy.
- * @method array get_term_clone_rules() Get the clone rules for a taxonomy.
+ * @method static array get_sync_rules( $object_type, string ...$map )  Get the sync rules.
+ * @method static array get_clone_rules( $object_type, string ...$map ) Get the clone rules.
+ * @method static array get_post_sync_rules( string ...$map )           Get the sync rules for a post type.
+ * @method static array get_post_clone_rules( string ...$map )          Get the clone rules for a post type.
+ * @method static array get_term_sync_rules( string ...$map )           Get the sync rules for a taxonomy.
+ * @method static array get_term_clone_rules( string ...$map )          Get the clone rules for a taxonomy.
  */
 final class Registry {
 	// =========================
