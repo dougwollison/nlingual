@@ -1,4 +1,6 @@
 <?php
+// phpcs:ignoreFile WordPress.WP.I18n.NonSingularStringLiteralText,	WordPress.WP.I18n.NonSingularStringLiteralDomain, WordPress.WP.I18n.LowLevelTranslationFunction - proxy functions
+
 /**
  * nLingual GetText Utilities
  *
@@ -15,10 +17,11 @@
 /*
  * Localize format string.
  *
+ * @since 2.9.4 Rewrite to call translate directly, to avoid gettext extraction issues.
  * @since 2.0.0 Reworked to accept separate args or and array of them.
  * @since 1.0.0
  *
- * @uses __()
+ * @uses translate()
  *
  * @param string $text   The format string.
  * @param string $domain The domain to use.
@@ -32,16 +35,19 @@ function _f( $text, $domain, $args ) {
 		$args = array_slice( $args, 2 );
 	}
 
-	return vsprintf( __( $text, $domain ), $args );
+	$format = translate( $text, $domain );
+
+	return vsprintf( $format, $args );
 }
 
 /*
  * Localize format string, with context.
  *
+ * @since 2.9.4 Rewrite to call translate_with_gettext_context directly, to avoid gettext extraction issues.
  * @since 2.0.0 Reworked to accept separate args or and array of them.
  * @since 1.0.0
  *
- * @uses _x()
+ * @uses translate_with_gettext_context()
  *
  * @param string $text The format string.
  * @param string $context The context to use.
@@ -56,7 +62,9 @@ function _fx( $text, $context, $domain, $args ) {
 		$args = array_slice( $args, 3 );
 	}
 
-	return vsprintf( _x( $text, $context, $domain ), $args );
+	$format = translate_with_gettext_context( $text, $context, $domain );
+
+	return vsprintf( $format, $args );
 }
 
 /*
@@ -93,9 +101,10 @@ function _efx( $text, $context, $domain ) {
 /*
  * Localize an array of strings.
  *
+ * @since 2.9.4 Rewrite to call translate directly, to avoid gettext extraction issues.
  * @since 1.0.0
  *
- * @uses __()
+ * @uses translate()
  *
  * @param array $array The array to be localized.
  * @param string $domain The domain to use.
@@ -103,7 +112,7 @@ function _efx( $text, $context, $domain ) {
 function _a( $array, $domain = 'default' ) {
 	$_array = array();
 	foreach ( $array as $key => $value ) {
-		$_array[ $key ] = __( $value, $domain );
+		$_array[ $key ] = translate( $value, $domain );
 	}
 
 	return $_array;
@@ -112,9 +121,10 @@ function _a( $array, $domain = 'default' ) {
 /*
  * Localize an array of strings.
  *
+ * @since 2.9.4 Rewrite to call translate_with_gettext_context directly, to avoid gettext extraction issues.
  * @since 1.0.0
  *
- * @uses _x()
+ * @uses translate_with_gettext_context()
  *
  * @param array $array The array to be localized.
  * @param string $context The context to use.
@@ -123,7 +133,7 @@ function _a( $array, $domain = 'default' ) {
 function _ax( $array, $context, $domain = 'default' ) {
 	$_array = array();
 	foreach ( $array as $key => $value ) {
-		$_array[ $key ] = _x( $value, $context, $domain );
+		$_array[ $key ] = translate_with_gettext_context( $value, $context, $domain );
 	}
 
 	return $_array;
