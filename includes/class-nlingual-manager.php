@@ -648,9 +648,9 @@ final class Manager extends Handler {
 		global $plugin_page;
 		?>
 		<div class="wrap">
-			<h2><?php echo get_admin_page_title(); ?></h2>
+			<h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
 			<?php settings_errors(); ?>
-			<form method="post" action="options.php" id="<?php echo $plugin_page; ?>-form">
+			<form method="post" action="options.php" id="<?php echo esc_attr( $plugin_page ); ?>-form">
 				<?php settings_fields( $plugin_page ); ?>
 				<?php do_settings_sections( $plugin_page ); ?>
 				<?php submit_button(); ?>
@@ -673,30 +673,30 @@ final class Manager extends Handler {
 		global $plugin_page;
 		?>
 		<div class="wrap">
-			<h2><?php echo get_admin_page_title(); ?></h2>
+			<h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
 			<?php settings_errors( $plugin_page ); ?>
-			<form method="post" action="options.php" id="<?php echo $plugin_page; ?>-form">
+			<form method="post" action="options.php" id="<?php echo esc_attr( $plugin_page ); ?>-form">
 				<?php settings_fields( $plugin_page ); ?>
 				<div id="nl_language_controls">
 					<select id="nl_language_preset">
-						<option value=""><?php _e( '&mdash; Custom Language &mdash;', 'nlingual' ); ?></option>
+						<option value=""><?php esc_html_e( '&mdash; Custom Language &mdash;', 'nlingual' ); ?></option>
 					</select>
-					<button type="button" id="nl_language_add" class="button"><?php _e( 'Add Language', 'nlingual' ); ?></button>
+					<button type="button" id="nl_language_add" class="button"><?php esc_html_e( 'Add Language', 'nlingual' ); ?></button>
 				</div>
 				<table id="nlingual_languages" class="wp-list-table widefat fixed striped">
 					<thead>
 						<tr>
-							<th scope="col" class="nl-language-list_order"><?php _e( 'List Order', 'nlingual' ); ?></th>
-							<th scope="col" class="nl-language-system_name"><?php _e( 'System Name', 'nlingual' ); ?></th>
-							<th scope="col" class="nl-language-native_name"><?php _e( 'Native Name', 'nlingual' ); ?></th>
-							<th scope="col" class="nl-language-short_name"><?php _e( 'Short Name', 'nlingual' ); ?></th>
-							<th scope="col" class="nl-language-locale_name"><?php _e( 'Locale', 'nlingual' ); ?></th>
-							<th scope="col" class="nl-language-accept_code"><?php _e( 'Code(s)', 'nlingual' ); ?></th>
-							<th scope="col" class="nl-language-iso_code"><?php _e( 'ISO', 'nlingual' ); ?></th>
-							<th scope="col" class="nl-language-slug"><?php _e( 'Slug', 'nlingual' ); ?></th>
-							<th scope="col" class="nl-language-direction"><?php _e( 'Text Direction', 'nlingual' ); ?></th>
-							<th scope="col" class="nl-language-active"><?php _e( 'Active?', 'nlingual' ); ?></th>
-							<td class="nl-language-delete"><?php _e( 'Delete?', 'nlingual' ); ?></td>
+							<th scope="col" class="nl-language-list_order"><?php esc_html_e( 'List Order', 'nlingual' ); ?></th>
+							<th scope="col" class="nl-language-system_name"><?php esc_html_e( 'System Name', 'nlingual' ); ?></th>
+							<th scope="col" class="nl-language-native_name"><?php esc_html_e( 'Native Name', 'nlingual' ); ?></th>
+							<th scope="col" class="nl-language-short_name"><?php esc_html_e( 'Short Name', 'nlingual' ); ?></th>
+							<th scope="col" class="nl-language-locale_name"><?php esc_html_e( 'Locale', 'nlingual' ); ?></th>
+							<th scope="col" class="nl-language-accept_code"><?php esc_html_e( 'Code(s)', 'nlingual' ); ?></th>
+							<th scope="col" class="nl-language-iso_code"><?php esc_html_e( 'ISO', 'nlingual' ); ?></th>
+							<th scope="col" class="nl-language-slug"><?php esc_html_e( 'Slug', 'nlingual' ); ?></th>
+							<th scope="col" class="nl-language-direction"><?php esc_html_e( 'Text Direction', 'nlingual' ); ?></th>
+							<th scope="col" class="nl-language-active"><?php esc_html_e( 'Active?', 'nlingual' ); ?></th>
+							<td class="nl-language-delete"><?php esc_html_e( 'Delete?', 'nlingual' ); ?></td>
 						</tr>
 					</thead>
 					<tbody id="nl_language_list">
@@ -729,8 +729,8 @@ final class Manager extends Handler {
 							<input type="text" name="nlingual_languages[%id%][slug]" value="%slug%" maxlength="100" />
 						</td>
 						<td class="nl-language-direction">
-							<label title="<?php _e( 'Left to Right', 'nlingual' ); ?>"><input type="radio" name="nlingual_languages[%id%][direction]" value="ltr" />&rsaquo;&para;</label>
-							<label title="<?php _e( 'Right to Left', 'nlingual' ); ?>"><input type="radio" name="nlingual_languages[%id%][direction]" value="rtl" />&para;&lsaquo;</label>
+							<label title="<?php esc_html_e( 'Left to Right', 'nlingual' ); ?>"><input type="radio" name="nlingual_languages[%id%][direction]" value="ltr" />&rsaquo;&para;</label>
+							<label title="<?php esc_html_e( 'Right to Left', 'nlingual' ); ?>"><input type="radio" name="nlingual_languages[%id%][direction]" value="rtl" />&para;&lsaquo;</label>
 						</td>
 						<td class="nl-language-active">
 							<input type="checkbox" name="nlingual_languages[%id%][active]" value="1" />
@@ -761,17 +761,17 @@ final class Manager extends Handler {
 		global $plugin_page;
 		?>
 		<div class="wrap">
-			<h2><?php echo get_admin_page_title(); ?></h2>
+			<h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
 			<?php settings_errors(); ?>
-			<form method="post" action="options.php" id="<?php echo $plugin_page; ?>-form">
+			<form method="post" action="options.php" id="<?php echo esc_attr( $plugin_page ); ?>-form">
 				<?php settings_fields( $plugin_page ); ?>
 				<?php do_settings_sections( $plugin_page ); ?>
 				<p><small>
-					<sup>1</sup> <?php _e( 'includes creation/publication date, modified date, and their GMT versions', 'nlingual' ); ?><br />
-					<sup>2</sup> <?php _e( 'will NOT apply to trashing or untrashing via normal means', 'nlingual' ); ?><br />
-					<sup>3</sup> <?php _e( 'will use counterpart translation if found', 'nlingual' ); ?><br />
-					<sup>4</sup> <?php _e( 'includes pingback status', 'nlingual' ); ?><br />
-					<sup>5</sup> <?php _e( 'includes excerpt and filtered content data', 'nlingual' ); ?>
+					<sup>1</sup> <?php esc_html_e( 'includes creation/publication date, modified date, and their GMT versions', 'nlingual' ); ?><br />
+					<sup>2</sup> <?php esc_html_e( 'will NOT apply to trashing or untrashing via normal means', 'nlingual' ); ?><br />
+					<sup>3</sup> <?php esc_html_e( 'will use counterpart translation if found', 'nlingual' ); ?><br />
+					<sup>4</sup> <?php esc_html_e( 'includes pingback status', 'nlingual' ); ?><br />
+					<sup>5</sup> <?php esc_html_e( 'includes excerpt and filtered content data', 'nlingual' ); ?>
 				</small></p>
 				<?php submit_button(); ?>
 			</form>
@@ -786,7 +786,7 @@ final class Manager extends Handler {
 	 */
 	public static function settings_section_cloning() {
 		?>
-		<p><?php _e( 'When creating a new translation of an existing post (i.e. a clone), what details should be cloned?', 'nlingual' ); ?></p>
+		<p><?php esc_html_e( 'When creating a new translation of an existing post (i.e. a clone), what details should be cloned?', 'nlingual' ); ?></p>
 		<?php
 	}
 }

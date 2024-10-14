@@ -572,6 +572,7 @@ final class Backend extends Handler {
 	/**
 	 * Add <select> for filtering posts by language.
 	 *
+	 * @since 2.9.4 Escaping touch-ups.
 	 * @since 2.6.0 Default post type/status to any.
 	 * @since 2.4.0 Show all languages as filtering options.
 	 * @since 2.2.0 Fixed handling of string vs array for $current.
@@ -603,15 +604,27 @@ final class Backend extends Handler {
 			$current = reset( $current );
 		}
 		?>
-		<select name="<?php echo $query_var; ?>" class="postform">
-			<option value="-1"><?php _e( 'All Languages', 'nlingual' ); ?></option>
+		<select name="<?php echo esc_attr( $query_var ); ?>" class="postform">
+			<option value="-1"><?php esc_html_e( 'All Languages', 'nlingual' ); ?></option>
 			<?php
 			$count = Backend::language_posts_count( 0, $post_type, $post_status );
-			printf( '<option value="%s" %s>%s (%s)</option>', 0, $current == '0' ? 'selected' : '', __( 'No Language', 'nlingual' ), $count );
+			printf(
+				'<option value="%s" %s>%s (%s)</option>',
+				0,
+				selected( $current, '0', false ),
+				esc_html__( 'No Language', 'nlingual' ),
+				$count
+			);
 			foreach ( Registry::languages() as $language ) {
 				$selected = $current == $language->slug;
 				$count = Backend::language_posts_count( $language->id, $post_type, $post_status );
-				printf( '<option value="%s" %s>%s (%d)</option>', $language->slug, $selected ? 'selected' : '', $language->system_name, $count );
+				printf(
+					'<option value="%s" %s>%s (%d)</option>',
+					esc_attr( $language->slug ),
+					selected( $selected, true, false ),
+					esc_html( $language->system_name ),
+					$count
+				);
 			}
 			?>
 		</select>
@@ -682,18 +695,18 @@ final class Backend extends Handler {
 		}
 
 		// Add a dead nonce field for use by the inlineEdit hook
-		printf( '<input type="hidden" class="nl-nonce" value="%s" />', wp_create_nonce( 'update-post_' . $post_id ) );
+		printf( '<input type="hidden" class="nl-nonce" value="%s" />', esc_attr( wp_create_nonce( 'update-post_' . $post_id ) ) );
 
 		// Start by printing out the language
 		$language = Translator::get_post_language( $post_id, 'true_value' );
 		if ( ! $language ) {
 			echo '<input type="hidden" class="nl-language" value="0" />';
-			_ex( 'None', 'no language', 'nlingual' );
+			echo esc_html_x( 'None', 'no language', 'nlingual' );
 			return;
 		}
 
 		printf( '<input type="hidden" class="nl-language" value="%d" />', $language->id );
-		printf( '<strong>%s</strong>', $language->system_name );
+		printf( '<strong>%s</strong>', esc_html( $language->system_name ) );
 
 		// Print links to either existing translations or Translate This actions.
 		$links = array();
@@ -709,18 +722,18 @@ final class Backend extends Handler {
 				$title = get_the_title( $translation );
 				// Edit or view link depending on permissions
 				if ( $edit_link = get_edit_post_link( $translation ) ) {
-					$link .= sprintf( '<a href="%s" target="_blank">%s</a>', $edit_link, $title ?: __( '(no title)', 'nlingual' ) );
+					$link .= sprintf( '<a href="%s" target="_blank">%s</a>', esc_url( $edit_link ), esc_html( $title ?: __( '(no title)', 'nlingual' ) ) );
 				} else {
-					$link .= sprintf( '<a href="%s" target="_blank">%s</a>', get_permalink( $translation ), $title ?: __( '(no title)', 'nlingual' ) );
+					$link .= sprintf( '<a href="%s" target="_blank">%s</a>', get_permalink( $translation ), esc_html( $title ?: __( '(no title)', 'nlingual' ) ) );
 				}
 			} elseif ( $translation_link = get_translate_post_link( $post_id, $other_language->id ) ) {
-				$link .= sprintf( '<a href="%s" target="_blank">%s</a>', $translation_link, __( '[Create translation]', 'nlingual' ) );
+				$link .= sprintf( '<a href="%s" target="_blank">%s</a>', esc_url( $translation_link ), esc_html__( '[Create translation]', 'nlingual' ) );
 			} else {
-				$link .= __( '[No translation]', 'nlingual' );
+				$link .= esc_html__( '[No translation]', 'nlingual' );
 			}
 
 			/* translators: %1$s = The name of the language, %2$s = The title of the post, wrapped in a link */
-			$links[] = _fx( '%1$s: %2$s', 'language: title', 'nlingual', $other_language->system_name, $link );
+			$links[] = esc_html( _fx( '%1$s: %2$s', 'language: title', 'nlingual', $other_language->system_name, $link ) );
 		}
 		if ( $links ) {
 			echo '<ul><li>' . implode( '</li><li>', $links ) . '</li></ul>';
@@ -768,7 +781,7 @@ final class Backend extends Handler {
 				<?php if ( ! Registry::get( 'lock_post_language' ) ) : ?>
 					<div class="inline-edit-col nl-manage-language">
 						<label>
-							<span class="title"><?php _e( 'Language', 'nlingual' ); ?></span>
+							<span class="title"><?php esc_html_e( 'Language', 'nlingual' ); ?></span>
 							<select name="nlingual_language" class="nl-input nl-language-input">
 								<?php if ( ! Registry::get( 'language_is_required' ) ) : ?>
 									<option value="0">&mdash; <?php _ex( 'None', 'no language', 'nlingual' ); ?> &mdash;</option>
@@ -853,7 +866,7 @@ final class Backend extends Handler {
 			<fieldset class="nl-fieldset">
 				<div class="inline-edit-col">
 					<label>
-						<span class="title"><?php _e( 'Language', 'nlingual' ); ?></span>
+						<span class="title"><?php esc_html_e( 'Language', 'nlingual' ); ?></span>
 						<select name="nlingual_bulk_language" id="nl_language">
 							<option value="">&mdash; <?php _e( 'No Change', 'nlingual' ); ?> &mdash;</option>
 							<?php if ( ! Registry::get( 'language_is_required' ) ) : ?>
@@ -976,11 +989,11 @@ final class Backend extends Handler {
 		<div class="nl-translation-manager">
 			<?php if ( $lock_post_language ) : $post_language = $post_language ?: Registry::default_language(); ?>
 				<input type="hidden" name="nlingual_language" id="nl_language" class="nl-input nl-language-input" value="<?php echo $post_language->id; ?>">
-				<strong><?php _e( 'Language:', 'nlingual' ); ?></strong>
+				<strong><?php esc_html_e( 'Language:', 'nlingual' ); ?></strong>
 				<em><?php echo $post_language->system_name; ?></em>
 			<?php else: ?>
 				<div class="nl-field nl-manage-language">
-					<label for="nl_language" class="screen-reader-text"><?php _e( 'Language', 'nlingual' ); ?></label>
+					<label for="nl_language" class="screen-reader-text"><?php esc_html_e( 'Language', 'nlingual' ); ?></label>
 					<select name="nlingual_language" id="nl_language" class="nl-input nl-language-input">
 						<?php if ( ! $language_is_required ) : ?>
 							<option value="0">&mdash; <?php _ex( 'Select Language', 'no language', 'nlingual' ); ?> &mdash;</option>
@@ -1002,7 +1015,7 @@ final class Backend extends Handler {
 
 			<div class="nl-manage-translations">
 				<?php if ( $languages->count() > 1 ) : ?>
-					<h4 class="screen-reader-text"><?php _e( 'Translations', 'nlingual' ); ?></h4>
+					<h4 class="screen-reader-text"><?php esc_html_e( 'Translations', 'nlingual' ); ?></h4>
 					<?php foreach ( $languages as $language ) : ?>
 						<div class="nl-field nl-translation-field nl-translation-<?php echo $language->id; ?>" data-nl_language="<?php echo $language->id; ?>">
 							<input type="hidden" name="nlingual_translation[<?php echo $language->id; ?>]" class="nl-input nl-translation-input" value="<?php echo $translations[ $language->id ]; ?>" />
@@ -1011,8 +1024,8 @@ final class Backend extends Handler {
 								/* translators: %s = language name */
 								_ef( '%s Translation:', 'nlingual', $language->system_name );
 								 ?>
-								<button type="button" class="button button-small button-primary nl-add-translation"><?php _e( 'Create', 'nlingual' ); ?></button>
-								<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php _e( 'Edit', 'nlingual' ); ?></button>
+								<button type="button" class="button button-small button-primary nl-add-translation"><?php esc_html_e( 'Create', 'nlingual' ); ?></button>
+								<button type="button" class="button button-small nl-edit-translation" data-url="<?php echo htmlentities( admin_url( $post_type->_edit_link . '&action=edit' ) ); ?>"><?php esc_html_e( 'Edit', 'nlingual' ); ?></button>
 							</label>
 						</div>
 					<?php endforeach; ?>
@@ -1243,7 +1256,7 @@ final class Backend extends Handler {
 		global $nav_menu_selected_id;
 		?>
 		<div class="posttypediv" id="nl_language_link">
-			<p><?php _e( 'These links will go to the respective language versions of the current URL.', 'nlingual' ); ?></p>
+			<p><?php esc_html_e( 'These links will go to the respective language versions of the current URL.', 'nlingual' ); ?></p>
 			<div id="tabs-panel-nl_language_link-all" class="tabs-panel tabs-panel-active">
 				<ul id="pagechecklist-most-recent" class="categorychecklist form-no-clear">
 				<?php $i = -1; foreach ( Registry::languages() as $language ) : ?>
@@ -1254,8 +1267,8 @@ final class Backend extends Handler {
 							<?php if ( ! $language->active ) _ex( '[Inactive]', 'language inactive', 'nlingual' ); ?>
 						</label>
 						<input type="hidden" class="menu-item-type" name="menu-item[<?php echo $i; ?>][menu-item-type]" value="nl_language_link">
-						<input type="hidden" class="menu-item-title" name="menu-item[<?php echo $i; ?>][menu-item-title]" value="<?php echo $language->native_name; ?>">
-						<input type="hidden" class="menu-item-url" name="menu-item[<?php echo $i; ?>][menu-item-object]" value="<?php echo $language->slug; ?>">
+						<input type="hidden" class="menu-item-title" name="menu-item[<?php echo $i; ?>][menu-item-title]" value="<?php echo esc_attr( $language->native_name ); ?>">
+						<input type="hidden" class="menu-item-url" name="menu-item[<?php echo $i; ?>][menu-item-object]" value="<?php echo esc_attr( $language->slug ); ?>">
 					</li>
 				<?php $i--; endforeach; ?>
 				</ul>

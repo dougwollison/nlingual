@@ -24,6 +24,7 @@ final class Uninstaller {
 	 *
 	 * Will check for Multisite and run uninstall() for each blog.
 	 *
+	 * @since 2.9.4 Escape WP_UNINSTALL_PLUGIN in message.
 	 * @since 2.3.0
 	 */
 	public static function run() {
@@ -34,7 +35,7 @@ final class Uninstaller {
 
 		// Also abort if (somehow) it's some other plugin being uninstalled
 		if ( WP_UNINSTALL_PLUGIN != basename( __DIR__ ) . '/nlingual.php' ) {
-			die( sprintf( 'Illegal attempt to uninstall nLingual while uninstalling %s.', WP_UNINSTALL_PLUGIN ) );
+			die( sprintf( 'Illegal attempt to uninstall nLingual while uninstalling %s.', esc_html( WP_UNINSTALL_PLUGIN ) ) );
 		}
 
 		// Check if this site is a Multisite installation

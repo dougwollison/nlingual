@@ -316,7 +316,7 @@ final class Liaison extends Handler {
 
 		// Fail if nothing is found
 		if ( ! $terms ) {
-			wp_die( _e( 'No terms found needing conversion.', 'nlingual' ) );
+			wp_die( esc_html_e( 'No terms found needing conversion.', 'nlingual' ) );
 		}
 
 		// Start a list of taxonomies that needed localization
@@ -366,7 +366,7 @@ final class Liaison extends Handler {
 
 		?>
 		<div class="updated">
-			<p><?php _e( 'All terms found have been successfully converted, and their taxonomies have been enabled for localization.', 'nlingual' ); ?></p>
+			<p><?php esc_html_e( 'All terms found have been successfully converted, and their taxonomies have been enabled for localization.', 'nlingual' ); ?></p>
 		</div>
 		<?php
 	}
@@ -579,15 +579,16 @@ final class Liaison extends Handler {
 
 		// Default notice type/message
 		$notice_type = 'info';
-		$notice_text = _fx( 'You are currently editing a translation of the page that shows your latest %s.', 'index page translation', 'nlingual', $label );
+		$notice_text = esc_html( _fx( 'You are currently editing a translation of the page that shows your latest %s.', 'index page translation', 'nlingual', $label ) );
 
 		// If the post type doesn't explicitly support index-pages, mention content may not be displayed.
 		if ( ! post_type_supports( $post_type, 'index-page' ) ) {
 			$notice_type = 'warning';
-			$notice_text .= ' <em>' . __( 'Your current theme may not display the content you write here.', 'index-pages' ) . '</em>';
+			// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
+			$notice_text .= ' <em>' . esc_html__( 'Your current theme may not display the content you write here.', 'index-pages' ) . '</em>';
 		}
 
-		printf( '<div class="notice notice-%s inline"><p>%s</p></div>', $notice_type, $notice_text );
+		printf( '<div class="notice notice-%s inline"><p>%s</p></div>', esc_attr( $notice_type ), $notice_text );
 	}
 
 	/**
