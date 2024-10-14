@@ -8,7 +8,7 @@ Author: Doug Wollison
 Author URI: https://dougw.me
 Tags: multilingual, multi, language, admin, bilingual, switcher, translation, nlingual
 License: GPL2
-Text Domain: nLingual
+Text Domain: nlingual
 Domain Path: /languages
 */
 
