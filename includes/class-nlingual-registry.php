@@ -371,16 +371,17 @@ final class Registry {
 	/**
 	 * Get the sync or cloning rules for a specific object.
 	 *
+	 * @since 2.9.4 Use rest arguments format, rename $sections to $map.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::get() to retrive the appropriate rules array.
 	 *
 	 * @param string $rule_type   The type of rules to retrieve ('sync' or 'clone').
-	 * @param string $sections... Optional A list of indexes drilling down into the array.
+	 * @param string[] $map... Optional A list of indexes drilling down into the array.
 	 *
 	 * @return array The array of rules, empty if not found.
 	 */
-	public static function get_rules( $rule_type ) {
+	public static function get_rules( $rule_type, ...$map ) {
 		// Get the rules
 		$rules = Registry::get( $rule_type . '_rules' );
 
@@ -389,20 +390,16 @@ final class Registry {
 			return array();
 		}
 
-		// Get the args as the sections map
-		$sections = func_get_args();
-		array_shift( $sections ); // Skip the first argment (list type)
-
 		// If no section list is present, return the rules
-		if ( ! $sections ) {
+		if ( ! $map ) {
 			return $rules;
 		}
 
-		// Loop through the sections list
-		foreach ( $sections as $section ) {
+		// Loop through the map list
+		foreach ( $map as $key ) {
 			// Drill down if an array is found
-			if ( isset( $rules[ $section ] ) && is_array( $rules[ $section ] ) ) {
-				$rules = $rules[ $section ];
+			if ( isset( $rules[ $key ] ) && is_array( $rules[ $key ] ) ) {
+				$rules = $rules[ $key ];
 			} else {
 				// Abort and return empty array
 				return array();
