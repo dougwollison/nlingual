@@ -25,7 +25,7 @@ namespace nLingual;
  * @since 2.6.0  Added consideration of WP_INSTALLING.
  * @since 2.0.0
  *
- * @return bool Wether or not this should be considered a "backend" request.
+ * @return bool Whether or not this should be considered a "backend" request.
  */
 function is_backend() {
 	if ( defined( 'WP_INSTALLING' ) && WP_INSTALLING ) {
@@ -54,7 +54,7 @@ function is_backend() {
  *
  * @since 2.4.0
  *
- * @return bool Wether or not we're running on 4.6 or earlier.
+ * @return bool Whether or not we're running on 4.6 or earlier.
  */
 function is_patch_font_stack_needed() {
 	// Only needed prior to 4.6
@@ -167,7 +167,7 @@ function get_translate_post_link( $post_id, $language_id ) {
  *
  * @since 2.8.0
  *
- * @return bool Wether or not this plugin is active.
+ * @return bool Whether or not this plugin is active.
  */
 function is_nlingual_active() {
 	if ( function_exists( 'is_plugin_active' ) ) {

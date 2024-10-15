@@ -188,7 +188,7 @@ final class System extends Handler {
 	 * @uses Registry::$previous_languages to log the current language.
 	 *
 	 * @param mixed $language           The language object, slug or id.
-	 * @param bool  $reload_textdomains Wether or not to reload text domains.
+	 * @param bool  $reload_textdomains Whether or not to reload text domains.
 	 */
 	public static function switch_language( $language, $reload_textdomains = false ) {
 		// Ensure $language is a Language
@@ -433,7 +433,7 @@ final class System extends Handler {
 			Liaison::restore_all_hooks();
 
 			/**
-			 * @todo figure out handling of switching langauge within switching blog
+			 * @todo figure out handling of switching language within switching blog
 			 */
 
 			// If switching back, retrieve the previous language
@@ -481,7 +481,7 @@ final class System extends Handler {
 	 * @uses Registry::get() to get the query var option.
 	 * @uses Rewriter::process_url() to parse the current page URL.
 	 * @uses Registry::does_skip_default_l10n_apply() to see if the default language URL should be unlocalized.
-	 * @uses Registry::accepted_language() to determine a perferred language.
+	 * @uses Registry::accepted_language() to determine a preferred language.
 	 * @uses Registry::set_language() to tentatively apply the detected language.
 	 */
 	public static function detect_language() {
@@ -693,7 +693,7 @@ final class System extends Handler {
 	/**
 	 * Flag a post being (un)trashed.
 	 *
-	 * This is to prevent syncronize_post() from proceeding.
+	 * This is to prevent synchronize_post() from proceeding.
 	 *
 	 * @since 2.6.0
 	 *
@@ -905,7 +905,7 @@ final class System extends Handler {
 			return $url;
 		}
 
-		// If the languge was detected via URL and we're still parsing the request, force localization
+		// If the language was detected via URL and we're still parsing the request, force localization
 		$force_localize = defined( 'NL_DETECTED_SOURCE' ) && NL_DETECTED_SOURCE == 'url' && ! did_action( 'parse_request' );
 
 		// Return the localized version of the URL
@@ -957,7 +957,7 @@ final class System extends Handler {
 
 		// Get the language to use
 		$language = Registry::current_language();
-		// Use the post's langauge if desired or otherwise in the backend
+		// Use the post's language if desired or otherwise in the backend
 		if ( Registry::get( 'post_language_override', false ) || is_backend() ) {
 			$language = Translator::get_post_language( $post_id );
 
@@ -1233,7 +1233,7 @@ final class System extends Handler {
 			$value = Registry::languages( 'active' )->pluck( 'id', false );
 		}
 
-		// If in the admin, or language is not required, or non-supported post types are involved, add 0 to retreive language-less posts too
+		// If in the admin, or language is not required, or non-supported post types are involved, add 0 to retrieve language-less posts too
 		if ( is_admin() || ! Registry::get( 'language_is_required' ) || ! Registry::is_post_type_supported( $query->get( 'post_type' ), 'require all' ) ) {
 			$value[] = '0';
 		}
@@ -1331,7 +1331,7 @@ final class System extends Handler {
 		// Ensure languages is an array
 		$requested_languages = (array) $requested_languages;
 
-		// Get the available languages for valiation purposes
+		// Get the available languages for validation purposes
 		$all_languages = Registry::languages();
 
 		// Loop through each language specified and build the subclause
@@ -1437,11 +1437,11 @@ final class System extends Handler {
 	 *
 	 * @uses Registry::get() to retrieve the show_all_languages option.
 	 * @uses Registry::languages() to check/get the matching language object.
-	 * @uses Registry::current_language() as the default language to fitler by.
+	 * @uses Registry::current_language() as the default language to filter by.
 	 * @uses Translator::get_post_language() to get the translation in that language.
 	 *
 	 * @param array $pages The list of pages to filter.
-	 * @param array $args  The arugments passed to get_pages().
+	 * @param array $args  The arguments passed to get_pages().
 	 *
 	 * @return array The filtered list of pages.
 	 */

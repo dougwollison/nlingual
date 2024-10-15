@@ -1,6 +1,6 @@
 <?php
 /**
- * nLingual Management Funtionality
+ * nLingual Management Functionality
  *
  * @package nLingual
  * @subpackage Handlers
@@ -82,7 +82,7 @@ final class Manager extends Handler {
 			'nlingual-options', // slug
 			array( __CLASS__, 'settings_page' ), // callback
 			'dashicons-translation', // icon
-			90 // Postion; after settings
+			90 // Position; after settings
 		);
 
 		// Languages manager
@@ -241,7 +241,7 @@ final class Manager extends Handler {
 				$entry['active'] = $language['active'];
 			}
 
-			// Default text direction to ltr if not set, rtl if not explictly ltr
+			// Default text direction to ltr if not set, rtl if not explicitly ltr
 			$entry['direction'] = 'ltr';
 			if ( isset( $language['direction'] ) && $language['direction'] != 'ltr' ) {
 				$entry['direction'] = 'rtl';

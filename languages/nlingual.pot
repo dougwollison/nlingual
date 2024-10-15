@@ -1294,7 +1294,7 @@ msgid "Polish"
 msgstr ""
 
 #: includes/presets-languages.php:144
-msgid "Portugese"
+msgid "Portuguese"
 msgstr ""
 
 #: includes/presets-languages.php:152

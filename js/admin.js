@@ -55,7 +55,7 @@
 
 	jQuery( ( $ ) => {
 		// =========================
-		// ! Setings Pages
+		// ! Settings Pages
 		// =========================
 
 		// Check all fields of a matching name
@@ -446,7 +446,7 @@
 			// Handle existing editors
 			tinymce.editors.forEach( localizeEditor );
 
-			// Backwards compatiblity; catch any late-registered editors
+			// Backwards compatibility; catch any late-registered editors
 			tinymce.on( 'SetupEditor', e => {
 				// TinyMCE 4.7 changes callback arg to event CONTAINING editor
 				var editor = e.editor || e;
@@ -482,7 +482,21 @@
 			$parent.find( '.nl-translation-' + id ).hide();
 		} ).change(); // Update on page load
 
-		// Create a new translation for the assocaited language
+		// Show/Hide the Add/Edit buttons based on value
+		$( '.nl-translation-field' ).each( function() {
+			var value = $( this ).find( '.nl-input' ).val();
+
+			var $add = $( this ).find( '.nl-add-translation' );
+			var $edit = $( this ).find( '.nl-edit-translation' );
+
+			$edit.hide();
+			if ( parseInt( value, 10 ) ) {
+				$add.hide();
+				$edit.show();
+			}
+		} );
+
+		// Create a new translation for the associated language
 		$( '.nl-add-translation' ).click( function() {
 			const $field                = $( this ).parents( '.nl-field' );
 			const $input                = $field.find( '.nl-input' );

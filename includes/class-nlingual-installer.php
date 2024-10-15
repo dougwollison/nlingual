@@ -69,7 +69,7 @@ final class Installer extends Handler {
 	 * @since 2.0.0
 	 */
 	private static function plugin_security_check( $check_referer = null ) {
-		// Make sure they have permisson
+		// Make sure they have permission
 		if ( ! current_user_can( 'activate_plugins' ) ) {
 			return false;
 		}
@@ -91,11 +91,11 @@ final class Installer extends Handler {
 	/**
 	 * Test if the site previously used nLingual 1.
 	 *
-	 * Tests for presense of old nLingual-options array.
+	 * Tests for presence of old nLingual-options array.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @return bool Wether or not we're upgrading.
+	 * @return bool Whether or not we're upgrading.
 	 */
 	private static function is_upgrading() {
 		$old_options = get_option( 'nLingual-options' );
@@ -304,7 +304,7 @@ final class Installer extends Handler {
 	 *
 	 * @global \wpdb $wpdb The database abstraction class instance.
 	 *
-	 * @return bool Wether or not an upgrade was performed.
+	 * @return bool Whether or not an upgrade was performed.
 	 */
 	public static function upgrade() {
 		global $wpdb;

@@ -68,7 +68,7 @@ final class Frontend extends Handler {
 		self::add_hook( 'wp_get_nav_menu_items', 'localize_menu_items', 10, 3 );
 		self::add_hook( 'wp_nav_menu_objects', 'handle_language_links', 10, 1 );
 
-		// General fitlering
+		// General filtering
 		self::add_hook( 'body_class', 'add_body_classes', 10, 1 );
 		self::add_hook( 'option_page_on_front', 'current_language_post', 10, 1 );
 		self::add_hook( 'option_page_for_posts', 'current_language_post', 10, 1 );
@@ -249,7 +249,7 @@ final class Frontend extends Handler {
 	 *
 	 * @param string $type       The type of location.
 	 * @param array  $locations  The list of locations to filter.
-	 * @param array  $registered The list of orignially register locations.
+	 * @param array  $registered The list of originally register locations.
 	 *
 	 * @return array The modified $locations with unlocalized versions updated.
 	 */
@@ -357,7 +357,7 @@ final class Frontend extends Handler {
 		 *
 		 * @since 2.9.2
 		 *
-		 * @param bool   $localize_items Wether or not to localize menu items.
+		 * @param bool   $localize_items Whether or not to localize menu items.
 		 * @param object $menu           The menu being considered.
 		 * @param array  $items          The items for the menu.
 		 */
@@ -692,7 +692,7 @@ final class Frontend extends Handler {
 			return;
 		}
 
-		// Replace with new isntance of patched one
+		// Replace with new instance of patched one
 		$wp_locale = new Locale();
 	}
 

@@ -176,7 +176,7 @@ final class Documenter extends Handler {
 	// =========================
 
 	/**
-	 * Load the sepecified tab's file and return it's ID/title/content.
+	 * Load the specified tab's file and return it's ID/title/content.
 	 *
 	 * @since 2.0.0
 	 *
