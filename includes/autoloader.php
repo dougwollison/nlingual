@@ -21,7 +21,7 @@ namespace nLingual_Autoloader;
  * @param string $type The type to try and look under (class, trait, etc.)
  * @param string $name The symbol name of the asset being requested.
  *
- * @return bool Wether or not the file was found and loaded.
+ * @return bool Whether or not the file was found and loaded.
  */
 function find( $type, $name ) {
 	// Just in case, trim off beginning backslash
@@ -45,7 +45,7 @@ function find( $type, $name ) {
 /**
  * Find/load an nLingual class.
  *
- * Will automatically initailize if it's a Functional sub-class.
+ * Will automatically initialize if it's a Functional sub-class.
  *
  * @internal
  *

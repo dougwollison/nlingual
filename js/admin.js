@@ -55,7 +55,7 @@
 
 	jQuery( $ => {
 		// =========================
-		// ! Setings Pages
+		// ! Settings Pages
 		// =========================
 
 		// Check all fields of a matching name
@@ -450,7 +450,7 @@
 			// Handle existing editors
 			tinymce.editors.forEach( localizeEditor );
 
-			// Backwards compatiblity; catch any late-registered editors
+			// Backwards compatibility; catch any late-registered editors
 			tinymce.on( 'SetupEditor', e => {
 				// TinyMCE 4.7 changes callback arg to event CONTAINING editor
 				var editor = e.editor || e;
@@ -500,7 +500,7 @@
 			}
 		} );
 
-		// Create a new translation for the assocaited language
+		// Create a new translation for the associated language
 		$( '.nl-add-translation' ).click( function() {
 			var $field                  = $( this ).parents( '.nl-field' );
 			var $input                  = $field.find( '.nl-input' );

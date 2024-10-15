@@ -141,7 +141,7 @@ return array(
 		'direction'   => 'ltr',
 	),
 	'pt' => array(
-		'system_name' => __( 'Portugese', 'nlingual' ),
+		'system_name' => __( 'Portuguese', 'nlingual' ),
 		'native_name' => 'Português',
 		'short_name'  => 'Pt',
 		'locale_name' => 'pt_BR',

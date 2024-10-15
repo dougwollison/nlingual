@@ -25,7 +25,7 @@ final class Rewriter {
 	// =========================
 
 	/**
-	 * Internal flag for wether or not to localize a URL.
+	 * Internal flag for whether or not to localize a URL.
 	 *
 	 * @internal
 	 *
@@ -104,7 +104,7 @@ final class Rewriter {
 	 * @uses Registry::get() to get the query var and redirection method options.
 	 *
 	 * @param string|array $url_data        Optional. The URL string or parsed array to process.
-	 * @param bool         $return_language Optional. Wether or not to return just the language.
+	 * @param bool         $return_language Optional. Whether or not to return just the language.
 	 *
 	 * @return URL The parsed and processed URL object.
 	 */
@@ -216,7 +216,7 @@ final class Rewriter {
 	 * This will add the language slug subdomain/subdirecty/query var as needed.
 	 *
 	 * @since 2.10.0 Use wp_parse_url().
-	 * @since 2.9.1 Adjust URL building and trainling slash handling.
+	 * @since 2.9.1 Adjust URL building and trailing slash handling.
 	 * @since 2.9.0 Use does_skip_default_l10n_apply() to handle default URL localization logic,
 	 *              Added $force_localize to allow overriding skip_default_l10n even if it applies.
 	 * @since 2.8.9 Fix handling of wordpress internal URLs.
@@ -231,7 +231,7 @@ final class Rewriter {
 	 *
 	 * @param string $url            The URL to parse.
 	 * @param mixed  $language       Optional. The desired language to localize to.
-	 * @param bool   $force_localize Optional. Wether or not to ignore skip_default_l10n.
+	 * @param bool   $force_localize Optional. Whether or not to ignore skip_default_l10n.
 	 *
 	 * @throws Exception If the language requested does not exist.
 	 *
@@ -255,7 +255,7 @@ final class Rewriter {
 		}
 
 		/**
-		 * Filter wether or not to localize the URL.
+		 * Filter whether or not to localize the URL.
 		 *
 		 * @since 2.8.4 Dropped $relocalize param.
 		 * @since 2.0.0
@@ -304,7 +304,7 @@ final class Rewriter {
 			$the_url = new URL( $url );
 
 			// If it's not a wordpress internal URL,
-			// AND skip_defalt_l10n does not apply,
+			// AND skip_default_l10n does not apply,
 			// Go ahead and localize the URL
 			if ( ! preg_match( '#^/wp-([\w-]+.php|(admin|content|includes)/)#', $the_url->path )
 			&& ( $force_localize || ! Registry::does_skip_default_l10n_apply( $language ) ) ) {
@@ -493,7 +493,7 @@ final class Rewriter {
 				$url = get_search_link( get_query_var( 's' ) );
 				unset( $_GET['s'] );
 			}
-			// Give up and just get the orginally requested URL, relocalized
+			// Give up and just get the originally requested URL, relocalized
 			else {
 				$url = self::localize_url( NL_ORIGINAL_URL, null );
 			}
@@ -611,7 +611,7 @@ final class Rewriter {
 	 * @uses Registry::languages() to loop through all active registered languages.
 	 * @uses Rewriter::localize_here() to get each URL.
 	 *
-	 * @param bool   $skip_current Wether or not to skip the current language.
+	 * @param bool   $skip_current Whether or not to skip the current language.
 	 * @param string $index_by     What language property to use for the array index (typically id or slug).
 	 *
 	 * @return array A list of URLs for the current page in each language.

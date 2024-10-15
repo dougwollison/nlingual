@@ -23,8 +23,8 @@ namespace nLingual;
  *
  * @method static bool|Language get_post_language( int|\WP_Post $post, bool $true_value = false ) get a post's language.
  * @method static bool|Language get_term_language( int|\WP_Term $term, bool $true_value = false ) get a term's language.
- * @method static bool          set_post_language( int|\WP_Post $post, mixed $langauge )          set a post's language.
- * @method static bool          set_term_language( int|\WP_Term $term, mixed $langauge )          set a term's language.
+ * @method static bool          set_post_language( int|\WP_Post $post, mixed $language )          set a post's language.
+ * @method static bool          set_term_language( int|\WP_Term $term, mixed $language )          set a term's language.
  * @method static bool          delete_post_language( int|\WP_Post $post )                        delete a post's language.
  * @method static bool          delete_term_language( int|\WP_Term $term )                        delete a term's language.
  *
@@ -214,7 +214,7 @@ final class Translator {
 	 *
 	 * @param string $object_type The type of object.
 	 * @param int    $object_id   The ID of the object.
-	 * @param bool   $true_value  Wether or not to bypass language_is_requried fallback.
+	 * @param bool   $true_value  Whether or not to bypass language_is_required fallback.
 	 *
 	 * @return bool|Language The language of the object (false if not found).
 	 */
@@ -450,7 +450,7 @@ final class Translator {
 	 * Will fail if the primary isn't already in the database or if
 	 * any of the languages listed aren't valid.
 	 *
-	 * @since 2.10.0 Fix doucmentation on $translations.
+	 * @since 2.10.0 Fix documentation on $translations.
 	 * @since 2.6.0 Now flushes cache for translations as well as target object.
 	 * @since 2.0.0
 	 *
@@ -467,7 +467,7 @@ final class Translator {
 	 *
 	 * @throws Exception If the language specified does not exist.
 	 *
-	 * @param bool Wether or not the association could be done (false if aborted).
+	 * @param bool Whether or not the association could be done (false if aborted).
 	 */
 	public static function set_object_translations( $object_type, $object_id, $translations ) {
 		global $wpdb;
@@ -542,7 +542,7 @@ final class Translator {
 	 *
 	 * @throws Exception If the language specified does not exist.
 	 *
-	 * @param bool Wether or not the association could be done.
+	 * @param bool Whether or not the association could be done.
 	 */
 	public static function set_object_translation( $object_type, $object_id, $language, $target_id ) {
 		// Ensure $language is a Language
@@ -575,7 +575,7 @@ final class Translator {
 	 *
 	 * @throws Exception If the language specified does not exist.
 	 *
-	 * @return bool Wether or not a deletion was performed (false = nothing to delete).
+	 * @return bool Whether or not a deletion was performed (false = nothing to delete).
 	 */
 	public static function delete_object_translation( $object_type, $object_id, $language ) {
 		global $wpdb;

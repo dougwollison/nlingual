@@ -420,7 +420,7 @@ final class Liaison extends Handler {
 	 * @param mixed     $pre_value The value to use instead of the determined one.
 	 * @param \WP_Query $query     The query being modified.
 	 *
-	 * @return mixed The default language ot use.
+	 * @return mixed The default language to use.
 	 */
 	public static function quickstart_order_manager_language( $pre_value, $query ) {
 		// Don't bother on comment queries
@@ -600,7 +600,7 @@ final class Liaison extends Handler {
 	 * @param array $args  The arguments for get_pages().
 	 */
 	public static function indexpages_filter_pages_for_dropdown( $pages, $args ) {
-		// Bail if pages are not supported for tranlsation
+		// Bail if pages are not supported for translation
 		if ( ! Registry::is_post_type_supported( 'page' ) ) {
 			return $pages;
 		}
@@ -679,7 +679,7 @@ final class Liaison extends Handler {
 	// =========================
 
 	/**
-	 * Check if certian SEO plugins are active, setup necessary helpers.
+	 * Check if certain SEO plugins are active, setup necessary helpers.
 	 *
 	 * @since 2.9.1
 	 */

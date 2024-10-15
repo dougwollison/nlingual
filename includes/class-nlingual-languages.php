@@ -125,7 +125,7 @@ final class Languages implements \Iterator, \Countable {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @return bool Wether or not the position is valid.
+	 * @return bool Whether or not the position is valid.
 	 */
 	public function valid() {
 		return isset( $this->items[ $this->position ] );
@@ -320,7 +320,7 @@ final class Languages implements \Iterator, \Countable {
 	 * @since 2.0.0
 	 *
 	 * @param array|Language $language The language to add.
-	 * @param bool           $sort     Wether or not to sort after adding.
+	 * @param bool           $sort     Whether or not to sort after adding.
 	 *
 	 * @return self.
 	 */
@@ -386,7 +386,7 @@ final class Languages implements \Iterator, \Countable {
 	 * Try to find a language whose accept_code matches the language tag specified.
 	 *
 	 * @since 2.9.1 Drop checking of locale/ISO for match.
-	 * @sicne 2.2.0 Changed to check all locales before checking ISO codes.
+	 * @since 2.2.0 Changed to check all locales before checking ISO codes.
 	 * @since 2.0.0
 	 *
 	 * @param string $language_tag The language tag to try and find a match for.

@@ -134,7 +134,7 @@ abstract class Handler {
 	 * @see add_filter() for details.
 	 *
 	 * @param string $tag           The name of the filter to hook the $method to.
-	 * @param string $method        The name of the called classe's method to run when applied.
+	 * @param string $method        The name of the called class' method to run when applied.
 	 * @param int    $priority      Optional. The priority to use for this particular callback.
 	 * @param int    $accepted_args Optional. The number of arguments the callback accepts.
 	 */
@@ -174,7 +174,7 @@ abstract class Handler {
 	 *
 	 * @param string $tag          The name of the filter to remove from.
 	 * @param string $method       The name of the called class' method to remove.
-	 * @param bool   $dont_disable Wether or not to skip flagging it at disabled.
+	 * @param bool   $dont_disable Whether or not to skip flagging it at disabled.
 	 *
 	 * @return bool|int The priority it originally had (false if wasn't added).
 	 */
@@ -215,7 +215,7 @@ abstract class Handler {
 	 *
 	 * @since 2.6.0
 	 *
-	 * @param bool $force Wether or not to explicitly disable all hooks.
+	 * @param bool $force Whether or not to explicitly disable all hooks.
 	 */
 	public static function remove_all_hooks( $disable = false ) {
 		foreach ( static::$implemented_hooks as $hook ) {
@@ -232,7 +232,7 @@ abstract class Handler {
 	 *
 	 * @param string $tag        The name of the filter to remove from.
 	 * @param string $method     The name of the class' method to remove.
-	 * @param bool   $dont_force Wether or not to ignore a hook's disabled status.
+	 * @param bool   $dont_force Whether or not to ignore a hook's disabled status.
 	 */
 	final public static function restore_hook( $tag, $method, $dont_force = false ) {
 		$class = get_called_class();
@@ -254,7 +254,7 @@ abstract class Handler {
 	 *
 	 * @since 2.6.0
 	 *
-	 * @param bool $force Wether or not to force-restore all hooks.
+	 * @param bool $force Whether or not to force-restore all hooks.
 	 */
 	public static function restore_all_hooks( $force = false ) {
 		foreach ( static::$implemented_hooks as $hook ) {
