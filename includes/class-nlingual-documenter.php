@@ -163,7 +163,7 @@ final class Documenter extends Handler {
 	 *
 	 * @uses Documenter::register_help_tab() to register each screen/tab.
 	 *
-	 * @param string $screens An array of screen=>tab IDs to register.
+	 * @param array<string,string> $screens An array of screen=>tab IDs to register.
 	 */
 	public static function register_help_tabs( $screens ) {
 		foreach ( $screens as $screen => $tab ) {
