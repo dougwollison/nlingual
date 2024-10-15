@@ -342,7 +342,7 @@ final class Backend extends Handler {
 	 * @param string $global The global variable name to be edited.
 	 */
 	private static function register_localized_locations( $type, $global ) {
-		$list = $GLOBALS[ $global ];
+		$list = $GLOBALS[ $global ] ?? array();
 
 		// Cache the old version of the menus for reference
 		wp_cache_set( $global, $list, 'nlingual:vars' );
