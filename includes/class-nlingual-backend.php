@@ -956,7 +956,7 @@ final class Backend extends Handler {
 	/**
 	 * Print out the quick-edit box for post language/translations.
 	 *
-	 * @since 2.11.0 Use get_posts instead of $wdpb to get options.
+	 * @since 2.11.0 Use get_posts instead of $wpdb to get options.
 	 * @since 2.0.0
 	 *
 	 * @uses Registry::is_post_type_supported() to check for support.
