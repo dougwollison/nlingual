@@ -93,7 +93,7 @@ final class Localizer_Field extends Model {
 	public $field_id;
 
 	/**
-	 * Wether or not to ignore the fallback when the localized value is empty.
+	 * Whether or not to ignore the fallback when the localized value is empty.
 	 *
 	 * @since 2.6.0
 	 *

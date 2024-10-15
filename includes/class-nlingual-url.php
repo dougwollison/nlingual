@@ -147,7 +147,7 @@ final class URL extends Model {
 		}
 		// If not an array, throw an exception
 		elseif ( ! is_array( $url_data ) ) {
-			throw new Exception( __CLASS__ . '::parse() expects a string or array, recieved ' . gettype( $url_data ), NL_ERR_UNSUPPORTED );
+			throw new Exception( __CLASS__ . '::parse() expects a string or array, received ' . gettype( $url_data ), NL_ERR_UNSUPPORTED );
 		}
 
 		// If defaults were provided, parse them
@@ -238,7 +238,7 @@ final class URL extends Model {
 			$url = add_query_arg( $args, $url );
 		}
 
-		// Finishe with the fragment
+		// Finish with the fragment
 		if ( $this->fragment ) {
 			$url .= '#' . $this->fragment;
 		}

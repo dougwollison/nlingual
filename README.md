@@ -36,7 +36,7 @@ Admittedly, this is a feature few will need, but it's a godsend to those that do
 - ISO Code: the official ISO 639-1 code for the language (2 letters)
 - Slug: the value to use when localizing a URL for the language (typically the same as the ISO code).
 - Text Direction: the text direction the language should be rendered in (Left-to-right or right-to-left). Will override the one specified in the text domain files.
-- Active State: wether or not to allow public access to content in the language.
+- Active State: whether or not to allow public access to content in the language.
 
 Flexible Language Detection/Switching
 ---

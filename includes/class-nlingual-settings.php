@@ -107,7 +107,7 @@ final class Settings {
 	}
 
 	/**
-	 * Given an array, extract the disired value defined like so: myvar[mykey][0].
+	 * Given an array, extract the desired value defined like so: myvar[mykey][0].
 	 *
 	 * @since 2.0.0
 	 *
@@ -148,7 +148,7 @@ final class Settings {
 	/**
 	 * Retrieve the settings value.
 	 *
-	 * Handles names like option[suboption][] appropraitely.
+	 * Handles names like option[suboption][] appropriately.
 	 *
 	 * @since 2.0.0
 	 *
@@ -190,7 +190,7 @@ final class Settings {
 	 *     @option string "type" The field type.
 	 *     @option mixed  "data" Optional. data for the field.
 	 *     @option string "help" Optional. Help text.
-	 * @param mixed $value Optional. A specifi value to use
+	 * @param mixed $value Optional. A specific value to use
 	 *                     instead of dynamically retrieving it.
 	 */
 	public static function build_field( $args, $value = null ) {
@@ -228,7 +228,7 @@ final class Settings {
 		$html = call_user_func_array( array( __CLASS__, $method ), $cb_args );
 
 		if ( $args['help'] ) {
-			// Wrap $html in lable with help text if checkbox or radio
+			// Wrap $html in label with help text if checkbox or radio
 			if ( $args['type'] == 'checkbox' || $args['type'] == 'radio' ) {
 				$html = sprintf( '<label>%s %s</label>', $html, $args['help'] );
 			} else {

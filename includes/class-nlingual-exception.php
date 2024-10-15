@@ -71,7 +71,7 @@ final class Exception extends \Exception {
     }
 
 	/**
-	 * Ouput a string representation of the exception.
+	 * Output a string representation of the exception.
 	 *
 	 * @since 2.0.0
 	 *

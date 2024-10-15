@@ -168,7 +168,7 @@ final class Language extends Model {
 	 *     @option string "accept_code" The code(s) this language accepts (i.e. HTTP Accept-Language).
 	 *     @option string "iso_code"    The ISO 639-1 code for the language.
 	 *     @option string "direction"   The text direction of the language (ltr or rtl).
-	 *     @option int    "list_order"  The disired order of the language.
+	 *     @option int    "list_order"  The desired order of the language.
 	 */
 	public function __construct( $values ) {
 		// Setup the object with the provided values

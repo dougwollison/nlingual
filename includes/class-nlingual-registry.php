@@ -241,7 +241,7 @@ final class Registry {
 	/**
 	 * Check if an option is supported.
 	 *
-	 * Will also udpate the option value if it was deprecated
+	 * Will also update the option value if it was deprecated
 	 * but has a sufficient alternative.
 	 *
 	 * @since 2.0.1 Fixed to use isset(), not in_array()
@@ -249,7 +249,7 @@ final class Registry {
 	 *
 	 * @param string &$option The option name.
 	 *
-	 * @return bool Wether or not the option is supported.
+	 * @return bool Whether or not the option is supported.
 	 */
 	public static function has( &$option ) {
 		if ( isset( self::$options_deprecated[ $option ] ) ) {
@@ -279,7 +279,7 @@ final class Registry {
 
 		// Check if it's set, return it's value.
 		if ( isset( self::$options[ $option ] ) ) {
-			// Check if it's been overriden, use that unless otherwise requested
+			// Check if it's been overridden, use that unless otherwise requested
 			$has_override = isset( self::$options_override[ $option ] );
 			if ( $has_override && ! $true_value ) {
 				$value = self::$options_override[ $option ];
@@ -375,7 +375,7 @@ final class Registry {
 	 * @since 2.10.0 Use rest arguments format, rename $sections to $map.
 	 * @since 2.0.0
 	 *
-	 * @uses Registry::get() to retrive the appropriate rules array.
+	 * @uses Registry::get() to retrieve the appropriate rules array.
 	 *
 	 * @param string $rule_type   The type of rules to retrieve ('sync' or 'clone').
 	 * @param string[] $map... Optional A list of indexes drilling down into the array.
@@ -445,12 +445,12 @@ final class Registry {
 	 * @since 2.0.0
 	 *
 	 * @param mixed $language The desired language.
-	 * @param bool  $lock     Wether or not to lock the selection.
-	 * @param bool  $override Wether or not to override the lock.
+	 * @param bool  $lock     Whether or not to lock the selection.
+	 * @param bool  $override Whether or not to override the lock.
 	 *
 	 * @throws Exception If the language specified does not exist.
 	 *
-	 * @return bool Wether or not the language could be changed.
+	 * @return bool Whether or not the language could be changed.
 	 */
 	public static function set_language( $language, $lock = false, $override = false ) {
 		// Ensure $language is a Language
@@ -556,7 +556,7 @@ final class Registry {
 	 * @param mixed $language1 The language to compare with.
 	 * @param mixed $language2 The language to compare against.
 	 *
-	 * @return bool The result of the comparision.
+	 * @return bool The result of the comparison.
 	 */
 	public static function compare_languages( $language1, $language2 ) {
 		// Ensure $language1 is a Language
@@ -625,7 +625,7 @@ final class Registry {
 	 * @param string $type     The type of location to check for.
 	 * @param string $location Optional. The ID of a specific location to check.
 	 *
-	 * @return bool Wether or not the location is localizable.
+	 * @return bool Whether or not the location is localizable.
 	 */
 	public static function is_location_supported( $type, $location = null ) {
 		// Turn $type into proper key name
@@ -669,9 +669,9 @@ final class Registry {
 	 * @uses Registry::get() to get the post_types list.
 	 *
 	 * @param string|array $post_types  The post type(s) to check.
-	 * @param bool         $require_all Optional. Wether or not to ensure ALL are supported.
+	 * @param bool         $require_all Optional. Whether or not to ensure ALL are supported.
 	 *
-	 * @return bool Wether or not the post type(s) are supported.
+	 * @return bool Whether or not the post type(s) are supported.
 	 */
 	public static function is_post_type_supported( $post_types, $require_all = false ) {
 		$post_types = (array) $post_types; // Convert to array
@@ -708,7 +708,7 @@ final class Registry {
 	 *
 	 * @param string|array $taxonomies The taxonomy(ies) to check.
 	 *
-	 * @return bool Wether or not the taxonomy(ies) are supported.
+	 * @return bool Whether or not the taxonomy(ies) are supported.
 	 */
 	public static function is_taxonomy_supported( $taxonomies ) {
 		$taxonomies = (array) $taxonomies; // Convert to array
@@ -738,7 +738,7 @@ final class Registry {
 	 *
 	 * @global \WP_Rewrite $wp_rewrite The WordPress rewrite API.
 	 *
-	 * @return bool Wether or not rewriting can be used.
+	 * @return bool Whether or not rewriting can be used.
 	 */
 	public static function can_use_rewrites() {
 		global $wp_rewrite;
@@ -758,7 +758,7 @@ final class Registry {
 	 *
 	 * This setting applies if:
 	 * - it's enabled
-	 * - the default langauge is requested
+	 * - the default language is requested
 	 * - the accepted language doesn't match
 	 *   another available language
 	 *
@@ -766,7 +766,7 @@ final class Registry {
 	 *
 	 * @param mixed $language The language to compare.
 	 *
-	 * @return bool Wether or not the skip_default_l10n rule applies.
+	 * @return bool Whether or not the skip_default_l10n rule applies.
 	 */
 	public static function does_skip_default_l10n_apply( $language ) {
 		// Setting not enabled, does not apply

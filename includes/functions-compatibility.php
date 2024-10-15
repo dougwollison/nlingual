@@ -1,9 +1,9 @@
 <?php
 /**
- * nLingual Compatibilty Functions
+ * nLingual Compatibility Functions
  *
  * @package nLingual
- * @subpackage Backwards_Compatibilty
+ * @subpackage Backwards_Compatibility
  *
  * @since 2.0.0
  */
@@ -199,8 +199,8 @@ function nL_get_lang_links( $skip_current = false ) {
  * @see Rewriter::get_links() for how the links are retrieved.
  *
  * @param string $prefix Optional. A prefix to place before the links (should end with a space).
- * @param string $sep    Optioanl A separator to use when putting the links together.
- * @param bool   $skip_current Optional. Wether or not to leave out the link for the current language.
+ * @param string $sep    Optional A separator to use when putting the links together.
+ * @param bool   $skip_current Optional. Whether or not to leave out the link for the current language.
  */
 function nL_print_lang_links( $prefix = '', $sep = ' ', $skip_current = false ) {
 	$links = nl_get_lang_links( $skip_current );
@@ -224,7 +224,7 @@ function nL_print_lang_links( $prefix = '', $sep = ' ', $skip_current = false ) 
  * @param string $text      The text to split up.
  * @param mixed  $language  Optional. The language to get the matching version for (defaults to current).
  * @param string $separator Optional. The separator to use when splitting the text (defaults to one defined under nLingual before 2.0.0).
- * @param bool   $force     Optional. Wether or not to force the split to happen instead of only when outside the admin.
+ * @param bool   $force     Optional. Whether or not to force the split to happen instead of only when outside the admin.
  *
  * @return string The part of the text corresponding to the language desired.
  */

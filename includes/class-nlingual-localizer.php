@@ -119,7 +119,7 @@ final class Localizer extends Handler {
 	private static $current_object_id = 0;
 
 	/**
-	 * Registry of objects whos localized data has been preloaded.
+	 * Registry of objects whose localized data has been preloaded.
 	 *
 	 * @internal
 	 *
@@ -152,7 +152,7 @@ final class Localizer extends Handler {
 	 *
 	 * @param string|array $ids The ID (or list of IDs to try) of the field to retrieve.
 	 *
-	 * @return Localizer_Field|bool The retreived field, FALSE on failure.
+	 * @return Localizer_Field|bool The retrieved field, FALSE on failure.
 	 */
 	public static function get_field( $ids ) {
 		$ids = (array) $ids;
@@ -510,9 +510,9 @@ final class Localizer extends Handler {
 	 *
 	 * @param string|array $id          The ID (or possible IDs) of the field, or a key to search for.
 	 * @param int          $language_id The language ID to match.
-	 * @param int          $object_id   The object ID if relevent (otherwise 0).
+	 * @param int          $object_id   The object ID if relevant (otherwise 0).
 	 * @param string       $fallback    Optional. A fallback to use if the result is empty/null.
-	 * @param bool         $check_reg   Optional. Wether or not to check if the field is regsitered before fetching (default TRUE).
+	 * @param bool         $check_reg   Optional. Whether or not to check if the field is registered before fetching (default TRUE).
 	 *
 	 * @return field|bool The localized version, false if nothing found.
 	 */
@@ -564,8 +564,8 @@ final class Localizer extends Handler {
 	 * @uses Registry::languages() to fill out empty slots for each language as needed.
 	 *
 	 * @param string $key       The field key to search for.
-	 * @param int    $object_id Optional. The object ID if relevent (otherwise 0).
-	 * @param bool   $check_reg Optional. Wether or not to check if the field is regsitered before fetching (default TRUE).
+	 * @param int    $object_id Optional. The object ID if relevant (otherwise 0).
+	 * @param bool   $check_reg Optional. Whether or not to check if the field is registered before fetching (default TRUE).
 	 *
 	 * @return array The localized versions of the specified field.
 	 */
@@ -610,9 +610,9 @@ final class Localizer extends Handler {
 	 *
 	 * @param string $key         The field key to search for.
 	 * @param int    $language_id The language ID to save for.
-	 * @param int    $object_id   The object ID if relevent (otherwise 0).
+	 * @param int    $object_id   The object ID if relevant (otherwise 0).
 	 * @param string $value       The localized value of the field.
-	 * @param bool   $check_reg   Optional. Wether or not to check if the field is regsitered before fetching (default TRUE).
+	 * @param bool   $check_reg   Optional. Whether or not to check if the field is registered before fetching (default TRUE).
 	 */
 	public static function save_field_value( $key, $language_id, $object_id, $value, $check_reg = true ) {
 		global $wpdb;
@@ -856,7 +856,7 @@ final class Localizer extends Handler {
 		} else if ( $term_id ) {
 			$term_object = \WP_Term::get_instance( $term_id ); // Get the raw term
 
-			// If the term can be retrieved, localize the name, falling back if applicalbe
+			// If the term can be retrieved, localize the name, falling back if applicable
 			if ( $term_object ) {
 				$term = self::get_field_value( "term.{$term_object->taxonomy}:term_name", $language->id, $term_id, $term );
 			}
@@ -879,7 +879,7 @@ final class Localizer extends Handler {
 		$args = &$query->query_vars;
 
 		if ( $args['fields'] == 'names' ) {
-			// Chanage to id=>names, will convert back later
+			// Change to id=>names, will convert back later
 			$args['fields'] = 'id=>name';
 
 			// So we know we need to convert back later
@@ -937,7 +937,7 @@ final class Localizer extends Handler {
 	 * @param string $taxonomy The taxonomy of the term being updated.
 	 */
 	public static function update_unlocalized_term_fields( $term_id, $tt_id, $taxonomy ) {
-		// Get the udpated term, since we aren't provided with the updated values
+		// Get the updated term, since we aren't provided with the updated values
 		$term = get_term( $term_id, $taxonomy );
 
 		// Abort if no term is found
@@ -979,7 +979,7 @@ final class Localizer extends Handler {
 			return;
 		}
 
-		// Determin object ID to use
+		// Determine object ID to use
 		$object_id_keys = array(
 			'post.php'      => 'post_ID',
 			'term.php'      => 'tag_ID',
@@ -1067,7 +1067,7 @@ final class Localizer extends Handler {
 			return;
 		}
 
-		// Determin object ID to use
+		// Determine object ID to use
 		$object_id_keys = array(
 			'post'      => 'post',
 			'term'      => 'tag_ID',

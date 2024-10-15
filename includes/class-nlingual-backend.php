@@ -15,7 +15,7 @@ namespace nLingual;
  *
  * Hooks into various backend systems to load
  * custom assets, modify the interface, and
- * add language management to relevent screens.
+ * add language management to relevant screens.
  *
  * @internal Used by the System.
  *
@@ -1161,7 +1161,7 @@ final class Backend extends Handler {
 			isset( $_GET['message'] ) && in_array( $_GET['message'], array( 1, 4, 6, 8, 9, 10 ) )
 			// And the post type supports translation
 			&& Registry::is_post_type_supported( $post->post_type )
-			// And the post type has syncronization rules specified
+			// And the post type has synchronization rules specified
 			&& Registry::get_post_sync_rules( $post->post_type )
 			// And the post has sister translations
 			&& Translator::get_post_translations( $post->ID )
@@ -1295,7 +1295,7 @@ final class Backend extends Handler {
 	 * Enqueue necessary styles and scripts.
 	 *
 	 * @since 2.10.0 Add translator notes. Explicitly enqueue in header.
-	 * @sicne 2.8.8 Add admin_post, for nl_new_translation call.
+	 * @since 2.8.8 Add admin_post, for nl_new_translation call.
 	 * @since 2.6.0 Updated to use plugin version for CSS/JS files.
 	 * @since 2.0.0
 	 */
@@ -1326,7 +1326,7 @@ final class Backend extends Handler {
 	// =========================
 
 	/**
-	 * Print relevent variables for JavaScript.
+	 * Print relevant variables for JavaScript.
 	 *
 	 * @since 2.10.0 Use wp_json_encode().
 	 * @since 2.0.0
@@ -1351,7 +1351,7 @@ final class Backend extends Handler {
 	// =========================
 
 	/**
-	 * Create a clone of the requested post in the requested lanuage.
+	 * Create a clone of the requested post in the requested language.
 	 *
 	 * Will redirect to the edit screen for the new translation.
 	 *
