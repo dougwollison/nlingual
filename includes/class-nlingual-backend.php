@@ -732,7 +732,7 @@ final class Backend extends Handler {
 			}
 
 			/* translators: %1$s = The name of the language, %2$s = The title of the post, wrapped in a link */
-			$links[] = esc_html( _fx( '%1$s: %2$s', 'language: title', 'nlingual', $other_language->system_name, $link ) );
+			$links[] = _fx( '%1$s: %2$s', 'language: title', 'nlingual', $other_language->system_name, $link );
 		}
 		if ( $links ) {
 			echo '<ul><li>' . implode( '</li><li>', $links ) . '</li></ul>';
