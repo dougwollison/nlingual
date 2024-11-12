@@ -376,7 +376,7 @@ final class Backend extends Handler {
 	 * @param string $global The global variable name to be edited.
 	 */
 	private static function register_localized_locations( $type, $global ) {
-		$list = $GLOBALS[ $global ];
+		$list = $GLOBALS[ $global ] ?? array();
 
 		// Cache the old version of the menus for reference
 		wp_cache_set( $global, $list, 'nlingual:vars' );
@@ -942,7 +942,7 @@ final class Backend extends Handler {
 			}
 
 			/* translators: %1$s = The name of the language, %2$s = The title of the post, wrapped in a link */
-			$links[] = esc_html( _fx( '%1$s: %2$s', 'language: title', 'nlingual', $other_language->system_name, $link ) );
+			$links[] = _fx( '%1$s: %2$s', 'language: title', 'nlingual', $other_language->system_name, $link );
 		}
 		if ( $links ) {
 			echo '<ul><li>' . implode( '</li><li>', $links ) . '</li></ul>';

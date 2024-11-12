@@ -79,6 +79,9 @@ Although nLingual 2 has be rewritten from scratch, most if not all of the functi
 
 **Details on each release can be found [on the GitHub releases page](https://github.com/dougwollison/nlingual/releases) for this project.**
 
+= 2.10.0.1 =
+Fix display of translation links in posts screen.
+
 = 2.10.0 =
 WP 6.6 and PHP 7 compatibility and API documentation improvements. Minor type check fixes and output escaping for edge cases.
 
