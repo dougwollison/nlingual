@@ -406,13 +406,9 @@ final class Synchronizer {
 		/* translators: %1$s = The name of the language, %2$s = The post title */
 		$title = _f( '[Needs %1$s Translation]: %2$s', 'nlingual', $language->system_name, $post->post_title );
 
-		// And default the post_name to the original + the language slug
-		$slug = $post->post_name . '-' . $language->slug;
-
 		// Create the new post
 		$post_data = array(
 			'post_title'     => $title,
-			'post_name'      => $slug,
 			'post_status'    => 'draft',
 			'post_type'      => $post->post_type,
 			'post_mime_type' => $post->post_mime_type,
