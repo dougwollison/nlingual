@@ -316,7 +316,7 @@ final class Synchronizer {
 
 				// Re-add each value
 				foreach ( $meta_values as $meta_value ) {
-					add_post_meta( $target->ID, $meta_key, maybe_unserialize( $meta_value ) );
+					add_post_meta( $target->ID, $meta_key, $meta_value );
 				}
 			}
 		}
