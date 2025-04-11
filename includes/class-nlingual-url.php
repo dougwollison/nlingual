@@ -191,8 +191,8 @@ final class URL extends Model {
 					$url .= $this->user;
 
 					// Add password
-					if ( $this->pass ) {
-						$url .= ':' . $this->pass;
+					if ( $this->password ) {
+						$url .= ':' . $this->password;
 					}
 
 					// Finish with @ symbol
