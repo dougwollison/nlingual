@@ -31,7 +31,7 @@ final class URL extends Model {
 	 *
 	 * @var string
 	 */
-	public $scheme = null;
+	public $scheme = '';
 
 	/**
 	 * The username.
@@ -40,7 +40,7 @@ final class URL extends Model {
 	 *
 	 * @var string
 	 */
-	public $user = null;
+	public $user = '';
 
 	/**
 	 * The password.
@@ -49,7 +49,7 @@ final class URL extends Model {
 	 *
 	 * @var string
 	 */
-	public $password = null;
+	public $password = '';
 
 	/**
 	 * The host.
@@ -58,7 +58,7 @@ final class URL extends Model {
 	 *
 	 * @var string
 	 */
-	public $host = null;
+	public $host = '';
 
 	/**
 	 * The port number.
@@ -67,7 +67,7 @@ final class URL extends Model {
 	 *
 	 * @var string
 	 */
-	public $port = null;
+	public $port = '';
 
 	/**
 	 * The URI path.
@@ -76,7 +76,7 @@ final class URL extends Model {
 	 *
 	 * @var string
 	 */
-	public $path = null;
+	public $path = '';
 
 	/**
 	 * The query string.
@@ -85,7 +85,7 @@ final class URL extends Model {
 	 *
 	 * @var string
 	 */
-	public $query = null;
+	public $query = '';
 
 	/**
 	 * The document fragment.
@@ -94,7 +94,7 @@ final class URL extends Model {
 	 *
 	 * @var string
 	 */
-	public $fragment = null;
+	public $fragment = '';
 
 	// Special-use properties
 
@@ -112,9 +112,9 @@ final class URL extends Model {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @var array
+	 * @var int
 	 */
-	public $page = null;
+	public $page = 0;
 
 	/**
 	 * Miscellaneous meta data.

@@ -159,7 +159,7 @@ final class Rewriter {
 
 				case 'path':
 					// Get the path of the home URL, with trailing slash
-					$home_path = trailingslashit( wp_parse_url( $home, PHP_URL_PATH ) );
+					$home_path = trailingslashit( wp_parse_url( $home, PHP_URL_PATH ) ?? '' );
 
 					// Subtract the home path from the start of the path provided
 					$path = substr( $the_url->path, strlen( $home_path ) );
@@ -455,11 +455,16 @@ final class Rewriter {
 
 			// Now try various other conditional tags...
 
+			$post_types = $wp_query->query_vars['post_type'] ?? '';
+			if ( is_string( $post_types ) ) {
+				$post_types = explode( ',', $post_types );
+			}
+
 			// Single Post Type archive? Get the archive link
-			if ( is_post_type_archive() && count( (array) $wp_query->query_vars['post_type'] ) == 1 ) {
-				$post_types = (array) $wp_query->query_vars['post_type'];
+			if ( is_post_type_archive() && count( $post_types ) == 1 ) {
 				$url = get_post_type_archive_link( $post_types[0] );
 			}
+
 			// Single Term page? Get the term link
 			elseif ( ( is_tax() || is_tag() || is_category() )
 			&& count( $wp_query->tax_query->queries ) == 1
