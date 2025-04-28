@@ -464,6 +464,7 @@ final class Rewriter {
 			if ( is_post_type_archive() && count( $post_types ) == 1 ) {
 				$url = get_post_type_archive_link( $post_types[0] );
 			}
+
 			// Single Term page? Get the term link
 			elseif ( ( is_tax() || is_tag() || is_category() )
 			&& count( $wp_query->tax_query->queries ) == 1
