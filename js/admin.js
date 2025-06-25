@@ -417,8 +417,8 @@
 
 		if ( typeof tinymce === 'object' ) {
 			function localizeEditor( editor ) {
-				var $field = $( editor.getElement() ),
-					$control = $field.data( '$nl_localizer' );
+				const $field = $( editor.getElement() );
+				const $control = $field.data( '$nl_localizer' );
 
 				if ( ! $control ) {
 					return;
@@ -447,9 +447,9 @@
 			tinymce.editors.forEach( localizeEditor );
 
 			// Backwards compatibility; catch any late-registered editors
-			tinymce.on( 'SetupEditor', e => {
+			tinymce.on( 'SetupEditor', ( e ) => {
 				// TinyMCE 4.7 changes callback arg to event CONTAINING editor
-				var editor = e.editor || e;
+				const editor = e.editor || e;
 
 				localizeEditor( editor );
 			} );
@@ -484,10 +484,10 @@
 
 		// Show/Hide the Add/Edit buttons based on value
 		$( '.nl-translation-field' ).each( function() {
-			var value = $( this ).find( '.nl-input' ).val();
+			const value = $( this ).find( '.nl-input' ).val();
 
-			var $add = $( this ).find( '.nl-add-translation' );
-			var $edit = $( this ).find( '.nl-edit-translation' );
+			const $add = $( this ).find( '.nl-add-translation' );
+			const $edit = $( this ).find( '.nl-edit-translation' );
 
 			$edit.hide();
 			if ( parseInt( value, 10 ) ) {
