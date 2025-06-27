@@ -980,7 +980,7 @@ final class Backend extends Handler {
 		// Get the languages list
 		$languages = Registry::languages();
 		?>
-		<div class="nl-translations-manager clear">
+		<div class="nl-translation-manager clear">
 			<hr />
 			<fieldset class="nl-fieldset">
 				<input type="hidden" name="_nl_nonce" class="nl-nonce" />
