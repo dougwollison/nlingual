@@ -515,7 +515,7 @@ final class Rewriter {
 		$the_url = new URL( $url );
 
 		// Merge the args with the $_GET variables
-		$the_url->args = array_merge( $the_url->args, $_GET );
+		$the_url->args = array_merge( $the_url->args, wp_unslash( $_GET ) );
 
 		// Check if paged and add entry to $url_data
 		if ( is_paged() ) {
