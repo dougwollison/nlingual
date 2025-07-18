@@ -1016,7 +1016,6 @@ final class Backend extends Handler {
 									'suppress_filters' => false,
 									'post_type' => $post_type,
 									'nl_language' => $language->id,
-									'nl_is_translated' => false,
 									'orderby' => 'post_date',
 									'order' => 'desc',
 									'posts_per_page' => -1,
