@@ -790,7 +790,7 @@ final class Liaison extends Handler {
 
 		// If the main query isn't a search, abort
 		// Relevansii only deals with the main query usually
-		if ( ! $query->is_search() ) {
+		if ( ! $query || ! $query->is_search() ) {
 			return $query_restrictions;
 		}
 
