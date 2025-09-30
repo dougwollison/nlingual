@@ -219,7 +219,7 @@ final class Backend extends Handler {
 	 */
 	public static function load_textdomain() {
 		// Load the textdomain
-		load_plugin_textdomain( 'nlingual', false, basename( NL_PLUGIN_DIR ) . '/languages' );
+		load_plugin_textdomain( 'nlingual', false, dirname( plugin_basename( NL_PLUGIN_DIR ) ) . '/languages' );
 	}
 
 	/**
