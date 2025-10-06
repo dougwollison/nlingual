@@ -309,8 +309,7 @@ final class Backend extends Handler {
 	 * @return string The replaced locale.
 	 */
 	public static function maybe_rewrite_locale( $locale ) {
-		// If it's the accepted language or override language, use it instead
-		if ( defined( 'NL_ACCEPTED_LANGUAGE' ) ) {
+		if ( defined( 'NL_DETECTED_LANGUAGE' ) && NL_DETECTED_LANGUAGE ) {
 			return Registry::current_language( 'locale_name' );
 		}
 
