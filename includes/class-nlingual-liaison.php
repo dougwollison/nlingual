@@ -745,11 +745,11 @@ final class Liaison extends Handler {
 		global $wpdb;
 
 		// Get the query being used
-		$query = static::$cache['relevanssi_query'];
+		$query = static::$cache['relevanssi_query'] ?? null;
 
 		// If the main query isn't a search, abort
 		// Relevansii only deals with the main query usually
-		if ( ! $query->is_search() ) {
+		if ( ! $query || ! $query->is_search() ) {
 			return $query_join;
 		}
 
@@ -786,7 +786,7 @@ final class Liaison extends Handler {
 		global $wpdb;
 
 		// Get the query being used
-		$query = static::$cache['relevanssi_query'];
+		$query = static::$cache['relevanssi_query'] ?? null;
 
 		// If the main query isn't a search, abort
 		// Relevansii only deals with the main query usually
