@@ -105,6 +105,17 @@ final class Hook {
  */
 abstract class Handler {
 	/**
+	 * Record of added hooks.
+	 *
+	 * @internal Used by the Handler enable/disable methods.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @var array
+	 */
+	protected static $implemented_hooks = array();
+
+	/**
 	 * Retrieve an implemented hook's details.
 	 *
 	 * @since 2.6.0
