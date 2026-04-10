@@ -126,6 +126,9 @@ final class Backend extends Handler {
 
 		// Admin Bar Additions
 		self::add_hook( 'admin_bar_menu', 'add_switcher_menu', 81, 1 ); // should occur after New and View Page menu items
+
+		// Ajax Handlers
+		self::add_hook( 'wp_ajax_nl_drop_translation', 'ajax_drop_translation', 10 );
 	}
 
 	// =========================
@@ -1767,5 +1770,37 @@ final class Backend extends Handler {
 				$wp_admin_bar->add_node( $node );
 			}
 		}
+	}
+
+	// =========================
+	// ! Ajax Handlers
+	// =========================
+
+	public static function ajax_drop_translation() {
+		if ( empty( $_POST['post_id'] ) ) {
+			wp_die( 'Post ID not specified.' );
+			exit;
+		}
+
+		if ( empty( $_POST['language_id'] ) ) {
+			wp_die( 'Language ID not specified.' );
+			exit;
+		}
+
+		$result = null;
+		try {
+			$result = Translator::delete_post_translation( $_POST['post_id'], $_POST['language_id'] );
+		} catch ( Exception $error ) {
+			wp_die( new WP_Error( $error->getMessage() ) );
+			exit;
+		}
+
+		if ( ! $result ) {
+			wp_die( 'Error deleting translation, please try again.' );
+			exit;
+		}
+
+		http_response_code( 200 );
+		exit;
 	}
 }
