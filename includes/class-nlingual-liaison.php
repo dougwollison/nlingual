@@ -788,9 +788,9 @@ final class Liaison extends Handler {
 		// Get the query being used
 		$query = static::$cache['relevanssi_query'] ?? null;
 
-		// If the main query isn't a search, abort
+		// If the main query isn't using relevanssi, abort
 		// Relevansii only deals with the main query usually
-		if ( ! $query || ! $query->is_search() ) {
+		if ( ! $query || ! $query->get( 'relevanssi' ) ) {
 			return $query_restrictions;
 		}
 
@@ -835,7 +835,7 @@ final class Liaison extends Handler {
 		// If any where clauses were made, add them
 		if ( $clauses ) {
 			// Add the new clauses
-			$query_restrictions .= " AND (" . implode( ' OR ', $clauses ) . ") ";
+			$query_restrictions .= " AND (relevanssi.doc IN (SELECT $nl.object_id FROM $nl WHERE " . implode( ' OR ', $clauses ) . ")) ";
 		}
 
 		return $query_restrictions;
