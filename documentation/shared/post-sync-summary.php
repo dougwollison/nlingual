@@ -23,7 +23,10 @@
 			$taxonomies = array();
 			// Get the names of each field
 			foreach ( $rules['post_terms'] as $taxonomy ) {
-				$taxonomies[] = esc_html( get_taxonomy( $taxonomy )->labels->name );
+				$tax_object = get_taxonomy( $taxonomy );
+				if ( $tax_object ) {
+					$taxonomies[] = esc_html( $tax_object->labels->name );
+				}
 			}
 			echo implode( ', ', $taxonomies );
 		?></li>
