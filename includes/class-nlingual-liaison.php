@@ -710,9 +710,8 @@ final class Liaison extends Handler {
 		// Save the query context
 		self::add_hook( 'relevanssi_modify_wp_query', 'relevanssi_query', 999, 1 );
 
-		// Add where/join clause filters to relevanssi query
-		self::add_hook( 'relevanssi_join', 'relevanssi_join', 10, 1 );
-		self::add_hook( 'relevanssi_where', 'relevanssi_where', 10, 1 );
+		// Filter results by language requested
+		self::add_hook( 'relevanssi_results', 'relevanssi_results', 10, 1 );
 	}
 
 	/**
@@ -774,15 +773,13 @@ final class Liaison extends Handler {
 	}
 
 	/**
-	 * Add the language WHERE clause if applicable.
+	 * Filter the Relevanssi results to exclude those not in the requested language.
 	 *
-	 * @since 2.11.0
+	 * @param array $doc_weight An array of (post ID, weight) pairs.
 	 *
-	 * @param string $query_restrictions The WHERE clause for Relevanssi.
-	 *
-	 * @return string The updated WHERE clause.
+	 * @return array The modified ID/weight pairs.
 	 */
-	public static function relevanssi_where( $query_restrictions ) {
+	public static function relevanssi_results( $doc_weight ) {
 		global $wpdb;
 
 		// Get the query being used
@@ -832,13 +829,12 @@ final class Liaison extends Handler {
 			}
 		}
 
-		// If any where clauses were made, add them
-		if ( $clauses ) {
-			// Add the new clauses
-			$query_restrictions .= " AND (relevanssi.doc IN (SELECT $nl.object_id FROM $nl WHERE " . implode( ' OR ', $clauses ) . ")) ";
-		}
+		$doc_ids_in = implode( ',', array_map( 'absint', array_keys( $doc_weight ) ) );
 
-		return $query_restrictions;
+		// Get list of IDs that match the language requirements
+		$keep = $wpdb->get_col( "SELECT p.ID FROM $wpdb->posts as p LEFT JOIN $nl ON $nl.object_id = p.ID WHERE p.ID IN ($doc_ids_in) AND (" . implode( ' OR ', $clauses ) . ")" );
+
+		return array_filter( $doc_weight, fn( $id ) => in_array( $id, $keep ), ARRAY_FILTER_USE_KEY );
 	}
 
 	// =========================
