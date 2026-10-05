@@ -788,7 +788,7 @@ final class Liaison extends Handler {
 		// If the main query isn't using relevanssi, abort
 		// Relevansii only deals with the main query usually
 		if ( ! $query || ! $query->get( 'relevanssi' ) ) {
-			return $query_restrictions;
+			return $doc_weight;
 		}
 
 		// Get the language query_var name, and the query's variables
@@ -799,7 +799,7 @@ final class Liaison extends Handler {
 
 		// Abort if no language(s) was set
 		if ( is_null( $requested_languages ) || $requested_languages === '' ) {
-			return $query_restrictions;
+			return $doc_weight;
 		}
 
 		// Ensure languages is an array
