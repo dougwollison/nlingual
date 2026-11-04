@@ -956,14 +956,9 @@ final class System extends Handler {
 		}
 
 		// Get the language to use
-		$language = Registry::current_language();
-		// Use the post's language if desired or otherwise in the backend
-		if ( Registry::get( 'post_language_override', false ) || is_backend() ) {
-			$language = Translator::get_post_language( $post_id );
-
-			if ( ! $language ) {
-				return $permalink;
-			}
+		$language = Translator::get_post_language( $post_id, true );
+		if ( ! $language ) {
+			return $permalink;
 		}
 
 		// If it's a page, check if it's a home page translation
